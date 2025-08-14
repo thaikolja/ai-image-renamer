@@ -1,25 +1,93 @@
 # AI Image Renamer
 
-**AI Image Renamer** is a Python package that uses **Groq's free API** to rename one or more image files. It uses the latest open-source LLMs to accurately analyze your images and rename them based on what is in the image in an SEO-friendly way.
+**AI Image Renamer** is a command-line tool that leverages generative artificial intelligence to intelligently rename your image files based on their content. This helps in organizing your photo collection by giving images more descriptive and searchable filenames. A [free Groq API key](https://console.groq.com/keys) is required for this project.
 
-As an example, a file named `b19a8c45-9e29-4048-aae7.webp` that shows a woman sitting in her living room reading a book will then be renamed to `female-reading-a-book-in-living-room.web` (depending on the settings, the names will always slightly differ).
+**Table of Contents**
 
+[TOC]
 
+## Features
 
-> [!NOTE]
->
-> This project is still in progress and will be merged from `dev` to `main` once it reaches `v1.0.0`. When it's released and available on PyPi to install it via `pip`, this `REAMDE.md` will contain only a very brief installation and usage guide. For a thorough documentation of this CLI tool, visit https://docs.kolja-nolte.com/ai-image-renamer.
+- **AI-Powered Renaming**: Utilizes the advanced AI model `llama-4-maverick-17b-128e-instruct`[^1] to understand image content and suggest relevant names.
+- **Batch Processing**:[^2] Rename multiple images at once with a single command.
+- **Easy to Use**: Simple command-line interface for quick and efficient renaming.
 
+## Installation
 
+1. Install **AI Image Renamer** via the `pip` command:
 
-## Contribute
+   ```bash
+   pip install rename-images
+   ```
 
-Contributions are, of course, always welcome. Please fork the `main` branch and add your changes there before submitting a PR.
+2. Get your [free API key on console.groq.com](https://console.groq.com/keys) and set it as an environment variable in  your user's `.bashrc`, `.profile`, `.zshrc`, or whichever you use:
+
+   ```bash
+   export GROQ_API_KEY="..."
+   ```
+
+## Usage
+
+The `image-renamer` command is your entry point to the tool. However, since it's using [Groq and Meta's Llama 4 Maverick](https://console.groq.com/docs/vision) model[^1], some limitations apply:
+
+### Limits
+
+* **No more than 5 image** files per command
+* The total size of all images **must not exceed 4 MB**
+* Each image must have **fewer than 33,177,600 pixels** (e.g., 7680x4320)
+
+### Basic Usage
+
+To rename a single image:
+
+```bash
+image-renamer path/to/your/image.jpg
+```
+
+To rename multiple images:
+
+```bash
+image-renamer image1.png image2.jpeg path/to/another/image.tiff
+```
+
+### Help and Options
+
+You can always get help and see all available options by running:
+
+```bash
+image-renamer -h # or --help
+```
+
+This will display information about the command, its arguments, and options, similar to this:
+
+```bash
+usage: image-renamer [-h] [-v] image_paths [image_paths ...]
+
+AI Image Renamer CLI
+
+positional arguments:
+  image_paths           Path to the image file to be renamed
+
+options:
+  -h, --help            show this help message and exit
+  -v, --version         Show the version of the ai_image_renamer package
+
+For more information, visit https://docs.kolja-nolte.com/ai-image-renamer
+```
+
+## Contributing
+
+We welcome contributions to **AI Image Renamer**! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute.
 
 ## Author
 
-* **Kolja Nolte** (kolja.nolte@gmail.com)
+1. **Kolja Nolte** (kolja.nolte@gmail.com)
 
-## LIcense
+## License
 
-MIT
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+[^1]: Alternatively, you can also use the smaller LLM `meta-llama/llama-4-scout-17b-16e-instruct`.
+[^2]: Maximal 5 image files per command.
