@@ -1,30 +1,22 @@
-# -*- coding: utf-8 -*-
-"""
-A simple script to demonstrate and test the ImageRenamer class locally.
+#  -*- coding: utf-8 -*-
+#
+#  AI Image Renamer
+#
+#  Copyright (C) 2025 Kolja Nolte
+#  https://www.kolja-nolte.com
+#  kolja.nolte@gmail.com
+#
+#  This work is licensed under the MIT License. You are free to use, modify, and distribute this work, provided that you include the copyright notice and this permission notice in all copies or substantial portions of the work. For more information, visit: https://opensource.org/licenses/MIT
+#
+#  @author      Kolja Nolte
+#  @email       kolja.nolte@gmail.com
+#  @license     MIT
+#  @date        2025
+#  @website     https://docs.kolja-nolte.com/ai-image-renamer
+#  @repository  https://gitlab.com/thaikolja/ai-image-renamer
 
-This script is for development and testing purposes. The main entry point
-for the command-line tool is located in `ai_image_renamer/cli.py`.
-"""
+from ai_image_renamer.renamer import ImageRenamer
 
+renamer = ImageRenamer()
+image_path = ''
 
-# To run this script, you would typically import your main class
-# from your package.
-# from ai_image_renamer.renamer import ImageRenamer
-
-def main():
-	"""
-	A simple function to show how you might use the ImageRenamer class.
-	"""
-	print("Executing main.py...")
-	print("This script can be used to test the library functionality directly.")
-
-	# Example of how you might use your renamer class in the future:
-	# print("Instantiating ImageRenamer (once implemented)...")
-	# renamer = ImageRenamer(api_key="YOUR_API_KEY")
-	# renamer.rename_images_in_directory("./path/to/images")
-
-	print("main.py execution complete.")
-
-
-if __name__ == "__main__":
-	main()
