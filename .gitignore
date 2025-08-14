@@ -93,3 +93,8 @@ dmypy.json
 .pyre/
 .pytype/
 cython_debug/
+
+# Editor folders
+.vscode/
+
+NOTES.md
