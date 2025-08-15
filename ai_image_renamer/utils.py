@@ -22,6 +22,7 @@
 import os
 import re
 import base64
+import logging
 
 # Third-party libraries:
 # - filetype: infer MIME type from magic bytes
@@ -137,8 +138,14 @@ def get_words(image_path: str) -> str:
 		- The API key is hardcoded; consider externalizing via environment variables.
 		- The output is not further sanitized here (sanitization occurs elsewhere).
 	"""
+	groq_api_key = os.getenv("GROQ_API_KEY", None)
+
+	if not groq_api_key or groq_api_key is None:
+		logging.error("GROQ_API_KEY environment variable is not set.")
+		raise RuntimeError("Set GROQ_API_KEY in your environment")
+
 	# Initialize Groq client (consider securing the API key via env variable).
-	client = Groq(api_key=os.getenv('GROQ_API_KEY', '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'))
+	client = Groq(api_key=os.getenv(groq_api_key))
 
 	# Convert image binary to base64 for inline data URL usage.
 	encoded_image = encode_image(image_path)

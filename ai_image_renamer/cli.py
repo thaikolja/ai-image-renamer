@@ -17,10 +17,16 @@
 #  @repository  https://gitlab.com/thaikolja/ai-image-renamer
 
 
+# Standard library: provides logging capabilities for the application.
+import logging
+# Standard library: provides access to environment variables and filesystem operations.
+import os
 # Standard library: provides facilities for parsing CLI arguments.
 import argparse
 # Internal package import: brings in renamer module (aliased) containing ImageRenamer logic.
 import ai_image_renamer.renamer as renamer
+
+
 
 
 def main():

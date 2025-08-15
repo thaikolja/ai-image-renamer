@@ -87,7 +87,5 @@ We welcome contributions to **AI Image Renamer**! Please see our [CONTRIBUTING.m
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
-
 [^1]: Alternatively, you can also use the smaller LLM `meta-llama/llama-4-scout-17b-16e-instruct`.
 [^2]: Maximal 5 image files per command.
