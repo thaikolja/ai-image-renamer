@@ -17,6 +17,7 @@ class TestRenamer(unittest.TestCase):
         # Arrange
         args = MagicMock()
         args.image_paths = ["test_image.jpg"]
+        args.words = 8
         mock_utils.verify_image_file.return_value = True
         mock_utils.get_words.return_value = "A test description"
         mock_utils.sanitize_image_path.return_value = "a-test-description.jpg"
@@ -34,6 +35,7 @@ class TestRenamer(unittest.TestCase):
         # Arrange
         args = MagicMock()
         args.image_paths = ["test_image.jpg"]
+        args.words = 8
         mock_utils.verify_image_file.return_value = False
 
         # Act

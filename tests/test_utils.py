@@ -21,7 +21,7 @@ class TestUtils(unittest.TestCase):
         mock_groq.return_value.chat.completions.create.return_value = mock_completion
 
         # Act
-        result = utils.get_words("test_image.jpg")
+        result = utils.get_words("test_image.jpg", 8)
 
         # Assert
         self.assertEqual(result, "A test description")
@@ -35,7 +35,7 @@ class TestUtils(unittest.TestCase):
         mock_groq.return_value.chat.completions.create.return_value = None
 
         # Act
-        result = utils.get_words("test_image.jpg")
+        result = utils.get_words("test_image.jpg", 8)
 
         # Assert
         self.assertEqual(result, "")
