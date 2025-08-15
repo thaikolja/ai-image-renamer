@@ -17,53 +17,55 @@
 
 # Standard library imports: filesystem operations and logging utilities
 import os
-import logging
 
 # Project utility module: provides image verification, word extraction, and path sanitization helpers
 import ai_image_renamer.utils as utils
 
 
 class ImageRenamer:
-	"""Renames image files based on extracted textual content.
+	"""
+	Handles renaming of image files based on descriptive textual content extracted from them.
 
-	Workflow:
-	1. Validate each image path with utils.verify_image_file.
-	2. Extract words/descriptions via utils.get_words.
-	3. Build a sanitized new path with utils.sanitize_image_path.
-	4. Rename the original file using os.rename.
+	The `ImageRenamer` class processes a list of image file paths, verifies their validity,
+	extracts textual content, and renames the files to a more descriptive name. This is
+	useful for organizing and making image archives more searchable or user-friendly.
 
-	Parameters
-	----------
-	args : argparse.Namespace
-	    Must provide image_paths (Iterable[str]) to process.
+	:ivar image_paths: A list of file paths to the images that need to be renamed.
+	:type image_paths: list
 	"""
 
 	def __init__(self, args):
-		"""Initialize and trigger the rename process.
-
-		Parameters
-		----------
-		args : argparse.Namespace
-		    Holds image_paths (Iterable[str]) that will be processed.
 		"""
-		self.image_paths = args.image_paths
+		Initializes an instance and renames files based on the provided image paths.
 
+		The constructor accepts arguments required for setting up the instance and
+		processes file renaming for the given image paths.
+
+		:param args: Arguments containing image paths.
+		:type args: Any
+		"""
+		self.args = args
+		self.image_paths = args.image_paths
 		self.rename()
-		pass
 
 	def rename(self):
-		"""Process and rename each image path in self.image_paths.
-
-		For every path:
-		- Skip and log an error if the file is not a valid image.
-		- Extract descriptive content; skip if empty or failed.
-		- Generate a sanitized new path; skip if too short.
-		- Perform the filesystem rename.
-
-		Returns
-		-------
-		None
 		"""
+		Rename each image file in `self.image_paths` using extracted descriptive content.
+
+		Pipeline:
+			1. Verification: Skip files that are not valid / supported images (`utils.verify_image_file`).
+			2. Content extraction: Derive descriptive words (`utils.get_words`); skip if none returned.
+			3. Sanitization: Build a new, safe target path (`utils.sanitize_image_path`); skip if path looks implausible (<=3 chars).
+			4. Rename: Perform `os.rename` and report the change.
+
+		Side effects:
+			- Mutates the filesystem by renaming files.
+			- Writes progress and skip reasons to stdout.
+
+		Returns:
+			None
+		"""
+
 		# Iterate over each image path provided via args.
 		for path in self.image_paths:
 			# Step 1: Verify the file is a supported, accessible image before any processing.
@@ -74,7 +76,7 @@ class ImageRenamer:
 			# Step 2: Extract descriptive textual content (e.g., labels, tags, OCR results).
 			# If extraction fails or returns nothing meaningful, skip this file.
 			print(f"Processing {path}...")
-			content = utils.get_words(path)
+			content = utils.get_words(path, self.args.words)
 			if not content:
 				print(f"Failed to retrieve content from image: {path}")
 				continue

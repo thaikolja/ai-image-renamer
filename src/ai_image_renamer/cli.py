@@ -17,18 +17,14 @@
 #  @repository  https://gitlab.com/thaikolja/ai-image-renamer
 
 
-# Standard library: provides logging capabilities for the application.
-import logging
-# Standard library: provides access to environment variables and filesystem operations.
-import os
-# Standard library: provides facilities for parsing CLI arguments.
+# Standard library import: argparse provides facilities for parsing CLI arguments.
 import argparse
-from importlib import metadata
-# Internal package import: brings in renamer module (aliased) containing ImageRenamer logic.
+# Internal package import: renamer module (aliased) containing ImageRenamer logic.
 import ai_image_renamer.renamer as renamer
+# Standard library import: metadata retrieves the installed package version (PEP 566).
+from importlib import metadata
+# Third-party import: load_dotenv loads environment variables from a .env file.
 from dotenv import load_dotenv
-
-
 
 
 def main():
@@ -61,6 +57,14 @@ def main():
 		version=f"%(prog)s {metadata.version('ai-image-renamer')}",
 		help="Show the version of the ai_image_renamer package",
 	)
+	parser.add_argument(
+		'--words', '-w',
+		default=6,
+		help="Number of words used to rename the image file (default: 6)",
+		type=int,
+		metavar='N',
+		choices=range(1, 50),
+	)
 	# Add a positional argument accepting one or more image file paths.
 	# nargs='+' enforces at least one path; each is collected as a string.
 	parser.add_argument(
@@ -76,6 +80,3 @@ def main():
 
 	# Instantiate the ImageRenamer with the parsed arguments to perform renaming logic.
 	renamer.ImageRenamer(args)
-
-
-

@@ -22,7 +22,6 @@
 import os
 import re
 import base64
-import logging
 
 # Third-party libraries:
 # - filetype: infer MIME type from magic bytes
@@ -117,34 +116,36 @@ def sanitize_image_path(image_path: str, image_content: str) -> str:
 
 
 # noinspection PyTypeChecker
-def get_words(image_path: str) -> str:
+def get_words(image_path: str, words: int = 6) -> str:
 	"""
-	Generate a short (<= 8 words), SEO-friendly description of the image.
-
-	This function:
-	1. Base64-encodes the image at the given path.
-	2. Sends the encoded image to the Groq chat completion endpoint using a multimodal prompt.
-	3. Requests a concise, descriptive phrase suitable for use in file naming or alt text.
-	4. Returns an empty string if no valid response is produced.
+	Generate a short, SEO-friendly description for an image using a Groq multimodal model.
 
 	Parameters:
-		image_path (str): Absolute or relative filesystem path to the image.
+		image_path (str): Filesystem path to the image to analyze. Must point to a readable image file.
+		words (int): Maximum number of words requested for the description (soft constraint for the model).
 
 	Returns:
-		str: A short textual description, or an empty string on failure.
+		str: A concise description (ideally within the requested word limit) or an empty string if
+		the API returns no usable content.
+
+	Raises:
+		RuntimeError: If the environment variable GROQ_API_KEY is not set.
+		FileNotFoundError: Propagated if the image file does not exist (from encode_image).
+		OSError: Propagated if the image cannot be read.
+		Exception: Any underlying Groq client exception is not caught here.
 
 	Notes:
-		- Temperature is set high (2) to encourage variation; adjust for determinism.
-		- The API key is hardcoded; consider externalizing via environment variables.
-		- The output is not further sanitized here (sanitization occurs elsewhere).
+		- The temperature is set to 2 to encourage varied, creative phrasing; lower it for consistency.
+		- The image is embedded as a data URL (assumed JPEG mime) for inline transmission.
+		- Defensive checks ensure safe access to completion choices.
+		- The model may occasionally exceed the requested word count; you can post-trim if strict limits are required.
 	"""
 	groq_api_key = os.getenv("GROQ_API_KEY")
 
 	if not groq_api_key:
-		logging.error("GROQ_API_KEY environment variable is not set.")
 		raise RuntimeError("Set GROQ_API_KEY in your environment")
 
-	# Initialize Groq client (consider securing the API key via env variable).
+	# Initialize Groq client.
 	client = Groq(api_key=groq_api_key)
 
 	# Convert image binary to base64 for inline data URL usage.
@@ -162,7 +163,7 @@ def get_words(image_path: str) -> str:
 				"content": [
 					{
 						"type": "text",
-						"text": "What's in this image? Describe the content of this image with no more than 8 words in an SEO-friendly way"
+						"text": f"What's in this image? Describe the content of this image with no more than {words} words in an SEO-friendly way"
 					},
 					{
 						"type":      "image_url",

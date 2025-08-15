@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-include = ["ai_image_renamer"]
+where = ["src"]
 
 [project]
 name = "ai-image-renamer"
@@ -14,11 +14,10 @@ requires-python = ">=3.8"
 authors = [
     { name = "Kolja Nolte", email = "kolja.nolte@gmail.com" }
 ]
-license = { text = "MIT" }
+license = "MIT"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -28,10 +27,25 @@ classifiers = [
     "Topic :: Multimedia :: Graphics :: Graphics Conversion",
     "Topic :: Scientific/Engineering :: Image Processing",
 ]
+dependencies = [
+    "filetype~=1.2.0",
+    "groq~=0.31.0",
+    "python-dotenv~=1.1.1"
+]
 
 [project.urls]
-"Homepage" = "https://docs.kolja-nolte.com/ai-image-renamer"
+"Homepage" = "https://www.kolja-nolte.com"
 "Repository" = "https://gitlab.com/thaikolja/ai-image-renamer.git"
 
 [project.scripts]
 rename-images = "ai_image_renamer.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+]

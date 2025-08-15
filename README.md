@@ -1,6 +1,6 @@
 # AI Image Renamer
 
-**AI Image Renamer** is a command-line tool that leverages generative artificial intelligence to intelligently rename your image files based on their content. This helps in organizing your photo collection by giving images more descriptive and searchable filenames. A [free Groq API key](https://console.groq.com/keys) is required for this project.
+**AI Image Renamer** is a command-line tool that leverages generative artificial intelligence to intelligently rename your image files based on their content. This helps in organizing your photo collection by giving images more descriptive and searchable filenames. A [free Groq API key](https://console.groq.com/keys) is required for this project. For a full documentation of this tool, please visit https://docs.kolja-nolte.com/ai-image-renamer.
 
 **Table of Contents**
 
@@ -17,10 +17,10 @@
 1. Install **AI Image Renamer** via the `pip` command:
 
    ```bash
-   pip install rename-images
+   pip install ai-image-renamer
    ```
 
-2. Get your [free API key on console.groq.com](https://console.groq.com/keys) and set it as an environment variable in  your user's `.bashrc`, `.profile`, `.zshrc`, or whichever you use:
+2. Get your [free API key on console.groq.com](https://console.groq.com/keys) and set it as an environment variable in  your user's `.bashrc`, `.bash_profile`, `.zshrc`, `.zprofile`, or whichever you use:
 
    ```bash
    export GROQ_API_KEY="..."
@@ -47,8 +47,17 @@ image-renamer path/to/your/image.jpg
 To rename multiple images:
 
 ```bash
-image-renamer image1.png image2.jpeg path/to/another/image.tiff
+image-renamer image1.png image2.jpg path/to/another/image.webp
 ```
+
+### File Types
+
+The following image file types are supported:
+
+* `.jpg` / `.jpeg`
+* `.png`
+* `.webp`
+* `.bmp`
 
 ### Help and Options
 
@@ -61,16 +70,17 @@ image-renamer -h # or --help
 This will display information about the command, its arguments, and options, similar to this:
 
 ```bash
-usage: image-renamer [-h] [-v] image_paths [image_paths ...]
+usage: rename-images [-h] [--version] [--words N] image_paths [image_paths ...]
 
 AI Image Renamer CLI
 
 positional arguments:
-  image_paths           Path to the image file to be renamed
+  image_paths    Path(s) to the image file(s) to be renamed
 
 options:
-  -h, --help            show this help message and exit
-  -v, --version         Show the version of the ai_image_renamer package
+  -h, --help     show this help message and exit
+  --version, -v  Show the version of the ai_image_renamer package
+  --words, -w N  Number of words used to rename the image file (default: 8)
 
 For more information, visit https://docs.kolja-nolte.com/ai-image-renamer
 ```
