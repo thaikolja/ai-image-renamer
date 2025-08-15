@@ -34,7 +34,7 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://www.kolja-nolte.com"
+"Homepage" = "https://docs.kolja-nolte.com/ai-image-renamer"
 "Repository" = "https://gitlab.com/thaikolja/ai-image-renamer.git"
 
 [project.scripts]
