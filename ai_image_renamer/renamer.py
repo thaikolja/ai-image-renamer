@@ -68,14 +68,15 @@ class ImageRenamer:
 		for path in self.image_paths:
 			# Step 1: Verify the file is a supported, accessible image before any processing.
 			if not utils.verify_image_file(path):
-				logging.error(f"Invalid image file: {path}")
+				print(f"Skipping invalid image file: {path}")
 				continue
 
 			# Step 2: Extract descriptive textual content (e.g., labels, tags, OCR results).
 			# If extraction fails or returns nothing meaningful, skip this file.
+			print(f"Processing {path}...")
 			content = utils.get_words(path)
 			if not content:
-				logging.error(f"Failed to retrieve content from image: {path}")
+				print(f"Failed to retrieve content from image: {path}")
 				continue
 
 			# Step 3: Build a sanitized new file path (typically incorporating extracted words).
@@ -86,3 +87,4 @@ class ImageRenamer:
 
 			# Step 4: Rename the original file to the new, descriptive path.
 			os.rename(path, new_path)
+			print(f"Renamed {path} to {new_path}")

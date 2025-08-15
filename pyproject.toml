@@ -6,12 +6,32 @@ build-backend = "setuptools.build_meta"
 include = ["ai_image_renamer"]
 
 [project]
-name = "rename-images"
-version = "0.1.0"
-description = "Rename images based on AI tags"
+name = "ai-image-renamer"
+version = "1.0.0"
+description = "Rename images based on AI-generated descriptions."
 readme = "README.md"
 requires-python = ">=3.8"
-dependencies = []
+authors = [
+    { name = "Kolja Nolte", email = "kolja.nolte@gmail.com" }
+]
+license = { text = "MIT" }
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Graphics :: Graphics Conversion",
+    "Topic :: Scientific/Engineering :: Image Processing",
+]
+
+[project.urls]
+"Homepage" = "https://docs.kolja-nolte.com/ai-image-renamer"
+"Repository" = "https://gitlab.com/thaikolja/ai-image-renamer.git"
 
 [project.scripts]
 rename-images = "ai_image_renamer.cli:main"

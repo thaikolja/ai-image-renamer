@@ -23,8 +23,10 @@ import logging
 import os
 # Standard library: provides facilities for parsing CLI arguments.
 import argparse
+from importlib import metadata
 # Internal package import: brings in renamer module (aliased) containing ImageRenamer logic.
 import ai_image_renamer.renamer as renamer
+from dotenv import load_dotenv
 
 
 
@@ -43,6 +45,8 @@ def main():
 	Returns:
 		None
 	"""
+	load_dotenv()
+
 	# Create an ArgumentParser configured with a short description and an epilog
 	# pointing users to the project documentation for extended usage details.
 	parser = argparse.ArgumentParser(
@@ -54,7 +58,7 @@ def main():
 	parser.add_argument(
 		'--version', '-v',
 		action="version",
-		version="ai_image_renamer 1.0.0",
+		version=f"%(prog)s {metadata.version('ai-image-renamer')}",
 		help="Show the version of the ai_image_renamer package",
 	)
 	# Add a positional argument accepting one or more image file paths.
@@ -74,11 +78,4 @@ def main():
 	renamer.ImageRenamer(args)
 
 
-def __init__():
-	"""
-	Module initializer hook.
 
-	Provided for symmetry; calling this function triggers the CLI flow
-	identically to invoking main() directly.
-	"""
-	main()

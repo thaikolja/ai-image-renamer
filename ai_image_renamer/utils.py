@@ -91,14 +91,14 @@ def encode_image(image_path: str) -> str:
 
 def sanitize_image_path(image_path: str, image_content: str) -> str:
 	"""
-	Sanitize the given image path based on the content of the image. The method generates
-	a new sanitized file name by removing non-alphabetic characters from the image content
-	and converting spaces into hyphens. The new name is then combined with the original
-	directory path and file extension. The sanitized image path is returned.
+	Sanitizes the image path based on the image content.
 
-	:param image_path: The original path of the image file
-	:param image_content: Content associated with the image, which will be used for generating a sanitized file name
-	:return: The sanitized file path as a string
+	Generates a new file name by removing non-alphabetic characters from the
+	image content and converting spaces to hyphens.
+
+	:param image_path: The original path of the image file.
+	:param image_content: The content to use for the new file name.
+	:return: The sanitized file path.
 	"""
 	# Absolute directory path containing the original image file
 	dir_path = os.path.abspath(os.path.dirname(image_path))
@@ -138,14 +138,14 @@ def get_words(image_path: str) -> str:
 		- The API key is hardcoded; consider externalizing via environment variables.
 		- The output is not further sanitized here (sanitization occurs elsewhere).
 	"""
-	groq_api_key = os.getenv("GROQ_API_KEY", None)
+	groq_api_key = os.getenv("GROQ_API_KEY")
 
-	if not groq_api_key or groq_api_key is None:
+	if not groq_api_key:
 		logging.error("GROQ_API_KEY environment variable is not set.")
 		raise RuntimeError("Set GROQ_API_KEY in your environment")
 
 	# Initialize Groq client (consider securing the API key via env variable).
-	client = Groq(api_key=os.getenv(groq_api_key))
+	client = Groq(api_key=groq_api_key)
 
 	# Convert image binary to base64 for inline data URL usage.
 	encoded_image = encode_image(image_path)
