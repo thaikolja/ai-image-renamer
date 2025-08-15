@@ -1,0 +1,10 @@
+image: python:3.13-slim
+
+stages:
+  - test
+
+test:
+  stage: test
+  script:
+    - pip install -e .
+    - pytest

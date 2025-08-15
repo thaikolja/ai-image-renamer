@@ -28,7 +28,7 @@
 
 ## Usage
 
-The `image-renamer` command is your entry point to the tool. However, since it's using [Groq and Meta's Llama 4 Maverick](https://console.groq.com/docs/vision) model[^1], some limitations apply:
+The `rename-images` command is your entry point to the tool. However, since it's using [Groq and Meta's Llama 4 Maverick](https://console.groq.com/docs/vision) model[^1], some limitations apply:
 
 ### Limits
 
@@ -41,13 +41,13 @@ The `image-renamer` command is your entry point to the tool. However, since it's
 To rename a single image:
 
 ```bash
-image-renamer path/to/your/image.jpg
+rename-images path/to/your/image.jpg
 ```
 
 To rename multiple images:
 
 ```bash
-image-renamer image1.png image2.jpg path/to/another/image.webp
+rename-images image1.png image2.jpg path/to/another/image.webp
 ```
 
 ### File Types
