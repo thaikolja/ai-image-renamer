@@ -1,0 +1,15 @@
+image: python:3.13-slim
+
+stages:
+  - test
+
+test:
+  before_script:
+    - pip install --upgrade pip
+    - pip install pytest
+  stage: test
+  variables:
+    GROQ_API_KEY: "test"
+  script:
+    - pip install -e .
+    - pytest
