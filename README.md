@@ -1,5 +1,7 @@
 # AI Image Renamer
 
+![PyPI - Version](https://img.shields.io/pypi/v/ai-image-renamer) ![PyPI - Downloads](https://img.shields.io/pypi/dm/ai-image-renamer) ![PyPI - License](https://img.shields.io/pypi/l/ai-image-renamer)
+
 **AI Image Renamer** is a command-line tool that leverages generative artificial intelligence to intelligently rename your image files based on their content. This helps in organizing your photo collection by giving images more descriptive and searchable filenames. A [free Groq API key](https://console.groq.com/keys) is required for this project. For a full documentation of this tool, please visit https://docs.kolja-nolte.com/ai-image-renamer.
 
 **Table of Contents**
@@ -80,14 +82,14 @@ positional arguments:
 options:
   -h, --help     show this help message and exit
   --version, -v  Show the version of the ai_image_renamer package
-  --words, -w N  Number of words used to rename the image file (default: 8)
+  --words, -w N  Number of words used to rename the image file (default: 6)
 
 For more information, visit https://docs.kolja-nolte.com/ai-image-renamer
 ```
 
 ## Contributing
 
-We welcome contributions to **AI Image Renamer**! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute.
+I welcome contributions to **AI Image Renamer**! Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for guidelines on how to contribute.
 
 ## Author
 
@@ -97,5 +99,5 @@ We welcome contributions to **AI Image Renamer**! Please see our [CONTRIBUTING.m
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-[^1]: Alternatively, you can also use the smaller LLM `meta-llama/llama-4-scout-17b-16e-instruct`.
+[^1]: Alternatively, you can also use the smaller LLM `meta-llama/llama-4-scout-17b-16e-instruct` model.
 [^2]: Maximal 5 image files per command.
