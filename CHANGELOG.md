@@ -8,4 +8,4 @@ All notable changes to this project will be documented in this file. The format 
 
 #### Added
 
-* Initial release of the **AI Image Renamer** CLI tool
+* Initial release of the *AI Image Renamer* CLI tool
