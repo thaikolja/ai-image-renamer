@@ -19,7 +19,7 @@
 import os
 
 # Project utility module: provides image verification, word extraction, and path sanitization helpers
-import ai_image_renamer.utils as utils
+import src.ai_image_renamer.utils as utils
 
 
 class ImageRenamer:
