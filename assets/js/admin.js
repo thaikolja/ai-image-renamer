@@ -87,12 +87,14 @@
         },
         success: function (response) {
           if (response.success) {
-            $delBtn.remove(); // Remove delete button
+            // Keep button, just re-enable
+            $delBtn.prop("disabled", false).text("Delete Key");
+
             // Update description to reflect deletion
             $apiKeyInput
               .closest("div")
               .next(".description")
-              .text("Enter your Groq API key."); // Or use localized string if available
+              .text("Enter your Groq API key.");
           } else {
             alert(response.data.message);
             $delBtn.prop("disabled", false).text("Delete Key");
@@ -103,6 +105,23 @@
           $delBtn.prop("disabled", false).text("Delete Key");
         },
       });
+    });
+
+    // --- Model Selector Handler ---
+    // Handle card selection styling
+    function updateModelCards() {
+      $(".air-model-card").removeClass("selected");
+      $(".air-model-card input:checked")
+        .closest(".air-model-card")
+        .addClass("selected");
+    }
+
+    // Initialize
+    updateModelCards();
+
+    // On change
+    $(document).on("change", ".air-model-card input", function () {
+      updateModelCards();
     });
   });
 })(jQuery);
