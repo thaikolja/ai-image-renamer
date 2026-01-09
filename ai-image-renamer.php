@@ -67,6 +67,7 @@ if ( file_exists( AIR_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
 
 // Bootstrap the plugin.
 add_action( 'plugins_loaded', function () {
+	load_plugin_textdomain( 'ai-image-renamer', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 	$plugin = new Plugin();
 	$plugin->init();
 } );

@@ -97,7 +97,7 @@ class Groq_Service {
 		// If alt text is enabled, force 10 keywords regardless of max_keywords setting.
 		$max_keywords = $set_alt ? 10 : ( $options[ 'max_keywords' ] ?? 5 );
 
-		return \sprintf( 'View this image and describe it in no more than %d keywords. Only return the output.', $max_keywords );
+		return \sprintf( /* translators: %d: Maximum number of keywords */ \_n( 'View this image and describe it in no more than %d keyword into English. Only return the output.', 'View this image and describe it in no more than %d keywords in English. Only return the output.', $max_keywords, 'ai-image-renamer' ), $max_keywords );
 	}
 
 	/**
@@ -149,12 +149,12 @@ class Groq_Service {
 
 		// Make a simple models request to verify the key.
 		$response = \wp_safe_remote_get( 'https://api.groq.com/openai/v1/models', [
-				'timeout' => 15,
-				'headers' => [
-					'Authorization' => 'Bearer ' . $api_key,
-					'Content-Type'  => 'application/json',
-				],
-			] );
+			'timeout' => 15,
+			'headers' => [
+				'Authorization' => 'Bearer ' . $api_key,
+				'Content-Type'  => 'application/json',
+			],
+		] );
 
 		if ( \is_wp_error( $response ) ) {
 			return $response->get_error_message();
@@ -246,13 +246,13 @@ class Groq_Service {
 
 		// Make the API request.
 		$response = \wp_remote_post( self::API_ENDPOINT, [
-				'timeout' => 30,
-				'headers' => [
-					'Authorization' => 'Bearer ' . $api_key,
-					'Content-Type'  => 'application/json',
-				],
-				'body'    => \wp_json_encode( $payload ),
-			] );
+			'timeout' => 30,
+			'headers' => [
+				'Authorization' => 'Bearer ' . $api_key,
+				'Content-Type'  => 'application/json',
+			],
+			'body'    => \wp_json_encode( $payload ),
+		] );
 
 		if ( \is_wp_error( $response ) ) {
 			return false;

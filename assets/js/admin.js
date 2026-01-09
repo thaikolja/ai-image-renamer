@@ -98,14 +98,14 @@
 
       if (
           !window.confirm(
-              "Are you sure you want to delete the API Key? This action cannot be undone."
+              admin.strings.delete_confirm
           )
       ) {
         return;
       }
 
       const $delBtn = $(this);
-      setButtonState($delBtn, true, "Deleting...");
+      setButtonState($delBtn, true, admin.strings.deleting);
 
       // Instantly clear the input field as requested
       $apiKeyInput.val("");
@@ -124,16 +124,16 @@
               $apiKeyInput
                   .closest("div")
                   .next(".description")
-                  .text("Enter your Groq API key.");
+                  .text(admin.strings.enter_key);
             } else {
               window.alert(getResponseMessage(response));
             }
           })
           .fail((_xhr, _status, errorThrown) => {
-            window.alert(`Request failed: ${errorThrown || ""}`.trim());
+            window.alert(`${admin.strings.request_failed} ${errorThrown || ""}`.trim());
           })
           .always(() => {
-            setButtonState($delBtn, false, "Delete Key");
+            setButtonState($delBtn, false, admin.strings.delete_key_button);
           });
     });
 

@@ -588,10 +588,15 @@ class Settings_Page {
 			'ajaxUrl' => \admin_url( 'admin-ajax.php' ),
 			'nonce'   => \wp_create_nonce( 'air_test_connection' ),
 			'strings' => [
-				'testing' => \__( 'Testing...', 'ai-image-renamer' ),
-				'success' => \__( 'Connection successful!', 'ai-image-renamer' ),
-				'error'   => \__( 'Connection failed:', 'ai-image-renamer' ),
-				'no_key'  => \__( 'No API key configured.', 'ai-image-renamer' ),
+				'testing'           => \__( 'Testing...', 'ai-image-renamer' ),
+				'success'           => \__( 'Connection successful!', 'ai-image-renamer' ),
+				'error'             => \__( 'Connection failed:', 'ai-image-renamer' ),
+				'no_key'            => \__( 'No API key configured.', 'ai-image-renamer' ),
+				'delete_confirm'    => \__( 'Are you sure you want to delete the API Key? This action cannot be undone.', 'ai-image-renamer' ),
+				'deleting'          => \__( 'Deleting...', 'ai-image-renamer' ),
+				'enter_key'         => \__( 'Enter your Groq API key.', 'ai-image-renamer' ),
+				'request_failed'    => \__( 'Request failed:', 'ai-image-renamer' ),
+				'delete_key_button' => \__( 'Delete Key', 'ai-image-renamer' ),
 			],
 		] );
 

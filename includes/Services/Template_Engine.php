@@ -67,10 +67,10 @@ class Template_Engine {
 		$loader = new FilesystemLoader( $views_path );
 
 		$this->twig = new Environment( $loader, [
-				'cache'       => WP_DEBUG ? false : $cache_path,
-				'auto_reload' => true,
-				'debug'       => WP_DEBUG,
-			] );
+			'cache'       => WP_DEBUG ? false : $cache_path,
+			'auto_reload' => true,
+			'debug'       => WP_DEBUG,
+		] );
 
 		// Add WordPress-specific globals and functions.
 		$this->register_globals();
@@ -95,32 +95,32 @@ class Template_Engine {
 	private function register_functions(): void {
 		// WordPress translation functions.
 		$this->twig->addFunction( new TwigFunction( '__', function ( string $text, string $domain = 'ai-image-renamer' ): string {
-				return \__( $text, $domain ); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
-			} ) );
+			return \__( $text, $domain ); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
+		} ) );
 
 		$this->twig->addFunction( new TwigFunction( 'esc_html', function ( string $text ): string {
-				return \esc_html( $text );
-			} ) );
+			return \esc_html( $text );
+		} ) );
 
 		$this->twig->addFunction( new TwigFunction( 'esc_attr', function ( string $text ): string {
-				return \esc_attr( $text );
-			} ) );
+			return \esc_attr( $text );
+		} ) );
 
 		$this->twig->addFunction( new TwigFunction( 'wp_nonce_field', function ( string $action, string $name = '_wpnonce', bool $referer = true, bool $echo = false ): string {
-				return \wp_nonce_field( $action, $name, $referer, $echo );
-			} ) );
+			return \wp_nonce_field( $action, $name, $referer, $echo );
+		} ) );
 
 		$this->twig->addFunction( new TwigFunction( 'settings_fields', function ( string $option_group ): void {
-				\settings_fields( $option_group );
-			} ) );
+			\settings_fields( $option_group );
+		} ) );
 
 		$this->twig->addFunction( new TwigFunction( 'do_settings_sections', function ( string $page ): void {
-				\do_settings_sections( $page );
-			} ) );
+			\do_settings_sections( $page );
+		} ) );
 
 		$this->twig->addFunction( new TwigFunction( 'submit_button', function ( string $text = '', string $type = 'primary', string $name = 'submit', bool $wrap = true, $other_attributes = null ): void {
-				\submit_button( $text, $type, $name, $wrap, $other_attributes );
-			} ) );
+			\submit_button( $text, $type, $name, $wrap, $other_attributes );
+		} ) );
 	}
 
 	/**
@@ -136,7 +136,7 @@ class Template_Engine {
 			return $this->twig->render( $template, $context );
 		} catch ( LoaderError|RuntimeError|SyntaxError $e ) {
 			if ( WP_DEBUG ) {
-				return '<div class="notice notice-error"><p>Template Error: ' . \esc_html( $e->getMessage() ) . '</p></div>';
+				return '<div class="notice notice-error"><p>' . \esc_html__( 'Template Error:', 'ai-image-renamer' ) . ' ' . \esc_html( $e->getMessage() ) . '</p></div>';
 			}
 			\error_log( 'AI Image Renamer Template Error: ' . $e->getMessage() );
 
