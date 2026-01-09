@@ -279,19 +279,20 @@ class Settings_Page {
 			<?php if ( $saved ) : ?><?php esc_html_e( 'Your Groq API key has been encrypted and saved.', 'ai-image-renamer' ); ?><?php else : ?><?php esc_html_e( 'Enter your Groq API key.', 'ai-image-renamer' ); ?><?php endif; ?>
         </p>
         <p>
+            <a
+                    href="https://console.groq.com/keys"
+                    target="_blank"
+                    class="button button-primary"
+                    style="margin-right: 5px;">
+				<?php esc_html_e( 'Get Free API Key', 'ai-image-renamer' ); ?>
+            </a>
             <button
                     type="button"
                     id="air_test_connection"
                     class="button button-secondary">
 				<?php esc_html_e( 'Test Connection', 'ai-image-renamer' ); ?>
             </button>
-            <a
-                    href="https://console.groq.com/keys"
-                    target="_blank"
-                    class="button button-secondary"
-                    style="margin-left: 5px;">
-				<?php esc_html_e( 'Get Free API Key', 'ai-image-renamer' ); ?>
-            </a> <span id="air_test_result"></span>
+            <span id="air_test_result"></span>
         </p>
 		<?php
 	}

@@ -34,65 +34,65 @@
 
 .air-settings .form-table td p.description {
   margin-top: 4px;
-  color: #646970;
+  color:      #646970;
 }
 
 /* File type checkboxes inline */
 .air-settings .form-table td label {
-  display: inline-block;
+  display:      inline-block;
   margin-right: 15px;
 }
 
 /* Custom prompt textarea */
 .air-settings textarea.large-text {
-  width: 100%;
+  width:     100%;
   max-width: 500px;
 }
 
 /* API key field */
 .air-settings input.regular-text {
-  width: 100%;
+  width:     100%;
   max-width: 400px;
 }
 
 /* Card-style Model Selector */
 .air-model-selector {
-  display: flex !important;
+  display:        flex !important;
   flex-direction: row !important;
-  flex-wrap: nowrap !important;
-  gap: 15px;
-  max-width: 600px;
+  flex-wrap:      nowrap !important;
+  gap:            15px;
+  max-width:      600px;
 }
 
 .air-model-card {
-  position: relative;
-  display: flex !important;
-  align-items: center !important;
-  flex: 1;
-  min-width: 200px;
-  padding: 15px !important;
-  background: #fff;
-  border: 1px solid #dcdcde;
+  position:      relative;
+  display:       flex !important;
+  align-items:   center !important;
+  flex:          1;
+  min-width:     200px;
+  padding:       15px !important;
+  background:    #ffffff;
+  border:        1px solid #dcdcde;
   border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
-  margin: 0 !important;
+  cursor:        pointer;
+  transition:    all 0.2s ease;
+  box-sizing:    border-box;
+  margin:        0 !important;
 }
 
 .air-model-card:hover {
   border-color: #2271b1;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transform:    translateY(-1px);
+  box-shadow:   0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .air-model-card input[type="radio"] {
-  margin: 0 15px 0 0 !important;
+  margin:      0 15px 0 0 !important;
   flex-shrink: 0;
 }
 
 .air-model-card.selected {
-  border-color: #2271b1;
+  border-color:     #2271b1;
   background-color: #f0f6fc;
 }
 
@@ -101,15 +101,15 @@
 }
 
 .air-model-content strong {
-  display: block;
+  display:       block;
   margin-bottom: 2px;
-  color: #1d2327;
-  font-size: 14px;
+  color:         #1d2327;
+  font-size:     14px;
 }
 
 .air-model-content p {
-  margin: 0;
-  font-size: 13px;
-  color: #646970;
+  margin:      0;
+  font-size:   13px;
+  color:       #646970;
   line-height: 1.3;
 }

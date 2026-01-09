@@ -57,8 +57,10 @@ To generate a key, run this PHP command:
 
 ```php
 <?php
+use Defuse\Crypto\Key;
+
 require 'vendor/autoload.php';
-$key = \Defuse\Crypto\Key::createNewRandomKey();
+$key = Key::createNewRandomKey();
 echo $key->saveToAsciiSafeString();
 ```
 

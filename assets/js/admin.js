@@ -4,124 +4,129 @@
  * Handles the Test Connection and Delete API Key functionalities.
  */
 
+/* global airAdmin */
+
 (function ($) {
   "use strict";
 
-  $(document).ready(function () {
-    // --- Test Connection Handler ---
-    var $testBtn = $("#air_test_connection");
-    var $testResult = $("#air_test_result");
+  $(function () {
+    const admin = window.airAdmin;
+    if (!admin || !admin.ajaxUrl) {
+      // Fail fast to avoid runtime errors if localized script data is missing
+      return;
+    }
 
-    $testBtn.on("click", function (e) {
+    const $doc = $(document);
+    const $apiKeyInput = $("#air_api_key");
+
+    const setButtonState = ($btn, disabled, label) => {
+      $btn.prop("disabled", disabled);
+      if (typeof label === "string") $btn.text(label);
+    };
+
+    const setResultState = (state, text) => {
+      const $testResult = $("#air_test_result");
+      $testResult.removeClass("success error testing").addClass(state).text(text);
+    };
+
+    const getResponseMessage = (response) =>
+        response && response.data && typeof response.data.message === "string"
+            ? response.data.message
+            : "";
+
+    // --- Test Connection Handler ---
+    const $testBtn = $("#air_test_connection");
+
+    $testBtn.on("click", (e) => {
       e.preventDefault();
 
-      // Update UI to show testing state.
-      $testBtn.prop("disabled", true);
-      $testResult
-        .removeClass("success error")
-        .addClass("testing")
-        .text(airAdmin.strings.testing);
+      setButtonState($testBtn, true);
+      setResultState("testing", admin.strings.testing);
 
-      // Prepare data.
-      var apiKey = $("#air_api_key").val();
-      var data = {
-        action: "air_test_connection",
-        nonce: airAdmin.nonce,
-      };
+      // Always send the API key value (even empty)
+      const apiKey = String($apiKeyInput.val() ?? "");
 
-      // Always send the API key value, even if empty, to support live testing of cleared keys.
-      data.api_key = apiKey;
-
-      // Make AJAX request.
       $.ajax({
-        url: airAdmin.ajaxUrl,
-        type: "POST",
-        data: data,
-        success: function (response) {
-          $testBtn.prop("disabled", false);
-          $testResult.removeClass("testing");
+        url:    admin.ajaxUrl,
+        method: "POST",
+        data:   {
+          action:  "air_test_connection",
+          nonce:   admin.nonce,
+          api_key: apiKey,
+        },
+      })
+          .done((response) => {
+            const msg = getResponseMessage(response);
 
-          if (response.success) {
-            $testResult.addClass("success").text(response.data.message);
-          } else {
-            $testResult
-              .addClass("error")
-              .text(airAdmin.strings.error + " " + response.data.message);
-          }
-        },
-        error: function (xhr, status, error) {
-          $testBtn.prop("disabled", false);
-          $testResult
-            .removeClass("testing")
-            .addClass("error")
-            .text(airAdmin.strings.error + " " + error);
-        },
-      });
+            if (response && response.success) {
+              setResultState("success", msg);
+            } else {
+              setResultState("error", `${admin.strings.error} ${msg}`.trim());
+            }
+          })
+          .fail((_xhr, _status, errorThrown) => {
+            setResultState("error", `${admin.strings.error} ${errorThrown || ""}`.trim());
+          })
+          .always(() => {
+            setButtonState($testBtn, false);
+            $("#air_test_result").removeClass("testing");
+          });
     });
 
     // --- Delete API Key Handler ---
-    $(document).on("click", "#air_delete_api_key", function (e) {
+    $doc.on("click", "#air_delete_api_key", function (e) {
       e.preventDefault();
 
       if (
-        !confirm(
-          "Are you sure you want to delete the API Key? This action cannot be undone."
-        )
+          !window.confirm(
+              "Are you sure you want to delete the API Key? This action cannot be undone."
+          )
       ) {
         return;
       }
 
-      var $delBtn = $(this);
-      $delBtn.prop("disabled", true).text("Deleting...");
+      const $delBtn = $(this);
+      setButtonState($delBtn, true, "Deleting...");
 
       // Instantly clear the input field as requested
-      var $apiKeyInput = $("#air_api_key");
       $apiKeyInput.val("");
 
       $.ajax({
-        url: airAdmin.ajaxUrl,
-        type: "POST",
-        data: {
+        url:    admin.ajaxUrl,
+        method: "POST",
+        data:   {
           action: "air_delete_api_key",
-          nonce: airAdmin.nonce, // Reuse nonce for simplicity as per PHP
+          nonce:  admin.nonce,
         },
-        success: function (response) {
-          if (response.success) {
-            // Keep button, just re-enable
-            $delBtn.prop("disabled", false).text("Delete Key");
-
-            // Update description to reflect deletion
-            $apiKeyInput
-              .closest("div")
-              .next(".description")
-              .text("Enter your Groq API key.");
-          } else {
-            alert(response.data.message);
-            $delBtn.prop("disabled", false).text("Delete Key");
-          }
-        },
-        error: function (xhr, status, error) {
-          alert("Request failed: " + error);
-          $delBtn.prop("disabled", false).text("Delete Key");
-        },
-      });
+      })
+          .done((response) => {
+            if (response && response.success) {
+              // Update description to reflect deletion
+              $apiKeyInput
+                  .closest("div")
+                  .next(".description")
+                  .text("Enter your Groq API key.");
+            } else {
+              window.alert(getResponseMessage(response));
+            }
+          })
+          .fail((_xhr, _status, errorThrown) => {
+            window.alert(`Request failed: ${errorThrown || ""}`.trim());
+          })
+          .always(() => {
+            setButtonState($delBtn, false, "Delete Key");
+          });
     });
 
     // --- Model Selector Handler ---
-    // Handle card selection styling
-    function updateModelCards() {
-      $(".air-model-card").removeClass("selected");
-      $(".air-model-card input:checked")
-        .closest(".air-model-card")
-        .addClass("selected");
-    }
+    const updateModelCards = () => {
+      const $cards = $(".air-model-card");
+      $cards.removeClass("selected");
+      $cards.find("input:checked").closest(".air-model-card").addClass("selected");
+    };
 
-    // Initialize
     updateModelCards();
 
-    // On change
-    $(document).on("change", ".air-model-card input", function () {
-      updateModelCards();
-    });
+    $doc.on("change", ".air-model-card input", updateModelCards);
   });
 })(jQuery);
