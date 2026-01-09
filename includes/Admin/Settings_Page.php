@@ -229,8 +229,11 @@ class Settings_Page
         $old       = get_option(self::OPTION_NAME, $this->get_defaults());
 
         // Handle API key encryption.
-        if (isset($input['api_key']) && ! empty($input['api_key'])) {
-            // Check if it's a new key (not already encrypted).
+        // Always preserve the old API key first.
+        $sanitized['api_key'] = $old['api_key'] ?? '';
+
+        // Only update the API key if a new one was provided.
+        if (isset($input['api_key']) && ! empty(trim($input['api_key']))) {
             $plaintext = trim($input['api_key']);
 
             // If the key starts with 'gsk_', it's a new plaintext key.
@@ -245,12 +248,9 @@ class Settings_Page
                         __('Failed to encrypt API key. Please try again.', 'ai-image-renamer'),
                         'error'
                     );
-                    $sanitized['api_key'] = $old['api_key'] ?? '';
                 }
-            } else {
-                // Keep the existing encrypted key.
-                $sanitized['api_key'] = $old['api_key'] ?? '';
             }
+            // If not starting with gsk_, keep the old key (already set above).
         }
 
         // Enabled toggle.
