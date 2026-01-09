@@ -1,191 +1,286 @@
 /**
  * AI Image Renamer - Admin Styles
  *
- * Minimal styling to blend with WordPress dashboard.
+ * Modern CSS3 with nesting for better maintainability
  */
+
+:root {
+  --air-max-width: 800px;
+  --air-border-radius: 4px;
+  --air-transition: all 0.2s ease;
+  --air-gap-sm: 10px;
+  --air-gap-md: 12px;
+  --air-gap-lg: 20px;
+
+  /* WordPress color palette */
+  --wp-blue: #2271b1;
+  --wp-blue-light: #f0f6fc;
+  --wp-green: #00a32a;
+  --wp-red: #d63638;
+  --wp-gray: #72777c;
+  --wp-gray-dark: #646970;
+  --wp-gray-light: #dcdcde;
+  --wp-border: #c3c4c7;
+  --wp-text: #1d2327;
+  --wp-white: #ffffff;
+}
 
 /* Settings page wrapper */
 .air-settings {
-  max-width: 800px;
-}
+  max-width: var(--air-max-width);
 
-/* Dashicon alignment in titles */
-.air-settings h2 .dashicons,
-.air-settings-hero .dashicons,
-.air-settings .form-table th .dashicons {
-  vertical-align: text-bottom;
-  margin-right:   8px;
-  width:          20px;
-  height:         20px;
-  font-size:      20px;
-}
+  h2 {
+    display: flex;
+    align-items: center;
 
-.dashicons {
-  margin-right: 12px !important;
-}
+    .dashicons {
+      vertical-align: text-bottom;
+      margin-right: 8px;
+      width: 20px;
+      height: 20px;
+      font-size: 20px;
+    }
+  }
 
+  /* Form table adjustments */
+  .form-table {
+    th {
+      width: 200px;
 
-.air-settings h2 {
-  display:     flex;
-  align-items: center;
+      .dashicons {
+        vertical-align: text-bottom;
+        margin-right: 8px;
+        width: 20px;
+        height: 20px;
+        font-size: 20px;
+      }
+    }
+
+    td {
+      p.description {
+        color: var(--wp-gray-dark);
+        margin: var(--air-gap-md) 0;
+      }
+
+      label {
+        display: inline-block;
+        margin-right: 15px;
+      }
+    }
+  }
+
+  /* Form inputs */
+  textarea.large-text {
+    width: 100%;
+    max-width: 500px;
+  }
+
+  input.regular-text {
+    width: 100%;
+    max-width: 400px;
+  }
 }
 
 /* Test connection result */
 #air_test_result {
-  margin-left: 10px;
+  margin-left: var(--air-gap-sm);
   font-weight: 500;
-}
 
-#air_test_result.success {
-  color: #00a32a;
-}
-
-#air_test_result.error {
-  color: #d63638;
-}
-
-#air_test_result.testing {
-  color: #72777c;
-}
-
-/* Form table adjustments */
-.air-settings .form-table th {
-  width: 200px;
-}
-
-.air-settings .form-table td p.description {
-  color:  #646970;
-  margin: 12px 0;
-}
-
-.button {
-  .dashicons {
-    margin-right: 5px; display: inline-flex; align-items: center; gap: 5px;
+  &.success {
+    color: var(--wp-green);
   }
-}
 
-/* File type checkboxes inline */
-.air-settings .form-table td label {
-  display:      inline-block;
-  margin-right: 15px;
-}
+  &.error {
+    color: var(--wp-red);
+  }
 
-/* Custom prompt textarea */
-.air-settings textarea.large-text {
-  width:     100%;
-  max-width: 500px;
-}
-
-/* API key field */
-.air-settings input.regular-text {
-  width:     100%;
-  max-width: 400px;
+  &.testing {
+    color: var(--wp-gray);
+  }
 }
 
 /* Card-style Model Selector */
 .air-model-selector {
-  display:        flex !important;
+  display: flex !important;
   flex-direction: row !important;
-  flex-wrap:      nowrap !important;
-  gap:            15px;
-  max-width:      600px;
+  flex-wrap: nowrap !important;
+  gap: 15px;
+  max-width: 600px;
 }
 
 .air-model-card {
-  position:      relative;
-  display:       flex !important;
-  align-items:   center !important;
-  flex:          1;
-  min-width:     200px;
-  padding:       15px !important;
-  background:    #ffffff;
-  border:        1px solid #dcdcde;
-  border-radius: 4px;
-  cursor:        pointer;
-  transition:    all 0.2s ease;
-  box-sizing:    border-box;
-  margin:        0 !important;
-}
+  position: relative;
+  display: flex !important;
+  align-items: center !important;
+  flex: 1;
+  min-width: 200px;
+  padding: 15px !important;
+  background: var(--wp-white);
+  border: 1px solid var(--wp-gray-light);
+  border-radius: var(--air-border-radius);
+  cursor: pointer;
+  transition: var(--air-transition);
+  box-sizing: border-box;
+  margin: 0 !important;
 
-.air-model-card:hover {
-  border-color: #2271b1;
-  transform:    translateY(-1px);
-  box-shadow:   0 2px 5px rgba(0, 0, 0, 0.05);
-}
+  &:hover {
+    border-color: var(--wp-blue);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
 
-.air-model-card input[type="radio"] {
-  margin:      0 15px 0 0 !important;
-  flex-shrink: 0;
-}
+  &.selected {
+    border-color: var(--wp-blue);
+    background-color: var(--wp-blue-light);
 
-.air-model-card.selected {
-  border-color:     #2271b1;
-  background-color: #f0f6fc;
+    .air-icon {
+      color: var(--wp-blue);
+    }
+  }
+
+  input[type="radio"] {
+    margin: 0 15px 0 0 !important;
+    flex-shrink: 0;
+  }
 }
 
 .air-model-content {
   flex-grow: 1;
-}
 
-.air-model-content strong {
-  display:       block;
-  margin-bottom: 2px;
-  color:         #1d2327;
-  font-size:     14px;
-}
+  strong {
+    display: block;
+    margin-bottom: 2px;
+    color: var(--wp-text);
+    font-size: 14px;
+  }
 
-.air-model-content p {
-  margin:      0;
-  font-size:   13px;
-  color:       #646970;
-  line-height: 1.3;
+  p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--wp-gray-dark);
+    line-height: 1.3;
+  }
 }
 
 /* Settings Hero Card */
 .air-settings-hero {
-  display:     flex !important;
-  gap:         20px;
-  margin:      20px 0 30px 0;
-  max-width:   1200px;
+  display: flex !important;
+  gap: var(--air-gap-lg);
+  margin: var(--air-gap-lg) 0 30px 0;
+  max-width: 1200px;
   align-items: stretch;
-}
 
-/* Hero Column as a Postbox */
-.air-hero-column.postbox {
-  flex:           1;
-  display:        flex;
-  flex-direction: column;
-  margin:         0;
-  min-width:      250px;
-  height:         auto;
-}
+  .dashicons {
+    vertical-align: text-bottom;
+    margin-right: 8px;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+  }
 
-/* Inside content to fill space */
-.air-hero-column.postbox .inside {
-  flex-grow:       1;
-  margin:          0;
-  padding:         12px;
-  display:         flex;
-  flex-direction:  column;
-  justify-content: center;
-}
-
-/* Header refinements */
-.air-hero-column.postbox .postbox-header {
-  border-bottom: 1px solid #c3c4c7;
-}
-
-.air-hero-column.postbox .hndle {
-  cursor: default;
-}
-
-/* Pro Column Special Styling */
-.air-hero-column.pro {
-  background-color: #f0f6fc;
-}
-
-@media (max-width: 782px) {
-  .air-settings-hero {
+  @media (max-width: 782px) {
     flex-direction: column;
   }
 }
+
+/* Hero Column as a Postbox */
+.air-hero-column {
+  &.postbox {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    min-width: 250px;
+    height: auto;
+
+    .postbox-header {
+      border-bottom: 1px solid var(--wp-border);
+    }
+
+    .hndle {
+      cursor: default;
+    }
+
+    .inside {
+      flex-grow: 0;
+      margin: 0;
+      padding: 0 var(--air-gap-md) var(--air-gap-md) var(--air-gap-md);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      p {
+        font-size: 15px;
+      }
+    }
+  }
+
+  &.pro {
+    background-color: var(--wp-blue-light);
+  }
+
+  /* Width variants */
+  &-narrow {
+    flex: 0 0 33.33%;
+    max-width: 33.33%;
+
+    @media (max-width: 782px) {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+  }
+
+  &-wide {
+    flex: 0 0 66.67%;
+    max-width: 66.67%;
+
+    @media (max-width: 782px) {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+  }
+}
+
+/* API Key Field Container */
+.air-api-key-container {
+  display: flex;
+  gap: var(--air-gap-sm);
+  align-items: center;
+}
+
+/* Action Buttons Container */
+.air-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--air-gap-md);
+}
+
+/* Button with Icon Styling */
+.air-button-with-icon {
+  display: flex;
+  align-items: center;
+  gap: var(--air-gap-md);
+
+  .dashicons {
+    margin: 0 !important;
+    line-height: 1;
+    vertical-align: middle;
+  }
+}
+
+/* File Type Checkbox Labels */
+.air-file-type-label {
+  margin-right: 15px;
+}
+
+/* SVG Icon Support */
+.air-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  fill: currentColor;
+  margin-right: 0.5rem;
+  display: inline-block;
+}
+
+

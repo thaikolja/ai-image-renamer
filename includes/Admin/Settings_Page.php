@@ -116,9 +116,7 @@ class Settings_Page {
 		\add_settings_section( 'air_main_section', '<span class="dashicons dashicons-admin-settings"></span> ' . \__( 'API Configuration', 'ai-image-renamer' ), function () {
 			?>
             <div class="air-settings-hero">
-                <div
-                        class="air-hero-column postbox"
-                        style="flex: 0 0 33.33%; max-width: 33.33%;">
+                <div class="air-hero-column air-hero-column-narrow postbox">
                     <div class="postbox-header">
                         <div class="handle-actions">
                             <button
@@ -136,9 +134,7 @@ class Settings_Page {
                         <p><?php \esc_html_e( 'The plugin uses the powerful Groq Vision API to analyze your uploaded images. It extracts descriptive keywords and automatically renames your files for better SEO and accessibility.', 'ai-image-renamer' ); ?></p>
                     </div>
                 </div>
-                <div
-                        class="air-hero-column postbox pro"
-                        style="flex: 0 0 66.67%; max-width: 66.67%;">
+                <div class="air-hero-column air-hero-column-wide postbox pro">
                     <div class="postbox-header">
                         <div class="handle-actions">
                             <button
@@ -162,25 +158,25 @@ class Settings_Page {
 		}, self::PAGE_SLUG );
 
 		// Enable/Disable toggle.
-		\add_settings_field( 'enabled', '<span class="dashicons dashicons-lightbulb"></span> ' . \__( 'Enable Auto-Rename', 'ai-image-renamer' ), [
+		\add_settings_field( 'enabled', '<label for="air_enabled"><span class="dashicons dashicons-lightbulb"></span> ' . \__( 'Enable Auto-Rename', 'ai-image-renamer' ) . '</label>', [
 			$this,
 			'render_enabled_field'
 		], self::PAGE_SLUG, 'air_main_section' );
 
 		// API Key field.
-		\add_settings_field( 'api_key', '<span class="dashicons dashicons-admin-network"></span> ' . \__( 'Groq API Key', 'ai-image-renamer' ), [
+		\add_settings_field( 'api_key', '<label for="air_api_key"><span class="dashicons dashicons-admin-network"></span> ' . \__( 'Groq API Key', 'ai-image-renamer' ) . '</label>', [
 			$this,
 			'render_api_key_field'
 		], self::PAGE_SLUG, 'air_main_section' );
 
 		// Model Selection.
-		\add_settings_field( 'model', '<span class="dashicons dashicons-products"></span> ' . \__( 'AI Model', 'ai-image-renamer' ), [
+		\add_settings_field( 'model', '<label for="air_model"><span class="dashicons dashicons-products"></span> ' . \__( 'AI Model', 'ai-image-renamer' ) . '</label>', [
 			$this,
 			'render_model_field'
 		], self::PAGE_SLUG, 'air_main_section' );
 
 		// Alt text toggle.
-		\add_settings_field( 'set_alt_text', '<span class="dashicons dashicons-text"></span> ' . \__( 'Use as <code>alt=""</code>', 'ai-image-renamer' ), [
+		\add_settings_field( 'set_alt_text', '<label for="air_set_alt_text"><span class="dashicons dashicons-text"></span> ' . \__( 'Use as <code>alt=""</code>', 'ai-image-renamer' ) . '</label>', [
 			$this,
 			'render_alt_text_field'
 		], self::PAGE_SLUG, 'air_main_section' );
@@ -200,12 +196,12 @@ class Settings_Page {
 			echo '<p>' . \esc_html__( 'Customize the AI prompt and keyword settings.', 'ai-image-renamer' ) . '</p>';
 		}, self::PAGE_SLUG );
 
-		\add_settings_field( 'custom_prompt', '<span class="dashicons dashicons-editor-quote"></span> ' . \__( 'Custom Prompt', 'ai-image-renamer' ), [
+		\add_settings_field( 'custom_prompt', '<label for="air_custom_prompt"><span class="dashicons dashicons-editor-quote"></span> ' . \__( 'Custom Prompt', 'ai-image-renamer' ) . '</label>', [
 			$this,
 			'render_custom_prompt_field'
 		], self::PAGE_SLUG, 'air_advanced_section' );
 
-		\add_settings_field( 'max_keywords', '<span class="dashicons dashicons-editor-ol"></span> ' . \__( 'Max Keywords', 'ai-image-renamer' ), [
+		\add_settings_field( 'max_keywords', '<label for="air_max_keywords"><span class="dashicons dashicons-editor-ol"></span> ' . \__( 'Max Keywords', 'ai-image-renamer' ) . '</label>', [
 			$this,
 			'render_max_keywords_field'
 		], self::PAGE_SLUG, 'air_advanced_section' );
@@ -322,7 +318,7 @@ class Settings_Page {
 
 		$saved = ! empty( $encrypted_key );
 		?>
-        <div style="display: flex; gap: 10px; align-items: center;">
+        <div class="air-api-key-container">
             <input
                     type="text"
                     id="air_api_key"
@@ -339,28 +335,21 @@ class Settings_Page {
 				<?php \esc_html_e( 'Delete Key', 'ai-image-renamer' ); ?>
             </button>
         </div>
-
         <p class="description">
 			<?php if ( $saved ) : ?><?php \esc_html_e( 'Your Groq API key has been encrypted and saved', 'ai-image-renamer' ); ?><?php else : ?><?php \esc_html_e( 'Enter your Groq API key.', 'ai-image-renamer' ); ?><?php endif; ?>
         </p>
-        <p style="display: flex; align-items: center;">
+        <p class="air-action-buttons">
             <a
                     href="https://console.groq.com/keys"
                     target="_blank"
-                    class="button button-primary"
-                    style="margin-right: 12px; display: inline-flex; align-items: center;"> <span
-                        class="dashicons dashicons-admin-network"
-                        style="margin-top: 0;"></span>
+                    class="button button-primary air-button-with-icon"> <span class="dashicons dashicons-admin-network"></span>
 				<?php \esc_html_e( 'Get Free Groq API Key', 'ai-image-renamer' ); ?>
             </a>
             <button
                     type="button"
                     id="air_test_connection"
-                    class="button button-secondary"
-                    style="display: inline-flex; align-items: center;">
-                <span
-                        class="dashicons dashicons-update"
-                        style="margin-top: 0;"></span>
+                    class="button button-secondary air-button-with-icon">
+                <span class="dashicons dashicons-update"></span>
 				<?php \esc_html_e( 'Test Connection', 'ai-image-renamer' ); ?>
             </button>
             <span id="air_test_result"></span>
@@ -379,6 +368,7 @@ class Settings_Page {
 		?>
         <label> <input
                     type="checkbox"
+                    id="air_enabled"
                     name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[enabled]"
                     value="1"
 				<?php \checked( $enabled ); ?> />
@@ -398,6 +388,7 @@ class Settings_Page {
 		?>
         <label> <input
                     type="checkbox"
+                    id="air_set_alt_text"
                     name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[set_alt_text]"
                     value="1"
 				<?php \checked( $set_alt ); ?> />
@@ -425,7 +416,7 @@ class Settings_Page {
 		foreach ( $available_types as $mime => $label ) {
 			$checked = in_array( $mime, $file_types, true );
 			?>
-            <label style="margin-right: 15px;"> <input
+            <label class="air-file-type-label"> <input
                         type="checkbox"
                         name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[file_types][]"
                         value="<?php echo \esc_attr( $mime ); ?>"
@@ -502,9 +493,14 @@ class Settings_Page {
 		];
 		?>
         <div class="air-model-selector">
-			<?php foreach ( $models as $id => $info ) : ?><?php $is_checked = ( $current === $id ); ?>
+			<?php
+			$is_first = true;
+			foreach ( $models as $id => $info ) :
+				$is_checked = ( $current === $id );
+				?>
                 <label class="air-model-card <?php echo $is_checked ? 'selected' : ''; ?>"> <input
                             type="radio"
+							<?php if ( $is_first ) : ?>id="air_model"<?php endif; ?>
                             name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[model]"
                             value="<?php echo \esc_attr( $id ); ?>"
 						<?php \checked( $current, $id ); ?> />
@@ -513,7 +509,10 @@ class Settings_Page {
                         <p><?php echo \esc_html( $info[ 'desc' ] ); ?></p>
                     </div>
                 </label>
-			<?php endforeach; ?>
+				<?php
+				$is_first = false;
+			endforeach;
+			?>
         </div>
 		<?php
 	}
@@ -561,6 +560,19 @@ class Settings_Page {
 				'no_key'  => \__( 'No API key configured.', 'ai-image-renamer' ),
 			],
 		] );
+
+		// Inject SVG sprite for icon support.
+		\add_action( 'admin_footer', function () use ( $hook ) {
+			if ( 'settings_page_' . self::PAGE_SLUG !== $hook ) {
+				return;
+			}
+
+			$sprite_path = AIR_PLUGIN_DIR . 'assets/icons/icons.svg';
+			if ( \file_exists( $sprite_path ) ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG sprite is safe.
+				echo \file_get_contents( $sprite_path );
+			}
+		} );
 	}
 
 	/**
@@ -576,22 +588,22 @@ class Settings_Page {
 		}
 
 		// Check if a specific key was provided in POST.
-		// We use isset() because we want to detect empty strings explicitly sent by JS.
-		if ( isset( $_POST[ 'api_key' ] ) ) {
-			$api_key = \sanitize_text_field( \wp_unslash( $_POST[ 'api_key' ] ) );
+		// Use filter_input instead of direct $_POST access for better security.
+		$api_key_raw = filter_input( INPUT_POST, 'api_key', FILTER_UNSAFE_RAW );
+
+		$api_key = null;
+
+		if ( null !== $api_key_raw ) {
+			$api_key = \sanitize_text_field( \wp_unslash( $api_key_raw ) );
 
 			// If the key is masked (contains bullets), treat it as null (use saved).
-			// (Note: With new cleartext logic, user sees key, so they shouldn't be sending bullets unless they manually typed them).
-			// But we keep this for safety if logic reverts.
 			if ( str_contains( $api_key, '•' ) ) {
 				$api_key = null;
 			} elseif ( empty( $api_key ) ) {
 				// Explicitly empty key provided.
 				\wp_send_json_error( [ 'message' => \__( 'No API key provided.', 'ai-image-renamer' ) ] );
+				return;
 			}
-		} else {
-			// No key provided, so we won't save anything.
-			$api_key = null;
 		}
 
 		$result = $this->groq_service->test_connection( $api_key );
