@@ -154,7 +154,9 @@
     font-size: 14px;
   }
 
-  p {
+  p,
+  .air-model-description {
+    display: block;
     margin: 0;
     font-size: 13px;
     color: var(--wp-gray-dark);

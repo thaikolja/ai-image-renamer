@@ -319,6 +319,9 @@ class Settings_Page {
 		$saved = ! empty( $encrypted_key );
 		?>
         <div class="air-api-key-container">
+            <label for="air_api_key" class="screen-reader-text">
+				<?php \esc_html_e( 'Groq API Key', 'ai-image-renamer' ); ?>
+            </label>
             <input
                     type="text"
                     id="air_api_key"
@@ -437,6 +440,9 @@ class Settings_Page {
 		$custom_prompt = $options[ 'custom_prompt' ] ?? '';
 		$default       = 'View this image and describe it in no more than 5 keywords. Only return the output.';
 		?>
+        <label for="air_custom_prompt" class="screen-reader-text">
+			<?php \esc_html_e( 'Custom Prompt', 'ai-image-renamer' ); ?>
+        </label>
         <textarea
                 id="air_custom_prompt"
                 name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[custom_prompt]"
@@ -458,6 +464,9 @@ class Settings_Page {
 		$options      = \get_option( self::OPTION_NAME, $this->get_defaults() );
 		$max_keywords = $options[ 'max_keywords' ] ?? 5;
 		?>
+        <label for="air_max_keywords" class="screen-reader-text">
+			<?php \esc_html_e( 'Maximum Keywords', 'ai-image-renamer' ); ?>
+        </label>
         <select
                 name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[max_keywords]"
                 id="air_max_keywords">
@@ -504,10 +513,10 @@ class Settings_Page {
                             name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[model]"
                             value="<?php echo \esc_attr( $id ); ?>"
 						<?php \checked( $current, $id ); ?> />
-                    <div class="air-model-content">
+                    <span class="air-model-content">
                         <strong><?php echo \esc_html( $info[ 'label' ] ); ?></strong>
-                        <p><?php echo \esc_html( $info[ 'desc' ] ); ?></p>
-                    </div>
+                        <span class="air-model-description"><?php echo \esc_html( $info[ 'desc' ] ); ?></span>
+                    </span>
                 </label>
 				<?php
 				$is_first = false;

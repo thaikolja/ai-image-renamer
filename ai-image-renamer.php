@@ -7,7 +7,7 @@
  * Version:           1.0.0
  * Requires at least: 6.0
  * Requires PHP:      8.2
- * Author:            Kolja
+ * Author:            Kolja Nolte
  * Author URI:        https://www.kolja-nolte.com
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -19,13 +19,17 @@
 
 declare( strict_types=1 );
 
+
 // Prevent direct access.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use AIR\Plugin;
+
 // Define plugin constants.
-define( 'AIR_VERSION', '1.0.0' );
+const AIR_VERSION = '1.0.0';
+
 define( 'AIR_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AIR_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'AIR_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
@@ -45,6 +49,6 @@ if ( file_exists( AIR_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
 
 // Bootstrap the plugin.
 add_action( 'plugins_loaded', function () {
-	$plugin = new \AIR\Plugin();
+	$plugin = new Plugin();
 	$plugin->init();
 } );
