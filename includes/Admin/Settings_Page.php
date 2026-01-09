@@ -132,6 +132,10 @@ class Settings_Page
 		// Enable/Disable toggle.
 		add_settings_field('enabled', __('Enable Auto-Rename', 'ai-image-renamer'), array($this, 'render_enabled_field'), self::PAGE_SLUG, 'air_main_section');
 
+		// Alt text toggle.
+		add_settings_field('set_alt_text', __('Add to <code>alt=""</code> Attribute', 'ai-image-renamer'), array($this, 'render_alt_text_field'), self::PAGE_SLUG, 'air_main_section');
+
+
 		// File types section.
 		add_settings_section('air_file_types_section', __('File Types', 'ai-image-renamer'), function () {
 			echo '<p>' . esc_html__('Select which image types to process.', 'ai-image-renamer') . '</p>';
@@ -162,6 +166,8 @@ class Settings_Page
 			'file_types'    => array('image/jpeg', 'image/png', 'image/webp', 'image/gif'),
 			'custom_prompt' => '',
 			'max_keywords'  => 5,
+			'max_keywords'  => 5,
+			'set_alt_text'  => false,
 			'model'         => 'meta-llama/llama-4-maverick-17b-128e-instruct',
 		);
 	}
@@ -222,6 +228,11 @@ class Settings_Page
 			$sanitized['max_keywords'] = absint($input['max_keywords']);
 			$sanitized['max_keywords'] = max(1, min(10, $sanitized['max_keywords']));
 		}
+
+		// Alt text toggle.
+		// Note: The UI says "Add to alt Attribute", key is set_alt_text
+		$sanitized['set_alt_text'] = isset($input['set_alt_text']) && '1' === $input['set_alt_text'];
+
 
 		// Model selection.
 		if (isset($input['model'])) {
@@ -309,6 +320,26 @@ class Settings_Page
 				value="1"
 				<?php checked($enabled); ?> />
 			<?php esc_html_e('Automatically rename images on upload', 'ai-image-renamer'); ?>
+		</label>
+	<?php
+	}
+
+	/**
+	 * Render the alt text toggle field.
+	 *
+	 * @return void
+	 */
+	public function render_alt_text_field(): void
+	{
+		$options = get_option(self::OPTION_NAME, $this->get_defaults());
+		$set_alt = $options['set_alt_text'] ?? false;
+	?>
+		<label> <input
+				type="checkbox"
+				name="<?php echo esc_attr(self::OPTION_NAME); ?>[set_alt_text]"
+				value="1"
+				<?php checked($set_alt); ?> />
+			<?php esc_html_e('Automatically set image Alt Text from AI description (Sentence case, ~10 keywords)', 'ai-image-renamer'); ?>
 		</label>
 		<?php
 	}

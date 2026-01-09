@@ -26,21 +26,21 @@ class Plugin {
 	/**
 	 * Template engine instance.
 	 *
-	 * @var Template_Engine
+	 * @var Template_Engine|null
 	 */
 	private Template_Engine $template_engine;
 
 	/**
 	 * Encryption service instance.
 	 *
-	 * @var Encryption_Service
+	 * @var Encryption_Service|null
 	 */
 	private Encryption_Service $encryption_service;
 
 	/**
 	 * Groq API service instance.
 	 *
-	 * @var Groq_Service
+	 * @var Groq_Service|null
 	 */
 	private Groq_Service $groq_service;
 
@@ -49,7 +49,7 @@ class Plugin {
 	 *
 	 * @return void
 	 */
-	public function init(): void {
+	final public function init(): void {
 		// Initialize services.
 		$this->encryption_service = new Encryption_Service();
 		$this->template_engine    = new Template_Engine();
