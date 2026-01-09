@@ -47,7 +47,7 @@ class File_Sanitizer
         $sanitized = preg_replace('/-+/', '-', $sanitized);
 
         // Trim dashes from the beginning and end.
-        $sanitized = trim($sanitized, '-');
+        $sanitized = \trim($sanitized, '-');
 
         // Ensure the filename is not empty.
         if (empty($sanitized)) {

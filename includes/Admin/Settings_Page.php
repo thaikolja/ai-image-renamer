@@ -84,11 +84,11 @@ class Settings_Page {
 	 * @return void
 	 */
 	final public function init(): void {
-		add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
-		add_action( 'admin_init', [ $this, 'register_settings' ] );
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
-		add_action( 'wp_ajax_air_test_connection', [ $this, 'ajax_test_connection' ] );
-		add_action( 'wp_ajax_air_delete_api_key', [ $this, 'ajax_delete_api_key' ] );
+		\add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
+		\add_action( 'admin_init', [ $this, 'register_settings' ] );
+		\add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
+		\add_action( 'wp_ajax_air_test_connection', [ $this, 'ajax_test_connection' ] );
+		\add_action( 'wp_ajax_air_delete_api_key', [ $this, 'ajax_delete_api_key' ] );
 	}
 
 	/**
@@ -97,7 +97,7 @@ class Settings_Page {
 	 * @return void
 	 */
 	final public function add_settings_page(): void {
-		add_options_page( __( 'AI Image Renamer', 'ai-image-renamer' ), __( 'AI Image Renamer', 'ai-image-renamer' ), 'manage_options', self::PAGE_SLUG, [ $this, 'render_settings_page' ] );
+		\add_options_page( \__( 'AI Image Renamer', 'ai-image-renamer' ), \__( 'AI Image Renamer', 'ai-image-renamer' ), 'manage_options', self::PAGE_SLUG, [ $this, 'render_settings_page' ] );
 	}
 
 	/**
@@ -106,44 +106,122 @@ class Settings_Page {
 	 * @return void
 	 */
 	final public function register_settings(): void {
-		register_setting( self::OPTION_GROUP, self::OPTION_NAME, [
+		\register_setting( self::OPTION_GROUP, self::OPTION_NAME, [
 			'type'              => 'array',
 			'sanitize_callback' => [ $this, 'sanitize_settings' ],
 			'default'           => $this->get_defaults(),
 		] );
 
 		// Main settings section.
-		add_settings_section( 'air_main_section', __( 'API Configuration', 'ai-image-renamer' ), function () {
-			echo '<p>' . esc_html__( 'Configure your Groq API settings below.', 'ai-image-renamer' ) . '</p>';
+		\add_settings_section( 'air_main_section', '<span class="dashicons dashicons-admin-settings"></span> ' . \__( 'API Configuration', 'ai-image-renamer' ), function () {
+			?>
+            <div class="air-settings-hero">
+                <div class="air-hero-column postbox">
+                    <div class="postbox-header">
+                        <div class="handle-actions">
+                            <button
+                                    type="button"
+                                    class="handlediv"
+                                    aria-expanded="true">
+                                <span
+                                        class="toggle-indicator"
+                                        aria-hidden="true"></span>
+                            </button>
+                        </div>
+                        <h2 class="hndle ui-sortable-handle"><span><span class="dashicons dashicons-editor-help"></span> <?php \esc_html_e( 'How does it work?', 'ai-image-renamer' ); ?></span></h2>
+                    </div>
+                    <div class="inside">
+                        <p><?php \esc_html_e( 'The plugin uses the powerful Groq Vision API to analyze your uploaded images. It extracts descriptive keywords and automatically renames your files for better SEO and accessibility.', 'ai-image-renamer' ); ?></p>
+                    </div>
+                </div>
+                <div class="air-hero-column postbox">
+                    <div class="postbox-header">
+                        <div class="handle-actions">
+                            <button
+                                    type="button"
+                                    class="handlediv"
+                                    aria-expanded="true">
+                                <span
+                                        class="toggle-indicator"
+                                        aria-hidden="true"></span>
+                            </button>
+                        </div>
+                        <h2 class="hndle ui-sortable-handle"><span><span class="dashicons dashicons-smiley"></span> <?php \esc_html_e( 'Is it free?', 'ai-image-renamer' ); ?></span></h2>
+                    </div>
+                    <div class="inside">
+                        <p><?php \esc_html_e( 'Yes! This plugin leverages Groq\'s generous free tier. Simply get your free API key from the Groq console and start renaming your images without any costs.', 'ai-image-renamer' ); ?></p>
+                    </div>
+                </div>
+                <div class="air-hero-column postbox pro">
+                    <div class="postbox-header">
+                        <div class="handle-actions">
+                            <button
+                                    type="button"
+                                    class="handlediv"
+                                    aria-expanded="true">
+                                <span
+                                        class="toggle-indicator"
+                                        aria-hidden="true"></span>
+                            </button>
+                        </div>
+                        <h2 class="hndle ui-sortable-handle"><span><span class="dashicons dashicons-star-filled"></span> <?php \esc_html_e( 'AI Image Renamer Pro', 'ai-image-renamer' ); ?></span></h2>
+                    </div>
+                    <div class="inside">
+                        <p><?php \esc_html_e( 'Unlock advanced features like bulk renaming, custom naming patterns, and support for 20+ languages. Coming soon to take your media management to the next level.', 'ai-image-renamer' ); ?></p>
+                    </div>
+                </div>
+            </div>
+			<?php
 		}, self::PAGE_SLUG );
 
 		// Enable/Disable toggle.
-		add_settings_field( 'enabled', __( 'Enable Auto-Rename', 'ai-image-renamer' ), [ $this, 'render_enabled_field' ], self::PAGE_SLUG, 'air_main_section' );
+		\add_settings_field( 'enabled', '<span class="dashicons dashicons-lightbulb"></span> ' . \__( 'Enable Auto-Rename', 'ai-image-renamer' ), [
+			$this,
+			'render_enabled_field'
+		], self::PAGE_SLUG, 'air_main_section' );
 
 		// API Key field.
-		add_settings_field( 'api_key', __( 'Groq API Key', 'ai-image-renamer' ), [ $this, 'render_api_key_field' ], self::PAGE_SLUG, 'air_main_section' );
+		\add_settings_field( 'api_key', '<span class="dashicons dashicons-admin-network"></span> ' . \__( 'Groq API Key', 'ai-image-renamer' ), [
+			$this,
+			'render_api_key_field'
+		], self::PAGE_SLUG, 'air_main_section' );
 
 		// Model Selection.
-		add_settings_field( 'model', __( 'AI Model', 'ai-image-renamer' ), [ $this, 'render_model_field' ], self::PAGE_SLUG, 'air_main_section' );
+		\add_settings_field( 'model', '<span class="dashicons dashicons-products"></span> ' . \__( 'AI Model', 'ai-image-renamer' ), [
+			$this,
+			'render_model_field'
+		], self::PAGE_SLUG, 'air_main_section' );
 
 		// Alt text toggle.
-		add_settings_field( 'set_alt_text', __( 'Add to <code>alt=""</code> Attribute', 'ai-image-renamer' ), [ $this, 'render_alt_text_field' ], self::PAGE_SLUG, 'air_main_section' );
+		\add_settings_field( 'set_alt_text', '<span class="dashicons dashicons-text"></span> ' . \__( 'Use as <code>alt=""</code>', 'ai-image-renamer' ), [
+			$this,
+			'render_alt_text_field'
+		], self::PAGE_SLUG, 'air_main_section' );
 
 		// File types section.
-		add_settings_section( 'air_file_types_section', __( 'File Types', 'ai-image-renamer' ), function () {
-			echo '<p>' . esc_html__( 'Select which image types to process.', 'ai-image-renamer' ) . '</p>';
+		\add_settings_section( 'air_file_types_section', '<span class="dashicons dashicons-format-image"></span> ' . \__( 'File Types', 'ai-image-renamer' ), function () {
+			echo '<p>' . \esc_html__( 'Select which image types to process.', 'ai-image-renamer' ) . '</p>';
 		}, self::PAGE_SLUG );
 
-		add_settings_field( 'file_types', __( 'Allowed Types', 'ai-image-renamer' ), [ $this, 'render_file_types_field' ], self::PAGE_SLUG, 'air_file_types_section' );
+		\add_settings_field( 'file_types', '<span class="dashicons dashicons-images-alt2"></span> ' . \__( 'Allowed Types', 'ai-image-renamer' ), [
+			$this,
+			'render_file_types_field'
+		], self::PAGE_SLUG, 'air_file_types_section' );
 
 		// Advanced section.
-		add_settings_section( 'air_advanced_section', __( 'Advanced Settings', 'ai-image-renamer' ), function () {
-			echo '<p>' . esc_html__( 'Customize the AI prompt and keyword settings.', 'ai-image-renamer' ) . '</p>';
+		\add_settings_section( 'air_advanced_section', '<span class="dashicons dashicons-admin-tools"></span> ' . \__( 'Advanced Settings', 'ai-image-renamer' ), function () {
+			echo '<p>' . \esc_html__( 'Customize the AI prompt and keyword settings.', 'ai-image-renamer' ) . '</p>';
 		}, self::PAGE_SLUG );
 
-		add_settings_field( 'custom_prompt', __( 'Custom Prompt', 'ai-image-renamer' ), [ $this, 'render_custom_prompt_field' ], self::PAGE_SLUG, 'air_advanced_section' );
+		\add_settings_field( 'custom_prompt', '<span class="dashicons dashicons-editor-quote"></span> ' . \__( 'Custom Prompt', 'ai-image-renamer' ), [
+			$this,
+			'render_custom_prompt_field'
+		], self::PAGE_SLUG, 'air_advanced_section' );
 
-		add_settings_field( 'max_keywords', __( 'Max Keywords', 'ai-image-renamer' ), [ $this, 'render_max_keywords_field' ], self::PAGE_SLUG, 'air_advanced_section' );
+		\add_settings_field( 'max_keywords', '<span class="dashicons dashicons-editor-ol"></span> ' . \__( 'Max Keywords', 'ai-image-renamer' ), [
+			$this,
+			'render_max_keywords_field'
+		], self::PAGE_SLUG, 'air_advanced_section' );
 	}
 
 	/**
@@ -172,13 +250,13 @@ class Settings_Page {
 	 */
 	final public function sanitize_settings( array $input ): array {
 		$sanitized = $this->get_defaults();
-		$old       = get_option( self::OPTION_NAME, $this->get_defaults() );
+		$old       = \get_option( self::OPTION_NAME, $this->get_defaults() );
 
 		// Helper to decrypt if needed, though we deal with input here.
 		// We expect plaintext from the admin form since we display plaintext now.
 
 		if ( isset( $input[ 'api_key' ] ) ) {
-			$plaintext = trim( $input[ 'api_key' ] );
+			$plaintext = \trim( $input[ 'api_key' ] );
 
 			if ( empty( $plaintext ) ) {
 				$sanitized[ 'api_key' ] = '';
@@ -187,14 +265,14 @@ class Settings_Page {
 				if ( false !== $encrypted ) {
 					$sanitized[ 'api_key' ] = $encrypted;
 				} else {
-					add_settings_error( self::OPTION_NAME, 'encryption_failed', __( 'Failed to encrypt API key. Please try again.', 'ai-image-renamer' ) );
+					\add_settings_error( self::OPTION_NAME, 'encryption_failed', \__( 'Failed to encrypt API key. Please try again.', 'ai-image-renamer' ) );
 					// Keep old key if encryption failed.
 					$sanitized[ 'api_key' ] = $old[ 'api_key' ] ?? '';
 				}
 			} else {
 				// Invalid format, maybe keep old or show error.
 				// For now, let's assume if it doesn't start with gsk_, it's invalid.
-				add_settings_error( self::OPTION_NAME, 'invalid_key', __( 'Invalid API Key format. Must start with <code>gsk_</code>.', 'ai-image-renamer' ) );
+				\add_settings_error( self::OPTION_NAME, 'invalid_key', \__( 'Invalid API Key format. Must start with <code>gsk_</code>.', 'ai-image-renamer' ) );
 				$sanitized[ 'api_key' ] = $old[ 'api_key' ] ?? '';
 			}
 		}
@@ -210,12 +288,12 @@ class Settings_Page {
 
 		// Custom prompt.
 		if ( isset( $input[ 'custom_prompt' ] ) ) {
-			$sanitized[ 'custom_prompt' ] = sanitize_textarea_field( $input[ 'custom_prompt' ] );
+			$sanitized[ 'custom_prompt' ] = \sanitize_textarea_field( $input[ 'custom_prompt' ] );
 		}
 
 		// Max keywords.
 		if ( isset( $input[ 'max_keywords' ] ) ) {
-			$sanitized[ 'max_keywords' ] = absint( $input[ 'max_keywords' ] );
+			$sanitized[ 'max_keywords' ] = \absint( $input[ 'max_keywords' ] );
 			$sanitized[ 'max_keywords' ] = max( 1, min( 10, $sanitized[ 'max_keywords' ] ) );
 		}
 
@@ -244,7 +322,7 @@ class Settings_Page {
 	 * @return void
 	 */
 	final public function render_api_key_field(): void {
-		$options       = get_option( self::OPTION_NAME, $this->get_defaults() );
+		$options       = \get_option( self::OPTION_NAME, $this->get_defaults() );
 		$encrypted_key = $options[ 'api_key' ] ?? '';
 		$decrypted_key = '';
 
@@ -261,8 +339,8 @@ class Settings_Page {
             <input
                     type="text"
                     id="air_api_key"
-                    name="<?php echo esc_attr( self::OPTION_NAME ); ?>[api_key]"
-                    value="<?php echo esc_attr( $decrypted_key ); ?>"
+                    name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[api_key]"
+                    value="<?php echo \esc_attr( $decrypted_key ); ?>"
                     class="regular-text"
                     placeholder="gsk_..."
                     autocomplete="off" />
@@ -271,12 +349,12 @@ class Settings_Page {
                     type="button"
                     id="air_delete_api_key"
                     class="button button-link-delete">
-				<?php esc_html_e( 'Delete Key', 'ai-image-renamer' ); ?>
+				<?php \esc_html_e( 'Delete Key', 'ai-image-renamer' ); ?>
             </button>
         </div>
 
         <p class="description">
-			<?php if ( $saved ) : ?><?php esc_html_e( 'Your Groq API key has been encrypted and saved.', 'ai-image-renamer' ); ?><?php else : ?><?php esc_html_e( 'Enter your Groq API key.', 'ai-image-renamer' ); ?><?php endif; ?>
+			<?php if ( $saved ) : ?><?php \esc_html_e( 'Your Groq API key has been encrypted and saved.', 'ai-image-renamer' ); ?><?php else : ?><?php \esc_html_e( 'Enter your Groq API key.', 'ai-image-renamer' ); ?><?php endif; ?>
         </p>
         <p>
             <a
@@ -284,13 +362,13 @@ class Settings_Page {
                     target="_blank"
                     class="button button-primary"
                     style="margin-right: 5px;">
-				<?php esc_html_e( 'Get Free API Key', 'ai-image-renamer' ); ?>
+				<?php \esc_html_e( 'Get Free API Key', 'ai-image-renamer' ); ?>
             </a>
             <button
                     type="button"
                     id="air_test_connection"
                     class="button button-secondary">
-				<?php esc_html_e( 'Test Connection', 'ai-image-renamer' ); ?>
+				<?php \esc_html_e( 'Test Connection', 'ai-image-renamer' ); ?>
             </button>
             <span id="air_test_result"></span>
         </p>
@@ -303,15 +381,15 @@ class Settings_Page {
 	 * @return void
 	 */
 	final public function render_enabled_field(): void {
-		$options = get_option( self::OPTION_NAME, $this->get_defaults() );
+		$options = \get_option( self::OPTION_NAME, $this->get_defaults() );
 		$enabled = $options[ 'enabled' ] ?? true;
 		?>
         <label> <input
                     type="checkbox"
-                    name="<?php echo esc_attr( self::OPTION_NAME ); ?>[enabled]"
+                    name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[enabled]"
                     value="1"
-				<?php checked( $enabled ); ?> />
-			<?php esc_html_e( 'Automatically rename images on upload', 'ai-image-renamer' ); ?>
+				<?php \checked( $enabled ); ?> />
+			<?php \esc_html_e( 'Automatically rename images on upload', 'ai-image-renamer' ); ?>
         </label>
 		<?php
 	}
@@ -322,15 +400,15 @@ class Settings_Page {
 	 * @return void
 	 */
 	final public function render_alt_text_field(): void {
-		$options = get_option( self::OPTION_NAME, $this->get_defaults() );
+		$options = \get_option( self::OPTION_NAME, $this->get_defaults() );
 		$set_alt = $options[ 'set_alt_text' ] ?? false;
 		?>
         <label> <input
                     type="checkbox"
-                    name="<?php echo esc_attr( self::OPTION_NAME ); ?>[set_alt_text]"
+                    name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[set_alt_text]"
                     value="1"
-				<?php checked( $set_alt ); ?> />
-			<?php esc_html_e( 'Automatically set images\' "alt" attribute from the filename.', 'ai-image-renamer' ); ?>
+				<?php \checked( $set_alt ); ?> />
+			<?php \esc_html_e( 'Automatically set images\' "alt" attribute from the filename.', 'ai-image-renamer' ); ?>
         </label>
 		<?php
 	}
@@ -341,7 +419,7 @@ class Settings_Page {
 	 * @return void
 	 */
 	final public function render_file_types_field(): void {
-		$options    = get_option( self::OPTION_NAME, $this->get_defaults() );
+		$options    = \get_option( self::OPTION_NAME, $this->get_defaults() );
 		$file_types = $options[ 'file_types' ] ?? [];
 
 		$available_types = [
@@ -356,10 +434,10 @@ class Settings_Page {
 			?>
             <label style="margin-right: 15px;"> <input
                         type="checkbox"
-                        name="<?php echo esc_attr( self::OPTION_NAME ); ?>[file_types][]"
-                        value="<?php echo esc_attr( $mime ); ?>"
-					<?php checked( $checked ); ?> />
-				<?php echo esc_html( $label ); ?>
+                        name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[file_types][]"
+                        value="<?php echo \esc_attr( $mime ); ?>"
+					<?php \checked( $checked ); ?> />
+				<?php echo \esc_html( $label ); ?>
             </label>
 			<?php
 		}
@@ -371,18 +449,18 @@ class Settings_Page {
 	 * @return void
 	 */
 	final public function render_custom_prompt_field(): void {
-		$options       = get_option( self::OPTION_NAME, $this->get_defaults() );
+		$options       = \get_option( self::OPTION_NAME, $this->get_defaults() );
 		$custom_prompt = $options[ 'custom_prompt' ] ?? '';
 		$default       = 'View this image and describe it in no more than 5 keywords. Only return the output.';
 		?>
         <textarea
                 id="air_custom_prompt"
-                name="<?php echo esc_attr( self::OPTION_NAME ); ?>[custom_prompt]"
+                name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[custom_prompt]"
                 rows="3"
                 class="large-text"
-                placeholder="<?php echo esc_attr( $default ); ?>"><?php echo esc_textarea( $custom_prompt ); ?></textarea>
+                placeholder="<?php echo \esc_attr( $default ); ?>"><?php echo \esc_textarea( $custom_prompt ); ?></textarea>
         <p class="description">
-			<?php esc_html_e( 'Leave empty to use the default prompt.', 'ai-image-renamer' ); ?>
+			<?php \esc_html_e( 'Leave empty to use the default prompt.', 'ai-image-renamer' ); ?>
         </p>
 		<?php
 	}
@@ -393,20 +471,20 @@ class Settings_Page {
 	 * @return void
 	 */
 	final public function render_max_keywords_field(): void {
-		$options      = get_option( self::OPTION_NAME, $this->get_defaults() );
+		$options      = \get_option( self::OPTION_NAME, $this->get_defaults() );
 		$max_keywords = $options[ 'max_keywords' ] ?? 5;
 		?>
         <select
-                name="<?php echo esc_attr( self::OPTION_NAME ); ?>[max_keywords]"
+                name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[max_keywords]"
                 id="air_max_keywords">
 			<?php for ( $i = 1; $i <= 10; $i ++ ) : ?>
-                <option value="<?php echo esc_attr( $i ); ?>" <?php selected( $max_keywords, $i ); ?>>
-					<?php echo esc_html( $i ); ?>
+                <option value="<?php echo \esc_attr( $i ); ?>" <?php \selected( $max_keywords, $i ); ?>>
+					<?php echo \esc_html( $i ); ?>
                 </option>
 			<?php endfor; ?>
         </select>
         <p class="description">
-			<?php esc_html_e( 'Maximum number of keywords to generate for filenames.', 'ai-image-renamer' ); ?>
+			<?php \esc_html_e( 'Maximum number of keywords to generate for filenames.', 'ai-image-renamer' ); ?>
         </p>
 		<?php
 	}
@@ -417,7 +495,7 @@ class Settings_Page {
 	 * @return void
 	 */
 	final public function render_model_field(): void {
-		$options = get_option( self::OPTION_NAME, $this->get_defaults() );
+		$options = \get_option( self::OPTION_NAME, $this->get_defaults() );
 		$current = $options[ 'model' ] ?? 'meta-llama/llama-4-maverick-17b-128e-instruct';
 		$models  = [
 			'meta-llama/llama-4-maverick-17b-128e-instruct' => [
@@ -434,12 +512,12 @@ class Settings_Page {
 			<?php foreach ( $models as $id => $info ) : ?><?php $is_checked = ( $current === $id ); ?>
                 <label class="air-model-card <?php echo $is_checked ? 'selected' : ''; ?>"> <input
                             type="radio"
-                            name="<?php echo esc_attr( self::OPTION_NAME ); ?>[model]"
-                            value="<?php echo esc_attr( $id ); ?>"
-						<?php checked( $current, $id ); ?> />
+                            name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[model]"
+                            value="<?php echo \esc_attr( $id ); ?>"
+						<?php \checked( $current, $id ); ?> />
                     <div class="air-model-content">
-                        <strong><?php echo esc_html( $info[ 'label' ] ); ?></strong>
-                        <p><?php echo esc_html( $info[ 'desc' ] ); ?></p>
+                        <strong><?php echo \esc_html( $info[ 'label' ] ); ?></strong>
+                        <p><?php echo \esc_html( $info[ 'desc' ] ); ?></p>
                     </div>
                 </label>
 			<?php endforeach; ?>
@@ -453,7 +531,7 @@ class Settings_Page {
 	 * @return void
 	 */
 	final public function render_settings_page(): void {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! \current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
@@ -476,18 +554,18 @@ class Settings_Page {
 			return;
 		}
 
-		wp_enqueue_style( 'air-admin', AIR_PLUGIN_URL . 'assets/css/admin.css', [], AIR_VERSION );
+		\wp_enqueue_style( 'air-admin', AIR_PLUGIN_URL . 'assets/css/admin.css', [], AIR_VERSION );
 
-		wp_enqueue_script( 'air-admin', AIR_PLUGIN_URL . 'assets/js/admin.js', [ 'jquery' ], AIR_VERSION, true );
+		\wp_enqueue_script( 'air-admin', AIR_PLUGIN_URL . 'assets/js/admin.js', [ 'jquery' ], AIR_VERSION, true );
 
-		wp_localize_script( 'air-admin', 'airAdmin', [
-			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-			'nonce'   => wp_create_nonce( 'air_test_connection' ),
+		\wp_localize_script( 'air-admin', 'airAdmin', [
+			'ajaxUrl' => \admin_url( 'admin-ajax.php' ),
+			'nonce'   => \wp_create_nonce( 'air_test_connection' ),
 			'strings' => [
-				'testing' => __( 'Testing...', 'ai-image-renamer' ),
-				'success' => __( 'Connection successful!', 'ai-image-renamer' ),
-				'error'   => __( 'Connection failed:', 'ai-image-renamer' ),
-				'no_key'  => __( 'No API key configured.', 'ai-image-renamer' ),
+				'testing' => \__( 'Testing...', 'ai-image-renamer' ),
+				'success' => \__( 'Connection successful!', 'ai-image-renamer' ),
+				'error'   => \__( 'Connection failed:', 'ai-image-renamer' ),
+				'no_key'  => \__( 'No API key configured.', 'ai-image-renamer' ),
 			],
 		] );
 	}
@@ -498,16 +576,16 @@ class Settings_Page {
 	 * @return void
 	 */
 	final public function ajax_test_connection(): void {
-		check_ajax_referer( 'air_test_connection', 'nonce' );
+		\check_ajax_referer( 'air_test_connection', 'nonce' );
 
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( [ 'message' => __( 'Permission denied.', 'ai-image-renamer' ) ] );
+		if ( ! \current_user_can( 'manage_options' ) ) {
+			\wp_send_json_error( [ 'message' => \__( 'Permission denied.', 'ai-image-renamer' ) ] );
 		}
 
 		// Check if a specific key was provided in POST.
 		// We use isset() because we want to detect empty strings explicitly sent by JS.
 		if ( isset( $_POST[ 'api_key' ] ) ) {
-			$api_key = sanitize_text_field( wp_unslash( $_POST[ 'api_key' ] ) );
+			$api_key = \sanitize_text_field( \wp_unslash( $_POST[ 'api_key' ] ) );
 
 			// If the key is masked (contains bullets), treat it as null (use saved).
 			// (Note: With new cleartext logic, user sees key, so they shouldn't be sending bullets unless they manually typed them).
@@ -516,7 +594,7 @@ class Settings_Page {
 				$api_key = null;
 			} elseif ( empty( $api_key ) ) {
 				// Explicitly empty key provided.
-				wp_send_json_error( [ 'message' => __( 'No API key provided.', 'ai-image-renamer' ) ] );
+				\wp_send_json_error( [ 'message' => \__( 'No API key provided.', 'ai-image-renamer' ) ] );
 			}
 		} else {
 			// No key provided, so we won't save anything.
@@ -526,9 +604,9 @@ class Settings_Page {
 		$result = $this->groq_service->test_connection( $api_key );
 
 		if ( true === $result ) {
-			wp_send_json_success( [ 'message' => __( 'Connection successful!', 'ai-image-renamer' ) ] );
+			\wp_send_json_success( [ 'message' => \__( 'Connection successful!', 'ai-image-renamer' ) ] );
 		} else {
-			wp_send_json_error( [ 'message' => $result ] );
+			\wp_send_json_error( [ 'message' => $result ] );
 		}
 	}
 
@@ -538,17 +616,17 @@ class Settings_Page {
 	 * @return void
 	 */
 	final public function ajax_delete_api_key(): void {
-		check_ajax_referer( 'air_test_connection', 'nonce' ); // Reusing nonce for convenience
+		\check_ajax_referer( 'air_test_connection', 'nonce' ); // Reusing nonce for convenience
 
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( [ 'message' => __( 'Permission denied.', 'ai-image-renamer' ) ] );
+		if ( ! \current_user_can( 'manage_options' ) ) {
+			\wp_send_json_error( [ 'message' => \__( 'Permission denied.', 'ai-image-renamer' ) ] );
 		}
 
-		$options              = get_option( self::OPTION_NAME, $this->get_defaults() );
+		$options              = \get_option( self::OPTION_NAME, $this->get_defaults() );
 		$options[ 'api_key' ] = '';
 
-		update_option( self::OPTION_NAME, $options );
+		\update_option( self::OPTION_NAME, $options );
 
-		wp_send_json_success( [ 'message' => __( 'API key deleted.', 'ai-image-renamer' ) ] );
+		\wp_send_json_success( [ 'message' => \__( 'API key deleted.', 'ai-image-renamer' ) ] );
 	}
 }

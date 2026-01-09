@@ -6,7 +6,7 @@
  * @package AIR
  */
 
-declare( strict_types=1 );
+declare(strict_types=1);
 
 namespace AIR;
 
@@ -21,7 +21,8 @@ use AIR\Services\Template_Engine;
  *
  * Bootstraps all plugin components.
  */
-class Plugin {
+class Plugin
+{
 
 	/**
 	 * Template engine instance.
@@ -49,20 +50,21 @@ class Plugin {
 	 *
 	 * @return void
 	 */
-	final public function init(): void {
+	final public function init(): void
+	{
 		// Initialize services.
 		$this->encryption_service = new Encryption_Service();
 		$this->template_engine    = new Template_Engine();
-		$this->groq_service       = new Groq_Service( $this->encryption_service );
+		$this->groq_service       = new Groq_Service($this->encryption_service);
 
 		// Initialize admin settings page.
-		if ( is_admin() ) {
-			$settings_page = new Settings_Page( $this->template_engine, $this->encryption_service, $this->groq_service );
+		if (\is_admin()) {
+			$settings_page = new Settings_Page($this->template_engine, $this->encryption_service, $this->groq_service);
 			$settings_page->init();
 		}
 
 		// Initialize upload hook.
-		$image_uploader = new Image_Uploader( $this->groq_service );
+		$image_uploader = new Image_Uploader($this->groq_service);
 		$image_uploader->init();
 	}
 }

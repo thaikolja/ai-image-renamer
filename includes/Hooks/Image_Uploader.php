@@ -6,7 +6,7 @@
  * @package AIR\Hooks
  */
 
-declare( strict_types=1 );
+declare(strict_types=1);
 
 namespace AIR\Hooks;
 
@@ -18,7 +18,8 @@ use AIR\Utils\File_Sanitizer;
  *
  * Hooks into WordPress upload process to rename images.
  */
-class Image_Uploader {
+class Image_Uploader
+{
 
 	/**
 	 * Groq service instance.
@@ -39,7 +40,8 @@ class Image_Uploader {
 	 *
 	 * @param  Groq_Service  $groq_service  Groq service instance.
 	 */
-	public function __construct( Groq_Service $groq_service ) {
+	public function __construct(Groq_Service $groq_service)
+	{
 		$this->groq_service = $groq_service;
 	}
 
@@ -48,9 +50,10 @@ class Image_Uploader {
 	 *
 	 * @return void
 	 */
-	final public function init(): void {
-		error_log( 'AI Image Renamer: Registering wp_handle_upload_prefilter hook' );
-		add_filter( 'wp_handle_upload_prefilter', [ $this, 'process_upload' ] );
+	final public function init(): void
+	{
+		\error_log('AI Image Renamer: Registering wp_handle_upload_prefilter hook');
+		\add_filter('wp_handle_upload_prefilter', [$this, 'process_upload']);
 	}
 
 	/**
@@ -60,68 +63,69 @@ class Image_Uploader {
 	 *
 	 * @return array The modified file data.
 	 */
-	final public function process_upload( array $file ): array {
+	final public function process_upload(array $file): array
+	{
 		// Check if the service is enabled.
-		if ( ! $this->groq_service->is_enabled() ) {
+		if (! $this->groq_service->is_enabled()) {
 			return $file;
 		}
 
 		// Check if there's an error with the upload.
-		if ( ! empty( $file[ 'error' ] ) ) {
+		if (! empty($file['error'])) {
 			return $file;
 		}
 
 		// Get the mime type.
-		$mime_type = $file[ 'type' ] ?? '';
+		$mime_type = $file['type'] ?? '';
 
 		// Check if this file type should be processed.
-		if ( ! $this->groq_service->is_allowed_type( $mime_type ) ) {
+		if (! $this->groq_service->is_allowed_type($mime_type)) {
 			return $file;
 		}
 
 		// Get the temporary file path.
-		$tmp_path = $file[ 'tmp_name' ] ?? '';
+		$tmp_path = $file['tmp_name'] ?? '';
 
-		if ( empty( $tmp_path ) || ! file_exists( $tmp_path ) ) {
+		if (empty($tmp_path) || ! \file_exists($tmp_path)) {
 			return $file;
 		}
 
 		// Generate a description using the Groq API.
-		$description = $this->groq_service->generate_description( $tmp_path );
+		$description = $this->groq_service->generate_description($tmp_path);
 
 		// If generation failed, fall back to the original filename.
-		if ( ! $description ) {
+		if (! $description) {
 			return $file;
 		}
 
 		// Sanitize the generated description.
-		$sanitized_name = File_Sanitizer::sanitize( $description );
+		$sanitized_name = File_Sanitizer::sanitize($description);
 
 		// Get the original extension.
-		$original_name = $file[ 'name' ] ?? '';
-		$extension     = File_Sanitizer::get_extension( $original_name );
+		$original_name = $file['name'] ?? '';
+		$extension     = File_Sanitizer::get_extension($original_name);
 
-		if ( empty( $extension ) ) {
+		if (empty($extension)) {
 			// Try to get extension from mime type.
-			$extension = $this->get_extension_from_mime( $mime_type );
+			$extension = $this->get_extension_from_mime($mime_type);
 		}
 
 		// Build the new filename.
-		$new_filename = File_Sanitizer::build_filename( $sanitized_name, $extension );
+		$new_filename = File_Sanitizer::build_filename($sanitized_name, $extension);
 
 		// Update the file array with the new name.
-		$file[ 'name' ] = $new_filename;
+		$file['name'] = $new_filename;
 
 		// Check if Alt Text feature is enabled.
-		$options = get_option( 'air_options', [] );
-		$set_alt = isset( $options[ 'set_alt_text' ] ) && '1' === (string) $options[ 'set_alt_text' ];
+		$options = \get_option('air_options', []);
+		$set_alt = isset($options['set_alt_text']) && '1' === (string) $options['set_alt_text'];
 
-		if ( $set_alt && ! empty( $description ) ) {
-			$clean_text             = ucfirst( str_replace( [ '-', '_' ], ' ', $sanitized_name ) );
+		if ($set_alt && ! empty($description)) {
+			$clean_text             = ucfirst(str_replace(['-', '_'], ' ', $sanitized_name));
 			$this->pending_alt_text = $clean_text;
 
 			// Hook into attachment creation to save this.
-			add_action( 'add_attachment', [ $this, 'set_image_alt_text' ] );
+			\add_action('add_attachment', [$this, 'set_image_alt_text']);
 		}
 
 		return $file;
@@ -134,10 +138,11 @@ class Image_Uploader {
 	 *
 	 * @return void
 	 */
-	final public function set_image_alt_text( int $post_id ): void {
-		if ( ! empty( $this->pending_alt_text ) ) {
-			update_post_meta( $post_id, '_wp_attachment_image_alt', $this->pending_alt_text );
-			update_post_meta( $post_id, '_ai_image_renamer_alt_set', 'true' ); // Flag for debugging
+	final public function set_image_alt_text(int $post_id): void
+	{
+		if (! empty($this->pending_alt_text)) {
+			\update_post_meta($post_id, '_wp_attachment_image_alt', $this->pending_alt_text);
+			\update_post_meta($post_id, '_ai_image_renamer_alt_set', 'true'); // Flag for debugging
 			$this->pending_alt_text = ''; // Reset
 		}
 	}
@@ -149,7 +154,8 @@ class Image_Uploader {
 	 *
 	 * @return string The file extension.
 	 */
-	private function get_extension_from_mime( string $mime_type ): string {
+	private function get_extension_from_mime(string $mime_type): string
+	{
 		$mime_to_ext = [
 			'image/jpeg' => 'jpg',
 			'image/png'  => 'png',
@@ -157,7 +163,7 @@ class Image_Uploader {
 			'image/webp' => 'webp',
 		];
 
-		$extensions = apply_filters( 'air_mime_to_ext', $mime_to_ext[ $mime_type ] );
+		$extensions = \apply_filters('air_mime_to_ext', $mime_to_ext[$mime_type]);
 
 		return $extensions ?? 'jpg';
 	}

@@ -9,6 +9,28 @@
   max-width: 800px;
 }
 
+
+/* Dashicon alignment in titles */
+.air-settings h2 .dashicons,
+.air-settings-hero .dashicons,
+.air-settings .form-table th .dashicons {
+  vertical-align: text-bottom;
+  margin-right:   8px;
+  width:          20px;
+  height:         20px;
+  font-size:      20px;
+}
+
+.dashicons {
+  margin-right: 12px !important;
+}
+
+
+.air-settings h2 {
+  display:     flex;
+  align-items: center;
+}
+
 /* Test connection result */
 #air_test_result {
   margin-left: 10px;
@@ -112,4 +134,53 @@
   font-size:   13px;
   color:       #646970;
   line-height: 1.3;
+}
+
+/* Settings Hero Card */
+.air-settings-hero {
+  display:     flex !important;
+  gap:         20px;
+  margin:      20px 0 30px 0;
+  max-width:   1200px;
+  align-items: stretch;
+}
+
+/* Hero Column as a Postbox */
+.air-hero-column.postbox {
+  flex:           1;
+  display:        flex;
+  flex-direction: column;
+  margin:         0;
+  min-width:      250px;
+  height:         auto;
+}
+
+/* Inside content to fill space */
+.air-hero-column.postbox .inside {
+  flex-grow:       1;
+  margin:          0;
+  padding:         12px;
+  display:         flex;
+  flex-direction:  column;
+  justify-content: center;
+}
+
+/* Header refinements */
+.air-hero-column.postbox .postbox-header {
+  border-bottom: 1px solid #c3c4c7;
+}
+
+.air-hero-column.postbox .hndle {
+  cursor: default;
+}
+
+/* Pro Column Special Styling */
+.air-hero-column.pro {
+  background-color: #f0f6fc;
+}
+
+@media (max-width: 782px) {
+  .air-settings-hero {
+    flex-direction: column;
+  }
 }
