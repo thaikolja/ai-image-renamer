@@ -1,0 +1,168 @@
+<?php
+
+/**
+ * Twig Template Engine Service.
+ *
+ * @package AIR\Services
+ */
+
+declare(strict_types=1);
+
+namespace AIR\Services;
+
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+
+/**
+ * Class Template_Engine
+ *
+ * Wrapper for Twig template rendering.
+ */
+class Template_Engine
+{
+
+    /**
+     * Twig environment instance.
+     *
+     * @var Environment
+     */
+    private Environment $twig;
+
+    /**
+     * Constructor.
+     *
+     * Initializes the Twig environment with the views directory.
+     */
+    public function __construct()
+    {
+        $views_path = AIR_PLUGIN_DIR . 'views';
+        $cache_path = AIR_PLUGIN_DIR . 'cache/twig';
+
+        // Create cache directory if it doesn't exist.
+        if (! is_dir($cache_path)) {
+            wp_mkdir_p($cache_path);
+        }
+
+        $loader = new FilesystemLoader($views_path);
+
+        $this->twig = new Environment(
+            $loader,
+            array(
+                'cache'       => WP_DEBUG ? false : $cache_path,
+                'auto_reload' => true,
+                'debug'       => WP_DEBUG,
+            )
+        );
+
+        // Add WordPress-specific globals and functions.
+        $this->register_globals();
+        $this->register_functions();
+    }
+
+    /**
+     * Register global variables available in all templates.
+     *
+     * @return void
+     */
+    private function register_globals(): void
+    {
+        $this->twig->addGlobal('plugin_url', AIR_PLUGIN_URL);
+        $this->twig->addGlobal('plugin_version', AIR_VERSION);
+    }
+
+    /**
+     * Register custom Twig functions for WordPress integration.
+     *
+     * @return void
+     */
+    private function register_functions(): void
+    {
+        // WordPress translation functions.
+        $this->twig->addFunction(
+            new \Twig\TwigFunction(
+                '__',
+                function (string $text, string $domain = 'ai-image-renamer'): string {
+                    return __($text, $domain); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
+                }
+            )
+        );
+
+        $this->twig->addFunction(
+            new \Twig\TwigFunction(
+                'esc_html',
+                function (string $text): string {
+                    return esc_html($text);
+                }
+            )
+        );
+
+        $this->twig->addFunction(
+            new \Twig\TwigFunction(
+                'esc_attr',
+                function (string $text): string {
+                    return esc_attr($text);
+                }
+            )
+        );
+
+        $this->twig->addFunction(
+            new \Twig\TwigFunction(
+                'wp_nonce_field',
+                function (string $action, string $name = '_wpnonce', bool $referer = true, bool $echo = false): string {
+                    return wp_nonce_field($action, $name, $referer, $echo);
+                }
+            )
+        );
+
+        $this->twig->addFunction(
+            new \Twig\TwigFunction(
+                'settings_fields',
+                function (string $option_group): void {
+                    settings_fields($option_group);
+                }
+            )
+        );
+
+        $this->twig->addFunction(
+            new \Twig\TwigFunction(
+                'do_settings_sections',
+                function (string $page): void {
+                    do_settings_sections($page);
+                }
+            )
+        );
+
+        $this->twig->addFunction(
+            new \Twig\TwigFunction(
+                'submit_button',
+                function (string $text = '', string $type = 'primary', string $name = 'submit', bool $wrap = true, $other_attributes = null): void {
+                    submit_button($text, $type, $name, $wrap, $other_attributes);
+                }
+            )
+        );
+    }
+
+    /**
+     * Render a Twig template.
+     *
+     * @param string $template The template filename (relative to views/).
+     * @param array  $context  Variables to pass to the template.
+     *
+     * @return string The rendered HTML.
+     */
+    public function render(string $template, array $context = array()): string
+    {
+        try {
+            return $this->twig->render($template, $context);
+        } catch (LoaderError | RuntimeError | SyntaxError $e) {
+            if (WP_DEBUG) {
+                return '<div class="notice notice-error"><p>Template Error: ' . esc_html($e->getMessage()) . '</p></div>';
+            }
+            error_log('AI Image Renamer Template Error: ' . $e->getMessage());
+            return '';
+        }
+    }
+}

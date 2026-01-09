@@ -1,0 +1,20 @@
+{
+  "version": "5.8.2",
+  "integrations": [
+    "agents-md",
+    "octo-md"
+  ],
+  "templates": {
+    "prdQuestions": "default",
+    "fullPrd": "default",
+    "quickPrd": "default"
+  },
+  "outputs": {
+    "path": ".clavix/outputs",
+    "format": "markdown"
+  },
+  "preferences": {
+    "autoOpenOutputs": false,
+    "verboseLogging": false
+  }
+}

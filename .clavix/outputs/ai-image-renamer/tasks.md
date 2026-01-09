@@ -1,0 +1,110 @@
+# Implementation Plan - AI Image Renamer
+
+**Project**: ai-image-renamer
+**Generated**: 2026-01-10T00:10:00Z
+
+## Technical Context & Standards
+- **Framework**: WordPress 6.x
+- **PHP**: 8.2+
+- **Templating**: Twig (v3.x)
+- **Security**: `defuse/php-encryption` for API key protection
+- **Architecture**: PSR-4 autoloading via Composer, Class-based hooks and services.
+- **Conventions**: WordPress Coding Standards (WPCS). **Includes** directory for source. snake_case for methods/hooks, PascalCase for Classes. All classes and hooks prefixed with `AIR_` or within `AIR\` namespace to avoid collisions.
+
+---
+
+## Phase 1: Project Foundation
+
+- [x] **Initialize Composer and Dependencies**
+  Task ID: phase-1-foundation-01
+  > **Implementation**: Create `composer.json` in the plugin root.
+  > **Details**: Require `twig/twig` and `defuse/php-encryption`. Configure PSR-4 autoloading for the `AIR` namespace (root: `includes/`). Run `composer install`.
+
+- [ ] **Create Main Plugin Entry Point**
+  Task ID: phase-1-foundation-02
+  > **Implementation**: Create `ai-image-renamer.php`.
+  > **Details**: Add standard WordPress plugin header. Include `vendor/autoload.php`. Initialize a main `AIR\Plugin` class that bootstraps other services.
+
+- [ ] **Setup Plugin Directory Structure**
+  Task ID: phase-1-foundation-03
+  > **Implementation**: Create directories: `includes/`, `views/`, `assets/`, `assets/css/`, `assets/js/`.
+  > **Details**: Ensure `views/` is ready for Twig `.twig` files. Use `includes/` for all PHP class files.
+
+---
+
+## Phase 2: Security & Encryption Service
+
+- [ ] **Implement Encryption Service**
+  Task ID: phase-2-security-01
+  > **Implementation**: Create `includes/Services/Encryption_Service.php`.
+  > **Details**: Implement methods for `encrypt($data)` and `decrypt($data)`. Use `defuse/php-encryption`. Handle key generation and storage (e.g., in a secure option or constant). Follow WP naming for the file and class.
+
+---
+
+## Phase 3: Administrative UI (Twig)
+
+- [ ] **Bootstrap Twig Template Engine**
+  Task ID: phase-3-ui-01
+  > **Implementation**: Create `includes/Services/Template_Engine.php`.
+  > **Details**: Initialize Twig `FilesystemLoader` pointing to the `views/` directory. Create a wrapper method `render($template, $data)` for the plugin to use.
+
+- [ ] **Register Settings Page & Fields**
+  Task ID: phase-3-ui-02
+  > **Implementation**: Create `includes/Admin/Settings_Page.php`.
+  > **Details**: Use `add_options_page()` to add a subpage under "Settings". Use the Settings API (`register_setting`, `add_settings_section`, etc.) to define fields for the Groq API Key and future settings.
+
+- [ ] **Create Settings View (Twig)**
+  Task ID: phase-3-ui-03
+  > **Implementation**: Create `views/admin/settings.twig`.
+  > **Details**: Build a clean, minimalistic WP-style settings screen. Include the API Key input (masked/encrypted) and a "Test Connection" button.
+
+- [ ] **Implement Test Connection Handler**
+  Task ID: phase-3-ui-04
+  > **Implementation**: Add an AJAX handler in `includes/Admin/Settings_Page.php`.
+  > **Details**: When the button is clicked, decrypt the key, ping Groq API, and return a JSON success/error response to the settings page.
+
+---
+
+## Phase 4: Groq API Service
+
+- [ ] **Implement Groq Client Service**
+  Task ID: phase-4-api-01
+  > **Implementation**: Create `includes/Services/Groq_Service.php`.
+  > **Details**: Use `wp_remote_post()` with the `Authorization` bearer token over HTTPS. Implement `generate_description($image_path)` which calls Llama Scout and returns keywords.
+
+---
+
+## Phase 5: Image Renaming Logic
+
+- [ ] **Hook into Upload Process**
+  Task ID: phase-5-logic-01
+  > **Implementation**: Create `includes/Hooks/Image_Uploader.php`.
+  > **Details**: Use the `wp_handle_upload_prefilter` hook to intercept the filename before it's saved.
+
+- [ ] **Implement Sanitization and Renaming Utility**
+  Task ID: phase-5-logic-02
+  > **Implementation**: Create `includes/Utils/File_Sanitizer.php`.
+  > **Details**: Implement the cleaning logic: lowercase, alphanumeric + dashes, spaces to dashes.
+
+- [ ] **Integrate AI Renaming Workflow**
+  Task ID: phase-5-logic-03
+  > **Implementation**: Update `includes/Hooks/Image_Uploader.php`.
+  > **Details**: Call `Groq_Service` to get keywords, sanitize them via `File_Sanitizer`, and return the new filename. Implement fallback logic (if API fails, use original name).
+
+---
+
+## Phase 6: Final Polish
+
+- [ ] **Add Admin Styling**
+  Task ID: phase-6-polish-01
+  > **Implementation**: Create `assets/css/admin.css` and enqueue it.
+  > **Details**: Ensure the settings page matches the WordPress 6.x "minimalistic" dashboard aesthetic.
+
+- [ ] **Final Verification and README Update**
+  Task ID: phase-6-polish-02
+  > **Implementation**: Run `composer dump-autoload -o`. Update `README.md` with usage instructions.
+  > **Details**: Verify all tasks against PRD requirements.
+
+---
+
+*Generated by Clavix /clavix-plan*

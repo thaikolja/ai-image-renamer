@@ -1,0 +1,56 @@
+/**
+ * AI Image Renamer - Admin Styles
+ *
+ * Minimal styling to blend with WordPress dashboard.
+ */
+
+/* Settings page wrapper */
+.air-settings {
+  max-width: 800px;
+}
+
+/* Test connection result */
+#air_test_result {
+  margin-left: 10px;
+  font-weight: 500;
+}
+
+#air_test_result.success {
+  color: #00a32a;
+}
+
+#air_test_result.error {
+  color: #d63638;
+}
+
+#air_test_result.testing {
+  color: #72777c;
+}
+
+/* Form table adjustments */
+.air-settings .form-table th {
+  width: 200px;
+}
+
+.air-settings .form-table td p.description {
+  margin-top: 4px;
+  color: #646970;
+}
+
+/* File type checkboxes inline */
+.air-settings .form-table td label {
+  display: inline-block;
+  margin-right: 15px;
+}
+
+/* Custom prompt textarea */
+.air-settings textarea.large-text {
+  width: 100%;
+  max-width: 500px;
+}
+
+/* API key field */
+.air-settings input.regular-text {
+  width: 100%;
+  max-width: 400px;
+}

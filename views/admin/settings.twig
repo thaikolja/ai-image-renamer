@@ -1,0 +1,10 @@
+{# Admin Settings Page Template #}
+<div class="wrap air-settings">
+    <h1>{{ __('AI Image Renamer Settings') }}</h1>
+
+    <form method="post" action="options.php">
+        {{ settings_fields(option_group) }}
+        {{ do_settings_sections(page_slug) }}
+        {{ submit_button(__('Save Settings')) }}
+    </form>
+</div>
