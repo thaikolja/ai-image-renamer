@@ -1,4 +1,22 @@
 <?php
+/*
+ * @name:           AI Image Renamer
+ * @wordpress       Uses AI to rename images during upload for SEO-friendly filenames.
+ * @author          Kolja Nolte <kolja.nolte@gmail.com>
+ * @copyright       2025-2026 (C) Kolja Nolte
+ * @see             https://docs.kolja-nolte.com/wp-ai-image-renamer/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Released under the GNU General Public License v2 or later.
+ * See: https://www.gnu.org/licenses/gpl-2.0.html
+ *
+ * @package AIR
+ * @license GPL-2.0-or-later
+ */
 
 /**
  * Groq API Service.
@@ -131,12 +149,12 @@ class Groq_Service {
 
 		// Make a simple models request to verify the key.
 		$response = \wp_safe_remote_get( 'https://api.groq.com/openai/v1/models', [
-			'timeout' => 15,
-			'headers' => [
-				'Authorization' => 'Bearer ' . $api_key,
-				'Content-Type'  => 'application/json',
-			],
-		] );
+				'timeout' => 15,
+				'headers' => [
+					'Authorization' => 'Bearer ' . $api_key,
+					'Content-Type'  => 'application/json',
+				],
+			] );
 
 		if ( \is_wp_error( $response ) ) {
 			return $response->get_error_message();
@@ -228,13 +246,13 @@ class Groq_Service {
 
 		// Make the API request.
 		$response = \wp_remote_post( self::API_ENDPOINT, [
-			'timeout' => 30,
-			'headers' => [
-				'Authorization' => 'Bearer ' . $api_key,
-				'Content-Type'  => 'application/json',
-			],
-			'body'    => \wp_json_encode( $payload ),
-		] );
+				'timeout' => 30,
+				'headers' => [
+					'Authorization' => 'Bearer ' . $api_key,
+					'Content-Type'  => 'application/json',
+				],
+				'body'    => \wp_json_encode( $payload ),
+			] );
 
 		if ( \is_wp_error( $response ) ) {
 			return false;

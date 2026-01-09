@@ -1,26 +1,56 @@
 {
-  "name": "thaikolja/ai-image-renamer",
-  "description": "WordPress plugin that automatically renames uploaded images using Groq's Vision API for SEO-friendly filenames.",
-  "type": "wordpress-plugin",
-  "license": "GPL-2.0-or-later",
-  "authors": [
+  "name":         "thaikolja/ai-image-renamer",
+  "description":  "WordPress plugin that automatically renames uploaded images using Groq's Vision API for SEO-friendly filenames.",
+  "type":         "wordpress-plugin",
+  "license":      "GPL-2.0-or-later",
+  "authors":      [
     {
-      "name": "Kolja",
-      "email": "kolja@example.com"
+      "name":     "Kolja Nolte",
+      "email":    "kolja.nolte@gmail.com",
+      "homepage": "https://www.kolja-nolte.com",
+      "role":     "Developer"
     }
   ],
-  "require": {
-    "php": ">=8.2",
-    "twig/twig": "^3.0",
+  "keywords":     [
+    "wordpress",
+    "plugin",
+    "groq",
+    "vision-api",
+    "image-renaming"
+  ],
+  "homepage":     "https://github.com/thaikolja/ai-image-renamer",
+  "support":      {
+    "issues": "https://github.com/thaikolja/ai-image-renamer/issues"
+  },
+  "require":      {
+    "php":                   ">=8.2",
+    "twig/twig":             "^3.0",
     "defuse/php-encryption": "^2.0"
   },
-  "autoload": {
+  "require-dev":  {
+    "phpstan/phpstan":           "^1.11",
+    "squizlabs/php_codesniffer": "^3.10",
+    "wp-coding-standards/wpcs":  "^3.0"
+  },
+  "autoload":     {
     "psr-4": {
       "AIR\\": "includes/"
     }
   },
-  "config": {
+  "scripts":      {
+    "lint":    "php -l ai-image-renamer.php && find includes -name '*.php' -print0 | xargs -0 -n1 php -l",
+    "phpstan": "phpstan analyse --no-progress",
+    "phpcs":   "phpcs . --standard=vendor/wp-coding-standards/wpcs/WordPress",
+    "phpcbf":  "phpcbf . --standard=vendor/wp-coding-standards/wpcs/WordPress"
+  },
+  "suggest":      {
+    "wp-cli/wp-cli": "Useful for local development and automation."
+  },
+  "config":       {
     "optimize-autoloader": true,
-    "sort-packages": true
+    "sort-packages":       true,
+    "allow-plugins":       {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   }
 }

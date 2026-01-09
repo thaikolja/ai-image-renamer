@@ -1,4 +1,22 @@
 <?php
+/*
+ * @name:           AI Image Renamer
+ * @wordpress       Uses AI to rename images during upload for SEO-friendly filenames.
+ * @author          Kolja Nolte <kolja.nolte@gmail.com>
+ * @copyright       2025-2026 (C) Kolja Nolte
+ * @see             https://docs.kolja-nolte.com/wp-ai-image-renamer/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Released under the GNU General Public License v2 or later.
+ * See: https://www.gnu.org/licenses/gpl-2.0.html
+ *
+ * @package AIR
+ * @license GPL-2.0-or-later
+ */
 
 /**
  * Admin Settings Page.
@@ -123,7 +141,7 @@ class Settings_Page {
                                     type="button"
                                     class="handlediv"
                                     aria-expanded="true">
-                                <span
+								<span
                                         class="toggle-indicator"
                                         aria-hidden="true"></span>
                             </button>
@@ -141,7 +159,7 @@ class Settings_Page {
                                     type="button"
                                     class="handlediv"
                                     aria-expanded="true">
-                                <span
+								<span
                                         class="toggle-indicator"
                                         aria-hidden="true"></span>
                             </button>
@@ -160,25 +178,25 @@ class Settings_Page {
 		// Enable/Disable toggle.
 		\add_settings_field( 'enabled', '<label for="air_enabled"><span class="dashicons dashicons-lightbulb"></span> ' . \__( 'Enable Auto-Rename', 'ai-image-renamer' ) . '</label>', [
 			$this,
-			'render_enabled_field'
+			'render_enabled_field',
 		], self::PAGE_SLUG, 'air_main_section' );
 
 		// API Key field.
 		\add_settings_field( 'api_key', '<label for="air_api_key"><span class="dashicons dashicons-admin-network"></span> ' . \__( 'Groq API Key', 'ai-image-renamer' ) . '</label>', [
 			$this,
-			'render_api_key_field'
+			'render_api_key_field',
 		], self::PAGE_SLUG, 'air_main_section' );
 
 		// Model Selection.
 		\add_settings_field( 'model', '<label for="air_model"><span class="dashicons dashicons-products"></span> ' . \__( 'AI Model', 'ai-image-renamer' ) . '</label>', [
 			$this,
-			'render_model_field'
+			'render_model_field',
 		], self::PAGE_SLUG, 'air_main_section' );
 
 		// Alt text toggle.
 		\add_settings_field( 'set_alt_text', '<label for="air_set_alt_text"><span class="dashicons dashicons-text"></span> ' . \__( 'Use as <code>alt=""</code>', 'ai-image-renamer' ) . '</label>', [
 			$this,
-			'render_alt_text_field'
+			'render_alt_text_field',
 		], self::PAGE_SLUG, 'air_main_section' );
 
 		// File types section.
@@ -188,7 +206,7 @@ class Settings_Page {
 
 		\add_settings_field( 'file_types', '<span class="dashicons dashicons-images-alt2"></span> ' . \__( 'Allowed Types', 'ai-image-renamer' ), [
 			$this,
-			'render_file_types_field'
+			'render_file_types_field',
 		], self::PAGE_SLUG, 'air_file_types_section' );
 
 		// Advanced section.
@@ -198,12 +216,12 @@ class Settings_Page {
 
 		\add_settings_field( 'custom_prompt', '<label for="air_custom_prompt"><span class="dashicons dashicons-editor-quote"></span> ' . \__( 'Custom Prompt', 'ai-image-renamer' ) . '</label>', [
 			$this,
-			'render_custom_prompt_field'
+			'render_custom_prompt_field',
 		], self::PAGE_SLUG, 'air_advanced_section' );
 
 		\add_settings_field( 'max_keywords', '<label for="air_max_keywords"><span class="dashicons dashicons-editor-ol"></span> ' . \__( 'Max Keywords', 'ai-image-renamer' ) . '</label>', [
 			$this,
-			'render_max_keywords_field'
+			'render_max_keywords_field',
 		], self::PAGE_SLUG, 'air_advanced_section' );
 	}
 
@@ -284,7 +302,6 @@ class Settings_Page {
 		// Note: The UI says "Add to alt Attribute", key is set_alt_text
 		$sanitized[ 'set_alt_text' ] = isset( $input[ 'set_alt_text' ] ) && '1' === $input[ 'set_alt_text' ];
 
-
 		// Model selection.
 		if ( isset( $input[ 'model' ] ) ) {
 			$valid_models = [
@@ -319,10 +336,11 @@ class Settings_Page {
 		$saved = ! empty( $encrypted_key );
 		?>
         <div class="air-api-key-container">
-            <label for="air_api_key" class="screen-reader-text">
+            <label
+                    for="air_api_key"
+                    class="screen-reader-text">
 				<?php \esc_html_e( 'Groq API Key', 'ai-image-renamer' ); ?>
-            </label>
-            <input
+            </label> <input
                     type="text"
                     id="air_api_key"
                     name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[api_key]"
@@ -339,7 +357,11 @@ class Settings_Page {
             </button>
         </div>
         <p class="description">
-			<?php if ( $saved ) : ?><?php \esc_html_e( 'Your Groq API key has been encrypted and saved', 'ai-image-renamer' ); ?><?php else : ?><?php \esc_html_e( 'Enter your Groq API key.', 'ai-image-renamer' ); ?><?php endif; ?>
+			<?php
+			if ( $saved ) :
+				?><?php \esc_html_e( 'Your Groq API key has been encrypted and saved', 'ai-image-renamer' ); ?><?php
+			else :
+				?><?php \esc_html_e( 'Enter your Groq API key.', 'ai-image-renamer' ); ?><?php endif; ?>
         </p>
         <p class="air-action-buttons">
             <a
@@ -440,10 +462,11 @@ class Settings_Page {
 		$custom_prompt = $options[ 'custom_prompt' ] ?? '';
 		$default       = 'View this image and describe it in no more than 5 keywords. Only return the output.';
 		?>
-        <label for="air_custom_prompt" class="screen-reader-text">
+        <label
+                for="air_custom_prompt"
+                class="screen-reader-text">
 			<?php \esc_html_e( 'Custom Prompt', 'ai-image-renamer' ); ?>
-        </label>
-        <textarea
+        </label>        <textarea
                 id="air_custom_prompt"
                 name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[custom_prompt]"
                 rows="3"
@@ -464,10 +487,11 @@ class Settings_Page {
 		$options      = \get_option( self::OPTION_NAME, $this->get_defaults() );
 		$max_keywords = $options[ 'max_keywords' ] ?? 5;
 		?>
-        <label for="air_max_keywords" class="screen-reader-text">
+        <label
+                for="air_max_keywords"
+                class="screen-reader-text">
 			<?php \esc_html_e( 'Maximum Keywords', 'ai-image-renamer' ); ?>
-        </label>
-        <select
+        </label>        <select
                 name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[max_keywords]"
                 id="air_max_keywords">
 			<?php for ( $i = 1; $i <= 10; $i ++ ) : ?>
@@ -509,15 +533,16 @@ class Settings_Page {
 				?>
                 <label class="air-model-card <?php echo $is_checked ? 'selected' : ''; ?>"> <input
                             type="radio"
-							<?php if ( $is_first ) : ?>id="air_model"<?php endif; ?>
+						<?php
+						if ( $is_first ) :
+							?>
+                            id="air_model"<?php endif; ?>
                             name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[model]"
                             value="<?php echo \esc_attr( $id ); ?>"
-						<?php \checked( $current, $id ); ?> />
-                    <span class="air-model-content">
-                        <strong><?php echo \esc_html( $info[ 'label' ] ); ?></strong>
-                        <span class="air-model-description"><?php echo \esc_html( $info[ 'desc' ] ); ?></span>
-                    </span>
-                </label>
+						<?php \checked( $current, $id ); ?> /> <span class="air-model-content">
+						<strong><?php echo \esc_html( $info[ 'label' ] ); ?></strong>
+						<span class="air-model-description"><?php echo \esc_html( $info[ 'desc' ] ); ?></span>
+					</span> </label>
 				<?php
 				$is_first = false;
 			endforeach;
@@ -611,6 +636,7 @@ class Settings_Page {
 			} elseif ( empty( $api_key ) ) {
 				// Explicitly empty key provided.
 				\wp_send_json_error( [ 'message' => \__( 'No API key provided.', 'ai-image-renamer' ) ] );
+
 				return;
 			}
 		}

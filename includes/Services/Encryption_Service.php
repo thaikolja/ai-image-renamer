@@ -1,4 +1,22 @@
 <?php
+/*
+ * @name:           AI Image Renamer
+ * @wordpress       Uses AI to rename images during upload for SEO-friendly filenames.
+ * @author          Kolja Nolte <kolja.nolte@gmail.com>
+ * @copyright       2025-2026 (C) Kolja Nolte
+ * @see             https://docs.kolja-nolte.com/wp-ai-image-renamer/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Released under the GNU General Public License v2 or later.
+ * See: https://www.gnu.org/licenses/gpl-2.0.html
+ *
+ * @package AIR
+ * @license GPL-2.0-or-later
+ */
 
 /**
  * Encryption Service for secure API key storage.
@@ -6,7 +24,7 @@
  * @package AIR\Services
  */
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace AIR\Services;
 
@@ -20,8 +38,8 @@ use Exception;
  *
  * Handles encryption and decryption of sensitive data using defuse/php-encryption.
  */
-class Encryption_Service
-{
+class Encryption_Service {
+
 
 	/**
 	 * Option name for storing the encryption key.
@@ -42,8 +60,7 @@ class Encryption_Service
 	 *
 	 * Initializes or loads the encryption key.
 	 */
-	public function __construct()
-	{
+	public function __construct() {
 		$this->key = $this->get_or_create_key();
 	}
 
@@ -55,29 +72,28 @@ class Encryption_Service
 	 *
 	 * @return Key|null The encryption key or null on failure.
 	 */
-	private function get_or_create_key(): ?Key
-	{
+	private function get_or_create_key(): ?Key {
 		// Check if key is defined in wp-config.php (recommended).
-		if (\defined('AIR_ENCRYPTION_KEY') && ! empty(AIR_ENCRYPTION_KEY)) {
+		if ( \defined( 'AIR_ENCRYPTION_KEY' ) && ! empty( AIR_ENCRYPTION_KEY ) ) {
 			try {
-				return Key::loadFromAsciiSafeString(AIR_ENCRYPTION_KEY);
-			} catch (Exception $e) {
+				return Key::loadFromAsciiSafeString( AIR_ENCRYPTION_KEY );
+			} catch ( Exception $e ) {
 				// Invalid key format, fall through to option-based key.
-				\error_log('AI Image Renamer: Invalid encryption key constant. ' . $e->getMessage());
+				\error_log( 'AI Image Renamer: Invalid encryption key constant. ' . $e->getMessage() );
 			}
 		}
 
 		// Check if key exists in options.
-		$stored_key = \get_option(self::KEY_OPTION_NAME);
+		$stored_key = \get_option( self::KEY_OPTION_NAME );
 
-		if ($stored_key) {
+		if ( $stored_key ) {
 			try {
-				return Key::loadFromAsciiSafeString($stored_key);
-			} catch (Exception) {
+				return Key::loadFromAsciiSafeString( $stored_key );
+			} catch ( Exception ) {
 				// Corrupted key, regenerate.
-				\error_log('AI Image Renamer: Corrupted encryption key option. Regenerating.');
+				\error_log( 'AI Image Renamer: Corrupted encryption key option. Regenerating.' );
 
-				\delete_option(self::KEY_OPTION_NAME);
+				\delete_option( self::KEY_OPTION_NAME );
 			}
 		}
 
@@ -87,11 +103,11 @@ class Encryption_Service
 			$key_string = $new_key->saveToAsciiSafeString();
 
 			// Store in options (autoloaded for performance).
-			\update_option(self::KEY_OPTION_NAME, $key_string, false);
+			\update_option( self::KEY_OPTION_NAME, $key_string, false );
 
 			return $new_key;
-		} catch (Exception $e) {
-			\error_log('AI Image Renamer: Failed to create encryption key. ' . $e->getMessage());
+		} catch ( Exception $e ) {
+			\error_log( 'AI Image Renamer: Failed to create encryption key. ' . $e->getMessage() );
 
 			return null;
 		}
@@ -104,16 +120,15 @@ class Encryption_Service
 	 *
 	 * @return string|false The encrypted ciphertext or false on failure.
 	 */
-	final public function encrypt(string $plaintext): string|false
-	{
-		if (null === $this->key || empty($plaintext)) {
+	final public function encrypt( string $plaintext ): string|false {
+		if ( null === $this->key || empty( $plaintext ) ) {
 			return false;
 		}
 
 		try {
-			return Crypto::encrypt($plaintext, $this->key);
-		} catch (Exception $e) {
-			\error_log('AI Image Renamer: Encryption failed. ' . $e->getMessage());
+			return Crypto::encrypt( $plaintext, $this->key );
+		} catch ( Exception $e ) {
+			\error_log( 'AI Image Renamer: Encryption failed. ' . $e->getMessage() );
 
 			return false;
 		}
@@ -126,20 +141,19 @@ class Encryption_Service
 	 *
 	 * @return string|false The decrypted plaintext or false on failure.
 	 */
-	public function decrypt(string $ciphertext): string|false
-	{
-		if (null === $this->key || empty($ciphertext)) {
+	public function decrypt( string $ciphertext ): string|false {
+		if ( null === $this->key || empty( $ciphertext ) ) {
 			return false;
 		}
 
 		try {
-			return Crypto::decrypt($ciphertext, $this->key);
-		} catch (WrongKeyOrModifiedCiphertextException $e) {
-			\error_log('AI Image Renamer: Decryption failed (wrong key or tampered data). ' . $e->getMessage());
+			return Crypto::decrypt( $ciphertext, $this->key );
+		} catch ( WrongKeyOrModifiedCiphertextException $e ) {
+			\error_log( 'AI Image Renamer: Decryption failed (wrong key or tampered data). ' . $e->getMessage() );
 
 			return false;
-		} catch (Exception $e) {
-			\error_log('AI Image Renamer: Decryption failed. ' . $e->getMessage());
+		} catch ( Exception $e ) {
+			\error_log( 'AI Image Renamer: Decryption failed. ' . $e->getMessage() );
 
 			return false;
 		}
@@ -150,8 +164,7 @@ class Encryption_Service
 	 *
 	 * @return bool True if encryption is available.
 	 */
-	public function is_available(): bool
-	{
+	public function is_available(): bool {
 		return null !== $this->key;
 	}
 }
