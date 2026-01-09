@@ -116,7 +116,9 @@ class Settings_Page {
 		\add_settings_section( 'air_main_section', '<span class="dashicons dashicons-admin-settings"></span> ' . \__( 'API Configuration', 'ai-image-renamer' ), function () {
 			?>
             <div class="air-settings-hero">
-                <div class="air-hero-column postbox">
+                <div
+                        class="air-hero-column postbox"
+                        style="flex: 0 0 33.33%; max-width: 33.33%;">
                     <div class="postbox-header">
                         <div class="handle-actions">
                             <button
@@ -134,7 +136,9 @@ class Settings_Page {
                         <p><?php \esc_html_e( 'The plugin uses the powerful Groq Vision API to analyze your uploaded images. It extracts descriptive keywords and automatically renames your files for better SEO and accessibility.', 'ai-image-renamer' ); ?></p>
                     </div>
                 </div>
-                <div class="air-hero-column postbox">
+                <div
+                        class="air-hero-column postbox pro"
+                        style="flex: 0 0 66.67%; max-width: 66.67%;">
                     <div class="postbox-header">
                         <div class="handle-actions">
                             <button
@@ -150,23 +154,6 @@ class Settings_Page {
                     </div>
                     <div class="inside">
                         <p><?php \esc_html_e( 'Yes! This plugin leverages Groq\'s generous free tier. Simply get your free API key from the Groq console and start renaming your images without any costs.', 'ai-image-renamer' ); ?></p>
-                    </div>
-                </div>
-                <div class="air-hero-column postbox pro">
-                    <div class="postbox-header">
-                        <div class="handle-actions">
-                            <button
-                                    type="button"
-                                    class="handlediv"
-                                    aria-expanded="true">
-                                <span
-                                        class="toggle-indicator"
-                                        aria-hidden="true"></span>
-                            </button>
-                        </div>
-                        <h2 class="hndle ui-sortable-handle"><span><span class="dashicons dashicons-star-filled"></span> <?php \esc_html_e( 'AI Image Renamer Pro', 'ai-image-renamer' ); ?></span></h2>
-                    </div>
-                    <div class="inside">
                         <p><?php \esc_html_e( 'Unlock advanced features like bulk renaming, custom naming patterns, and support for 20+ languages. Coming soon to take your media management to the next level.', 'ai-image-renamer' ); ?></p>
                     </div>
                 </div>
@@ -354,20 +341,26 @@ class Settings_Page {
         </div>
 
         <p class="description">
-			<?php if ( $saved ) : ?><?php \esc_html_e( 'Your Groq API key has been encrypted and saved.', 'ai-image-renamer' ); ?><?php else : ?><?php \esc_html_e( 'Enter your Groq API key.', 'ai-image-renamer' ); ?><?php endif; ?>
+			<?php if ( $saved ) : ?><?php \esc_html_e( 'Your Groq API key has been encrypted and saved', 'ai-image-renamer' ); ?><?php else : ?><?php \esc_html_e( 'Enter your Groq API key.', 'ai-image-renamer' ); ?><?php endif; ?>
         </p>
-        <p>
+        <p style="display: flex; align-items: center;">
             <a
                     href="https://console.groq.com/keys"
                     target="_blank"
                     class="button button-primary"
-                    style="margin-right: 5px;">
-				<?php \esc_html_e( 'Get Free API Key', 'ai-image-renamer' ); ?>
+                    style="margin-right: 12px; display: inline-flex; align-items: center;"> <span
+                        class="dashicons dashicons-admin-network"
+                        style="margin-top: 0;"></span>
+				<?php \esc_html_e( 'Get Free Groq API Key', 'ai-image-renamer' ); ?>
             </a>
             <button
                     type="button"
                     id="air_test_connection"
-                    class="button button-secondary">
+                    class="button button-secondary"
+                    style="display: inline-flex; align-items: center;">
+                <span
+                        class="dashicons dashicons-update"
+                        style="margin-top: 0;"></span>
 				<?php \esc_html_e( 'Test Connection', 'ai-image-renamer' ); ?>
             </button>
             <span id="air_test_result"></span>

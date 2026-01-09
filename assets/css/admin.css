@@ -9,7 +9,6 @@
   max-width: 800px;
 }
 
-
 /* Dashicon alignment in titles */
 .air-settings h2 .dashicons,
 .air-settings-hero .dashicons,
@@ -55,8 +54,14 @@
 }
 
 .air-settings .form-table td p.description {
-  margin-top: 4px;
-  color:      #646970;
+  color:  #646970;
+  margin: 12px 0;
+}
+
+.button {
+  .dashicons {
+    margin-right: 5px; display: inline-flex; align-items: center; gap: 5px;
+  }
 }
 
 /* File type checkboxes inline */
