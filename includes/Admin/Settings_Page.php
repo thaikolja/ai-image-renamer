@@ -92,6 +92,7 @@ class Settings_Page
         add_action('admin_init', array($this, 'register_settings'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_assets'));
         add_action('wp_ajax_air_test_connection', array($this, 'ajax_test_connection'));
+        add_action('wp_ajax_air_delete_api_key', array($this, 'ajax_delete_api_key'));
     }
 
     /**
@@ -142,6 +143,15 @@ class Settings_Page
             'api_key',
             __('Groq API Key', 'ai-image-renamer'),
             array($this, 'render_api_key_field'),
+            self::PAGE_SLUG,
+            'air_main_section'
+        );
+
+        // Model Selection.
+        add_settings_field(
+            'model',
+            __('AI Model', 'ai-image-renamer'),
+            array($this, 'render_model_field'),
             self::PAGE_SLUG,
             'air_main_section'
         );
@@ -213,6 +223,7 @@ class Settings_Page
             'file_types'    => array('image/jpeg', 'image/png', 'image/webp', 'image/gif'),
             'custom_prompt' => '',
             'max_keywords'  => 5,
+            'model'         => 'meta-llama/llama-4-maverick-17b-128e-instruct',
         );
     }
 
@@ -228,16 +239,15 @@ class Settings_Page
         $sanitized = $this->get_defaults();
         $old       = get_option(self::OPTION_NAME, $this->get_defaults());
 
-        // Handle API key encryption.
-        // Always preserve the old API key first.
-        $sanitized['api_key'] = $old['api_key'] ?? '';
+        // Helper to decrypt if needed, though we deal with input here.
+        // We expect plaintext from the admin form since we display plaintext now.
 
-        // Only update the API key if a new one was provided.
-        if (isset($input['api_key']) && ! empty(trim($input['api_key']))) {
+        if (isset($input['api_key'])) {
             $plaintext = trim($input['api_key']);
 
-            // If the key starts with 'gsk_', it's a new plaintext key.
-            if (str_starts_with($plaintext, 'gsk_')) {
+            if (empty($plaintext)) {
+                $sanitized['api_key'] = '';
+            } elseif (str_starts_with($plaintext, 'gsk_')) {
                 $encrypted = $this->encryption_service->encrypt($plaintext);
                 if (false !== $encrypted) {
                     $sanitized['api_key'] = $encrypted;
@@ -248,9 +258,20 @@ class Settings_Page
                         __('Failed to encrypt API key. Please try again.', 'ai-image-renamer'),
                         'error'
                     );
+                    // Keep old key if encryption failed.
+                    $sanitized['api_key'] = $old['api_key'] ?? '';
                 }
+            } else {
+                // Invalid format, maybe keep old or show error.
+                // For now, let's assume if it doesn't start with gsk_, it's invalid.
+                add_settings_error(
+                    self::OPTION_NAME,
+                    'invalid_key',
+                    __('Invalid API Key format. Must start with "gsk_".', 'ai-image-renamer'),
+                    'error'
+                );
+                $sanitized['api_key'] = $old['api_key'] ?? '';
             }
-            // If not starting with gsk_, keep the old key (already set above).
         }
 
         // Enabled toggle.
@@ -273,6 +294,17 @@ class Settings_Page
             $sanitized['max_keywords'] = max(1, min(10, $sanitized['max_keywords']));
         }
 
+        // Model selection.
+        if (isset($input['model'])) {
+            $valid_models = array(
+                'meta-llama/llama-4-maverick-17b-128e-instruct',
+                'meta-llama/llama-4-scout-17b-16e-instruct',
+            );
+            if (in_array($input['model'], $valid_models, true)) {
+                $sanitized['model'] = $input['model'];
+            }
+        }
+
         return $sanitized;
     }
 
@@ -284,28 +316,39 @@ class Settings_Page
     public function render_api_key_field(): void
     {
         $options = get_option(self::OPTION_NAME, $this->get_defaults());
-        $api_key = $options['api_key'] ?? '';
+        $encrypted_key = $options['api_key'] ?? '';
+        $decrypted_key = '';
 
-        // Show masked encrypted key or empty input.
-        $display_value = '';
-        if (! empty($api_key)) {
-            // Show first 10 characters of encrypted key to indicate it's set.
-            $display_value = substr($api_key, 0, 20) . '...';
+        if (! empty($encrypted_key)) {
+            $decrypted_key = $this->encryption_service->decrypt($encrypted_key);
+            if (false === $decrypted_key) {
+                $decrypted_key = '';
+            }
         }
 
+        $saved = ! empty($encrypted_key);
 ?>
-        <input type="text"
-            id="air_api_key"
-            name="<?php echo esc_attr(self::OPTION_NAME); ?>[api_key]"
-            value=""
-            class="regular-text"
-            placeholder="<?php echo esc_attr($display_value ? $display_value : 'gsk_...'); ?>"
-            autocomplete="off" />
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <input type="text"
+                id="air_api_key"
+                name="<?php echo esc_attr(self::OPTION_NAME); ?>[api_key]"
+                value="<?php echo esc_attr($decrypted_key); ?>"
+                class="regular-text"
+                placeholder="gsk_..."
+                autocomplete="off" />
+
+            <?php if ($saved) : ?>
+                <button type="button" id="air_delete_api_key" class="button button-link-delete">
+                    <?php esc_html_e('Delete Key', 'ai-image-renamer'); ?>
+                </button>
+            <?php endif; ?>
+        </div>
+
         <p class="description">
-            <?php if (! empty($api_key)) : ?>
-                <?php esc_html_e('API key is set (encrypted). Enter a new key to replace it.', 'ai-image-renamer'); ?>
+            <?php if ($saved) : ?>
+                <?php esc_html_e('API key is saved. Clear the field to delete it.', 'ai-image-renamer'); ?>
             <?php else : ?>
-                <?php esc_html_e('Enter your Groq API key. It will be encrypted before storage.', 'ai-image-renamer'); ?>
+                <?php esc_html_e('Enter your Groq API key.', 'ai-image-renamer'); ?>
             <?php endif; ?>
         </p>
         <p>
@@ -410,6 +453,45 @@ class Settings_Page
         <p class="description">
             <?php esc_html_e('Maximum number of keywords to generate for filenames.', 'ai-image-renamer'); ?>
         </p>
+    <?php
+    }
+
+    /**
+     * Render the model selection field.
+     *
+     * @return void
+     */
+    public function render_model_field(): void
+    {
+        $options = get_option(self::OPTION_NAME, $this->get_defaults());
+        $current = $options['model'] ?? 'meta-llama/llama-4-maverick-17b-128e-instruct';
+
+        $models = array(
+            'meta-llama/llama-4-maverick-17b-128e-instruct' => array(
+                'label' => 'Maverick',
+                'desc'  => 'High-performance model for detailed and creative image analysis.',
+            ),
+            'meta-llama/llama-4-scout-17b-16e-instruct'    => array(
+                'label' => 'Scout',
+                'desc'  => 'Lightweight model optimized for speed and efficiency.',
+            ),
+        );
+    ?>
+        <fieldset>
+            <?php foreach ($models as $id => $info) : ?>
+                <label style="display: block; margin-bottom: 8px;">
+                    <input type="radio"
+                        name="<?php echo esc_attr(self::OPTION_NAME); ?>[model]"
+                        value="<?php echo esc_attr($id); ?>"
+                        <?php checked($current, $id); ?> />
+                    <strong><?php echo esc_html($info['label']); ?></strong>
+                    <br>
+                    <span class="description" style="margin-left: 25px; display: block;">
+                        <?php echo esc_html($info['desc']); ?>
+                    </span>
+                </label>
+            <?php endforeach; ?>
+        </fieldset>
 <?php
     }
 
@@ -487,12 +569,50 @@ class Settings_Page
             wp_send_json_error(array('message' => __('Permission denied.', 'ai-image-renamer')));
         }
 
-        $result = $this->groq_service->test_connection();
+        // Check if a specific key was provided in POST.
+        // We use isset() because we want to detect empty strings explicitly sent by JS.
+        if (isset($_POST['api_key'])) {
+            $api_key = sanitize_text_field(wp_unslash($_POST['api_key']));
+
+            // If the key is masked (contains bullets), treat it as null (use saved).
+            // (Note: With new cleartext logic, user sees key, so they shouldn't be sending bullets unless they manually typed them).
+            // But we keep this for safety if logic reverts.
+            if (str_contains($api_key, '•')) {
+                $api_key = null;
+            } elseif (empty($api_key)) {
+                // Explicitly empty key provided.
+                wp_send_json_error(array('message' => __('No API key provided.', 'ai-image-renamer')));
+            }
+        } else {
+            $api_key = null; // Not provided, use saved.
+        }
+
+        $result = $this->groq_service->test_connection($api_key);
 
         if (true === $result) {
             wp_send_json_success(array('message' => __('Connection successful!', 'ai-image-renamer')));
         } else {
             wp_send_json_error(array('message' => $result));
         }
+    }
+
+    /**
+     * Handle API key deletion.
+     *
+     * @return void
+     */
+    public function ajax_delete_api_key(): void
+    {
+        check_ajax_referer('air_test_connection', 'nonce'); // Reusing nonce for convenience
+
+        if (! current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('Permission denied.', 'ai-image-renamer')));
+        }
+
+        $options = get_option(self::OPTION_NAME, $this->get_defaults());
+        $options['api_key'] = '';
+        update_option(self::OPTION_NAME, $options);
+
+        wp_send_json_success(array('message' => __('API key deleted.', 'ai-image-renamer')));
     }
 }

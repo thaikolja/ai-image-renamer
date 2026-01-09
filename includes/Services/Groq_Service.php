@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace AIR\Services;
 
+use AIR\Services\Encryption_Service;
+
 /**
  * Class Groq_Service
  *
@@ -108,11 +110,6 @@ class Groq_Service
         // Check if API key exists.
         $has_key = ! empty($options['api_key']);
 
-        // Debug logging.
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('AI Image Renamer: is_enabled check - enabled=' . ($enabled ? 'true' : 'false') . ', has_key=' . ($has_key ? 'true' : 'false'));
-        }
-
         return $enabled && $has_key;
     }
 
@@ -134,13 +131,17 @@ class Groq_Service
     /**
      * Test the API connection.
      *
+     * @param string|null $api_key Optional API key to test. If null, uses the saved key.
+     *
      * @return true|string True on success, error message on failure.
      */
-    public function test_connection(): true|string
+    public function test_connection(?string $api_key = null): true|string
     {
-        $api_key = $this->get_api_key();
+        if (empty($api_key)) {
+            $api_key = $this->get_api_key();
+        }
 
-        if (false === $api_key) {
+        if (false === $api_key || empty($api_key)) {
             return __('No API key configured.', 'ai-image-renamer');
         }
 
@@ -181,6 +182,17 @@ class Groq_Service
     }
 
     /**
+     * Get the selected model ID.
+     *
+     * @return string
+     */
+    private function get_model(): string
+    {
+        $options = get_option('air_options', array());
+        return $options['model'] ?? self::DEFAULT_MODEL;
+    }
+
+    /**
      * Generate a description for an image.
      *
      * @param string $image_path Absolute path to the image file.
@@ -189,41 +201,33 @@ class Groq_Service
      */
     public function generate_description(string $image_path): string|false
     {
-        error_log('AI Image Renamer: generate_description called for: ' . $image_path);
-
         if (! $this->is_enabled()) {
-            error_log('AI Image Renamer: Service disabled in generate_description check.');
             return false;
         }
 
         $api_key = $this->get_api_key();
 
         if (false === $api_key) {
-            error_log('AI Image Renamer: API Key retrieval failed in generate_description.');
             return false;
         }
 
         // Read and encode the image.
         if (! file_exists($image_path) || ! is_readable($image_path)) {
-            error_log('AI Image Renamer: Image file not found or not readable: ' . $image_path);
             return false;
         }
 
         $image_data = file_get_contents($image_path); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
         if (false === $image_data) {
-            error_log('AI Image Renamer: Failed to read image content.');
             return false;
         }
 
         $mime_type    = mime_content_type($image_path);
-        error_log('AI Image Renamer: Detected mime type: ' . $mime_type);
-
         $base64_image = base64_encode($image_data); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
         $data_url     = sprintf('data:%s;base64,%s', $mime_type, $base64_image);
 
         // Build the request payload.
         $payload = array(
-            'model'      => self::DEFAULT_MODEL,
+            'model'      => $this->get_model(),
             'messages'   => array(
                 array(
                     'role'    => 'user',
@@ -244,8 +248,6 @@ class Groq_Service
             'max_tokens' => 100,
         );
 
-        error_log('AI Image Renamer: Sending request to Groq API (' . self::API_ENDPOINT . ')...');
-
         // Make the API request.
         $response = wp_remote_post(
             self::API_ENDPOINT,
@@ -260,30 +262,22 @@ class Groq_Service
         );
 
         if (is_wp_error($response)) {
-            error_log('AI Image Renamer: API request failed: ' . $response->get_error_message());
             return false;
         }
 
         $code = wp_remote_retrieve_response_code($response);
         $body = wp_remote_retrieve_body($response);
 
-        error_log('AI Image Renamer: API Response Code: ' . $code);
-
         if (200 !== $code) {
-            error_log('AI Image Renamer: API returned HTTP ' . $code . ': ' . $body);
             return false;
         }
 
         $decoded = json_decode($body, true);
 
         if (! isset($decoded['choices'][0]['message']['content'])) {
-            error_log('AI Image Renamer: Unexpected API response format: ' . $body);
             return false;
         }
 
-        $content = trim($decoded['choices'][0]['message']['content']);
-        error_log('AI Image Renamer: API Response Content: ' . $content);
-
-        return $content;
+        return trim($decoded['choices'][0]['message']['content']);
     }
 }

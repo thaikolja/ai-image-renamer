@@ -58,69 +58,41 @@ class Image_Uploader
      */
     public function process_upload(array $file): array
     {
-        // ALWAYS log for debugging.
-        error_log('AI Image Renamer: ========== UPLOAD START ==========');
-        error_log('AI Image Renamer: process_upload called for file: ' . ($file['name'] ?? 'unknown'));
-        error_log('AI Image Renamer: File array: ' . print_r($file, true));
-
         // Check if the service is enabled.
         if (! $this->groq_service->is_enabled()) {
-            error_log('AI Image Renamer: Service is NOT enabled, skipping.');
             return $file;
         }
 
-        error_log('AI Image Renamer: Service IS enabled, proceeding...');
-
         // Check if there's an error with the upload.
         if (! empty($file['error'])) {
-            error_log('AI Image Renamer: Upload has error, skipping. Error code: ' . $file['error']);
             return $file;
         }
 
         // Get the mime type.
         $mime_type = $file['type'] ?? '';
-        error_log('AI Image Renamer: File mime type: ' . $mime_type);
 
         // Check if this file type should be processed.
         if (! $this->groq_service->is_allowed_type($mime_type)) {
-            error_log('AI Image Renamer: Mime type "' . $mime_type . '" not allowed, skipping.');
             return $file;
         }
-
-        error_log('AI Image Renamer: Mime type IS allowed.');
 
         // Get the temporary file path.
         $tmp_path = $file['tmp_name'] ?? '';
-        error_log('AI Image Renamer: Temp file path: ' . $tmp_path);
 
-        if (empty($tmp_path)) {
-            error_log('AI Image Renamer: Temp path is EMPTY, skipping.');
+        if (empty($tmp_path) || ! file_exists($tmp_path)) {
             return $file;
         }
-
-        if (! file_exists($tmp_path)) {
-            error_log('AI Image Renamer: Temp file does NOT exist at: ' . $tmp_path);
-            return $file;
-        }
-
-        error_log('AI Image Renamer: Temp file EXISTS, calling Groq API...');
 
         // Generate a description using the Groq API.
         $description = $this->groq_service->generate_description($tmp_path);
 
-        error_log('AI Image Renamer: Groq API returned: ' . ($description === false ? 'FALSE' : '"' . $description . '"'));
-
         // If generation failed, fall back to the original filename.
         if (false === $description || empty($description)) {
-            error_log('AI Image Renamer: generate_description returned empty/false, keeping original name.');
             return $file;
         }
 
-        error_log('AI Image Renamer: Generated description: ' . $description);
-
         // Sanitize the generated description.
         $sanitized_name = File_Sanitizer::sanitize($description);
-        error_log('AI Image Renamer: Sanitized name: ' . $sanitized_name);
 
         // Get the original extension.
         $original_name = $file['name'] ?? '';
@@ -133,9 +105,6 @@ class Image_Uploader
 
         // Build the new filename.
         $new_filename = File_Sanitizer::build_filename($sanitized_name, $extension);
-
-        error_log('AI Image Renamer: RENAMING "' . $original_name . '" TO "' . $new_filename . '"');
-        error_log('AI Image Renamer: ========== UPLOAD END ==========');
 
         // Update the file array with the new name.
         $file['name'] = $new_filename;
