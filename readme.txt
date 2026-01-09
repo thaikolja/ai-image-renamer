@@ -8,7 +8,7 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Automatically rename uploaded images using AI for SEO-friendly, descriptive filenames. Powered by Groq's Vision API.
+Automatically rename uploaded images using AI for SEO-friendly, descriptive filenames. Powered by Groq's free Vision API.
 
 == Description ==
 
