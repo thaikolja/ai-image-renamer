@@ -163,7 +163,68 @@ class Encryption_Service {
 	 *
 	 * @return bool True if encryption is available.
 	 */
-	public function is_available(): bool {
-		return null !== $this->key;
+		public function is_available(): bool {
+			return null !== $this->key;
+		}
+	
+		/**
+		 * Check if the encryption key is stored in wp-config.php (recommended) or in options table.
+		 *
+		 * @return bool True if key is defined in wp-config.php, false if stored in options.
+		 */
+		public function is_using_config_constant(): bool {
+			return \defined( 'AIR_ENCRYPTION_KEY' ) && ! empty( AIR_ENCRYPTION_KEY );
+		}
+	
+		/**
+		 * Display admin notice if encryption key is stored in options instead of wp-config.php.
+		 *
+		 * @return void
+		 */
+		public function maybe_show_security_notice(): void {
+			if ( ! $this->is_available() ) {
+				return;
+			}
+	
+			if ( ! $this->is_using_config_constant() ) {
+				$dismissed_key = 'air_encryption_notice_dismissed';
+				if ( \get_user_meta( \get_current_user_id(), $dismissed_key, true ) ) {
+					return;
+				}
+	
+				?>
+				<div class="notice notice-warning is-dismissible air-encryption-notice">
+					<p>
+						<strong><?php \esc_html_e( 'Security Warning: AI Image Renamer', 'ai-image-renamer' ); ?></strong><br>
+						<?php
+						\printf(
+							/* translators: %s: AIR_ENCRYPTION_KEY */
+							\esc_html__( 'Your encryption key is stored in the WordPress database. For better security, define %s in your wp-config.php file.', 'ai-image-renamer' ),
+							'<code>AIR_ENCRYPTION_KEY</code>'
+						);
+						?>
+					</p>
+					<p>
+						<a href="https://docs.kolja-nolte.com/wp-ai-image-renamer/security/" target="_blank">
+							<?php \esc_html_e( 'Learn more about securing your encryption key', 'ai-image-renamer' ); ?>
+						</a>
+					</p>
+				</div>
+				<script>
+					jQuery(document).ready(function($) {
+						$('.air-encryption-notice').on('click', '.notice-dismiss', function() {
+							jQuery.ajax({
+								url: ajaxurl,
+								method: 'POST',
+								data: {
+									action: 'air_dismiss_encryption_notice',
+									nonce: '<?php echo \wp_create_nonce( 'air_dismiss_encryption_notice' ); ?>'
+								}
+							});
+						});
+					});
+				</script>
+				<?php
+			}
+		}
 	}
-}

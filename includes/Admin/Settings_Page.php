@@ -105,8 +105,10 @@ class Settings_Page {
 		\add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
 		\add_action( 'admin_init', [ $this, 'register_settings' ] );
 		\add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
+		\add_action( 'admin_notices', [ $this, 'show_encryption_notice' ] );
 		\add_action( 'wp_ajax_air_test_connection', [ $this, 'ajax_test_connection' ] );
 		\add_action( 'wp_ajax_air_delete_api_key', [ $this, 'ajax_delete_api_key' ] );
+		\add_action( 'wp_ajax_air_dismiss_encryption_notice', [ $this, 'ajax_dismiss_encryption_notice' ] );
 	}
 
 	/**
@@ -673,5 +675,41 @@ class Settings_Page {
 		\update_option( self::OPTION_NAME, $options );
 
 		\wp_send_json_success( [ 'message' => \__( 'API key deleted.', 'ai-image-renamer' ) ] );
+	}
+
+	/**
+	 * Show encryption security notice if key is not in wp-config.php.
+	 *
+	 * @return void
+	 */
+	final public function show_encryption_notice(): void {
+		// Only show on plugin settings page or general settings page.
+		$screen = \get_current_screen();
+		if ( ! $screen ) {
+			return;
+		}
+
+		if ( 'settings_page_' . self::PAGE_SLUG !== $screen->id && 'options-general' !== $screen->id ) {
+			return;
+		}
+
+		$this->encryption_service->maybe_show_security_notice();
+	}
+
+	/**
+	 * Handle AJAX request to dismiss encryption notice.
+	 *
+	 * @return void
+	 */
+	final public function ajax_dismiss_encryption_notice(): void {
+		\check_ajax_referer( 'air_dismiss_encryption_notice', 'nonce' );
+
+		if ( ! \current_user_can( 'manage_options' ) ) {
+			\wp_send_json_error( [ 'message' => \__( 'Permission denied.', 'ai-image-renamer' ) ] );
+		}
+
+		\update_user_meta( \get_current_user_id(), 'air_encryption_notice_dismissed', true );
+
+		\wp_send_json_success();
 	}
 }
