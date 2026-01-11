@@ -24,7 +24,7 @@
  * @package AIR\Services
  */
 
-declare( strict_types=1 );
+declare(strict_types=1);
 
 namespace AIR\Services;
 
@@ -33,7 +33,8 @@ namespace AIR\Services;
  *
  * Handles communication with the Groq Vision API.
  */
-class Groq_Service {
+class Groq_Service
+{
 
 	/**
 	 * Groq API endpoint.
@@ -61,7 +62,8 @@ class Groq_Service {
 	 *
 	 * @param  Encryption_Service  $encryption_service  Encryption service instance.
 	 */
-	public function __construct( Encryption_Service $encryption_service ) {
+	public function __construct(Encryption_Service $encryption_service)
+	{
 		$this->encryption_service = $encryption_service;
 	}
 
@@ -70,14 +72,15 @@ class Groq_Service {
 	 *
 	 * @return string|false The API key or false if not available.
 	 */
-	private function get_api_key(): string|false {
-		$options = \get_option( 'air_options', [] );
+	private function get_api_key(): string|false
+	{
+		$options = \get_option('air_options', []);
 
-		if ( empty( $options[ 'api_key' ] ) ) {
+		if (empty($options['api_key'])) {
 			return false;
 		}
 
-		return $this->encryption_service->decrypt( $options[ 'api_key' ] );
+		return $this->encryption_service->decrypt($options['api_key']);
 	}
 
 	/**
@@ -85,19 +88,20 @@ class Groq_Service {
 	 *
 	 * @return string The prompt text.
 	 */
-	private function get_prompt(): string {
-		$options = \get_option( 'air_options', [] );
+	private function get_prompt(): string
+	{
+		$options = \get_option('air_options', []);
 
-		if ( ! empty( $options[ 'custom_prompt' ] ) ) {
-			return $options[ 'custom_prompt' ];
+		if (! empty($options['custom_prompt'])) {
+			return $options['custom_prompt'];
 		}
 
-		$set_alt = isset( $options[ 'set_alt_text' ] ) && '1' === (string) $options[ 'set_alt_text' ];
+		$set_alt = isset($options['set_alt_text']) && '1' === (string) $options['set_alt_text'];
 
 		// If alt text is enabled, force 10 keywords regardless of max_keywords setting.
-		$max_keywords = $set_alt ? 10 : ( $options[ 'max_keywords' ] ?? 5 );
+		$max_keywords = $set_alt ? 10 : ($options['max_keywords'] ?? 5);
 
-		return \sprintf( /* translators: %d: Maximum number of keywords */ \_n( 'View this image and describe it in no more than %d keyword into English. Only return the output.', 'View this image and describe it in no more than %d keywords in English. Only return the output.', $max_keywords, 'ai-image-renamer' ), $max_keywords );
+		return \sprintf( /* translators: %d: Maximum number of keywords */\_n('View this image and describe it in no more than %d keyword into English. Only return the output.', 'View this image and describe it in no more than %d keywords in English. Only return the output.', $max_keywords, 'ai-image-renamer'), $max_keywords);
 	}
 
 	/**
@@ -105,14 +109,15 @@ class Groq_Service {
 	 *
 	 * @return bool True if enabled.
 	 */
-	final public function is_enabled(): bool {
-		$options = \get_option( 'air_options', [] );
+	final public function is_enabled(): bool
+	{
+		$options = \get_option('air_options', []);
 
 		// Check enabled flag - handle both boolean and string "1" from database.
-		$enabled = isset( $options[ 'enabled' ] ) && ( $options[ 'enabled' ] === true || $options[ 'enabled' ] === '1' || $options[ 'enabled' ] === 1 );
+		$enabled = isset($options['enabled']) && ($options['enabled'] === true || $options['enabled'] === '1' || $options['enabled'] === 1);
 
 		// Check if API key exists.
-		$has_key = ! empty( $options[ 'api_key' ] );
+		$has_key = ! empty($options['api_key']);
 
 		return $enabled && $has_key;
 	}
@@ -124,11 +129,23 @@ class Groq_Service {
 	 *
 	 * @return bool True if allowed.
 	 */
-	final public function is_allowed_type( string $mime_type ): bool {
-		$options    = \get_option( 'air_options', [] );
-		$file_types = $options[ 'file_types' ] ?? [ 'image/jpeg', 'image/png', 'image/webp', 'image/gif' ];
+	final public function is_allowed_type(string $mime_type): bool
+	{
+		$options    = \get_option('air_options', []);
+		$file_types = $options['file_types'] ?? ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
-		return in_array( $mime_type, $file_types, true );
+		/**
+		 * Filter the allowed file types.
+		 * Pro can expand this list to include more formats.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array  $file_types The allowed MIME types.
+		 * @param string $mime_type  The MIME type being checked.
+		 */
+		$file_types = \apply_filters('air_allowed_file_types', $file_types, $mime_type);
+
+		return in_array($mime_type, $file_types, true);
 	}
 
 	/**
@@ -138,39 +155,40 @@ class Groq_Service {
 	 *
 	 * @return true|string True on success, error message on failure.
 	 */
-	final public function test_connection( ?string $api_key = null ): true|string {
-		if ( empty( $api_key ) ) {
+	final public function test_connection(?string $api_key = null): true|string
+	{
+		if (empty($api_key)) {
 			$api_key = $this->get_api_key();
 		}
 
-		if ( empty( $api_key ) ) {
-			return \__( 'No API key configured.', 'ai-image-renamer' );
+		if (empty($api_key)) {
+			return \__('No API key configured.', 'ai-image-renamer');
 		}
 
 		// Make a simple models request to verify the key.
-		$response = \wp_safe_remote_get( 'https://api.groq.com/openai/v1/models', [
+		$response = \wp_safe_remote_get('https://api.groq.com/openai/v1/models', [
 			'timeout' => 15,
 			'headers' => [
 				'Authorization' => 'Bearer ' . $api_key,
 				'Content-Type'  => 'application/json',
 			],
-		] );
+		]);
 
-		if ( \is_wp_error( $response ) ) {
+		if (\is_wp_error($response)) {
 			return $response->get_error_message();
 		}
 
-		$code = \wp_remote_retrieve_response_code( $response );
+		$code = \wp_remote_retrieve_response_code($response);
 
-		if ( 200 !== $code ) {
-			$body    = \wp_remote_retrieve_body( $response );
-			$decoded = json_decode( $body, true );
+		if (200 !== $code) {
+			$body    = \wp_remote_retrieve_body($response);
+			$decoded = json_decode($body, true);
 
-			if ( isset( $decoded[ 'error' ][ 'message' ] ) ) {
-				return $decoded[ 'error' ][ 'message' ];
+			if (isset($decoded['error']['message'])) {
+				return $decoded['error']['message'];
 			}
 
-			return \sprintf( /* translators: %d: HTTP status code */ \__( 'API returned HTTP %d', 'ai-image-renamer' ), $code );
+			return \sprintf( /* translators: %d: HTTP status code */\__('API returned HTTP %d', 'ai-image-renamer'), $code);
 		}
 
 		return true;
@@ -181,10 +199,11 @@ class Groq_Service {
 	 *
 	 * @return string
 	 */
-	private function get_model(): string {
-		$options = \get_option( 'air_options', [] );
+	private function get_model(): string
+	{
+		$options = \get_option('air_options', []);
 
-		return $options[ 'model' ] ?? self::DEFAULT_MODEL;
+		return $options['model'] ?? self::DEFAULT_MODEL;
 	}
 
 	/**
@@ -194,30 +213,31 @@ class Groq_Service {
 	 *
 	 * @return string|false The generated keywords or false on failure.
 	 */
-	final public function generate_description( string $image_path ): string|false {
-		if ( ! $this->is_enabled() ) {
+	final public function generate_description(string $image_path): string|false
+	{
+		if (! $this->is_enabled()) {
 			return false;
 		}
 
 		$api_key = $this->get_api_key();
 
-		if ( false === $api_key ) {
+		if (false === $api_key) {
 			return false;
 		}
 
 		// Read and encode the image.
-		if ( ! \file_exists( $image_path ) || ! \is_readable( $image_path ) ) {
+		if (! \file_exists($image_path) || ! \is_readable($image_path)) {
 			return false;
 		}
 
-		$image_data = \file_get_contents( $image_path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		if ( false === $image_data ) {
+		$image_data = \file_get_contents($image_path); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		if (false === $image_data) {
 			return false;
 		}
 
-		$mime_type    = \mime_content_type( $image_path );
-		$base64_image = \base64_encode( $image_data ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
-		$data_url     = \sprintf( 'data:%s;base64,%s', $mime_type, $base64_image );
+		$mime_type    = \mime_content_type($image_path);
+		$base64_image = \base64_encode($image_data); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+		$data_url     = \sprintf('data:%s;base64,%s', $mime_type, $base64_image);
 
 		// Build the request payload.
 		$payload = [
@@ -245,32 +265,32 @@ class Groq_Service {
 		];
 
 		// Make the API request.
-		$response = \wp_remote_post( self::API_ENDPOINT, [
+		$response = \wp_remote_post(self::API_ENDPOINT, [
 			'timeout' => 30,
 			'headers' => [
 				'Authorization' => 'Bearer ' . $api_key,
 				'Content-Type'  => 'application/json',
 			],
-			'body'    => \wp_json_encode( $payload ),
-		] );
+			'body'    => \wp_json_encode($payload),
+		]);
 
-		if ( \is_wp_error( $response ) ) {
+		if (\is_wp_error($response)) {
 			return false;
 		}
 
-		$code = \wp_remote_retrieve_response_code( $response );
-		$body = \wp_remote_retrieve_body( $response );
+		$code = \wp_remote_retrieve_response_code($response);
+		$body = \wp_remote_retrieve_body($response);
 
-		if ( 200 !== $code ) {
+		if (200 !== $code) {
 			return false;
 		}
 
-		$decoded = json_decode( $body, true );
+		$decoded = json_decode($body, true);
 
-		if ( ! isset( $decoded[ 'choices' ][ 0 ][ 'message' ][ 'content' ] ) ) {
+		if (! isset($decoded['choices'][0]['message']['content'])) {
 			return false;
 		}
 
-		return \trim( $decoded[ 'choices' ][ 0 ][ 'message' ][ 'content' ] );
+		return \trim($decoded['choices'][0]['message']['content']);
 	}
 }

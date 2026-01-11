@@ -40,7 +40,6 @@ use Exception;
  */
 class Encryption_Service {
 
-
 	/**
 	 * Option name for storing the encryption key.
 	 *
@@ -68,7 +67,7 @@ class Encryption_Service {
 	 * Get or create the encryption key.
 	 *
 	 * The key is stored in wp-config.php as a constant if defined,
-	 * otherwise stored as a WordPress option (less secure but works out of the box).
+	 * otherwise stored as an encrypted WordPress option (less secure but works out of the box).
 	 *
 	 * @return Key|null The encryption key or null on failure.
 	 */

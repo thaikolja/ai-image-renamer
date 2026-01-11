@@ -1,10 +1,8 @@
 # AI Image Renamer (WordPress Plugin)
 
-Automatically rename uploaded images with AI for SEO-friendly, descriptive filenames. Powered by Groq’s Vision API.
+**Automatically rename uploaded images with AI for SEO-friendly, descriptive filenames. Powered by Groq’s Vision API.**
 
-[![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-0073aa)](https://wordpress.org/)
-[![PHP](https://img.shields.io/badge/PHP-8.2%2B-777bb4)](https://www.php.net/)
-[![License: GPL v2+](https://img.shields.io/badge/License-GPLv2%2B-3da639)](https://www.gnu.org/licenses/gpl-2.0.html)
+[![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-0073aa)](https://wordpress.org/) [![PHP](https://img.shields.io/badge/PHP-8.2%2B-777bb4)](https://www.php.net/) [![License: GPL v2+](https://img.shields.io/badge/License-GPLv2%2B-3da639)](https://www.gnu.org/licenses/gpl-2.0.html)
 
 > Note: This repository contains a WordPress plugin. It runs inside WordPress, not as a standalone PHP app.
 
@@ -65,8 +63,7 @@ composer install --no-dev --optimize-autoloader
 
 ### Optional: define a dedicated encryption key
 
-For maximum control, define an encryption key in `wp-config.php` (the plugin also works without this, but explicitly
-setting a key makes environments more predictable):
+For maximum control, define an encryption key in `wp-config.php` (the plugin also works without this, but explicitly setting a key makes environments more predictable):
 
 ```php
 define('AIR_ENCRYPTION_KEY', 'put-a-long-random-secret-here');
@@ -80,7 +77,7 @@ php -r "echo bin2hex(random_bytes(32)), PHP_EOL;"
 
 ## Example
 
-- Before: `IMG_1234.jpg`
+- Before: `IMG_1234.JPEG`
 - After: `golden-retriever-playing-fetch-sunny-park.jpg`
 
 ## Security & Privacy
@@ -110,7 +107,7 @@ inside the plugin directory.
 ## Links
 
 - Plugin documentation: https://docs.kolja-nolte.com/ai-image-renamer
-- Plugin page (WordPress.org): https://wordpress.org/plugins/ (add the final slug once published)
+- Plugin page (WordPress.org): https://wordpress.org/plugins/ai-image-renamer
 - Issues: https://github.com/thaikolja/ai-image-renamer/issues
 
 ## License
