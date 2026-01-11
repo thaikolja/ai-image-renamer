@@ -46,11 +46,18 @@ class Image_Uploader
 	private Groq_Service $groq_service;
 
 	/**
-	 * Pending alt text to be saved.
+	 * Transient prefix for storing pending alt text.
 	 *
 	 * @var string
 	 */
-	private string $pending_alt_text = '';
+	private const ALT_TEXT_TRANSIENT_PREFIX = 'air_pending_alt_text_';
+
+	/**
+	 * Transient expiration time in seconds (5 minutes).
+	 *
+	 * @var int
+	 */
+	private const TRANSIENT_EXPIRATION = 300;
 
 	/**
 	 * Constructor.
@@ -169,6 +176,9 @@ class Image_Uploader
 		 */
 		$new_filename = \apply_filters('air_new_filename', $new_filename, $sanitized_name, $extension, $file, $description);
 
+		// Ensure the final filename is lowercase (defensive check).
+		$new_filename = strtolower($new_filename);
+
 		// Store original name for action hook.
 		$original_name = $file['name'] ?? '';
 
@@ -205,10 +215,17 @@ class Image_Uploader
 			 * @param string $description The AI-generated description.
 			 * @param array  $file        The file data.
 			 */
-			$this->pending_alt_text = \apply_filters('air_alt_text', $clean_text, $description, $file);
+			$alt_text = \apply_filters('air_alt_text', $clean_text, $description, $file);
+
+			// Store alt text in transient using the new filename as key.
+			// This prevents race conditions when multiple images are uploaded simultaneously.
+			$transient_key = self::ALT_TEXT_TRANSIENT_PREFIX . \md5($new_filename . \microtime(true));
+			\set_transient($transient_key, $alt_text, self::TRANSIENT_EXPIRATION);
 
 			// Hook into attachment creation to save this.
-			\add_action('add_attachment', [$this, 'set_image_alt_text']);
+			\add_action('add_attachment', function($post_id) use ($transient_key) {
+				$this->set_image_alt_text($post_id, $transient_key);
+			});
 		}
 
 		return $file;
@@ -217,16 +234,20 @@ class Image_Uploader
 	/**
 	 * Set the image Alt Text meta.
 	 *
-	 * @param  int  $post_id  Attachment ID.
+	 * @param  int     $post_id         Attachment ID.
+	 * @param  string  $transient_key   The transient key containing the alt text.
 	 *
 	 * @return void
 	 */
-	final public function set_image_alt_text(int $post_id): void
+	final public function set_image_alt_text(int $post_id, string $transient_key): void
 	{
-		if (! empty($this->pending_alt_text)) {
-			\update_post_meta($post_id, '_wp_attachment_image_alt', $this->pending_alt_text);
+		$alt_text = \get_transient($transient_key);
+
+		if (! empty($alt_text)) {
+			\update_post_meta($post_id, '_wp_attachment_image_alt', $alt_text);
 			\update_post_meta($post_id, '_ai_image_renamer_alt_set', 'true');
-			$this->pending_alt_text = ''; // Reset
+			// Delete the transient after use to prevent memory leaks.
+			\delete_transient($transient_key);
 		}
 	}
 

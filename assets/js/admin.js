@@ -70,7 +70,7 @@
         method: "POST",
         data:   {
           action:  "air_test_connection",
-          nonce:   admin.nonce,
+          nonce:   admin.nonces.test_connection,
           api_key: apiKey,
         },
       })
@@ -115,7 +115,7 @@
         method: "POST",
         data:   {
           action: "air_delete_api_key",
-          nonce:  admin.nonce,
+          nonce:  admin.nonces.delete_api_key,
         },
       })
           .done((response) => {

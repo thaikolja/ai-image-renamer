@@ -171,7 +171,8 @@ class Groq_Service {
 		] );
 
 		if ( \is_wp_error( $response ) ) {
-			return $response->get_error_message();
+			// Sanitize the error message.
+			return \esc_html( $response->get_error_message() );
 		}
 
 		$code = \wp_remote_retrieve_response_code( $response );
@@ -181,7 +182,8 @@ class Groq_Service {
 			$decoded = json_decode( $body, true );
 
 			if ( isset( $decoded[ 'error' ][ 'message' ] ) ) {
-				return $decoded[ 'error' ][ 'message' ];
+				// Sanitize the API error message.
+				return \esc_html( $decoded[ 'error' ][ 'message' ] );
 			}
 
 			return \sprintf( /* translators: %d: HTTP status code */ \__( 'API returned HTTP %d', 'ai-image-renamer' ), $code );
@@ -224,17 +226,22 @@ class Groq_Service {
 			return false;
 		}
 
-		// Validate that the image path is within the uploads directory to prevent directory traversal.
-		$upload_dir  = \wp_upload_dir();
-		$real_image_path = \realpath( $image_path );
-		$real_upload_dir = \realpath( $upload_dir['basedir'] );
+		// Validate file size to prevent memory issues and DoS attacks.
+		// Maximum file size: 10MB (10 * 1024 * 1024 bytes).
+		$max_file_size = 10 * 1024 * 1024;
+		$file_size = \filesize( $image_path );
 
-		// Check if realpath succeeded and path is within uploads directory.
-		if ( false === $real_image_path || false === $real_upload_dir ) {
+		if ( false === $file_size ) {
 			return false;
 		}
 
-		if ( 0 !== \strpos( $real_image_path, $real_upload_dir ) ) {
+		if ( $file_size > $max_file_size ) {
+			\error_log( \sprintf( 'AI Image Renamer: Image file too large (%d bytes). Maximum allowed: %d bytes.', $file_size, $max_file_size ) );
+			return false;
+		}
+
+		if ( 0 === $file_size ) {
+			\error_log( 'AI Image Renamer: Image file is empty.' );
 			return false;
 		}
 

@@ -5,8 +5,8 @@
     <form
             method="post"
             action="options.php">
-        {{ settings_fields(option_group) }}
-        {{ do_settings_sections(page_slug) }}
-        {{ submit_button(__('Save Settings', 'ai-image-renamer')) }}
+        {{ settings_fields(option_group)|raw }}
+        {{ do_settings_sections(page_slug)|raw }}
+        {{ submit_button(__('Save Settings', 'ai-image-renamer'))|raw }}
     </form>
 </div>

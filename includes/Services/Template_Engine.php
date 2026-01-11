@@ -61,17 +61,44 @@ class Template_Engine
 		$views_path = AIR_PLUGIN_DIR . 'views';
 		$cache_path = AIR_PLUGIN_DIR . 'cache/twig';
 
-		// Create cache directory if it doesn't exist.
-		if (! \is_dir($cache_path)) {
-			\wp_mkdir_p($cache_path);
+		// Validate views directory path.
+		$real_views_path = \realpath($views_path);
+		$real_plugin_dir = \realpath(AIR_PLUGIN_DIR);
+
+		if (false === $real_views_path || false === $real_plugin_dir) {
+			\error_log('AI Image Renamer: Failed to resolve paths for Twig template engine.');
+			// Fall back to no caching if path resolution fails.
+			$cache_path = false;
+		} elseif (0 !== \strpos($real_views_path, $real_plugin_dir)) {
+			\error_log('AI Image Renamer: Views directory is outside plugin directory.');
+			// Fall back to no caching for security.
+			$cache_path = false;
+		}
+
+		// Create cache directory if it doesn't exist and caching is enabled.
+		if ($cache_path && ! \is_dir($cache_path)) {
+			$created = \wp_mkdir_p($cache_path);
+			if (! $created) {
+				\error_log('AI Image Renamer: Failed to create Twig cache directory.');
+				// Fall back to no caching if directory creation fails.
+				$cache_path = false;
+			}
+		}
+
+		// Validate cache directory is writable.
+		if ($cache_path && ! \is_writable($cache_path)) {
+			\error_log('AI Image Renamer: Twig cache directory is not writable.');
+			// Fall back to no caching if directory is not writable.
+			$cache_path = false;
 		}
 
 		$loader = new FilesystemLoader($views_path);
 
 		$this->twig = new Environment($loader, [
-			'cache'       => WP_DEBUG ? false : $cache_path,
+			'cache'       => (WP_DEBUG || false === $cache_path) ? false : $cache_path,
 			'auto_reload' => true,
 			'debug'       => WP_DEBUG,
+			'autoescape'  => 'html', // Enable auto-escaping for security
 		]);
 
 		// Add WordPress-specific globals and functions.

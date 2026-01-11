@@ -263,20 +263,24 @@ class Settings_Page {
 
 			if ( empty( $plaintext ) ) {
 				$sanitized[ 'api_key' ] = '';
-			} elseif ( str_starts_with( $plaintext, 'gsk_' ) ) {
-				$encrypted = $this->encryption_service->encrypt( $plaintext );
-				if ( false !== $encrypted ) {
-					$sanitized[ 'api_key' ] = $encrypted;
-				} else {
-					\add_settings_error( self::OPTION_NAME, 'encryption_failed', \__( 'Failed to encrypt API key. Please try again.', 'ai-image-renamer' ) );
-					// Keep old key if encryption failed.
-					$sanitized[ 'api_key' ] = $old[ 'api_key' ] ?? '';
-				}
 			} else {
-				// Invalid format, maybe keep old or show error.
-				// For now, let's assume if it doesn't start with gsk_, it's invalid.
-				\add_settings_error( self::OPTION_NAME, 'invalid_key', \__( 'Invalid API Key format. Must start with <code>gsk_</code>.', 'ai-image-renamer' ) );
-				$sanitized[ 'api_key' ] = $old[ 'api_key' ] ?? '';
+				// Use strict API key validation.
+				$validation = \AIR\Utils\API_Key_Validator::validate_groq_key( $plaintext );
+
+				if ( ! $validation[ 'valid' ] ) {
+					\add_settings_error( self::OPTION_NAME, 'invalid_key', $validation[ 'message' ] );
+					// Keep old key if validation failed.
+					$sanitized[ 'api_key' ] = $old[ 'api_key' ] ?? '';
+				} else {
+					$encrypted = $this->encryption_service->encrypt( $plaintext );
+					if ( false !== $encrypted ) {
+						$sanitized[ 'api_key' ] = $encrypted;
+					} else {
+						\add_settings_error( self::OPTION_NAME, 'encryption_failed', \__( 'Failed to encrypt API key. Please try again.', 'ai-image-renamer' ) );
+						// Keep old key if encryption failed.
+						$sanitized[ 'api_key' ] = $old[ 'api_key' ] ?? '';
+					}
+				}
 			}
 		}
 
@@ -312,6 +316,14 @@ class Settings_Page {
 			];
 			if ( in_array( $input[ 'model' ], $valid_models, true ) ) {
 				$sanitized[ 'model' ] = $input[ 'model' ];
+			} else {
+				// Invalid model submitted, add error and use default.
+				\add_settings_error(
+					self::OPTION_NAME,
+					'invalid_model',
+					\__( 'Invalid AI model selected. Using default model.', 'ai-image-renamer' )
+				);
+				$sanitized[ 'model' ] = $this->get_defaults()[ 'model' ];
 			}
 		}
 
@@ -588,7 +600,11 @@ class Settings_Page {
 
 		\wp_localize_script( 'air-admin', 'airAdmin', [
 			'ajaxUrl' => \admin_url( 'admin-ajax.php' ),
-			'nonce'   => \wp_create_nonce( 'air_test_connection' ),
+			'nonces'  => [
+				'test_connection'       => \wp_create_nonce( 'air_test_connection' ),
+				'delete_api_key'        => \wp_create_nonce( 'air_delete_api_key' ),
+				'dismiss_encryption_notice' => \wp_create_nonce( 'air_dismiss_encryption_notice' ),
+			],
 			'strings' => [
 				'testing'           => \__( 'Testing...', 'ai-image-renamer' ),
 				'success'           => \__( 'Connection successful!', 'ai-image-renamer' ),
@@ -609,9 +625,13 @@ class Settings_Page {
 			}
 
 			$sprite_path = AIR_PLUGIN_DIR . 'assets/icons/icons.svg';
-			if ( \file_exists( $sprite_path ) ) {
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG sprite is safe.
-				echo \file_get_contents( $sprite_path );
+
+			// Use SVG_Sanitizer to validate and sanitize the SVG content.
+			$sanitized_svg = \AIR\Utils\SVG_Sanitizer::load_and_sanitize_file( $sprite_path );
+
+			if ( false !== $sanitized_svg ) {
+				// Output is now safe after sanitization.
+				echo $sanitized_svg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 		} );
 	}
@@ -622,6 +642,11 @@ class Settings_Page {
 	 * @return void
 	 */
 	final public function ajax_test_connection(): void {
+		// Apply rate limiting: 10 requests per minute.
+		if ( ! \AIR\Utils\Rate_Limiter::check_rate_limit( 'air_test_connection', 10, 60 ) ) {
+			\AIR\Utils\Rate_Limiter::send_rate_limit_error( 'air_test_connection' );
+		}
+
 		\check_ajax_referer( 'air_test_connection', 'nonce' );
 
 		if ( ! \current_user_can( 'manage_options' ) ) {
@@ -637,14 +662,21 @@ class Settings_Page {
 		if ( null !== $api_key_raw ) {
 			$api_key = \sanitize_text_field( \wp_unslash( $api_key_raw ) );
 
-			// If the key is masked (contains bullets), treat it as null (use saved).
-			if ( str_contains( $api_key, '•' ) ) {
+			// If the key is masked, treat it as null (use saved).
+			if ( \AIR\Utils\API_Key_Validator::is_masked( $api_key ) ) {
 				$api_key = null;
 			} elseif ( empty( $api_key ) ) {
 				// Explicitly empty key provided.
 				\wp_send_json_error( [ 'message' => \__( 'No API key provided.', 'ai-image-renamer' ) ] );
 
 				return;
+			} else {
+				// Validate the API key format before testing.
+				$validation = \AIR\Utils\API_Key_Validator::validate_groq_key( $api_key );
+				if ( ! $validation[ 'valid' ] ) {
+					\wp_send_json_error( [ 'message' => $validation[ 'message' ] ] );
+					return;
+				}
 			}
 		}
 
@@ -663,7 +695,12 @@ class Settings_Page {
 	 * @return void
 	 */
 	final public function ajax_delete_api_key(): void {
-		\check_ajax_referer( 'air_test_connection', 'nonce' ); // Reusing nonce for convenience
+		// Apply rate limiting: 5 requests per minute.
+		if ( ! \AIR\Utils\Rate_Limiter::check_rate_limit( 'air_delete_api_key', 5, 60 ) ) {
+			\AIR\Utils\Rate_Limiter::send_rate_limit_error( 'air_delete_api_key' );
+		}
+
+		\check_ajax_referer( 'air_delete_api_key', 'nonce' );
 
 		if ( ! \current_user_can( 'manage_options' ) ) {
 			\wp_send_json_error( [ 'message' => \__( 'Permission denied.', 'ai-image-renamer' ) ] );
