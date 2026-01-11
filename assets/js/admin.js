@@ -38,6 +38,10 @@
     const $doc = $(document);
     const $apiKeyInput = $("#air_api_key");
 
+    // Track if the user has entered a new key (not masked)
+    let hasEnteredNewKey = false;
+    let originalMaskedValue = $apiKeyInput.val();
+
     const setButtonState = ($btn, disabled, label) => {
       $btn.prop("disabled", disabled);
       if (typeof label === "string") $btn.text(label);
@@ -52,6 +56,33 @@
         response && response.data && typeof response.data.message === "string"
             ? response.data.message
             : "";
+
+    // When user focuses on the input field, select all text for easy overwriting
+    $apiKeyInput.on("focus", function () {
+      originalMaskedValue = $(this).val();
+      // Select all text for easy overwriting
+      $(this).select();
+    });
+
+    // When user starts typing in the input field, clear the masked value
+    $apiKeyInput.on("input", function () {
+      const currentValue = $(this).val();
+      
+      // If the value was masked and user started typing, clear it
+      if (originalMaskedValue && originalMaskedValue.includes("•") && 
+          currentValue !== originalMaskedValue && 
+          !currentValue.includes("•")) {
+        // User is typing a new key, clear the field completely
+        $(this).val(currentValue);
+        hasEnteredNewKey = true;
+      } else if (currentValue.includes("•")) {
+        // Still contains masked characters
+        hasEnteredNewKey = false;
+      } else {
+        // New key being entered
+        hasEnteredNewKey = true;
+      }
+    });
 
     // --- Test Connection Handler ---
     const $testBtn = $("#air_test_connection");
@@ -69,9 +100,10 @@
         url:    admin.ajaxUrl,
         method: "POST",
         data:   {
-          action:  "air_test_connection",
-          nonce:   admin.nonces.test_connection,
-          api_key: apiKey,
+          action:    "air_test_connection",
+          nonce:     admin.nonces.test_connection,
+          api_key:   apiKey,
+          is_new_key: hasEnteredNewKey ? 1 : 0,
         },
       })
           .done((response) => {
@@ -109,6 +141,8 @@
 
       // Instantly clear the input field as requested
       $apiKeyInput.val("");
+      hasEnteredNewKey = false;
+      originalMaskedValue = "";
 
       $.ajax({
         url:    admin.ajaxUrl,

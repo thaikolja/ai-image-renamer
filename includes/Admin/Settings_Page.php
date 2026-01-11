@@ -263,6 +263,9 @@ class Settings_Page {
 
 			if ( empty( $plaintext ) ) {
 				$sanitized[ 'api_key' ] = '';
+			} elseif ( \AIR\Utils\API_Key_Validator::is_masked( $plaintext ) ) {
+				// If the key is masked (user didn't change it), keep the old encrypted key.
+				$sanitized[ 'api_key' ] = $old[ 'api_key' ] ?? '';
 			} else {
 				// Use strict API key validation.
 				$validation = \AIR\Utils\API_Key_Validator::validate_groq_key( $plaintext );
@@ -348,6 +351,14 @@ class Settings_Page {
 		}
 
 		$saved = ! empty( $encrypted_key );
+
+		// Mask the API key for display.
+		$display_key = $saved && ! empty( $decrypted_key )
+			? \AIR\Utils\API_Key_Validator::mask_for_display( $decrypted_key )
+			: '';
+
+		// Set placeholder based on whether a key is saved.
+		$placeholder = $saved ? __( 'Type to overwrite existing key...', 'ai-image-renamer' ) : 'gsk_...';
 		?>
         <div class="air-api-key-container">
             <label
@@ -358,22 +369,24 @@ class Settings_Page {
                     type="text"
                     id="air_api_key"
                     name="<?php echo \esc_attr( self::OPTION_NAME ); ?>[api_key]"
-                    value="<?php echo \esc_attr( $decrypted_key ); ?>"
+                    value="<?php echo \esc_attr( $display_key ); ?>"
                     class="regular-text"
-                    placeholder="gsk_..."
+                    placeholder="<?php echo \esc_attr( $placeholder ); ?>"
                     autocomplete="off" />
 
+		<?php if ( $saved ) : ?>
             <button
                     type="button"
                     id="air_delete_api_key"
                     class="button button-link-delete">
 				<?php \esc_html_e( 'Delete Key', 'ai-image-renamer' ); ?>
             </button>
+		<?php endif; ?>
         </div>
         <p class="description">
 			<?php
 			if ( $saved ) :
-				?><?php \esc_html_e( 'Your Groq API key has been encrypted and saved', 'ai-image-renamer' ); ?><?php
+				?><?php \esc_html_e( 'Your Groq API key has been encrypted and saved. Type a new key to overwrite it.', 'ai-image-renamer' ); ?><?php
 			else :
 				?><?php \esc_html_e( 'Enter your Groq API key.', 'ai-image-renamer' ); ?><?php endif; ?>
         </p>
@@ -656,21 +669,23 @@ class Settings_Page {
 		// Check if a specific key was provided in POST.
 		// Use filter_input instead of direct $_POST access for better security.
 		$api_key_raw = filter_input( INPUT_POST, 'api_key', FILTER_UNSAFE_RAW );
+		$is_new_key = filter_input( INPUT_POST, 'is_new_key', FILTER_VALIDATE_BOOLEAN );
 
 		$api_key = null;
 
 		if ( null !== $api_key_raw ) {
 			$api_key = \sanitize_text_field( \wp_unslash( $api_key_raw ) );
 
-			// If the key is masked, treat it as null (use saved).
-			if ( \AIR\Utils\API_Key_Validator::is_masked( $api_key ) ) {
+			// If the key is masked and it's not explicitly marked as a new key, use saved key.
+			if ( \AIR\Utils\API_Key_Validator::is_masked( $api_key ) && ! $is_new_key ) {
 				$api_key = null;
 			} elseif ( empty( $api_key ) ) {
 				// Explicitly empty key provided.
 				\wp_send_json_error( [ 'message' => \__( 'No API key provided.', 'ai-image-renamer' ) ] );
 
 				return;
-			} else {
+			} elseif ( ! \AIR\Utils\API_Key_Validator::is_masked( $api_key ) ) {
+				// Only validate if it's not masked (i.e., it's a new key).
 				// Validate the API key format before testing.
 				$validation = \AIR\Utils\API_Key_Validator::validate_groq_key( $api_key );
 				if ( ! $validation[ 'valid' ] ) {

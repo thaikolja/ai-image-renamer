@@ -40,47 +40,49 @@ class SVG_Sanitizer {
 	 *
 	 * @var array
 	 */
-	private const ALLOWED_ELEMENTS = [
-		'svg',
-		'symbol',
-		'path',
-		'circle',
-		'rect',
-		'polyline',
-		'polygon',
-		'line',
-		'ellipse',
-	];
+	private const ALLOWED_ELEMENTS
+		= [
+			'svg',
+			'symbol',
+			'path',
+			'circle',
+			'rect',
+			'polyline',
+			'polygon',
+			'line',
+			'ellipse',
+		];
 
 	/**
 	 * Allowed SVG attributes.
 	 *
 	 * @var array
 	 */
-	private const ALLOWED_ATTRIBUTES = [
-		'id',
-		'viewBox',
-		'xmlns',
-		'display',
-		'd',
-		'cx',
-		'cy',
-		'r',
-		'rx',
-		'ry',
-		'x',
-		'y',
-		'width',
-		'height',
-		'fill',
-		'stroke',
-		'stroke-width',
-		'points',
-		'x1',
-		'y1',
-		'x2',
-		'y2',
-	];
+	private const ALLOWED_ATTRIBUTES
+		= [
+			'id',
+			'viewBox',
+			'xmlns',
+			'display',
+			'd',
+			'cx',
+			'cy',
+			'r',
+			'rx',
+			'ry',
+			'x',
+			'y',
+			'width',
+			'height',
+			'fill',
+			'stroke',
+			'stroke-width',
+			'points',
+			'x1',
+			'y1',
+			'x2',
+			'y2',
+		];
 
 	/**
 	 * Validate and sanitize SVG content.
@@ -97,6 +99,7 @@ class SVG_Sanitizer {
 		// Check for potentially dangerous content before parsing.
 		if ( self::contains_dangerous_content( $svg_content ) ) {
 			\error_log( 'AI Image Renamer: SVG contains dangerous content and was rejected.' );
+
 			return false;
 		}
 
@@ -112,6 +115,7 @@ class SVG_Sanitizer {
 
 		if ( ! $loaded ) {
 			\error_log( 'AI Image Renamer: Failed to parse SVG content.' );
+
 			return false;
 		}
 
@@ -191,6 +195,7 @@ class SVG_Sanitizer {
 
 		if ( 0 === $svg_elements->length ) {
 			\error_log( 'AI Image Renamer: SVG has no root svg element.' );
+
 			return false;
 		}
 
@@ -203,6 +208,7 @@ class SVG_Sanitizer {
 		$namespace = $root->namespaceURI;
 		if ( 'http://www.w3.org/2000/svg' !== $namespace ) {
 			\error_log( 'AI Image Renamer: SVG has invalid namespace: ' . ( $namespace ?: 'none' ) );
+
 			return false;
 		}
 
@@ -221,7 +227,7 @@ class SVG_Sanitizer {
 		$xpath->registerNamespace( 'svg', 'http://www.w3.org/2000/svg' );
 
 		// Remove disallowed elements.
-		$all_elements = $dom->getElementsByTagName( '*' );
+		$all_elements       = $dom->getElementsByTagName( '*' );
 		$elements_to_remove = [];
 
 		foreach ( $all_elements as $element ) {
@@ -264,7 +270,7 @@ class SVG_Sanitizer {
 	 */
 	public static function load_and_sanitize_file( string $file_path ): string|false {
 		// Validate file path is within plugin directory.
-		$real_path = \realpath( $file_path );
+		$real_path  = \realpath( $file_path );
 		$plugin_dir = \realpath( AIR_PLUGIN_DIR );
 
 		if ( false === $real_path || false === $plugin_dir ) {
@@ -273,6 +279,7 @@ class SVG_Sanitizer {
 
 		if ( 0 !== \strpos( $real_path, $plugin_dir ) ) {
 			\error_log( 'AI Image Renamer: Attempted to load SVG from outside plugin directory.' );
+
 			return false;
 		}
 
@@ -283,7 +290,7 @@ class SVG_Sanitizer {
 
 		// Check file extension.
 		$path_info = \pathinfo( $real_path );
-		if ( 'svg' !== strtolower( $path_info['extension'] ?? '' ) ) {
+		if ( 'svg' !== strtolower( $path_info[ 'extension' ] ?? '' ) ) {
 			return false;
 		}
 
