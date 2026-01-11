@@ -1,0 +1,245 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: AI Image Renamer\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-10 05:47+0700\n"
+"PO-Revision-Date: 2026-01-10 06:00+0700\n"
+"Last-Translator: Kolja Nolte <kolja.nolte@gmail.com >\n"
+"Language-Team: kolja.nolte@gmail.com\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.8\n"
+
+#: ai-image-renamer.php:61
+msgid ""
+"AI Image Renamer: Composer dependencies not installed. Please run \"composer "
+"install\" in the plugin directory."
+msgstr ""
+"AI Image Renamer: Composer-Abhängigkeiten sind nicht installiert. Bitte "
+"führen Sie \"composer install\" im Plugin-Verzeichnis aus."
+
+#: includes/Admin/Settings_Page.php:118
+msgid "AI Image Renamer"
+msgstr "AI Image Renamer"
+
+#: includes/Admin/Settings_Page.php:134
+msgid "API Configuration"
+msgstr "API-Konfiguration"
+
+#: includes/Admin/Settings_Page.php:149
+msgid "How does it work?"
+msgstr "Wie funktioniert es?"
+
+#: includes/Admin/Settings_Page.php:152
+msgid ""
+"The plugin uses the powerful Groq Vision API to analyze your uploaded "
+"images. It extracts descriptive keywords and automatically renames your "
+"files for better SEO and accessibility."
+msgstr ""
+"Das Plugin verwendet die leistungsstarke Groq Vision API, um Ihre "
+"hochgeladenen Bilder zu analysieren. Es extrahiert beschreibende "
+"Schlüsselwörter und benennt Ihre Dateien automatisch um, um eine bessere SEO "
+"und Barrierefreiheit zu gewährleisten."
+
+#: includes/Admin/Settings_Page.php:167
+msgid "Is it free?"
+msgstr "Ist es kostenlos?"
+
+#: includes/Admin/Settings_Page.php:170
+msgid ""
+"Yes! This plugin leverages Groq's generous free tier. Simply get your free "
+"API key from the Groq console and start renaming your images without any "
+"costs."
+msgstr ""
+"Ja! Dieses Plugin nutzt das großzügige kostenlose Angebot von Groq. Holen "
+"Sie sich einfach Ihren kostenlosen API-Schlüssel aus der Groq-Konsole und "
+"fangen Sie an, Ihre Bilder ohne Kosten umzubenennen."
+
+#: includes/Admin/Settings_Page.php:171
+msgid ""
+"Unlock advanced features like bulk renaming, custom naming patterns, and "
+"support for 20+ languages. Coming soon to take your media management to the "
+"next level."
+msgstr ""
+"Schalten Sie erweiterte Funktionen wie Massenumbenennung, benutzerdefinierte "
+"Benennungsmuster und Unterstützung für mehr als 20 Sprachen frei. Demnächst "
+"verfügbar, um Ihre Medienverwaltung auf die nächste Stufe zu heben."
+
+#: includes/Admin/Settings_Page.php:179
+msgid "Enable Auto-Rename"
+msgstr "Automatisches Umbenennen aktivieren"
+
+#: includes/Admin/Settings_Page.php:185 includes/Admin/Settings_Page.php:342
+msgid "Groq API Key"
+msgstr "Groq API-Schlüssel"
+
+#: includes/Admin/Settings_Page.php:191
+msgid "AI Model"
+msgstr "KI-Modell"
+
+#: includes/Admin/Settings_Page.php:197
+msgid "Use as <code>alt=\"\"</code>"
+msgstr "Als <code>alt=\"\"</code> verwenden"
+
+#: includes/Admin/Settings_Page.php:203
+msgid "File Types"
+msgstr "Dateitypen"
+
+#: includes/Admin/Settings_Page.php:204
+msgid "Select which image types to process."
+msgstr "Wählen Sie aus, welche Bildtypen verarbeitet werden sollen."
+
+#: includes/Admin/Settings_Page.php:207
+msgid "Allowed Types"
+msgstr "Erlaubte Typen"
+
+#: includes/Admin/Settings_Page.php:213
+msgid "Advanced Settings"
+msgstr "Erweiterte Einstellungen"
+
+#: includes/Admin/Settings_Page.php:214
+msgid "Customize the AI prompt and keyword settings."
+msgstr "Passen Sie den KI-Prompt und die Schlüsselwort-Einstellungen an."
+
+#: includes/Admin/Settings_Page.php:217 includes/Admin/Settings_Page.php:468
+msgid "Custom Prompt"
+msgstr "Benutzerdefinierter Prompt"
+
+#: includes/Admin/Settings_Page.php:222
+msgid "Max Keywords"
+msgstr "Maximale Schlüsselwörter"
+
+#: includes/Admin/Settings_Page.php:269
+msgid "Failed to encrypt API key. Please try again."
+msgstr ""
+"Verschlüsselung des API-Schlüssels fehlgeschlagen. Bitte versuchen Sie es "
+"erneut."
+
+#: includes/Admin/Settings_Page.php:276
+msgid "Invalid API Key format. Must start with <code>gsk_</code>."
+msgstr "Ungültiges API-Schlüsselformat. Muss mit <code>gsk_</code> beginnen."
+
+#: includes/Admin/Settings_Page.php:356 includes/Admin/Settings_Page.php:599
+msgid "Delete Key"
+msgstr "Schlüssel löschen"
+
+#: includes/Admin/Settings_Page.php:362
+msgid "Your Groq API key has been encrypted and saved"
+msgstr "Ihr Groq API-Schlüssel wurde verschlüsselt und gespeichert"
+
+#: includes/Admin/Settings_Page.php:364 includes/Admin/Settings_Page.php:597
+msgid "Enter your Groq API key."
+msgstr "Geben Sie Ihren Groq API-Schlüssel ein."
+
+#: includes/Admin/Settings_Page.php:371
+msgid "Get Free Groq API Key"
+msgstr "Kostenlosen Groq API-Schlüssel anfordern"
+
+#: includes/Admin/Settings_Page.php:378
+msgid "Test Connection"
+msgstr "Verbindung testen"
+
+#: includes/Admin/Settings_Page.php:400
+msgid "Automatically rename images on upload"
+msgstr "Bilder beim Hochladen automatisch umbenennen"
+
+#: includes/Admin/Settings_Page.php:420
+msgid "Automatically set images' \"alt\" attribute from the filename."
+msgstr ""
+"Das \"alt\"-Attribut von Bildern automatisch aus dem Dateinamen setzen."
+
+#: includes/Admin/Settings_Page.php:476
+msgid "Leave empty to use the default prompt."
+msgstr "Leer lassen, um den Standard-Prompt zu verwenden."
+
+#: includes/Admin/Settings_Page.php:493
+msgid "Maximum Keywords"
+msgstr "Maximale Anzahl an Schlüsselwörtern"
+
+#: includes/Admin/Settings_Page.php:504
+msgid "Maximum number of keywords to generate for filenames."
+msgstr "Maximale Anzahl der für Dateinamen zu generierenden Schlüsselwörter."
+
+#: includes/Admin/Settings_Page.php:591
+msgid "Testing..."
+msgstr "Teste..."
+
+#: includes/Admin/Settings_Page.php:592 includes/Admin/Settings_Page.php:652
+msgid "Connection successful!"
+msgstr "Verbindung erfolgreich!"
+
+#: includes/Admin/Settings_Page.php:593
+msgid "Connection failed:"
+msgstr "Verbindung fehlgeschlagen:"
+
+#: includes/Admin/Settings_Page.php:594 includes/Services/Groq_Service.php:147
+msgid "No API key configured."
+msgstr "Kein API-Schlüssel konfiguriert."
+
+#: includes/Admin/Settings_Page.php:595
+msgid ""
+"Are you sure you want to delete the API Key? This action cannot be undone."
+msgstr ""
+"Sind Sie sicher, dass Sie den API-Schlüssel löschen möchten? Diese Aktion "
+"kann nicht rückgängig gemacht werden."
+
+#: includes/Admin/Settings_Page.php:596
+msgid "Deleting..."
+msgstr "Lösche..."
+
+#: includes/Admin/Settings_Page.php:598
+msgid "Request failed:"
+msgstr "Anfrage fehlgeschlagen:"
+
+#: includes/Admin/Settings_Page.php:626 includes/Admin/Settings_Page.php:667
+msgid "Permission denied."
+msgstr "Berechtigung verweigert."
+
+#: includes/Admin/Settings_Page.php:643
+msgid "No API key provided."
+msgstr "Kein API-Schlüssel angegeben."
+
+#: includes/Admin/Settings_Page.php:675
+msgid "API key deleted."
+msgstr "API-Schlüssel gelöscht."
+
+#: includes/Services/Groq_Service.php:100
+#, php-format
+msgid ""
+"View this image and describe it in no more than %d keyword. Only return the "
+"output."
+msgid_plural ""
+"View this image and describe it in no more than %d keywords. Only return the "
+"output."
+msgstr[0] ""
+"Betrachte dieses Bild und beschreibe es mit nicht mehr als %d Schlüsselwort. "
+"Gib nur das Ergebnis zurück."
+msgstr[1] ""
+"Betrachte dieses Bild und beschreibe es mit nicht mehr als %d "
+"Schlüsselwörtern. Gib nur das Ergebnis zurück."
+
+#: includes/Services/Groq_Service.php:173
+#, php-format
+msgid "API returned HTTP %d"
+msgstr "API antwortete mit HTTP %d"
+
+#: includes/Services/Template_Engine.php:139
+msgid "Template Error:"
+msgstr "Template-Fehler:"
+
+#: languages/twig-strings.php:22
+msgid "AI Image Renamer Settings"
+msgstr "AI Image Renamer Einstellungen"
+
+#: languages/twig-strings.php:23
+msgid "Save Settings"
+msgstr "Einstellungen speichern"
