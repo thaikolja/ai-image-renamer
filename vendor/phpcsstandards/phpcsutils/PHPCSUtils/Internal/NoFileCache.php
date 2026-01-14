@@ -42,123 +42,118 @@ namespace PHPCSUtils\Internal;
  *
  * @since 1.0.0
  */
-final class NoFileCache
-{
+final class NoFileCache {
 
-    /**
-     * Whether caching is enabled or not.
-     *
-     * Note: this switch is ONLY intended for use within test suites and should never
-     * be touched in any other circumstances!
-     *
-     * Don't forget to always turn the cache back on in a `tear_down()` method!
-     *
-     * @since 1.0.0
-     *
-     * @var bool
-     */
-    public static $enabled = true;
 
-    /**
-     * Results cache.
-     *
-     * @since 1.0.0
-     *
-     * @var array<string, array<int|string, mixed>> Format: $cache[$key][$id] = mixed $value;
-     */
-    private static $cache = [];
+	/**
+	 * Whether caching is enabled or not.
+	 *
+	 * Note: this switch is ONLY intended for use within test suites and should never
+	 * be touched in any other circumstances!
+	 *
+	 * Don't forget to always turn the cache back on in a `tear_down()` method!
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var bool
+	 */
+	public static $enabled = true;
 
-    /**
-     * Check whether a result has been cached for a certain utility function.
-     *
-     * @since 1.0.0
-     *
-     * @param string     $key The key to identify a particular set of results.
-     *                        It is recommended to pass `__METHOD__` to this parameter.
-     * @param int|string $id  Unique identifier for these results.
-     *                        It is recommended for this to be a serialization of arguments passed
-     *                        to the function or an md5 hash of an input.
-     *
-     * @return bool
-     */
-    public static function isCached($key, $id)
-    {
-        return self::$enabled === true && isset(self::$cache[$key]) && \array_key_exists($id, self::$cache[$key]);
-    }
+	/**
+	 * Results cache.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var array<string, array<int|string, mixed>> Format: $cache[$key][$id] = mixed $value;
+	 */
+	private static $cache = array();
 
-    /**
-     * Retrieve a previously cached result for a certain utility function.
-     *
-     * @since 1.0.0
-     *
-     * @param string     $key The key to identify a particular set of results.
-     *                        It is recommended to pass `__METHOD__` to this parameter.
-     * @param int|string $id  Unique identifier for these results.
-     *                        It is recommended for this to be a serialization of arguments passed
-     *                        to the function or an md5 hash of an input.
-     *
-     * @return mixed
-     */
-    public static function get($key, $id)
-    {
-        if (self::$enabled === true && isset(self::$cache[$key]) && \array_key_exists($id, self::$cache[$key])) {
-            return self::$cache[$key][$id];
-        }
+	/**
+	 * Check whether a result has been cached for a certain utility function.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string     $key The key to identify a particular set of results.
+	 *                        It is recommended to pass `__METHOD__` to this parameter.
+	 * @param int|string $id  Unique identifier for these results.
+	 *                        It is recommended for this to be a serialization of arguments passed
+	 *                        to the function or an md5 hash of an input.
+	 *
+	 * @return bool
+	 */
+	public static function isCached( $key, $id ) {
+		return self::$enabled === true && isset( self::$cache[ $key ] ) && \array_key_exists( $id, self::$cache[ $key ] );
+	}
 
-        return null;
-    }
+	/**
+	 * Retrieve a previously cached result for a certain utility function.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string     $key The key to identify a particular set of results.
+	 *                        It is recommended to pass `__METHOD__` to this parameter.
+	 * @param int|string $id  Unique identifier for these results.
+	 *                        It is recommended for this to be a serialization of arguments passed
+	 *                        to the function or an md5 hash of an input.
+	 *
+	 * @return mixed
+	 */
+	public static function get( $key, $id ) {
+		if ( self::$enabled === true && isset( self::$cache[ $key ] ) && \array_key_exists( $id, self::$cache[ $key ] ) ) {
+			return self::$cache[ $key ][ $id ];
+		}
 
-    /**
-     * Retrieve all previously cached results for a certain utility function.
-     *
-     * @since 1.0.0
-     *
-     * @param string $key The key to identify a particular set of results.
-     *                    It is recommended to pass `__METHOD__` to this parameter.
-     *
-     * @return array<int|string, mixed>
-     */
-    public static function getForKey($key)
-    {
-        if (self::$enabled === true && \array_key_exists($key, self::$cache)) {
-            return self::$cache[$key];
-        }
+		return null;
+	}
 
-        return [];
-    }
+	/**
+	 * Retrieve all previously cached results for a certain utility function.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $key The key to identify a particular set of results.
+	 *                    It is recommended to pass `__METHOD__` to this parameter.
+	 *
+	 * @return array<int|string, mixed>
+	 */
+	public static function getForKey( $key ) {
+		if ( self::$enabled === true && \array_key_exists( $key, self::$cache ) ) {
+			return self::$cache[ $key ];
+		}
 
-    /**
-     * Cache the result for a certain utility function.
-     *
-     * @since 1.0.0
-     *
-     * @param string     $key   The key to identify a particular set of results.
-     *                          It is recommended to pass `__METHOD__` to this parameter.
-     * @param int|string $id    Unique identifier for these results.
-     *                          It is recommended for this to be a serialization of arguments passed
-     *                          to the function or an md5 hash of an input.
-     * @param mixed      $value An arbitrary value to write to the cache.
-     *
-     * @return mixed
-     */
-    public static function set($key, $id, $value)
-    {
-        if (self::$enabled === false) {
-            return;
-        }
+		return array();
+	}
 
-        self::$cache[$key][$id] = $value;
-    }
+	/**
+	 * Cache the result for a certain utility function.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string     $key   The key to identify a particular set of results.
+	 *                          It is recommended to pass `__METHOD__` to this parameter.
+	 * @param int|string $id    Unique identifier for these results.
+	 *                          It is recommended for this to be a serialization of arguments passed
+	 *                          to the function or an md5 hash of an input.
+	 * @param mixed      $value An arbitrary value to write to the cache.
+	 *
+	 * @return mixed
+	 */
+	public static function set( $key, $id, $value ) {
+		if ( self::$enabled === false ) {
+			return;
+		}
 
-    /**
-     * Clear the cache.
-     *
-     * @since 1.0.0
-     *
-     * @return void
-     */
-    public static function clear()
-    {
-        self::$cache = [];
-    }
+		self::$cache[ $key ][ $id ] = $value;
+	}
+
+	/**
+	 * Clear the cache.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public static function clear() {
+		self::$cache = array();
+	}
 }

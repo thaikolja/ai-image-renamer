@@ -48,27 +48,27 @@ final class DeprecatedClassesSniff extends AbstractClassRestrictionsSniff {
 	private $deprecated_classes = array(
 
 		// WP 3.1.0.
-		'WP_User_Search' => array(
+		'WP_User_Search'                         => array(
 			'alt'     => 'WP_User_Query',
 			'version' => '3.1.0',
 		),
 
 		// WP 3.7.0.
-		'WP_HTTP_Fsockopen' => array(
+		'WP_HTTP_Fsockopen'                      => array(
 			'alt'     => 'WP_HTTP::request()',
 			'version' => '3.7.0',
 		),
 
 		// WP 4.9.0.
-		'WP_Customize_New_Menu_Section' => array(
+		'WP_Customize_New_Menu_Section'          => array(
 			'version' => '4.9.0',
 		),
-		'WP_Customize_New_Menu_Control' => array(
+		'WP_Customize_New_Menu_Control'          => array(
 			'version' => '4.9.0',
 		),
 
 		// WP 5.3.0.
-		'WP_Privacy_Data_Export_Requests_Table' => array(
+		'WP_Privacy_Data_Export_Requests_Table'  => array(
 			'alt'     => 'WP_Privacy_Data_Export_Requests_List_Table',
 			'version' => '5.3.0',
 		),
@@ -76,21 +76,21 @@ final class DeprecatedClassesSniff extends AbstractClassRestrictionsSniff {
 			'alt'     => 'WP_Privacy_Data_Removal_Requests_List_Table',
 			'version' => '5.3.0',
 		),
-		'Services_JSON' => array(
+		'Services_JSON'                          => array(
 			'alt'     => 'The PHP native JSON extension',
 			'version' => '5.3.0',
 		),
-		'Services_JSON_Error' => array(
+		'Services_JSON_Error'                    => array(
 			'alt'     => 'The PHP native JSON extension',
 			'version' => '5.3.0',
 		),
 
 		// WP 6.4.0.
-		'WP_Http_Curl' => array(
+		'WP_Http_Curl'                           => array(
 			'alt'     => 'WP_Http',
 			'version' => '6.4.0',
 		),
-		'WP_Http_Streams' => array(
+		'WP_Http_Streams'                        => array(
 			'alt'     => 'WP_Http',
 			'version' => '6.4.0',
 		),

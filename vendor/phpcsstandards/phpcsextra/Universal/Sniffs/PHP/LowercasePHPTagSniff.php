@@ -18,70 +18,68 @@ use PHP_CodeSniffer\Sniffs\Sniff;
  *
  * @since 1.2.0
  */
-final class LowercasePHPTagSniff implements Sniff
-{
+final class LowercasePHPTagSniff implements Sniff {
 
-    /**
-     * Name of the metric.
-     *
-     * @since 1.2.0
-     *
-     * @var string
-     */
-    const METRIC_NAME = 'PHP open tag case';
 
-    /**
-     * Registers the tokens that this sniff wants to listen for.
-     *
-     * @since 1.2.0
-     *
-     * @return array<int>
-     */
-    public function register()
-    {
-        return [\T_OPEN_TAG];
-    }
+	/**
+	 * Name of the metric.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @var string
+	 */
+	const METRIC_NAME = 'PHP open tag case';
 
-    /**
-     * Processes this test, when one of its tokens is encountered.
-     *
-     * @since 1.2.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token
-     *                                               in the stack passed in $tokens.
-     *
-     * @return void
-     */
-    public function process(File $phpcsFile, $stackPtr)
-    {
-        $tokens    = $phpcsFile->getTokens();
-        $content   = $tokens[$stackPtr]['content'];
-        $contentLC = \strtolower($content);
+	/**
+	 * Registers the tokens that this sniff wants to listen for.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @return array<int>
+	 */
+	public function register() {
+		return array( \T_OPEN_TAG );
+	}
 
-        if ($contentLC === $content) {
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'lowercase');
-            return;
-        }
+	/**
+	 * Processes this test, when one of its tokens is encountered.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token
+	 *                                               in the stack passed in $tokens.
+	 *
+	 * @return void
+	 */
+	public function process( File $phpcsFile, $stackPtr ) {
+		$tokens    = $phpcsFile->getTokens();
+		$content   = $tokens[ $stackPtr ]['content'];
+		$contentLC = \strtolower( $content );
 
-        $errorCode = '';
-        if (\strtoupper($content) === $content) {
-            $errorCode = 'Uppercase';
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'uppercase');
-        } else {
-            $errorCode = 'Mixedcase';
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'mixed case');
-        }
+		if ( $contentLC === $content ) {
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'lowercase' );
+			return;
+		}
 
-        $fix = $phpcsFile->addFixableError(
-            'The php open tag should be in lowercase. Found: %s',
-            $stackPtr,
-            $errorCode,
-            [\trim($content)]
-        );
+		$errorCode = '';
+		if ( \strtoupper( $content ) === $content ) {
+			$errorCode = 'Uppercase';
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'uppercase' );
+		} else {
+			$errorCode = 'Mixedcase';
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'mixed case' );
+		}
 
-        if ($fix === true) {
-            $phpcsFile->fixer->replaceToken($stackPtr, $contentLC);
-        }
-    }
+		$fix = $phpcsFile->addFixableError(
+			'The php open tag should be in lowercase. Found: %s',
+			$stackPtr,
+			$errorCode,
+			array( \trim( $content ) )
+		);
+
+		if ( $fix === true ) {
+			$phpcsFile->fixer->replaceToken( $stackPtr, $contentLC );
+		}
+	}
 }

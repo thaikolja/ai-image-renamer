@@ -25,45 +25,43 @@ use Twig\Token;
  *
  * @internal
  */
-final class FromTokenParser extends AbstractTokenParser
-{
-    public function parse(Token $token): Node
-    {
-        $macro = $this->parser->parseExpression();
-        $stream = $this->parser->getStream();
-        $stream->expect(Token::NAME_TYPE, 'import');
+final class FromTokenParser extends AbstractTokenParser {
 
-        $targets = [];
-        while (true) {
-            $name = $stream->expect(Token::NAME_TYPE)->getValue();
+	public function parse( Token $token ): Node {
+		$macro  = $this->parser->parseExpression();
+		$stream = $this->parser->getStream();
+		$stream->expect( Token::NAME_TYPE, 'import' );
 
-            if ($stream->nextIf('as')) {
-                $alias = new AssignContextVariable($stream->expect(Token::NAME_TYPE)->getValue(), $token->getLine());
-            } else {
-                $alias = new AssignContextVariable($name, $token->getLine());
-            }
+		$targets = array();
+		while ( true ) {
+			$name = $stream->expect( Token::NAME_TYPE )->getValue();
 
-            $targets[$name] = $alias;
+			if ( $stream->nextIf( 'as' ) ) {
+				$alias = new AssignContextVariable( $stream->expect( Token::NAME_TYPE )->getValue(), $token->getLine() );
+			} else {
+				$alias = new AssignContextVariable( $name, $token->getLine() );
+			}
 
-            if (!$stream->nextIf(Token::PUNCTUATION_TYPE, ',')) {
-                break;
-            }
-        }
+			$targets[ $name ] = $alias;
 
-        $stream->expect(Token::BLOCK_END_TYPE);
+			if ( ! $stream->nextIf( Token::PUNCTUATION_TYPE, ',' ) ) {
+				break;
+			}
+		}
 
-        $internalRef = new AssignTemplateVariable(new TemplateVariable(null, $token->getLine()), $this->parser->isMainScope());
-        $node = new ImportNode($macro, $internalRef, $token->getLine());
+		$stream->expect( Token::BLOCK_END_TYPE );
 
-        foreach ($targets as $name => $alias) {
-            $this->parser->addImportedSymbol('function', $alias->getAttribute('name'), 'macro_'.$name, $internalRef);
-        }
+		$internalRef = new AssignTemplateVariable( new TemplateVariable( null, $token->getLine() ), $this->parser->isMainScope() );
+		$node        = new ImportNode( $macro, $internalRef, $token->getLine() );
 
-        return $node;
-    }
+		foreach ( $targets as $name => $alias ) {
+			$this->parser->addImportedSymbol( 'function', $alias->getAttribute( 'name' ), 'macro_' . $name, $internalRef );
+		}
 
-    public function getTag(): string
-    {
-        return 'from';
-    }
+		return $node;
+	}
+
+	public function getTag(): string {
+		return 'from';
+	}
 }

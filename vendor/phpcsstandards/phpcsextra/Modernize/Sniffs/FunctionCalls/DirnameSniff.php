@@ -23,367 +23,364 @@ use PHPCSUtils\Utils\PassedParameters;
  *
  * @since 1.0.0
  */
-final class DirnameSniff implements Sniff
-{
+final class DirnameSniff implements Sniff {
 
-    /**
-     * PHP version as configured or 0 if unknown.
-     *
-     * @since 1.1.1
-     *
-     * @var int
-     */
-    private $phpVersion;
 
-    /**
-     * Registers the tokens that this sniff wants to listen for.
-     *
-     * @since 1.0.0
-     *
-     * @return array<int|string>
-     */
-    public function register()
-    {
-        return [
-            \T_STRING,
-            \T_NAME_FULLY_QUALIFIED,
-        ];
-    }
+	/**
+	 * PHP version as configured or 0 if unknown.
+	 *
+	 * @since 1.1.1
+	 *
+	 * @var int
+	 */
+	private $phpVersion;
 
-    /**
-     * Processes this test, when one of its tokens is encountered.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token
-     *                                               in the stack passed in $tokens.
-     *
-     * @return void
-     */
-    public function process(File $phpcsFile, $stackPtr)
-    {
-        if (isset($this->phpVersion) === false || \defined('PHP_CODESNIFFER_IN_TESTS')) {
-            // Set default value to prevent this code from running every time the sniff is triggered.
-            $this->phpVersion = 0;
+	/**
+	 * Registers the tokens that this sniff wants to listen for.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int|string>
+	 */
+	public function register() {
+		return array(
+			\T_STRING,
+			\T_NAME_FULLY_QUALIFIED,
+		);
+	}
 
-            $phpVersion = Helper::getConfigData('php_version');
-            if ($phpVersion !== null) {
-                $this->phpVersion = (int) $phpVersion;
-            }
-        }
+	/**
+	 * Processes this test, when one of its tokens is encountered.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token
+	 *                                               in the stack passed in $tokens.
+	 *
+	 * @return void
+	 */
+	public function process( File $phpcsFile, $stackPtr ) {
+		if ( isset( $this->phpVersion ) === false || \defined( 'PHP_CODESNIFFER_IN_TESTS' ) ) {
+			// Set default value to prevent this code from running every time the sniff is triggered.
+			$this->phpVersion = 0;
 
-        if ($this->phpVersion !== 0 && $this->phpVersion < 50300) {
-            // PHP version too low, nothing to do.
-            return;
-        }
+			$phpVersion = Helper::getConfigData( 'php_version' );
+			if ( $phpVersion !== null ) {
+				$this->phpVersion = (int) $phpVersion;
+			}
+		}
 
-        $tokens   = $phpcsFile->getTokens();
-        $contents = $tokens[$stackPtr]['content'];
-        if ($tokens[$stackPtr]['code'] === \T_NAME_FULLY_QUALIFIED) {
-            $contents = \ltrim($contents, '\\');
-        }
+		if ( $this->phpVersion !== 0 && $this->phpVersion < 50300 ) {
+			// PHP version too low, nothing to do.
+			return;
+		}
 
-        if (\strtolower($contents) !== 'dirname') {
-            // Not our target.
-            return;
-        }
+		$tokens   = $phpcsFile->getTokens();
+		$contents = $tokens[ $stackPtr ]['content'];
+		if ( $tokens[ $stackPtr ]['code'] === \T_NAME_FULLY_QUALIFIED ) {
+			$contents = \ltrim( $contents, '\\' );
+		}
 
-        $nextNonEmpty = $phpcsFile->findNext(Tokens::$emptyTokens, ($stackPtr + 1), null, true);
-        if ($nextNonEmpty === false
-            || $tokens[$nextNonEmpty]['code'] !== \T_OPEN_PARENTHESIS
-            || isset($tokens[$nextNonEmpty]['parenthesis_owner']) === true
-        ) {
-            // Not our target.
-            return;
-        }
+		if ( \strtolower( $contents ) !== 'dirname' ) {
+			// Not our target.
+			return;
+		}
 
-        if (isset($tokens[$nextNonEmpty]['parenthesis_closer']) === false) {
-            // Live coding or parse error, ignore.
-            return;
-        }
+		$nextNonEmpty = $phpcsFile->findNext( Tokens::$emptyTokens, ( $stackPtr + 1 ), null, true );
+		if ( $nextNonEmpty === false
+			|| $tokens[ $nextNonEmpty ]['code'] !== \T_OPEN_PARENTHESIS
+			|| isset( $tokens[ $nextNonEmpty ]['parenthesis_owner'] ) === true
+		) {
+			// Not our target.
+			return;
+		}
 
-        if (Context::inAttribute($phpcsFile, $stackPtr) === true) {
-            // Class instantiation in attribute, not function call.
-            return;
-        }
+		if ( isset( $tokens[ $nextNonEmpty ]['parenthesis_closer'] ) === false ) {
+			// Live coding or parse error, ignore.
+			return;
+		}
 
-        // Check if it is really a function call to the global function.
-        $prevNonEmpty = $phpcsFile->findPrevious(Tokens::$emptyTokens, ($stackPtr - 1), null, true);
+		if ( Context::inAttribute( $phpcsFile, $stackPtr ) === true ) {
+			// Class instantiation in attribute, not function call.
+			return;
+		}
 
-        if (isset(Collections::objectOperators()[$tokens[$prevNonEmpty]['code']]) === true
-            || $tokens[$prevNonEmpty]['code'] === \T_NEW
-        ) {
-            // Method call, class instantiation or other "not our target".
-            return;
-        }
+		// Check if it is really a function call to the global function.
+		$prevNonEmpty = $phpcsFile->findPrevious( Tokens::$emptyTokens, ( $stackPtr - 1 ), null, true );
 
-        if ($tokens[$prevNonEmpty]['code'] === \T_NS_SEPARATOR) {
-            $prevPrevToken = $phpcsFile->findPrevious(Tokens::$emptyTokens, ($prevNonEmpty - 1), null, true);
-            if ($tokens[$prevPrevToken]['code'] === \T_STRING
-                || $tokens[$prevPrevToken]['code'] === \T_NAMESPACE
-            ) {
-                // Namespaced function.
-                return;
-            }
-        }
+		if ( isset( Collections::objectOperators()[ $tokens[ $prevNonEmpty ]['code'] ] ) === true
+			|| $tokens[ $prevNonEmpty ]['code'] === \T_NEW
+		) {
+			// Method call, class instantiation or other "not our target".
+			return;
+		}
 
-        /*
-         * As of here, we can be pretty sure this is a function call to the global function.
-         */
-        $opener = $nextNonEmpty;
-        $closer = $tokens[$nextNonEmpty]['parenthesis_closer'];
+		if ( $tokens[ $prevNonEmpty ]['code'] === \T_NS_SEPARATOR ) {
+			$prevPrevToken = $phpcsFile->findPrevious( Tokens::$emptyTokens, ( $prevNonEmpty - 1 ), null, true );
+			if ( $tokens[ $prevPrevToken ]['code'] === \T_STRING
+				|| $tokens[ $prevPrevToken ]['code'] === \T_NAMESPACE
+			) {
+				// Namespaced function.
+				return;
+			}
+		}
 
-        $parameters = PassedParameters::getParameters($phpcsFile, $stackPtr);
-        $paramCount = \count($parameters);
-        if (empty($parameters) || $paramCount > 2) {
-            // No parameters or too many parameter.
-            return;
-        }
+		/*
+		 * As of here, we can be pretty sure this is a function call to the global function.
+		 */
+		$opener = $nextNonEmpty;
+		$closer = $tokens[ $nextNonEmpty ]['parenthesis_closer'];
 
-        $pathParam = PassedParameters::getParameterFromStack($parameters, 1, 'path');
-        if ($pathParam === false) {
-            // If the path parameter doesn't exist, there's nothing to do.
-            return;
-        }
+		$parameters = PassedParameters::getParameters( $phpcsFile, $stackPtr );
+		$paramCount = \count( $parameters );
+		if ( empty( $parameters ) || $paramCount > 2 ) {
+			// No parameters or too many parameter.
+			return;
+		}
 
-        $levelsParam = PassedParameters::getParameterFromStack($parameters, 2, 'levels');
-        if ($levelsParam === false && $paramCount === 2) {
-            // There must be a typo in the param name or an otherwise stray parameter. Ignore.
-            return;
-        }
+		$pathParam = PassedParameters::getParameterFromStack( $parameters, 1, 'path' );
+		if ( $pathParam === false ) {
+			// If the path parameter doesn't exist, there's nothing to do.
+			return;
+		}
 
-        /*
-         * PHP 5.3+: Detect use of dirname(__FILE__).
-         */
-        if (\strtoupper($pathParam['clean']) === '__FILE__') {
-            $levelsValue = false;
+		$levelsParam = PassedParameters::getParameterFromStack( $parameters, 2, 'levels' );
+		if ( $levelsParam === false && $paramCount === 2 ) {
+			// There must be a typo in the param name or an otherwise stray parameter. Ignore.
+			return;
+		}
 
-            // Determine if the issue is auto-fixable.
-            $hasComment = $phpcsFile->findNext(Tokens::$commentTokens, ($opener + 1), $closer);
-            $fixable    = ($hasComment === false);
+		/*
+		 * PHP 5.3+: Detect use of dirname(__FILE__).
+		 */
+		if ( \strtoupper( $pathParam['clean'] ) === '__FILE__' ) {
+			$levelsValue = false;
 
-            if ($fixable === true) {
-                $levelsValue = $this->getLevelsValue($phpcsFile, $levelsParam);
-                if ($levelsParam !== false && $levelsValue === false) {
-                    // Can't autofix if we don't know the value of the $levels parameter.
-                    $fixable = false;
-                }
-            }
+			// Determine if the issue is auto-fixable.
+			$hasComment = $phpcsFile->findNext( Tokens::$commentTokens, ( $opener + 1 ), $closer );
+			$fixable    = ( $hasComment === false );
 
-            $error = 'Use the __DIR__ constant instead of calling dirname(__FILE__) (PHP >= 5.3)';
-            $code  = 'FileConstant';
+			if ( $fixable === true ) {
+				$levelsValue = $this->getLevelsValue( $phpcsFile, $levelsParam );
+				if ( $levelsParam !== false && $levelsValue === false ) {
+					// Can't autofix if we don't know the value of the $levels parameter.
+					$fixable = false;
+				}
+			}
 
-            // Throw the error.
-            if ($fixable === false) {
-                $phpcsFile->addError($error, $stackPtr, $code);
-                return;
-            }
+			$error = 'Use the __DIR__ constant instead of calling dirname(__FILE__) (PHP >= 5.3)';
+			$code  = 'FileConstant';
 
-            $fix = $phpcsFile->addFixableError($error, $stackPtr, $code);
-            if ($fix === true) {
-                if ($levelsParam === false || $levelsValue === 1) {
-                    // No $levels or $levels set to 1: we can replace the complete function call.
-                    $phpcsFile->fixer->beginChangeset();
+			// Throw the error.
+			if ( $fixable === false ) {
+				$phpcsFile->addError( $error, $stackPtr, $code );
+				return;
+			}
 
-                    $phpcsFile->fixer->replaceToken($stackPtr, '__DIR__');
+			$fix = $phpcsFile->addFixableError( $error, $stackPtr, $code );
+			if ( $fix === true ) {
+				if ( $levelsParam === false || $levelsValue === 1 ) {
+					// No $levels or $levels set to 1: we can replace the complete function call.
+					$phpcsFile->fixer->beginChangeset();
 
-                    for ($i = ($stackPtr + 1); $i <= $closer; $i++) {
-                        $phpcsFile->fixer->replaceToken($i, '');
-                    }
+					$phpcsFile->fixer->replaceToken( $stackPtr, '__DIR__' );
 
-                    // Remove potential leading \.
-                    if ($tokens[$prevNonEmpty]['code'] === \T_NS_SEPARATOR) {
-                        $phpcsFile->fixer->replaceToken($prevNonEmpty, '');
-                    }
+					for ( $i = ( $stackPtr + 1 ); $i <= $closer; $i++ ) {
+						$phpcsFile->fixer->replaceToken( $i, '' );
+					}
 
-                    $phpcsFile->fixer->endChangeset();
-                } else {
-                    // We can replace the $path parameter and will need to adjust the $levels parameter.
-                    $filePtr   = $phpcsFile->findNext(\T_FILE, $pathParam['start'], ($pathParam['end'] + 1));
-                    $levelsPtr = $phpcsFile->findNext(\T_LNUMBER, $levelsParam['start'], ($levelsParam['end'] + 1));
+					// Remove potential leading \.
+					if ( $tokens[ $prevNonEmpty ]['code'] === \T_NS_SEPARATOR ) {
+						$phpcsFile->fixer->replaceToken( $prevNonEmpty, '' );
+					}
 
-                    $phpcsFile->fixer->beginChangeset();
-                    $phpcsFile->fixer->replaceToken($filePtr, '__DIR__');
-                    $phpcsFile->fixer->replaceToken($levelsPtr, ($levelsValue - 1));
-                    $phpcsFile->fixer->endChangeset();
-                }
-            }
+					$phpcsFile->fixer->endChangeset();
+				} else {
+					// We can replace the $path parameter and will need to adjust the $levels parameter.
+					$filePtr   = $phpcsFile->findNext( \T_FILE, $pathParam['start'], ( $pathParam['end'] + 1 ) );
+					$levelsPtr = $phpcsFile->findNext( \T_LNUMBER, $levelsParam['start'], ( $levelsParam['end'] + 1 ) );
 
-            return;
-        }
+					$phpcsFile->fixer->beginChangeset();
+					$phpcsFile->fixer->replaceToken( $filePtr, '__DIR__' );
+					$phpcsFile->fixer->replaceToken( $levelsPtr, ( $levelsValue - 1 ) );
+					$phpcsFile->fixer->endChangeset();
+				}
+			}
 
-        /*
-         * PHP 7.0+: Detect use of nested calls to dirname().
-         */
-        if ($this->phpVersion !== 0 && $this->phpVersion < 70000) {
-            // No need to check for this issue if the PHP version would not allow for it anyway.
-            return;
-        }
+			return;
+		}
 
-        if (\preg_match('`^\s*\\\\?dirname\s*\(`i', $pathParam['clean']) !== 1) {
-            return;
-        }
+		/*
+		 * PHP 7.0+: Detect use of nested calls to dirname().
+		 */
+		if ( $this->phpVersion !== 0 && $this->phpVersion < 70000 ) {
+			// No need to check for this issue if the PHP version would not allow for it anyway.
+			return;
+		}
 
-        /*
-         * Check if there is something _behind_ the nested dirname() call within the same parameter.
-         *
-         * Note: the findNext() calls are safe and will always match the dirname() function call
-         * as otherwise the above regex wouldn't have matched.
-         */
-        $innerDirnamePtr = $phpcsFile->findNext($this->register(), $pathParam['start'], ($pathParam['end'] + 1));
-        $innerOpener     = $phpcsFile->findNext(\T_OPEN_PARENTHESIS, ($innerDirnamePtr + 1), ($pathParam['end'] + 1));
-        if (isset($tokens[$innerOpener]['parenthesis_closer']) === false) {
-            // Shouldn't be possible.
-            return; // @codeCoverageIgnore
-        }
+		if ( \preg_match( '`^\s*\\\\?dirname\s*\(`i', $pathParam['clean'] ) !== 1 ) {
+			return;
+		}
 
-        $innerCloser = $tokens[$innerOpener]['parenthesis_closer'];
-        if ($innerCloser !== $pathParam['end']) {
-            $hasContentAfter = $phpcsFile->findNext(
-                Tokens::$emptyTokens,
-                ($innerCloser + 1),
-                ($pathParam['end'] + 1),
-                true
-            );
-            if ($hasContentAfter !== false) {
-                // Matched code like: `dirname(dirname($file) . 'something')`. Ignore.
-                return;
-            }
-        }
+		/*
+		 * Check if there is something _behind_ the nested dirname() call within the same parameter.
+		 *
+		 * Note: the findNext() calls are safe and will always match the dirname() function call
+		 * as otherwise the above regex wouldn't have matched.
+		 */
+		$innerDirnamePtr = $phpcsFile->findNext( $this->register(), $pathParam['start'], ( $pathParam['end'] + 1 ) );
+		$innerOpener     = $phpcsFile->findNext( \T_OPEN_PARENTHESIS, ( $innerDirnamePtr + 1 ), ( $pathParam['end'] + 1 ) );
+		if ( isset( $tokens[ $innerOpener ]['parenthesis_closer'] ) === false ) {
+			// Shouldn't be possible.
+			return; // @codeCoverageIgnore
+		}
 
-        /*
-         * Determine if this is an auto-fixable error.
-         */
+		$innerCloser = $tokens[ $innerOpener ]['parenthesis_closer'];
+		if ( $innerCloser !== $pathParam['end'] ) {
+			$hasContentAfter = $phpcsFile->findNext(
+				Tokens::$emptyTokens,
+				( $innerCloser + 1 ),
+				( $pathParam['end'] + 1 ),
+				true
+			);
+			if ( $hasContentAfter !== false ) {
+				// Matched code like: `dirname(dirname($file) . 'something')`. Ignore.
+				return;
+			}
+		}
 
-        // Step 1: Are there comments ? If so, not auto-fixable as we don't want to remove comments.
-        $fixable          = true;
-        $outerLevelsValue = false;
-        $innerParameters  = [];
-        $innerLevelsParam = false;
-        $innerLevelsValue = false;
+		/*
+		 * Determine if this is an auto-fixable error.
+		 */
 
-        for ($i = ($opener + 1); $i < $closer; $i++) {
-            if (isset(Tokens::$commentTokens[$tokens[$i]['code']])) {
-                $fixable = false;
-                break;
-            }
+		// Step 1: Are there comments ? If so, not auto-fixable as we don't want to remove comments.
+		$fixable          = true;
+		$outerLevelsValue = false;
+		$innerParameters  = array();
+		$innerLevelsParam = false;
+		$innerLevelsValue = false;
 
-            if ($tokens[$i]['code'] === \T_OPEN_PARENTHESIS
-                && isset($tokens[$i]['parenthesis_closer'])
-            ) {
-                // Skip over everything within the nested dirname() function call.
-                $i = $tokens[$i]['parenthesis_closer'];
-            }
-        }
+		for ( $i = ( $opener + 1 ); $i < $closer; $i++ ) {
+			if ( isset( Tokens::$commentTokens[ $tokens[ $i ]['code'] ] ) ) {
+				$fixable = false;
+				break;
+			}
 
-        // Step 2: Does the `$levels` parameter exist for the outer dirname() call and if so, is it usable ?
-        if ($fixable === true) {
-            $outerLevelsValue = $this->getLevelsValue($phpcsFile, $levelsParam);
-            if ($levelsParam !== false && $outerLevelsValue === false) {
-                // Can't autofix if we don't know the value of the $levels parameter.
-                $fixable = false;
-            }
-        }
+			if ( $tokens[ $i ]['code'] === \T_OPEN_PARENTHESIS
+				&& isset( $tokens[ $i ]['parenthesis_closer'] )
+			) {
+				// Skip over everything within the nested dirname() function call.
+				$i = $tokens[ $i ]['parenthesis_closer'];
+			}
+		}
 
-        // Step 3: Does the `$levels` parameter exist for the inner dirname() call and if so, is it usable ?
-        if ($fixable === true) {
-            $innerParameters  = PassedParameters::getParameters($phpcsFile, $innerDirnamePtr);
-            $innerLevelsParam = PassedParameters::getParameterFromStack($innerParameters, 2, 'levels');
-            $innerLevelsValue = $this->getLevelsValue($phpcsFile, $innerLevelsParam);
-            if ($innerLevelsParam !== false && $innerLevelsValue === false) {
-                // Can't autofix if we don't know the value of the $levels parameter.
-                $fixable = false;
-            }
-        }
+		// Step 2: Does the `$levels` parameter exist for the outer dirname() call and if so, is it usable ?
+		if ( $fixable === true ) {
+			$outerLevelsValue = $this->getLevelsValue( $phpcsFile, $levelsParam );
+			if ( $levelsParam !== false && $outerLevelsValue === false ) {
+				// Can't autofix if we don't know the value of the $levels parameter.
+				$fixable = false;
+			}
+		}
 
-        /*
-         * Throw the error.
-         */
-        $error  = 'Pass the $levels parameter to the dirname() call instead of using nested dirname() calls';
-        $error .= ' (PHP >= 7.0)';
-        $code   = 'Nested';
+		// Step 3: Does the `$levels` parameter exist for the inner dirname() call and if so, is it usable ?
+		if ( $fixable === true ) {
+			$innerParameters  = PassedParameters::getParameters( $phpcsFile, $innerDirnamePtr );
+			$innerLevelsParam = PassedParameters::getParameterFromStack( $innerParameters, 2, 'levels' );
+			$innerLevelsValue = $this->getLevelsValue( $phpcsFile, $innerLevelsParam );
+			if ( $innerLevelsParam !== false && $innerLevelsValue === false ) {
+				// Can't autofix if we don't know the value of the $levels parameter.
+				$fixable = false;
+			}
+		}
 
-        if ($fixable === false) {
-            $phpcsFile->addError($error, $stackPtr, $code);
-            return;
-        }
+		/*
+		 * Throw the error.
+		 */
+		$error  = 'Pass the $levels parameter to the dirname() call instead of using nested dirname() calls';
+		$error .= ' (PHP >= 7.0)';
+		$code   = 'Nested';
 
-        $fix = $phpcsFile->addFixableError($error, $stackPtr, $code);
-        if ($fix === false) {
-            return;
-        }
+		if ( $fixable === false ) {
+			$phpcsFile->addError( $error, $stackPtr, $code );
+			return;
+		}
 
-        /*
-         * Fix the error.
-         */
-        $phpcsFile->fixer->beginChangeset();
+		$fix = $phpcsFile->addFixableError( $error, $stackPtr, $code );
+		if ( $fix === false ) {
+			return;
+		}
 
-        // Remove the info in the _outer_ param call.
-        for ($i = $opener; $i < $innerOpener; $i++) {
-            $phpcsFile->fixer->replaceToken($i, '');
-        }
+		/*
+		 * Fix the error.
+		 */
+		$phpcsFile->fixer->beginChangeset();
 
-        for ($i = ($innerCloser + 1); $i <= $closer; $i++) {
-            $phpcsFile->fixer->replaceToken($i, '');
-        }
+		// Remove the info in the _outer_ param call.
+		for ( $i = $opener; $i < $innerOpener; $i++ ) {
+			$phpcsFile->fixer->replaceToken( $i, '' );
+		}
 
-        if ($innerLevelsParam !== false) {
-            // Inner $levels parameter already exists, just adjust the value.
-            $innerLevelsPtr = $phpcsFile->findNext(
-                \T_LNUMBER,
-                $innerLevelsParam['start'],
-                ($innerLevelsParam['end'] + 1)
-            );
-            $phpcsFile->fixer->replaceToken($innerLevelsPtr, ($innerLevelsValue + $outerLevelsValue));
-        } else {
-            // Inner $levels parameter does not exist yet. We need to add it.
-            $content = ', ';
+		for ( $i = ( $innerCloser + 1 ); $i <= $closer; $i++ ) {
+			$phpcsFile->fixer->replaceToken( $i, '' );
+		}
 
-            $prevBeforeCloser = $phpcsFile->findPrevious(Tokens::$emptyTokens, ($innerCloser - 1), null, true);
-            if ($tokens[$prevBeforeCloser]['code'] === \T_COMMA) {
-                // Trailing comma found, no need to add the comma.
-                $content = ' ';
-            }
+		if ( $innerLevelsParam !== false ) {
+			// Inner $levels parameter already exists, just adjust the value.
+			$innerLevelsPtr = $phpcsFile->findNext(
+				\T_LNUMBER,
+				$innerLevelsParam['start'],
+				( $innerLevelsParam['end'] + 1 )
+			);
+			$phpcsFile->fixer->replaceToken( $innerLevelsPtr, ( $innerLevelsValue + $outerLevelsValue ) );
+		} else {
+			// Inner $levels parameter does not exist yet. We need to add it.
+			$content = ', ';
 
-            $innerPathParam = PassedParameters::getParameterFromStack($innerParameters, 1, 'path');
-            if (isset($innerPathParam['name_token']) === true) {
-                // Non-named param cannot follow named param, so add param name.
-                $content .= 'levels: ';
-            }
+			$prevBeforeCloser = $phpcsFile->findPrevious( Tokens::$emptyTokens, ( $innerCloser - 1 ), null, true );
+			if ( $tokens[ $prevBeforeCloser ]['code'] === \T_COMMA ) {
+				// Trailing comma found, no need to add the comma.
+				$content = ' ';
+			}
 
-            $content .= ($innerLevelsValue + $outerLevelsValue);
-            $phpcsFile->fixer->addContentBefore($innerCloser, $content);
-        }
+			$innerPathParam = PassedParameters::getParameterFromStack( $innerParameters, 1, 'path' );
+			if ( isset( $innerPathParam['name_token'] ) === true ) {
+				// Non-named param cannot follow named param, so add param name.
+				$content .= 'levels: ';
+			}
 
-        $phpcsFile->fixer->endChangeset();
-    }
+			$content .= ( $innerLevelsValue + $outerLevelsValue );
+			$phpcsFile->fixer->addContentBefore( $innerCloser, $content );
+		}
 
-    /**
-     * Determine the value of the $levels parameter passed to dirname().
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File     $phpcsFile   The file being scanned.
-     * @param array<string, int|string>|false $levelsParam The information about the parameter as retrieved
-     *                                                     via PassedParameters::getParameterFromStack().
-     *
-     * @return int|false Integer levels value or FALSE if the levels value couldn't be determined.
-     */
-    private function getLevelsValue($phpcsFile, $levelsParam)
-    {
-        if ($levelsParam === false) {
-            return 1;
-        }
+		$phpcsFile->fixer->endChangeset();
+	}
 
-        $ignore   = Tokens::$emptyTokens;
-        $ignore[] = \T_LNUMBER;
+	/**
+	 * Determine the value of the $levels parameter passed to dirname().
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File     $phpcsFile   The file being scanned.
+	 * @param array<string, int|string>|false $levelsParam The information about the parameter as retrieved
+	 *                                                     via PassedParameters::getParameterFromStack().
+	 *
+	 * @return int|false Integer levels value or FALSE if the levels value couldn't be determined.
+	 */
+	private function getLevelsValue( $phpcsFile, $levelsParam ) {
+		if ( $levelsParam === false ) {
+			return 1;
+		}
 
-        $hasNonNumber = $phpcsFile->findNext($ignore, $levelsParam['start'], ($levelsParam['end'] + 1), true);
-        if ($hasNonNumber !== false) {
-            return false;
-        }
+		$ignore   = Tokens::$emptyTokens;
+		$ignore[] = \T_LNUMBER;
 
-        return (int) $levelsParam['clean'];
-    }
+		$hasNonNumber = $phpcsFile->findNext( $ignore, $levelsParam['start'], ( $levelsParam['end'] + 1 ), true );
+		if ( $hasNonNumber !== false ) {
+			return false;
+		}
+
+		return (int) $levelsParam['clean'];
+	}
 }

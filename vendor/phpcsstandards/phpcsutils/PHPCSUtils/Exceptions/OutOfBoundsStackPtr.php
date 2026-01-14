@@ -21,31 +21,30 @@ use PHPCSUtils\Exceptions\RuntimeException;
  *
  * @since 1.1.0
  */
-final class OutOfBoundsStackPtr extends RuntimeException
-{
+final class OutOfBoundsStackPtr extends RuntimeException {
 
-    /**
-     * Create a new OutOfBoundsStackPtr exception with a standardized text.
-     *
-     * @param int    $position The argument position in the function signature. 1-based.
-     * @param string $name     The argument name in the function signature.
-     * @param mixed  $received The received stack pointer position.
-     *
-     * @return \PHPCSUtils\Exceptions\OutOfBoundsStackPtr
-     */
-    public static function create($position, $name, $received)
-    {
-        $stack = \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS, 2);
 
-        return new self(
-            \sprintf(
-                '%s::%s(): Argument #%d (%s) must be a stack pointer which exists in the $phpcsFile object, %s given.',
-                $stack[1]['class'],
-                $stack[1]['function'],
-                $position,
-                $name,
-                \is_scalar($received) ? \var_export($received, true) : \gettype($received)
-            )
-        );
-    }
+	/**
+	 * Create a new OutOfBoundsStackPtr exception with a standardized text.
+	 *
+	 * @param int    $position The argument position in the function signature. 1-based.
+	 * @param string $name     The argument name in the function signature.
+	 * @param mixed  $received The received stack pointer position.
+	 *
+	 * @return \PHPCSUtils\Exceptions\OutOfBoundsStackPtr
+	 */
+	public static function create( $position, $name, $received ) {
+		$stack = \debug_backtrace( \DEBUG_BACKTRACE_IGNORE_ARGS, 2 );
+
+		return new self(
+			\sprintf(
+				'%s::%s(): Argument #%d (%s) must be a stack pointer which exists in the $phpcsFile object, %s given.',
+				$stack[1]['class'],
+				$stack[1]['function'],
+				$position,
+				$name,
+				\is_scalar( $received ) ? \var_export( $received, true ) : \gettype( $received )
+			)
+		);
+	}
 }

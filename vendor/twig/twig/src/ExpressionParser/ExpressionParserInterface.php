@@ -11,18 +11,18 @@
 
 namespace Twig\ExpressionParser;
 
-interface ExpressionParserInterface
-{
-    public function __toString(): string;
+interface ExpressionParserInterface {
 
-    public function getName(): string;
+	public function __toString(): string;
 
-    public function getPrecedence(): int;
+	public function getName(): string;
 
-    public function getPrecedenceChange(): ?PrecedenceChange;
+	public function getPrecedence(): int;
 
-    /**
-     * @return array<string>
-     */
-    public function getAliases(): array;
+	public function getPrecedenceChange(): ?PrecedenceChange;
+
+	/**
+	 * @return array<string>
+	 */
+	public function getAliases(): array;
 }

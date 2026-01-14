@@ -27,226 +27,224 @@ use PHPCSUtils\Utils\UseStatements;
  *
  * @since 1.1.0
  */
-final class DisallowMixedGroupUseSniff implements Sniff
-{
+final class DisallowMixedGroupUseSniff implements Sniff {
 
-    /**
-     * Name of the "Use import source" metric.
-     *
-     * @since 1.1.0
-     *
-     * @var string
-     */
-    const METRIC_NAME = 'Import use statement type';
 
-    /**
-     * Returns an array of tokens this test wants to listen for.
-     *
-     * @since 1.1.0
-     *
-     * @return array<int|string>
-     */
-    public function register()
-    {
-        return [\T_USE];
-    }
+	/**
+	 * Name of the "Use import source" metric.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @var string
+	 */
+	const METRIC_NAME = 'Import use statement type';
 
-    /**
-     * Processes this test, when one of its tokens is encountered.
-     *
-     * @since 1.1.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token
-     *                                               in the stack passed in $tokens.
-     *
-     * @return void
-     */
-    public function process(File $phpcsFile, $stackPtr)
-    {
-        if (UseStatements::isImportUse($phpcsFile, $stackPtr) === false) {
-            // Closure or trait use statement. Bow out.
-            return;
-        }
+	/**
+	 * Returns an array of tokens this test wants to listen for.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return array<int|string>
+	 */
+	public function register() {
+		return array( \T_USE );
+	}
 
-        $useStatements = UseStatements::splitImportUseStatement($phpcsFile, $stackPtr);
+	/**
+	 * Processes this test, when one of its tokens is encountered.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token
+	 *                                               in the stack passed in $tokens.
+	 *
+	 * @return void
+	 */
+	public function process( File $phpcsFile, $stackPtr ) {
+		if ( UseStatements::isImportUse( $phpcsFile, $stackPtr ) === false ) {
+			// Closure or trait use statement. Bow out.
+			return;
+		}
 
-        $ooCount       = \count($useStatements['name']);
-        $functionCount = \count($useStatements['function']);
-        $constantCount = \count($useStatements['const']);
-        $totalCount    = $ooCount + $functionCount + $constantCount;
+		$useStatements = UseStatements::splitImportUseStatement( $phpcsFile, $stackPtr );
 
-        if ($totalCount === 0) {
-            // There must have been a parse error. Bow out.
-            return;
-        }
+		$ooCount       = \count( $useStatements['name'] );
+		$functionCount = \count( $useStatements['function'] );
+		$constantCount = \count( $useStatements['const'] );
+		$totalCount    = $ooCount + $functionCount + $constantCount;
 
-        // End of statement will always be found, otherwise the import statement parsing would have failed.
-        $endOfStatement = $phpcsFile->findNext([\T_SEMICOLON, \T_CLOSE_TAG], ($stackPtr + 1));
-        $groupStart     = $phpcsFile->findNext(\T_OPEN_USE_GROUP, ($stackPtr + 1), $endOfStatement);
+		if ( $totalCount === 0 ) {
+			// There must have been a parse error. Bow out.
+			return;
+		}
 
-        if ($groupStart === false) {
-            // Not a group use statement. Just record the metric.
-            if ($totalCount === 1) {
-                $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'single import');
-            } else {
-                $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'multi import');
-            }
+		// End of statement will always be found, otherwise the import statement parsing would have failed.
+		$endOfStatement = $phpcsFile->findNext( array( \T_SEMICOLON, \T_CLOSE_TAG ), ( $stackPtr + 1 ) );
+		$groupStart     = $phpcsFile->findNext( \T_OPEN_USE_GROUP, ( $stackPtr + 1 ), $endOfStatement );
 
-            return;
-        }
+		if ( $groupStart === false ) {
+			// Not a group use statement. Just record the metric.
+			if ( $totalCount === 1 ) {
+				$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'single import' );
+			} else {
+				$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'multi import' );
+			}
 
-        if ($totalCount === 1
-            || ($ooCount !== 0 && $functionCount === 0 && $constantCount === 0)
-            || ($ooCount === 0 && $functionCount !== 0 && $constantCount === 0)
-            || ($ooCount === 0 && $functionCount === 0 && $constantCount !== 0)
-        ) {
-            // Not a *mixed* group use statement.
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'group use, single type');
-            return;
-        }
+			return;
+		}
 
-        $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'group use, multi type');
+		if ( $totalCount === 1
+			|| ( $ooCount !== 0 && $functionCount === 0 && $constantCount === 0 )
+			|| ( $ooCount === 0 && $functionCount !== 0 && $constantCount === 0 )
+			|| ( $ooCount === 0 && $functionCount === 0 && $constantCount !== 0 )
+		) {
+			// Not a *mixed* group use statement.
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'group use, single type' );
+			return;
+		}
 
-        // Build up the error message.
-        $foundPhrases = [];
-        if ($ooCount > 1) {
-            $foundPhrases[] = \sprintf('%d namespaces/OO names', $ooCount);
-        } elseif ($ooCount === 1) {
-            $foundPhrases[] = \sprintf('%d namespace/OO name', $ooCount);
-        }
+		$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'group use, multi type' );
 
-        if ($functionCount > 1) {
-            $foundPhrases[] = \sprintf('%d functions', $functionCount);
-        } elseif ($functionCount === 1) {
-            $foundPhrases[] = \sprintf('%d function', $functionCount);
-        }
+		// Build up the error message.
+		$foundPhrases = array();
+		if ( $ooCount > 1 ) {
+			$foundPhrases[] = \sprintf( '%d namespaces/OO names', $ooCount );
+		} elseif ( $ooCount === 1 ) {
+			$foundPhrases[] = \sprintf( '%d namespace/OO name', $ooCount );
+		}
 
-        if ($constantCount > 1) {
-            $foundPhrases[] = \sprintf('%d constants', $constantCount);
-        } elseif ($constantCount === 1) {
-            $foundPhrases[] = \sprintf('%d constant', $constantCount);
-        }
+		if ( $functionCount > 1 ) {
+			$foundPhrases[] = \sprintf( '%d functions', $functionCount );
+		} elseif ( $functionCount === 1 ) {
+			$foundPhrases[] = \sprintf( '%d function', $functionCount );
+		}
 
-        if (\count($foundPhrases) === 2) {
-            $found = \implode(' and ', $foundPhrases);
-        } else {
-            $found  = \array_shift($foundPhrases) . ', ';
-            $found .= \implode(' and ', $foundPhrases);
-        }
+		if ( $constantCount > 1 ) {
+			$foundPhrases[] = \sprintf( '%d constants', $constantCount );
+		} elseif ( $constantCount === 1 ) {
+			$foundPhrases[] = \sprintf( '%d constant', $constantCount );
+		}
 
-        $error = 'Group use statements should import one type of construct.'
-            . ' Mixed group use statement found importing %s.';
-        $code  = 'Found';
-        $data  = [$found];
+		if ( \count( $foundPhrases ) === 2 ) {
+			$found = \implode( ' and ', $foundPhrases );
+		} else {
+			$found  = \array_shift( $foundPhrases ) . ', ';
+			$found .= \implode( ' and ', $foundPhrases );
+		}
 
-        $hasComment = $phpcsFile->findNext(Tokens::$commentTokens, ($stackPtr + 1), $endOfStatement);
-        if ($hasComment !== false) {
-            // Don't attempt to auto-fix is there are comments or PHPCS annotations in the statement.
-            $phpcsFile->addError($error, $stackPtr, $code, $data);
-            return;
-        }
+		$error = 'Group use statements should import one type of construct.'
+			. ' Mixed group use statement found importing %s.';
+		$code  = 'Found';
+		$data  = array( $found );
 
-        $fix = $phpcsFile->addFixableError($error, $stackPtr, $code, $data);
+		$hasComment = $phpcsFile->findNext( Tokens::$commentTokens, ( $stackPtr + 1 ), $endOfStatement );
+		if ( $hasComment !== false ) {
+			// Don't attempt to auto-fix is there are comments or PHPCS annotations in the statement.
+			$phpcsFile->addError( $error, $stackPtr, $code, $data );
+			return;
+		}
 
-        if ($fix === false) {
-            return;
-        }
+		$fix = $phpcsFile->addFixableError( $error, $stackPtr, $code, $data );
 
-        /*
-         * Fix it.
-         *
-         * This fixer complies with the following (arbitrary) requirements:
-         * - It will re-use the original base "group" name, i.e. the part before \{,
-         *   though it will remove a potential leading backslash from it.
-         * - It takes aliases into account, but only when something is aliased to a different name.
-         *   Aliases re-using the original name will be removed.
-         * - The fix will not add a trailing comma after the last group use sub-statement.
-         *   This is a PHP 7.2+ feature.
-         *   If a standard wants to enforce trailing commas, they should use a separate sniff for that.
-         * - If there is only 1 statement of a certain type, the replacement will be a single
-         *   import use statement, not a group use statement.
-         * - If any of the partial use statements within a group contain leading backslashes,
-         *   the sniff will not correct for this. This is a parse error and the fixed version will
-         *   still contain a parse error.
-         */
+		if ( $fix === false ) {
+			return;
+		}
 
-        $phpcsFile->fixer->beginChangeset();
+		/*
+		 * Fix it.
+		 *
+		 * This fixer complies with the following (arbitrary) requirements:
+		 * - It will re-use the original base "group" name, i.e. the part before \{,
+		 *   though it will remove a potential leading backslash from it.
+		 * - It takes aliases into account, but only when something is aliased to a different name.
+		 *   Aliases re-using the original name will be removed.
+		 * - The fix will not add a trailing comma after the last group use sub-statement.
+		 *   This is a PHP 7.2+ feature.
+		 *   If a standard wants to enforce trailing commas, they should use a separate sniff for that.
+		 * - If there is only 1 statement of a certain type, the replacement will be a single
+		 *   import use statement, not a group use statement.
+		 * - If any of the partial use statements within a group contain leading backslashes,
+		 *   the sniff will not correct for this. This is a parse error and the fixed version will
+		 *   still contain a parse error.
+		 */
 
-        // Ensure that a potential close PHP tag ending the statement is not removed.
-        $tokens     = $phpcsFile->getTokens();
-        $endRemoval = $endOfStatement;
-        if ($tokens[$endOfStatement]['code'] !== \T_SEMICOLON) {
-            $endRemoval = $phpcsFile->findPrevious(Tokens::$emptyTokens, ($endOfStatement - 1), null, true);
-        }
+		$phpcsFile->fixer->beginChangeset();
 
-        // Remove old statement with the exception of the `use` keyword.
-        for ($i = ($stackPtr + 1); $i <= $endRemoval; $i++) {
-            $phpcsFile->fixer->replaceToken($i, '');
-        }
+		// Ensure that a potential close PHP tag ending the statement is not removed.
+		$tokens     = $phpcsFile->getTokens();
+		$endRemoval = $endOfStatement;
+		if ( $tokens[ $endOfStatement ]['code'] !== \T_SEMICOLON ) {
+			$endRemoval = $phpcsFile->findPrevious( Tokens::$emptyTokens, ( $endOfStatement - 1 ), null, true );
+		}
 
-        // Build up the new use import statements.
-        $newStatements = [];
+		// Remove old statement with the exception of the `use` keyword.
+		for ( $i = ( $stackPtr + 1 ); $i <= $endRemoval; $i++ ) {
+			$phpcsFile->fixer->replaceToken( $i, '' );
+		}
 
-        $useIndent    = \str_repeat(' ', ($tokens[$stackPtr]['column'] - 1));
-        $insideIndent = $useIndent . \str_repeat(' ', 4);
+		// Build up the new use import statements.
+		$newStatements = array();
 
-        $baseGroupName = \ltrim(GetTokensAsString::noEmpties($phpcsFile, ($stackPtr + 1), ($groupStart - 1)), '\\');
+		$useIndent    = \str_repeat( ' ', ( $tokens[ $stackPtr ]['column'] - 1 ) );
+		$insideIndent = $useIndent . \str_repeat( ' ', 4 );
 
-        foreach ($useStatements as $type => $statements) {
-            $count = \count($statements);
-            if ($count === 0) {
-                continue;
-            }
+		$baseGroupName = \ltrim( GetTokensAsString::noEmpties( $phpcsFile, ( $stackPtr + 1 ), ( $groupStart - 1 ) ), '\\' );
 
-            $typeName = $type . ' ';
-            if ($type === 'name') {
-                $typeName = '';
-            }
+		foreach ( $useStatements as $type => $statements ) {
+			$count = \count( $statements );
+			if ( $count === 0 ) {
+				continue;
+			}
 
-            if ($count === 1) {
-                $qualifiedName = \reset($statements);
-                $alias         = \key($statements);
+			$typeName = $type . ' ';
+			if ( $type === 'name' ) {
+				$typeName = '';
+			}
 
-                $newStatement = 'use ' . $typeName . $qualifiedName;
+			if ( $count === 1 ) {
+				$qualifiedName = \reset( $statements );
+				$alias         = \key( $statements );
 
-                $unqualifiedName = \ltrim(\substr($qualifiedName, (int) \strrpos($qualifiedName, '\\')), '\\');
-                if ($unqualifiedName !== $alias) {
-                    $newStatement .= ' as ' . $alias;
-                }
+				$newStatement = 'use ' . $typeName . $qualifiedName;
 
-                $newStatement .= ';';
+				$unqualifiedName = \ltrim( \substr( $qualifiedName, (int) \strrpos( $qualifiedName, '\\' ) ), '\\' );
+				if ( $unqualifiedName !== $alias ) {
+					$newStatement .= ' as ' . $alias;
+				}
 
-                $newStatements[] = $newStatement;
-                continue;
-            }
+				$newStatement .= ';';
 
-            // Multiple statements, add a single-type group use statement.
-            $newStatement = 'use ' . $typeName . $baseGroupName . '{' . $phpcsFile->eolChar;
+				$newStatements[] = $newStatement;
+				continue;
+			}
 
-            foreach ($statements as $alias => $qualifiedName) {
-                $partialName   = \str_replace($baseGroupName, '', $qualifiedName);
-                $newStatement .= $insideIndent . $partialName;
+			// Multiple statements, add a single-type group use statement.
+			$newStatement = 'use ' . $typeName . $baseGroupName . '{' . $phpcsFile->eolChar;
 
-                $unqualifiedName = \ltrim(\substr($partialName, (int) \strrpos($partialName, '\\')), '\\');
-                if ($unqualifiedName !== $alias) {
-                    $newStatement .= ' as ' . $alias;
-                }
+			foreach ( $statements as $alias => $qualifiedName ) {
+				$partialName   = \str_replace( $baseGroupName, '', $qualifiedName );
+				$newStatement .= $insideIndent . $partialName;
 
-                $newStatement .= ',' . $phpcsFile->eolChar;
-            }
+				$unqualifiedName = \ltrim( \substr( $partialName, (int) \strrpos( $partialName, '\\' ) ), '\\' );
+				if ( $unqualifiedName !== $alias ) {
+					$newStatement .= ' as ' . $alias;
+				}
 
-            // Remove trailing comma after last statement as that's PHP 7.2+.
-            $newStatement = \rtrim($newStatement, ',' . $phpcsFile->eolChar);
+				$newStatement .= ',' . $phpcsFile->eolChar;
+			}
 
-            $newStatement   .= $phpcsFile->eolChar . $useIndent . '};';
-            $newStatements[] = $newStatement;
-        }
+			// Remove trailing comma after last statement as that's PHP 7.2+.
+			$newStatement = \rtrim( $newStatement, ',' . $phpcsFile->eolChar );
 
-        $replacement = \implode($phpcsFile->eolChar . $useIndent, $newStatements);
+			$newStatement   .= $phpcsFile->eolChar . $useIndent . '};';
+			$newStatements[] = $newStatement;
+		}
 
-        $phpcsFile->fixer->replaceToken($stackPtr, $replacement);
+		$replacement = \implode( $phpcsFile->eolChar . $useIndent, $newStatements );
 
-        $phpcsFile->fixer->endChangeset();
-    }
+		$phpcsFile->fixer->replaceToken( $stackPtr, $replacement );
+
+		$phpcsFile->fixer->endChangeset();
+	}
 }

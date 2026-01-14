@@ -22,254 +22,249 @@ use PHPCSUtils\Utils\ObjectDeclarations;
  *
  * @since 1.0.0
  */
-final class AlphabeticExtendsImplementsSniff implements Sniff
-{
+final class AlphabeticExtendsImplementsSniff implements Sniff {
 
-    /**
-     * Name of the "Alphabetically ordered" metric.
-     *
-     * @since 1.0.0
-     *
-     * @var string
-     */
-    const METRIC_NAME_ALPHA = 'Interface names in implements/extends ordered alphabetically (%s)';
 
-    /**
-     * Name of the "interface count" metric.
-     *
-     * @since 1.0.0
-     *
-     * @var string
-     */
-    const METRIC_NAME_COUNT = 'Number of interfaces being implemented/extended';
+	/**
+	 * Name of the "Alphabetically ordered" metric.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var string
+	 */
+	const METRIC_NAME_ALPHA = 'Interface names in implements/extends ordered alphabetically (%s)';
 
-    /**
-     * The sort order to use for the statement.
-     *
-     * If all names used are unqualified, the sort order won't make a difference.
-     * However, if one or more of the names are partially or fully qualified, the chosen
-     * sort order will determine how the sorting between unqualified, partially and
-     * fully qualified names is handled.
-     *
-     * The sniff supports two sort order options:
-     * - 'name' : sort by the interface name only (default);
-     * - 'full' : sort by the full name as used in the statement (without leading backslash).
-     *
-     * In both cases, the sorting will be done using natural sort, case-insensitive.
-     *
-     * Example:
-     * <code>
-     *   class Foo implements \Vendor\DiffIterator, My\Count, DateTimeInterface {}
-     * </code>
-     *
-     * If sorted using the "name" sort-order, the sniff looks just at the interface name, i.e.
-     * `DiffIterator`, `Count` and `DateTimeInterface`, which for this example would mean
-     * the correct order would be `My\Count, DateTimeInterface, \Vendor\DiffIterator`.
-     *
-     * If sorted using the "full" sort-order, the sniff will look at the full name as used
-     * in the `implements` statement, without leading backslashes.
-     * For the example above, this would mean that the correct order would be:
-     * `DateTimeInterface, My\Count, \Vendor\DiffIterator`.
-     *
-     * @since 1.0.0
-     *
-     * @var string
-     */
-    public $orderby = 'name';
+	/**
+	 * Name of the "interface count" metric.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var string
+	 */
+	const METRIC_NAME_COUNT = 'Number of interfaces being implemented/extended';
 
-    /**
-     * Returns an array of tokens this test wants to listen for.
-     *
-     * @since 1.0.0
-     *
-     * @return array<int|string>
-     */
-    public function register()
-    {
-        return (Collections::ooCanExtend() + Collections::ooCanImplement());
-    }
+	/**
+	 * The sort order to use for the statement.
+	 *
+	 * If all names used are unqualified, the sort order won't make a difference.
+	 * However, if one or more of the names are partially or fully qualified, the chosen
+	 * sort order will determine how the sorting between unqualified, partially and
+	 * fully qualified names is handled.
+	 *
+	 * The sniff supports two sort order options:
+	 * - 'name' : sort by the interface name only (default);
+	 * - 'full' : sort by the full name as used in the statement (without leading backslash).
+	 *
+	 * In both cases, the sorting will be done using natural sort, case-insensitive.
+	 *
+	 * Example:
+	 * <code>
+	 *   class Foo implements \Vendor\DiffIterator, My\Count, DateTimeInterface {}
+	 * </code>
+	 *
+	 * If sorted using the "name" sort-order, the sniff looks just at the interface name, i.e.
+	 * `DiffIterator`, `Count` and `DateTimeInterface`, which for this example would mean
+	 * the correct order would be `My\Count, DateTimeInterface, \Vendor\DiffIterator`.
+	 *
+	 * If sorted using the "full" sort-order, the sniff will look at the full name as used
+	 * in the `implements` statement, without leading backslashes.
+	 * For the example above, this would mean that the correct order would be:
+	 * `DateTimeInterface, My\Count, \Vendor\DiffIterator`.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var string
+	 */
+	public $orderby = 'name';
 
-    /**
-     * Processes this test, when one of its tokens is encountered.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token in
-     *                                               the stack passed in $tokens.
-     *
-     * @return void
-     */
-    public function process(File $phpcsFile, $stackPtr)
-    {
-        /*
-         * Validate the setting.
-         */
-        if ($this->orderby !== 'full') {
-            // Use the default.
-            $this->orderby = 'name';
-        }
-        $metricNameAlpha = \sprintf(self::METRIC_NAME_ALPHA, $this->orderby);
+	/**
+	 * Returns an array of tokens this test wants to listen for.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int|string>
+	 */
+	public function register() {
+		return ( Collections::ooCanExtend() + Collections::ooCanImplement() );
+	}
 
-        $tokens = $phpcsFile->getTokens();
-        if (isset($tokens[$stackPtr]['scope_opener']) === false) {
-            // Parse error or live coding. Ignore.
-            return;
-        }
+	/**
+	 * Processes this test, when one of its tokens is encountered.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token in
+	 *                                               the stack passed in $tokens.
+	 *
+	 * @return void
+	 */
+	public function process( File $phpcsFile, $stackPtr ) {
+		/*
+		 * Validate the setting.
+		 */
+		if ( $this->orderby !== 'full' ) {
+			// Use the default.
+			$this->orderby = 'name';
+		}
+		$metricNameAlpha = \sprintf( self::METRIC_NAME_ALPHA, $this->orderby );
 
-        $scopeOpener = $tokens[$stackPtr]['scope_opener'];
+		$tokens = $phpcsFile->getTokens();
+		if ( isset( $tokens[ $stackPtr ]['scope_opener'] ) === false ) {
+			// Parse error or live coding. Ignore.
+			return;
+		}
 
-        /*
-         * Get the names.
-         */
-        if (isset(Collections::ooCanImplement()[$tokens[$stackPtr]['code']]) === true) {
-            $names = ObjectDeclarations::findImplementedInterfaceNames($phpcsFile, $stackPtr);
-        } else {
-            $names = ObjectDeclarations::findExtendedInterfaceNames($phpcsFile, $stackPtr);
-        }
+		$scopeOpener = $tokens[ $stackPtr ]['scope_opener'];
 
-        if (\is_array($names) === false) {
-            // Class/interface/enum doesn't extend or implement.
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME_COUNT, 0);
-            $phpcsFile->recordMetric($stackPtr, $metricNameAlpha, 'n/a');
-            return;
-        }
+		/*
+		 * Get the names.
+		 */
+		if ( isset( Collections::ooCanImplement()[ $tokens[ $stackPtr ]['code'] ] ) === true ) {
+			$names = ObjectDeclarations::findImplementedInterfaceNames( $phpcsFile, $stackPtr );
+		} else {
+			$names = ObjectDeclarations::findExtendedInterfaceNames( $phpcsFile, $stackPtr );
+		}
 
-        $count = \count($names);
-        $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME_COUNT, $count);
+		if ( \is_array( $names ) === false ) {
+			// Class/interface/enum doesn't extend or implement.
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME_COUNT, 0 );
+			$phpcsFile->recordMetric( $stackPtr, $metricNameAlpha, 'n/a' );
+			return;
+		}
 
-        if ($count < 2) {
-            // Nothing to sort.
-            $phpcsFile->recordMetric($stackPtr, $metricNameAlpha, 'n/a');
-            return;
-        }
+		$count = \count( $names );
+		$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME_COUNT, $count );
 
-        /*
-         * Check the order.
-         */
-        if ($this->orderby === 'name') {
-            $sorted = $this->sortByName($names);
-        } else {
-            $sorted = $this->sortByFull($names);
-        }
+		if ( $count < 2 ) {
+			// Nothing to sort.
+			$phpcsFile->recordMetric( $stackPtr, $metricNameAlpha, 'n/a' );
+			return;
+		}
 
-        if ($sorted === $names) {
-            // Order is already correct.
-            $phpcsFile->recordMetric($stackPtr, $metricNameAlpha, 'yes');
-            return;
-        }
+		/*
+		 * Check the order.
+		 */
+		if ( $this->orderby === 'name' ) {
+			$sorted = $this->sortByName( $names );
+		} else {
+			$sorted = $this->sortByFull( $names );
+		}
 
-        $phpcsFile->recordMetric($stackPtr, $metricNameAlpha, 'no');
+		if ( $sorted === $names ) {
+			// Order is already correct.
+			$phpcsFile->recordMetric( $stackPtr, $metricNameAlpha, 'yes' );
+			return;
+		}
 
-        /*
-         * Throw the error.
-         */
-        $keyword = \T_IMPLEMENTS;
-        if (isset(Collections::ooCanImplement()[$tokens[$stackPtr]['code']]) === false) {
-            $keyword = \T_EXTENDS;
-        }
+		$phpcsFile->recordMetric( $stackPtr, $metricNameAlpha, 'no' );
 
-        $fixable    = true;
-        $keywordPtr = $phpcsFile->findNext($keyword, ($stackPtr + 1), $scopeOpener);
-        $hasComment = $phpcsFile->findNext(Tokens::$commentTokens, ($keywordPtr + 1), $scopeOpener);
-        if ($hasComment !== false) {
-            $fixable = false;
-        }
+		/*
+		 * Throw the error.
+		 */
+		$keyword = \T_IMPLEMENTS;
+		if ( isset( Collections::ooCanImplement()[ $tokens[ $stackPtr ]['code'] ] ) === false ) {
+			$keyword = \T_EXTENDS;
+		}
 
-        $error  = "The interface names in a \"%s %s\" statement should be ordered alphabetically.\n";
-        $error .= 'Expected: %s; Found: %s';
-        $code   = \ucfirst(\strtolower($tokens[$keywordPtr]['content'])) . 'WrongOrder';
-        $data   = [
-            $tokens[$stackPtr]['content'],
-            $tokens[$keywordPtr]['content'],
-            \implode(', ', $sorted),
-            \implode(', ', $names),
-        ];
+		$fixable    = true;
+		$keywordPtr = $phpcsFile->findNext( $keyword, ( $stackPtr + 1 ), $scopeOpener );
+		$hasComment = $phpcsFile->findNext( Tokens::$commentTokens, ( $keywordPtr + 1 ), $scopeOpener );
+		if ( $hasComment !== false ) {
+			$fixable = false;
+		}
 
-        if ($fixable === false) {
-            $code .= 'WithComments';
-            $phpcsFile->addError($error, $keywordPtr, $code, $data);
-            return;
-        }
+		$error  = "The interface names in a \"%s %s\" statement should be ordered alphabetically.\n";
+		$error .= 'Expected: %s; Found: %s';
+		$code   = \ucfirst( \strtolower( $tokens[ $keywordPtr ]['content'] ) ) . 'WrongOrder';
+		$data   = array(
+			$tokens[ $stackPtr ]['content'],
+			$tokens[ $keywordPtr ]['content'],
+			\implode( ', ', $sorted ),
+			\implode( ', ', $names ),
+		);
 
-        // OK, so we appear to have a fixable error.
-        $fix = $phpcsFile->addFixableError($error, $keywordPtr, $code, $data);
-        if ($fix === false) {
-            return;
-        }
+		if ( $fixable === false ) {
+			$code .= 'WithComments';
+			$phpcsFile->addError( $error, $keywordPtr, $code, $data );
+			return;
+		}
 
-        $phpcsFile->fixer->beginChangeset();
+		// OK, so we appear to have a fixable error.
+		$fix = $phpcsFile->addFixableError( $error, $keywordPtr, $code, $data );
+		if ( $fix === false ) {
+			return;
+		}
 
-        // Remove the complete previous extends/implements part.
-        for ($i = ($keywordPtr + 1); $i < $scopeOpener; $i++) {
-            $phpcsFile->fixer->replaceToken($i, '');
-        }
+		$phpcsFile->fixer->beginChangeset();
 
-        $phpcsFile->fixer->addContent($keywordPtr, ' ' . \implode(', ', $sorted) . ' ');
+		// Remove the complete previous extends/implements part.
+		for ( $i = ( $keywordPtr + 1 ); $i < $scopeOpener; $i++ ) {
+			$phpcsFile->fixer->replaceToken( $i, '' );
+		}
 
-        $phpcsFile->fixer->endChangeset();
-    }
+		$phpcsFile->fixer->addContent( $keywordPtr, ' ' . \implode( ', ', $sorted ) . ' ' );
 
-    /**
-     * Sort an array of potentially mixed qualified and unqualified names by the interface name.
-     *
-     * @since 1.0.0
-     *
-     * @param string[] $names Interface names, potentially mixed qualified and unqualified.
-     *
-     * @return string[]
-     */
-    protected function sortByName(array $names)
-    {
-        $getLastName = function ($name) {
-            $last = \strrchr($name, '\\');
-            if ($last === false) {
-                $last = $name;
-            } else {
-                $last = \substr($last, 1);
-            }
+		$phpcsFile->fixer->endChangeset();
+	}
 
-            return $last;
-        };
+	/**
+	 * Sort an array of potentially mixed qualified and unqualified names by the interface name.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string[] $names Interface names, potentially mixed qualified and unqualified.
+	 *
+	 * @return string[]
+	 */
+	protected function sortByName( array $names ) {
+		$getLastName = function ( $name ) {
+			$last = \strrchr( $name, '\\' );
+			if ( $last === false ) {
+				$last = $name;
+			} else {
+				$last = \substr( $last, 1 );
+			}
 
-        return $this->sortNames($names, $getLastName);
-    }
+			return $last;
+		};
 
-    /**
-     * Sort an array of potentially mixed qualified and unqualified names by the full name.
-     *
-     * @since 1.0.0
-     *
-     * @param string[] $names Interface names, potentially mixed qualified and unqualified.
-     *
-     * @return string[]
-     */
-    protected function sortByFull(array $names)
-    {
-        $trimLeadingBackslash = function ($name) {
-            return \ltrim($name, '\\');
-        };
+		return $this->sortNames( $names, $getLastName );
+	}
 
-        return $this->sortNames($names, $trimLeadingBackslash);
-    }
+	/**
+	 * Sort an array of potentially mixed qualified and unqualified names by the full name.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string[] $names Interface names, potentially mixed qualified and unqualified.
+	 *
+	 * @return string[]
+	 */
+	protected function sortByFull( array $names ) {
+		$trimLeadingBackslash = function ( $name ) {
+			return \ltrim( $name, '\\' );
+		};
 
-    /**
-     * Sort an array of names.
-     *
-     * @since 1.0.0
-     *
-     * @param string[] $names        Interface names, potentially mixed qualified and unqualified.
-     * @param callable $prepareNames Function to call to prepare the names before sorting.
-     *
-     * @return string[]
-     */
-    private function sortNames(array $names, callable $prepareNames)
-    {
-        $preppedNames = \array_map($prepareNames, $names);
-        $names        = \array_combine($names, $preppedNames);
+		return $this->sortNames( $names, $trimLeadingBackslash );
+	}
 
-        \natcasesort($names);
+	/**
+	 * Sort an array of names.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string[] $names        Interface names, potentially mixed qualified and unqualified.
+	 * @param callable $prepareNames Function to call to prepare the names before sorting.
+	 *
+	 * @return string[]
+	 */
+	private function sortNames( array $names, callable $prepareNames ) {
+		$preppedNames = \array_map( $prepareNames, $names );
+		$names        = \array_combine( $names, $preppedNames );
 
-        return \array_keys($names);
-    }
+		\natcasesort( $names );
+
+		return \array_keys( $names );
+	}
 }

@@ -94,7 +94,7 @@ final class AlternativeFunctionsSniff extends AbstractFunctionRestrictionsSniff 
 	 */
 	public function getGroups() {
 		return array(
-			'curl' => array(
+			'curl'                   => array(
 				'type'      => 'warning',
 				'message'   => 'Using cURL functions is highly discouraged. Use wp_remote_get() instead.',
 				'since'     => '2.7.0',
@@ -106,7 +106,7 @@ final class AlternativeFunctionsSniff extends AbstractFunctionRestrictionsSniff 
 				),
 			),
 
-			'parse_url' => array(
+			'parse_url'              => array(
 				'type'      => 'warning',
 				'message'   => '%s() is discouraged because of inconsistency in the output across PHP versions; use wp_parse_url() instead.',
 				'since'     => '4.4.0',
@@ -115,7 +115,7 @@ final class AlternativeFunctionsSniff extends AbstractFunctionRestrictionsSniff 
 				),
 			),
 
-			'json_encode' => array(
+			'json_encode'            => array(
 				'type'      => 'warning',
 				'message'   => '%s() is discouraged. Use wp_json_encode() instead.',
 				'since'     => '4.1.0',
@@ -124,7 +124,7 @@ final class AlternativeFunctionsSniff extends AbstractFunctionRestrictionsSniff 
 				),
 			),
 
-			'file_get_contents' => array(
+			'file_get_contents'      => array(
 				'type'      => 'warning',
 				'message'   => '%s() is discouraged. Use wp_remote_get() for remote URLs instead.',
 				'since'     => '2.7.0',
@@ -133,7 +133,7 @@ final class AlternativeFunctionsSniff extends AbstractFunctionRestrictionsSniff 
 				),
 			),
 
-			'unlink' => array(
+			'unlink'                 => array(
 				'type'      => 'warning',
 				'message'   => '%s() is discouraged. Use wp_delete_file() to delete a file.',
 				'since'     => '4.2.0',
@@ -142,7 +142,7 @@ final class AlternativeFunctionsSniff extends AbstractFunctionRestrictionsSniff 
 				),
 			),
 
-			'rename' => array(
+			'rename'                 => array(
 				'type'      => 'warning',
 				'message'   => '%s() is discouraged. Use WP_Filesystem::move() to rename a file.',
 				'since'     => '2.5.0',
@@ -176,7 +176,7 @@ final class AlternativeFunctionsSniff extends AbstractFunctionRestrictionsSniff 
 				),
 			),
 
-			'strip_tags' => array(
+			'strip_tags'             => array(
 				'type'      => 'warning',
 				'message'   => '%s() is discouraged. Use the more comprehensive wp_strip_all_tags() instead.',
 				'since'     => '2.9.0',
@@ -185,7 +185,7 @@ final class AlternativeFunctionsSniff extends AbstractFunctionRestrictionsSniff 
 				),
 			),
 
-			'rand_seeding' => array(
+			'rand_seeding'           => array(
 				'type'      => 'warning',
 				'message'   => '%s() is discouraged. Rand seeding is not necessary when using the wp_rand() function (as you should).',
 				'since'     => '2.6.2',
@@ -195,7 +195,7 @@ final class AlternativeFunctionsSniff extends AbstractFunctionRestrictionsSniff 
 				),
 			),
 
-			'rand' => array(
+			'rand'                   => array(
 				'type'      => 'warning',
 				'message'   => '%s() is discouraged. Use the far less predictable wp_rand() instead.',
 				'since'     => '2.6.2',

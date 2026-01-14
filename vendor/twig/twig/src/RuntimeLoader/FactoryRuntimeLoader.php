@@ -16,24 +16,23 @@ namespace Twig\RuntimeLoader;
  *
  * @author Robin Chalas <robin.chalas@gmail.com>
  */
-class FactoryRuntimeLoader implements RuntimeLoaderInterface
-{
-    /**
-     * @param array $map An array where keys are class names and values factory callables
-     */
-    public function __construct(
-        private array $map = [],
-    ) {
-    }
+class FactoryRuntimeLoader implements RuntimeLoaderInterface {
 
-    public function load(string $class)
-    {
-        if (!isset($this->map[$class])) {
-            return null;
-        }
+	/**
+	 * @param array $map An array where keys are class names and values factory callables
+	 */
+	public function __construct(
+		private array $map = array(),
+	) {
+	}
 
-        $runtimeFactory = $this->map[$class];
+	public function load( string $class ) {
+		if ( ! isset( $this->map[ $class ] ) ) {
+			return null;
+		}
 
-        return $runtimeFactory();
-    }
+		$runtimeFactory = $this->map[ $class ];
+
+		return $runtimeFactory();
+	}
 }

@@ -16,47 +16,53 @@ use Twig\Template;
 use Twig\TemplateWrapper;
 use Twig\TwigFunction;
 
-final class DebugExtension extends AbstractExtension
-{
-    public function getFunctions(): array
-    {
-        // dump is safe if var_dump is overridden by xdebug
-        $isDumpOutputHtmlSafe = \extension_loaded('xdebug')
-            // Xdebug overloads var_dump in develop mode when html_errors is enabled
-            && str_contains(\ini_get('xdebug.mode'), 'develop')
-            && (false === \ini_get('html_errors') || \ini_get('html_errors'))
-            || 'cli' === \PHP_SAPI
-        ;
+final class DebugExtension extends AbstractExtension {
 
-        return [
-            new TwigFunction('dump', [self::class, 'dump'], ['is_safe' => $isDumpOutputHtmlSafe ? ['html'] : [], 'needs_context' => true, 'needs_environment' => true, 'is_variadic' => true]),
-        ];
-    }
+	public function getFunctions(): array {
+		// dump is safe if var_dump is overridden by xdebug
+		$isDumpOutputHtmlSafe = \extension_loaded( 'xdebug' )
+			// Xdebug overloads var_dump in develop mode when html_errors is enabled
+			&& str_contains( \ini_get( 'xdebug.mode' ), 'develop' )
+			&& ( false === \ini_get( 'html_errors' ) || \ini_get( 'html_errors' ) )
+			|| 'cli' === \PHP_SAPI;
 
-    /**
-     * @internal
-     */
-    public static function dump(Environment $env, $context, ...$vars)
-    {
-        if (!$env->isDebug()) {
-            return;
-        }
+		return array(
+			new TwigFunction(
+				'dump',
+				array( self::class, 'dump' ),
+				array(
+					'is_safe'           => $isDumpOutputHtmlSafe ? array( 'html' ) : array(),
+					'needs_context'     => true,
+					'needs_environment' => true,
+					'is_variadic'       => true,
+				)
+			),
+		);
+	}
 
-        ob_start();
+	/**
+	 * @internal
+	 */
+	public static function dump( Environment $env, $context, ...$vars ) {
+		if ( ! $env->isDebug() ) {
+			return;
+		}
 
-        if (!$vars) {
-            $vars = [];
-            foreach ($context as $key => $value) {
-                if (!$value instanceof Template && !$value instanceof TemplateWrapper) {
-                    $vars[$key] = $value;
-                }
-            }
+		ob_start();
 
-            var_dump($vars);
-        } else {
-            var_dump(...$vars);
-        }
+		if ( ! $vars ) {
+			$vars = array();
+			foreach ( $context as $key => $value ) {
+				if ( ! $value instanceof Template && ! $value instanceof TemplateWrapper ) {
+					$vars[ $key ] = $value;
+				}
+			}
 
-        return ob_get_clean();
-    }
+			var_dump( $vars );
+		} else {
+			var_dump( ...$vars );
+		}
+
+		return ob_get_clean();
+	}
 }

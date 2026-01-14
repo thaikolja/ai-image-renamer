@@ -59,7 +59,7 @@ class API_Key_Validator {
 	/**
 	 * Validate a Groq API key format.
 	 *
-	 * @param  string  $api_key  The API key to validate.
+	 * @param  string $api_key  The API key to validate.
 	 *
 	 * @return array Validation result with 'valid' (bool) and 'message' (string) keys.
 	 */
@@ -69,81 +69,81 @@ class API_Key_Validator {
 
 		// Check if empty.
 		if ( empty( $api_key ) ) {
-			return [
+			return array(
 				'valid'   => false,
 				'message' => \__( 'API key cannot be empty.', 'ai-image-renamer' ),
-			];
+			);
 		}
 
 		// Check prefix.
 		if ( ! str_starts_with( $api_key, self::GROQ_KEY_PREFIX ) ) {
-			return [
+			return array(
 				'valid'   => false,
 				'message' => \sprintf(
 					/* translators: %s: API key prefix */
 					\__( 'Invalid API key format. Must start with <code>%s</code>.', 'ai-image-renamer' ),
 					self::GROQ_KEY_PREFIX
 				),
-			];
+			);
 		}
 
 		// Check length.
 		$key_length = strlen( $api_key );
 		if ( $key_length < self::MIN_LENGTH ) {
-			return [
+			return array(
 				'valid'   => false,
 				'message' => \sprintf(
 					/* translators: %d: Minimum length */
 					\__( 'API key is too short. Must be at least %d characters.', 'ai-image-renamer' ),
 					self::MIN_LENGTH
 				),
-			];
+			);
 		}
 
 		if ( $key_length > self::MAX_LENGTH ) {
-			return [
+			return array(
 				'valid'   => false,
 				'message' => \sprintf(
 					/* translators: %d: Maximum length */
 					\__( 'API key is too long. Must be at most %d characters.', 'ai-image-renamer' ),
 					self::MAX_LENGTH
 				),
-			];
+			);
 		}
 
 		// Check for valid characters (alphanumeric, underscore, hyphen).
 		$pattern = '/^' . preg_quote( self::GROQ_KEY_PREFIX, '/' ) . '[a-zA-Z0-9_-]+$/';
 
 		if ( ! preg_match( $pattern, $api_key ) ) {
-			return [
+			return array(
 				'valid'   => false,
 				'message' => \__( 'API key contains invalid characters. Only alphanumeric characters, hyphens, and underscores are allowed.', 'ai-image-renamer' ),
-			];
+			);
 		}
 
 		// Check for suspicious patterns that might indicate injection attempts.
 		if ( self::contains_suspicious_patterns( $api_key ) ) {
-			return [
+			return array(
 				'valid'   => false,
 				'message' => \__( 'API key contains invalid patterns.', 'ai-image-renamer' ),
-			];
+			);
 		}
 
-		return [
+		return array(
 			'valid'   => true,
 			'message' => '',
-		];
+		);
 	}
 
 	/**
 	 * Check if the API key contains suspicious patterns.
 	 *
-	 * @param  string  $api_key  The API key to check.
+	 * @param  string $api_key  The API key to check.
 	 *
 	 * @return bool True if suspicious patterns are found.
 	 */
 	private static function contains_suspicious_patterns( string $api_key ): bool {
-		$suspicious_patterns = [
+		$suspicious_patterns = array(
 			// SQL injection patterns
 			'--',
 			'/*',
@@ -169,7 +169,7 @@ class API_Key_Validator {
 			'../',
 			'..\\',
 			'%2e%2e',
-		];
+		);
 
 		$key_upper = strtoupper( $api_key );
 
@@ -188,7 +188,7 @@ class API_Key_Validator {
 	 * Note: This should only be used for display purposes, not for actual API calls.
 	 * For actual API calls, use the raw key.
 	 *
-	 * @param  string  $api_key  The API key to sanitize.
+	 * @param  string $api_key  The API key to sanitize.
 	 *
 	 * @return string Sanitized key (masked for display).
 	 */
@@ -198,7 +198,7 @@ class API_Key_Validator {
 		}
 
 		// Show first 4 characters after prefix, then mask the rest.
-		$prefix_len = strlen( self::GROQ_KEY_PREFIX );
+		$prefix_len  = strlen( self::GROQ_KEY_PREFIX );
 		$visible_len = 4;
 
 		if ( strlen( $api_key ) <= $prefix_len + $visible_len ) {
@@ -215,7 +215,7 @@ class API_Key_Validator {
 	/**
 	 * Check if an API key is masked (for display purposes).
 	 *
-	 * @param  string  $api_key  The API key to check.
+	 * @param  string $api_key  The API key to check.
 	 *
 	 * @return bool True if the key is masked.
 	 */

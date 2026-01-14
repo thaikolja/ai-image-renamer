@@ -19,150 +19,135 @@ use Twig\Sandbox\SourcePolicyInterface;
 use Twig\Source;
 use Twig\TokenParser\SandboxTokenParser;
 
-final class SandboxExtension extends AbstractExtension
-{
-    private $sandboxedGlobally;
-    private $sandboxed;
-    private $policy;
-    private $sourcePolicy;
+final class SandboxExtension extends AbstractExtension {
 
-    public function __construct(SecurityPolicyInterface $policy, $sandboxed = false, ?SourcePolicyInterface $sourcePolicy = null)
-    {
-        $this->policy = $policy;
-        $this->sandboxedGlobally = $sandboxed;
-        $this->sourcePolicy = $sourcePolicy;
-    }
+	private $sandboxedGlobally;
+	private $sandboxed;
+	private $policy;
+	private $sourcePolicy;
 
-    public function getTokenParsers(): array
-    {
-        return [new SandboxTokenParser()];
-    }
+	public function __construct( SecurityPolicyInterface $policy, $sandboxed = false, ?SourcePolicyInterface $sourcePolicy = null ) {
+		$this->policy            = $policy;
+		$this->sandboxedGlobally = $sandboxed;
+		$this->sourcePolicy      = $sourcePolicy;
+	}
 
-    public function getNodeVisitors(): array
-    {
-        return [new SandboxNodeVisitor()];
-    }
+	public function getTokenParsers(): array {
+		return array( new SandboxTokenParser() );
+	}
 
-    public function enableSandbox(): void
-    {
-        $this->sandboxed = true;
-    }
+	public function getNodeVisitors(): array {
+		return array( new SandboxNodeVisitor() );
+	}
 
-    public function disableSandbox(): void
-    {
-        $this->sandboxed = false;
-    }
+	public function enableSandbox(): void {
+		$this->sandboxed = true;
+	}
 
-    public function isSandboxed(?Source $source = null): bool
-    {
-        return $this->sandboxedGlobally || $this->sandboxed || $this->isSourceSandboxed($source);
-    }
+	public function disableSandbox(): void {
+		$this->sandboxed = false;
+	}
 
-    public function isSandboxedGlobally(): bool
-    {
-        return $this->sandboxedGlobally;
-    }
+	public function isSandboxed( ?Source $source = null ): bool {
+		return $this->sandboxedGlobally || $this->sandboxed || $this->isSourceSandboxed( $source );
+	}
 
-    private function isSourceSandboxed(?Source $source): bool
-    {
-        if (null === $source || null === $this->sourcePolicy) {
-            return false;
-        }
+	public function isSandboxedGlobally(): bool {
+		return $this->sandboxedGlobally;
+	}
 
-        return $this->sourcePolicy->enableSandbox($source);
-    }
+	private function isSourceSandboxed( ?Source $source ): bool {
+		if ( null === $source || null === $this->sourcePolicy ) {
+			return false;
+		}
 
-    public function setSecurityPolicy(SecurityPolicyInterface $policy): void
-    {
-        $this->policy = $policy;
-    }
+		return $this->sourcePolicy->enableSandbox( $source );
+	}
 
-    public function getSecurityPolicy(): SecurityPolicyInterface
-    {
-        return $this->policy;
-    }
+	public function setSecurityPolicy( SecurityPolicyInterface $policy ): void {
+		$this->policy = $policy;
+	}
 
-    public function checkSecurity($tags, $filters, $functions, ?Source $source = null): void
-    {
-        if ($this->isSandboxed($source)) {
-            $this->policy->checkSecurity($tags, $filters, $functions);
-        }
-    }
+	public function getSecurityPolicy(): SecurityPolicyInterface {
+		return $this->policy;
+	}
 
-    public function checkMethodAllowed($obj, $method, int $lineno = -1, ?Source $source = null): void
-    {
-        if ($this->isSandboxed($source)) {
-            try {
-                $this->policy->checkMethodAllowed($obj, $method);
-            } catch (SecurityNotAllowedMethodError $e) {
-                $e->setSourceContext($source);
-                $e->setTemplateLine($lineno);
+	public function checkSecurity( $tags, $filters, $functions, ?Source $source = null ): void {
+		if ( $this->isSandboxed( $source ) ) {
+			$this->policy->checkSecurity( $tags, $filters, $functions );
+		}
+	}
 
-                throw $e;
-            }
-        }
-    }
+	public function checkMethodAllowed( $obj, $method, int $lineno = -1, ?Source $source = null ): void {
+		if ( $this->isSandboxed( $source ) ) {
+			try {
+				$this->policy->checkMethodAllowed( $obj, $method );
+			} catch ( SecurityNotAllowedMethodError $e ) {
+				$e->setSourceContext( $source );
+				$e->setTemplateLine( $lineno );
 
-    public function checkPropertyAllowed($obj, $property, int $lineno = -1, ?Source $source = null): void
-    {
-        if ($this->isSandboxed($source)) {
-            try {
-                $this->policy->checkPropertyAllowed($obj, $property);
-            } catch (SecurityNotAllowedPropertyError $e) {
-                $e->setSourceContext($source);
-                $e->setTemplateLine($lineno);
+				throw $e;
+			}
+		}
+	}
 
-                throw $e;
-            }
-        }
-    }
+	public function checkPropertyAllowed( $obj, $property, int $lineno = -1, ?Source $source = null ): void {
+		if ( $this->isSandboxed( $source ) ) {
+			try {
+				$this->policy->checkPropertyAllowed( $obj, $property );
+			} catch ( SecurityNotAllowedPropertyError $e ) {
+				$e->setSourceContext( $source );
+				$e->setTemplateLine( $lineno );
 
-    /**
-     * @throws SecurityNotAllowedMethodError
-     */
-    public function ensureToStringAllowed($obj, int $lineno = -1, ?Source $source = null)
-    {
-        if (\is_array($obj)) {
-            $this->ensureToStringAllowedForArray($obj, $lineno, $source);
+				throw $e;
+			}
+		}
+	}
 
-            return $obj;
-        }
+	/**
+	 * @throws SecurityNotAllowedMethodError
+	 */
+	public function ensureToStringAllowed( $obj, int $lineno = -1, ?Source $source = null ) {
+		if ( \is_array( $obj ) ) {
+			$this->ensureToStringAllowedForArray( $obj, $lineno, $source );
 
-        if ($obj instanceof \Stringable && $this->isSandboxed($source)) {
-            try {
-                $this->policy->checkMethodAllowed($obj, '__toString');
-            } catch (SecurityNotAllowedMethodError $e) {
-                $e->setSourceContext($source);
-                $e->setTemplateLine($lineno);
+			return $obj;
+		}
 
-                throw $e;
-            }
-        }
+		if ( $obj instanceof \Stringable && $this->isSandboxed( $source ) ) {
+			try {
+				$this->policy->checkMethodAllowed( $obj, '__toString' );
+			} catch ( SecurityNotAllowedMethodError $e ) {
+				$e->setSourceContext( $source );
+				$e->setTemplateLine( $lineno );
 
-        return $obj;
-    }
+				throw $e;
+			}
+		}
 
-    private function ensureToStringAllowedForArray(array $obj, int $lineno, ?Source $source, array &$stack = []): void
-    {
-        foreach ($obj as $k => $v) {
-            if (!$v) {
-                continue;
-            }
+		return $obj;
+	}
 
-            if (!\is_array($v)) {
-                $this->ensureToStringAllowed($v, $lineno, $source);
-                continue;
-            }
+	private function ensureToStringAllowedForArray( array $obj, int $lineno, ?Source $source, array &$stack = array() ): void {
+		foreach ( $obj as $k => $v ) {
+			if ( ! $v ) {
+				continue;
+			}
 
-            if ($r = \ReflectionReference::fromArrayElement($obj, $k)) {
-                if (isset($stack[$r->getId()])) {
-                    continue;
-                }
+			if ( ! \is_array( $v ) ) {
+				$this->ensureToStringAllowed( $v, $lineno, $source );
+				continue;
+			}
 
-                $stack[$r->getId()] = true;
-            }
+			if ( $r = \ReflectionReference::fromArrayElement( $obj, $k ) ) {
+				if ( isset( $stack[ $r->getId() ] ) ) {
+					continue;
+				}
 
-            $this->ensureToStringAllowedForArray($v, $lineno, $source, $stack);
-        }
-    }
+				$stack[ $r->getId() ] = true;
+			}
+
+			$this->ensureToStringAllowedForArray( $v, $lineno, $source, $stack );
+		}
+	}
 }

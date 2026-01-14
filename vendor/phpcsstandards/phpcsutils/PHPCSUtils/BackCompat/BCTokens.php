@@ -66,215 +66,207 @@ use PHPCSUtils\Tokens\Collections;
  *                                                                         list as this list is about _text_ strings.
  * @method static array<int|string, int|string> textStringTokens()         Tokens that represent text strings.
  */
-final class BCTokens
-{
+final class BCTokens {
 
-    /**
-     * Handle calls to (undeclared) methods for token arrays which haven't received any
-     * changes since PHPCS 3.13.5.
-     *
-     * @since 1.0.0
-     *
-     * @param string       $name The name of the method which has been called.
-     * @param array<mixed> $args Any arguments passed to the method.
-     *                           Unused as none of the methods take arguments.
-     *
-     * @return array<int|string, int|string> Token array
-     *
-     * @throws \PHPCSUtils\Exceptions\InvalidTokenArray When an invalid token array is requested.
-     */
-    public static function __callStatic($name, $args)
-    {
-        if (isset(Tokens::${$name})) {
-            return Tokens::${$name};
-        }
 
-        // Unknown token array requested.
-        throw InvalidTokenArray::create($name);
-    }
+	/**
+	 * Handle calls to (undeclared) methods for token arrays which haven't received any
+	 * changes since PHPCS 3.13.5.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string       $name The name of the method which has been called.
+	 * @param array<mixed> $args Any arguments passed to the method.
+	 *                           Unused as none of the methods take arguments.
+	 *
+	 * @return array<int|string, int|string> Token array
+	 *
+	 * @throws \PHPCSUtils\Exceptions\InvalidTokenArray When an invalid token array is requested.
+	 */
+	public static function __callStatic( $name, $args ) {
+		if ( isset( Tokens::${$name} ) ) {
+			return Tokens::${$name};
+		}
 
-    /**
-     * Tokens that represent assignments.
-     *
-     * Retrieve the PHPCS assignments tokens array in a cross-version compatible manner.
-     *
-     * Changelog for the PHPCS native array:
-     * - PHPCS 4.0.0: The JS specific `T_ZSR_EQUAL` token is no longer available and has been removed from the array.
-     *
-     * @see \PHP_CodeSniffer\Util\Tokens::$assignmentTokens Original array.
-     *
-     * @since 1.0.0
-     *
-     * @return array<int|string, int|string> Token array.
-     */
-    public static function assignmentTokens()
-    {
-        $tokens = Tokens::$assignmentTokens;
+		// Unknown token array requested.
+		throw InvalidTokenArray::create( $name );
+	}
 
-        if (\defined('T_ZSR_EQUAL') && isset($tokens[\T_ZSR_EQUAL])) {
-            unset($tokens[\T_ZSR_EQUAL]);
-        }
+	/**
+	 * Tokens that represent assignments.
+	 *
+	 * Retrieve the PHPCS assignments tokens array in a cross-version compatible manner.
+	 *
+	 * Changelog for the PHPCS native array:
+	 * - PHPCS 4.0.0: The JS specific `T_ZSR_EQUAL` token is no longer available and has been removed from the array.
+	 *
+	 * @see \PHP_CodeSniffer\Util\Tokens::$assignmentTokens Original array.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int|string, int|string> Token array.
+	 */
+	public static function assignmentTokens() {
+		$tokens = Tokens::$assignmentTokens;
 
-        return $tokens;
-    }
+		if ( \defined( 'T_ZSR_EQUAL' ) && isset( $tokens[ \T_ZSR_EQUAL ] ) ) {
+			unset( $tokens[ \T_ZSR_EQUAL ] );
+		}
 
-    /**
-     * Tokens that open code blocks.
-     *
-     * Retrieve the PHPCS block opener tokens array in a cross-version compatible manner.
-     *
-     * Changelog for the PHPCS native array:
-     * - PHPCS 4.0.0: The JS specific `T_OBJECT` token is no longer available and has been removed from the array.
-     *
-     * @see \PHP_CodeSniffer\Util\Tokens::$blockOpeners Original array.
-     *
-     * @since 1.0.0
-     *
-     * @return array<int|string, int|string> Token array.
-     */
-    public static function blockOpeners()
-    {
-        $tokens = Tokens::$blockOpeners;
+		return $tokens;
+	}
 
-        if (\defined('T_OBJECT') && isset($tokens[\T_OBJECT])) {
-            unset($tokens[\T_OBJECT]);
-        }
+	/**
+	 * Tokens that open code blocks.
+	 *
+	 * Retrieve the PHPCS block opener tokens array in a cross-version compatible manner.
+	 *
+	 * Changelog for the PHPCS native array:
+	 * - PHPCS 4.0.0: The JS specific `T_OBJECT` token is no longer available and has been removed from the array.
+	 *
+	 * @see \PHP_CodeSniffer\Util\Tokens::$blockOpeners Original array.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int|string, int|string> Token array.
+	 */
+	public static function blockOpeners() {
+		$tokens = Tokens::$blockOpeners;
 
-        return $tokens;
-    }
+		if ( \defined( 'T_OBJECT' ) && isset( $tokens[ \T_OBJECT ] ) ) {
+			unset( $tokens[ \T_OBJECT ] );
+		}
 
-    /**
-     * Tokens that represent casting.
-     *
-     * Retrieve the PHPCS cast tokens array in a cross-version compatible manner.
-     *
-     * Changelog for the PHPCS native array:
-     * - PHPCS 4.0.2: The PHP 8.5 T_VOID_CAST token was added.
-     *
-     * @see \PHP_CodeSniffer\Util\Tokens::$castTokens Original array.
-     *
-     * @since 1.2.1
-     *
-     * @return array<int|string, int|string> Token array.
-     */
-    public static function castTokens()
-    {
-        $tokens = Tokens::$castTokens;
+		return $tokens;
+	}
 
-        if (\defined('T_VOID_CAST')) {
-            $tokens[\T_VOID_CAST] = \T_VOID_CAST;
-        }
+	/**
+	 * Tokens that represent casting.
+	 *
+	 * Retrieve the PHPCS cast tokens array in a cross-version compatible manner.
+	 *
+	 * Changelog for the PHPCS native array:
+	 * - PHPCS 4.0.2: The PHP 8.5 T_VOID_CAST token was added.
+	 *
+	 * @see \PHP_CodeSniffer\Util\Tokens::$castTokens Original array.
+	 *
+	 * @since 1.2.1
+	 *
+	 * @return array<int|string, int|string> Token array.
+	 */
+	public static function castTokens() {
+		$tokens = Tokens::$castTokens;
 
-        return $tokens;
-    }
+		if ( \defined( 'T_VOID_CAST' ) ) {
+			$tokens[ \T_VOID_CAST ] = \T_VOID_CAST;
+		}
 
-    /**
-     * Tokens that represent the names of called functions.
-     *
-     * Retrieve the PHPCS function name tokens array in a cross-version compatible manner.
-     *
-     * Changelog for the PHPCS native array:
-     * - Introduced in PHPCS 2.3.3.
-     * - PHPCS 4.0.0: `T_NAME_QUALIFIED`, `T_NAME_FULLY_QUALIFIED`, `T_NAME_RELATIVE` and `T_ANON_CLASS` added to the array.
-     *
-     * @see \PHP_CodeSniffer\Util\Tokens::$functionNameTokens Original array.
-     *
-     * @since 1.0.0
-     *
-     * @return array<int|string, int|string> Token array.
-     */
-    public static function functionNameTokens()
-    {
-        $tokens                = Tokens::$functionNameTokens;
-        $tokens               += Collections::nameTokens();
-        $tokens[\T_ANON_CLASS] = \T_ANON_CLASS;
+		return $tokens;
+	}
 
-        return $tokens;
-    }
+	/**
+	 * Tokens that represent the names of called functions.
+	 *
+	 * Retrieve the PHPCS function name tokens array in a cross-version compatible manner.
+	 *
+	 * Changelog for the PHPCS native array:
+	 * - Introduced in PHPCS 2.3.3.
+	 * - PHPCS 4.0.0: `T_NAME_QUALIFIED`, `T_NAME_FULLY_QUALIFIED`, `T_NAME_RELATIVE` and `T_ANON_CLASS` added to the array.
+	 *
+	 * @see \PHP_CodeSniffer\Util\Tokens::$functionNameTokens Original array.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int|string, int|string> Token array.
+	 */
+	public static function functionNameTokens() {
+		$tokens                  = Tokens::$functionNameTokens;
+		$tokens                 += Collections::nameTokens();
+		$tokens[ \T_ANON_CLASS ] = \T_ANON_CLASS;
 
-    /**
-     * Tokens used for "names", be it namespace, OO, function or constant names.
-     *
-     * Retrieve the PHPCS name tokens array in a cross-version compatible manner.
-     *
-     * Changelog for the PHPCS native array:
-     * - Introduced in PHPCS 4.0.0.
-     *
-     * @see \PHP_CodeSniffer\Util\Tokens::NAME_TOKENS Original array.
-     *
-     * @since 1.1.0
-     *
-     * @return array<int|string, int|string> Token array.
-     */
-    public static function nameTokens()
-    {
-        return Collections::nameTokens();
-    }
+		return $tokens;
+	}
 
-    /**
-     * Token types that open parentheses.
-     *
-     * Retrieve the PHPCS parenthesis openers tokens array in a cross-version compatible manner.
-     *
-     * Changelog for the PHPCS native array:
-     * - Introduced in PHPCS 0.0.5.
-     * - PHPCS 4.0.0: `T_USE` (for closures), `T_ISSET`, `T_UNSET`, `T_EMPTY`, `T_EVAL` and `T_EXIT` added to the array.
-     *
-     * **Important**: While `T_USE`, `T_ISSET`, `T_UNSET`, `T_EMPTY`, `T_EVAL` and `T_EXIT` will be included
-     * in the return value for this method, the associated parentheses will not have the `'parenthesis_owner'` index
-     * set until PHPCS 4.0.0.
-     * Use the {@see \PHPCSUtils\Utils\Parentheses::getOwner()} or {@see \PHPCSUtils\Utils\Parentheses::hasOwner()} methods
-     * if you need to check for whether any of these tokens are a parentheses owner.
-     *
-     * @see \PHP_CodeSniffer\Util\Tokens::$parenthesisOpeners Original array.
-     * @see \PHPCSUtils\Utils\Parentheses                     Class holding utility methods for
-     *                                                        working with the `'parenthesis_...'`
-     *                                                        index keys in a token array.
-     *
-     * @since 1.0.0
-     *
-     * @return array<int|string, int|string> Token array.
-     */
-    public static function parenthesisOpeners()
-    {
-        $tokens           = Tokens::$parenthesisOpeners;
-        $tokens[\T_USE]   = \T_USE;
-        $tokens[\T_ISSET] = \T_ISSET;
-        $tokens[\T_UNSET] = \T_UNSET;
-        $tokens[\T_EMPTY] = \T_EMPTY;
-        $tokens[\T_EVAL]  = \T_EVAL;
-        $tokens[\T_EXIT]  = \T_EXIT;
+	/**
+	 * Tokens used for "names", be it namespace, OO, function or constant names.
+	 *
+	 * Retrieve the PHPCS name tokens array in a cross-version compatible manner.
+	 *
+	 * Changelog for the PHPCS native array:
+	 * - Introduced in PHPCS 4.0.0.
+	 *
+	 * @see \PHP_CodeSniffer\Util\Tokens::NAME_TOKENS Original array.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return array<int|string, int|string> Token array.
+	 */
+	public static function nameTokens() {
+		return Collections::nameTokens();
+	}
 
-        return $tokens;
-    }
+	/**
+	 * Token types that open parentheses.
+	 *
+	 * Retrieve the PHPCS parenthesis openers tokens array in a cross-version compatible manner.
+	 *
+	 * Changelog for the PHPCS native array:
+	 * - Introduced in PHPCS 0.0.5.
+	 * - PHPCS 4.0.0: `T_USE` (for closures), `T_ISSET`, `T_UNSET`, `T_EMPTY`, `T_EVAL` and `T_EXIT` added to the array.
+	 *
+	 * **Important**: While `T_USE`, `T_ISSET`, `T_UNSET`, `T_EMPTY`, `T_EVAL` and `T_EXIT` will be included
+	 * in the return value for this method, the associated parentheses will not have the `'parenthesis_owner'` index
+	 * set until PHPCS 4.0.0.
+	 * Use the {@see \PHPCSUtils\Utils\Parentheses::getOwner()} or {@see \PHPCSUtils\Utils\Parentheses::hasOwner()} methods
+	 * if you need to check for whether any of these tokens are a parentheses owner.
+	 *
+	 * @see \PHP_CodeSniffer\Util\Tokens::$parenthesisOpeners Original array.
+	 * @see \PHPCSUtils\Utils\Parentheses                     Class holding utility methods for
+	 *                                                        working with the `'parenthesis_...'`
+	 *                                                        index keys in a token array.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int|string, int|string> Token array.
+	 */
+	public static function parenthesisOpeners() {
+		$tokens             = Tokens::$parenthesisOpeners;
+		$tokens[ \T_USE ]   = \T_USE;
+		$tokens[ \T_ISSET ] = \T_ISSET;
+		$tokens[ \T_UNSET ] = \T_UNSET;
+		$tokens[ \T_EMPTY ] = \T_EMPTY;
+		$tokens[ \T_EVAL ]  = \T_EVAL;
+		$tokens[ \T_EXIT ]  = \T_EXIT;
 
-    /**
-     * Tokens that are allowed to open scopes.
-     *
-     * Retrieve the PHPCS scope opener tokens array in a cross-version compatible manner.
-     *
-     * Changelog for the PHPCS native array:
-     * - PHPCS 4.0.0: The JS specific `T_PROPERTY` and `T_OBJECT` tokens are no longer available
-     *   and have been removed from the array.
-     *
-     * @see \PHP_CodeSniffer\Util\Tokens::$scopeOpeners Original array.
-     *
-     * @since 1.0.0
-     *
-     * @return array<int|string, int|string> Token array.
-     */
-    public static function scopeOpeners()
-    {
-        $tokens = Tokens::$scopeOpeners;
+		return $tokens;
+	}
 
-        if (\defined('T_PROPERTY') && isset($tokens[\T_PROPERTY])) {
-            unset($tokens[\T_PROPERTY]);
-        }
+	/**
+	 * Tokens that are allowed to open scopes.
+	 *
+	 * Retrieve the PHPCS scope opener tokens array in a cross-version compatible manner.
+	 *
+	 * Changelog for the PHPCS native array:
+	 * - PHPCS 4.0.0: The JS specific `T_PROPERTY` and `T_OBJECT` tokens are no longer available
+	 *   and have been removed from the array.
+	 *
+	 * @see \PHP_CodeSniffer\Util\Tokens::$scopeOpeners Original array.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int|string, int|string> Token array.
+	 */
+	public static function scopeOpeners() {
+		$tokens = Tokens::$scopeOpeners;
 
-        if (\defined('T_OBJECT') && isset($tokens[\T_OBJECT])) {
-            unset($tokens[\T_OBJECT]);
-        }
+		if ( \defined( 'T_PROPERTY' ) && isset( $tokens[ \T_PROPERTY ] ) ) {
+			unset( $tokens[ \T_PROPERTY ] );
+		}
 
-        return $tokens;
-    }
+		if ( \defined( 'T_OBJECT' ) && isset( $tokens[ \T_OBJECT ] ) ) {
+			unset( $tokens[ \T_OBJECT ] );
+		}
+
+		return $tokens;
+	}
 }

@@ -17,27 +17,26 @@ use OutOfBoundsException;
  *
  * @since 1.0.0
  */
-final class TestMarkerNotFound extends OutOfBoundsException
-{
+final class TestMarkerNotFound extends OutOfBoundsException {
 
-    /**
-     * Create a new "test marker not found" exception with a standardized text.
-     *
-     * @since 1.0.0
-     *
-     * @param string $marker The delimiter comment.
-     * @param string $file   The file in which the delimiter was not found.
-     *
-     * @return \PHPCSUtils\Exceptions\TestMarkerNotFound
-     */
-    public static function create($marker, $file)
-    {
-        return new self(
-            \sprintf(
-                'Failed to find the test marker: %s in test case file %s',
-                $marker,
-                $file
-            )
-        );
-    }
+
+	/**
+	 * Create a new "test marker not found" exception with a standardized text.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $marker The delimiter comment.
+	 * @param string $file   The file in which the delimiter was not found.
+	 *
+	 * @return \PHPCSUtils\Exceptions\TestMarkerNotFound
+	 */
+	public static function create( $marker, $file ) {
+		return new self(
+			\sprintf(
+				'Failed to find the test marker: %s in test case file %s',
+				$marker,
+				$file
+			)
+		);
+	}
 }

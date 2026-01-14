@@ -29,52 +29,48 @@ use Twig\Token;
  *
  * @internal
  */
-final class ForTokenParser extends AbstractTokenParser
-{
-    public function parse(Token $token): Node
-    {
-        $lineno = $token->getLine();
-        $stream = $this->parser->getStream();
-        $targets = $this->parseAssignmentExpression();
-        $stream->expect(Token::OPERATOR_TYPE, 'in');
-        $seq = $this->parser->parseExpression();
+final class ForTokenParser extends AbstractTokenParser {
 
-        $stream->expect(Token::BLOCK_END_TYPE);
-        $body = $this->parser->subparse([$this, 'decideForFork']);
-        if ('else' == $stream->next()->getValue()) {
-            $elseLineno = $stream->getCurrent()->getLine();
-            $stream->expect(Token::BLOCK_END_TYPE);
-            $else = new ForElseNode($this->parser->subparse([$this, 'decideForEnd'], true), $elseLineno);
-        } else {
-            $else = null;
-        }
-        $stream->expect(Token::BLOCK_END_TYPE);
+	public function parse( Token $token ): Node {
+		$lineno  = $token->getLine();
+		$stream  = $this->parser->getStream();
+		$targets = $this->parseAssignmentExpression();
+		$stream->expect( Token::OPERATOR_TYPE, 'in' );
+		$seq = $this->parser->parseExpression();
 
-        if (\count($targets) > 1) {
-            $keyTarget = $targets->getNode('0');
-            $keyTarget = new AssignContextVariable($keyTarget->getAttribute('name'), $keyTarget->getTemplateLine());
-            $valueTarget = $targets->getNode('1');
-        } else {
-            $keyTarget = new AssignContextVariable('_key', $lineno);
-            $valueTarget = $targets->getNode('0');
-        }
-        $valueTarget = new AssignContextVariable($valueTarget->getAttribute('name'), $valueTarget->getTemplateLine());
+		$stream->expect( Token::BLOCK_END_TYPE );
+		$body = $this->parser->subparse( array( $this, 'decideForFork' ) );
+		if ( 'else' == $stream->next()->getValue() ) {
+			$elseLineno = $stream->getCurrent()->getLine();
+			$stream->expect( Token::BLOCK_END_TYPE );
+			$else = new ForElseNode( $this->parser->subparse( array( $this, 'decideForEnd' ), true ), $elseLineno );
+		} else {
+			$else = null;
+		}
+		$stream->expect( Token::BLOCK_END_TYPE );
 
-        return new ForNode($keyTarget, $valueTarget, $seq, null, $body, $else, $lineno);
-    }
+		if ( \count( $targets ) > 1 ) {
+			$keyTarget   = $targets->getNode( '0' );
+			$keyTarget   = new AssignContextVariable( $keyTarget->getAttribute( 'name' ), $keyTarget->getTemplateLine() );
+			$valueTarget = $targets->getNode( '1' );
+		} else {
+			$keyTarget   = new AssignContextVariable( '_key', $lineno );
+			$valueTarget = $targets->getNode( '0' );
+		}
+		$valueTarget = new AssignContextVariable( $valueTarget->getAttribute( 'name' ), $valueTarget->getTemplateLine() );
 
-    public function decideForFork(Token $token): bool
-    {
-        return $token->test(['else', 'endfor']);
-    }
+		return new ForNode( $keyTarget, $valueTarget, $seq, null, $body, $else, $lineno );
+	}
 
-    public function decideForEnd(Token $token): bool
-    {
-        return $token->test('endfor');
-    }
+	public function decideForFork( Token $token ): bool {
+		return $token->test( array( 'else', 'endfor' ) );
+	}
 
-    public function getTag(): string
-    {
-        return 'for';
-    }
+	public function decideForEnd( Token $token ): bool {
+		return $token->test( 'endfor' );
+	}
+
+	public function getTag(): string {
+		return 'for';
+	}
 }

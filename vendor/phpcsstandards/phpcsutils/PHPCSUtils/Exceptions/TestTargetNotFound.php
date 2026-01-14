@@ -17,34 +17,33 @@ use OutOfBoundsException;
  *
  * @since 1.0.0
  */
-final class TestTargetNotFound extends OutOfBoundsException
-{
+final class TestTargetNotFound extends OutOfBoundsException {
 
-    /**
-     * Create a new "test target token not found" exception with a standardized text.
-     *
-     * @since 1.0.0
-     *
-     * @param string      $marker  The delimiter comment.
-     * @param string|null $content The (optional) target token content.
-     * @param string      $file    The file in which the target token was not found.
-     *
-     * @return \PHPCSUtils\Exceptions\TestTargetNotFound
-     */
-    public static function create($marker, $content, $file)
-    {
-        $contentPhrase = '';
-        if (\is_string($content)) {
-            $contentPhrase = ' with token content: ' . $content;
-        }
 
-        return new self(
-            \sprintf(
-                'Failed to find test target token for comment string: %s%s in test case file: %s',
-                $marker,
-                $contentPhrase,
-                $file
-            )
-        );
-    }
+	/**
+	 * Create a new "test target token not found" exception with a standardized text.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string      $marker  The delimiter comment.
+	 * @param string|null $content The (optional) target token content.
+	 * @param string      $file    The file in which the target token was not found.
+	 *
+	 * @return \PHPCSUtils\Exceptions\TestTargetNotFound
+	 */
+	public static function create( $marker, $content, $file ) {
+		$contentPhrase = '';
+		if ( \is_string( $content ) ) {
+			$contentPhrase = ' with token content: ' . $content;
+		}
+
+		return new self(
+			\sprintf(
+				'Failed to find test target token for comment string: %s%s in test case file: %s',
+				$marker,
+				$contentPhrase,
+				$file
+			)
+		);
+	}
 }

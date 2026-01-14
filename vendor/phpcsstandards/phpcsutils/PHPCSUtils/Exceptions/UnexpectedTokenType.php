@@ -21,33 +21,32 @@ use PHPCSUtils\Exceptions\RuntimeException;
  *
  * @since 1.1.0
  */
-final class UnexpectedTokenType extends RuntimeException
-{
+final class UnexpectedTokenType extends RuntimeException {
 
-    /**
-     * Create a new UnexpectedTokenType exception with a standardized text.
-     *
-     * @param int    $position      The argument position in the function signature. 1-based.
-     * @param string $name          The argument name in the function signature.
-     * @param string $acceptedTypes Phrase listing the accepted token type(s).
-     * @param string $receivedType  The received token type.
-     *
-     * @return \PHPCSUtils\Exceptions\UnexpectedTokenType
-     */
-    public static function create($position, $name, $acceptedTypes, $receivedType)
-    {
-        $stack = \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS, 2);
 
-        return new self(
-            \sprintf(
-                '%s::%s(): Argument #%d (%s) must be of type %s; %s given.',
-                $stack[1]['class'],
-                $stack[1]['function'],
-                $position,
-                $name,
-                $acceptedTypes,
-                $receivedType
-            )
-        );
-    }
+	/**
+	 * Create a new UnexpectedTokenType exception with a standardized text.
+	 *
+	 * @param int    $position      The argument position in the function signature. 1-based.
+	 * @param string $name          The argument name in the function signature.
+	 * @param string $acceptedTypes Phrase listing the accepted token type(s).
+	 * @param string $receivedType  The received token type.
+	 *
+	 * @return \PHPCSUtils\Exceptions\UnexpectedTokenType
+	 */
+	public static function create( $position, $name, $acceptedTypes, $receivedType ) {
+		$stack = \debug_backtrace( \DEBUG_BACKTRACE_IGNORE_ARGS, 2 );
+
+		return new self(
+			\sprintf(
+				'%s::%s(): Argument #%d (%s) must be of type %s; %s given.',
+				$stack[1]['class'],
+				$stack[1]['function'],
+				$position,
+				$name,
+				$acceptedTypes,
+				$receivedType
+			)
+		);
+	}
 }

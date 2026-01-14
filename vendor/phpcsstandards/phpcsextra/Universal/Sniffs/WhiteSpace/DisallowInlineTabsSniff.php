@@ -39,138 +39,136 @@ use PHPCSUtils\Tokens\Collections;
  *
  * @since 1.0.0
  */
-final class DisallowInlineTabsSniff implements Sniff
-{
+final class DisallowInlineTabsSniff implements Sniff {
 
-    /**
-     * The --tab-width CLI value that is being used.
-     *
-     * @since 1.0.0
-     *
-     * @var int
-     */
-    private $tabWidth;
 
-    /**
-     * Tokens to check for mid-line tabs.
-     *
-     * @since 1.0.0
-     *
-     * @var array<int|string, true>
-     */
-    private $find = [
-        \T_WHITESPACE             => true,
-        \T_DOC_COMMENT_WHITESPACE => true,
-        \T_DOC_COMMENT_STRING     => true,
-        \T_COMMENT                => true,
-        \T_START_HEREDOC          => true,
-        \T_START_NOWDOC           => true,
-        \T_YIELD_FROM             => true,
-    ];
+	/**
+	 * The --tab-width CLI value that is being used.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var int
+	 */
+	private $tabWidth;
 
-    /**
-     * Registers the tokens that this sniff wants to listen for.
-     *
-     * @since 1.0.0
-     *
-     * @return array<int|string>
-     */
-    public function register()
-    {
-        return Collections::phpOpenTags();
-    }
+	/**
+	 * Tokens to check for mid-line tabs.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var array<int|string, true>
+	 */
+	private $find = array(
+		\T_WHITESPACE             => true,
+		\T_DOC_COMMENT_WHITESPACE => true,
+		\T_DOC_COMMENT_STRING     => true,
+		\T_COMMENT                => true,
+		\T_START_HEREDOC          => true,
+		\T_START_NOWDOC           => true,
+		\T_YIELD_FROM             => true,
+	);
 
-    /**
-     * Processes this test, when one of its tokens is encountered.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token
-     *                                               in the stack passed in $tokens.
-     *
-     * @return int Integer stack pointer to skip the rest of the file.
-     */
-    public function process(File $phpcsFile, $stackPtr)
-    {
-        if (isset($this->tabWidth) === false) {
-            $this->tabWidth = (int) Helper::getTabWidth($phpcsFile);
-        }
+	/**
+	 * Registers the tokens that this sniff wants to listen for.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int|string>
+	 */
+	public function register() {
+		return Collections::phpOpenTags();
+	}
 
-        if (\defined('PHP_CODESNIFFER_IN_TESTS')) {
-            $this->tabWidth = (int) Helper::getCommandLineData($phpcsFile, 'tabWidth');
-        }
+	/**
+	 * Processes this test, when one of its tokens is encountered.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token
+	 *                                               in the stack passed in $tokens.
+	 *
+	 * @return int Integer stack pointer to skip the rest of the file.
+	 */
+	public function process( File $phpcsFile, $stackPtr ) {
+		if ( isset( $this->tabWidth ) === false ) {
+			$this->tabWidth = (int) Helper::getTabWidth( $phpcsFile );
+		}
 
-        $tokens = $phpcsFile->getTokens();
-        $dummy  = new DummyTokenizer('', $phpcsFile->config);
+		if ( \defined( 'PHP_CODESNIFFER_IN_TESTS' ) ) {
+			$this->tabWidth = (int) Helper::getCommandLineData( $phpcsFile, 'tabWidth' );
+		}
 
-        for ($i = 0; $i < $phpcsFile->numTokens; $i++) {
-            // Skip all non-target tokens and skip whitespace at the start of a new line.
-            if (isset($this->find[$tokens[$i]['code']]) === false
-                || (($tokens[$i]['code'] === \T_WHITESPACE
-                    || $tokens[$i]['code'] === \T_DOC_COMMENT_WHITESPACE)
-                    && $tokens[$i]['column'] === 1)
-            ) {
-                continue;
-            }
+		$tokens = $phpcsFile->getTokens();
+		$dummy  = new DummyTokenizer( '', $phpcsFile->config );
 
-            // If tabs haven't been converted to spaces by the tokenizer, do so now.
-            $token = $tokens[$i];
-            if (isset($token['orig_content']) === false) {
-                if ($token['content'] === '' || \strpos($token['content'], "\t") === false) {
-                    // If there are no tabs, we can continue, no matter what.
-                    continue;
-                }
+		for ( $i = 0; $i < $phpcsFile->numTokens; $i++ ) {
+			// Skip all non-target tokens and skip whitespace at the start of a new line.
+			if ( isset( $this->find[ $tokens[ $i ]['code'] ] ) === false
+				|| ( ( $tokens[ $i ]['code'] === \T_WHITESPACE
+					|| $tokens[ $i ]['code'] === \T_DOC_COMMENT_WHITESPACE )
+					&& $tokens[ $i ]['column'] === 1 )
+			) {
+				continue;
+			}
 
-                $dummy->replaceTabsInToken($token);
-            }
+			// If tabs haven't been converted to spaces by the tokenizer, do so now.
+			$token = $tokens[ $i ];
+			if ( isset( $token['orig_content'] ) === false ) {
+				if ( $token['content'] === '' || \strpos( $token['content'], "\t" ) === false ) {
+					// If there are no tabs, we can continue, no matter what.
+					continue;
+				}
 
-            /*
-             * Tokens only have the 'orig_content' key if they contain tabs,
-             * so from here on out, we **know** there will be tabs in the content.
-             */
-            $origContent = $token['orig_content'];
-            $commentOnly = '';
+				$dummy->replaceTabsInToken( $token );
+			}
 
-            $multiLineComment = false;
-            if (($tokens[$i]['code'] === \T_COMMENT
-                || isset(Tokens::$phpcsCommentTokens[$tokens[$i]['code']]))
-                && $tokens[$i]['column'] === 1
-                && ($tokens[($i - 1)]['code'] === \T_COMMENT
-                || isset(Tokens::$phpcsCommentTokens[$tokens[($i - 1)]['code']]))
-            ) {
-                $multiLineComment = true;
-            }
+			/*
+			 * Tokens only have the 'orig_content' key if they contain tabs,
+			 * so from here on out, we **know** there will be tabs in the content.
+			 */
+			$origContent = $token['orig_content'];
+			$commentOnly = '';
 
-            if ($multiLineComment === true) {
-                // This is the subsequent line of a multi-line comment. Account for indentation.
-                $commentOnly = \ltrim($origContent);
-                if ($commentOnly === '' || \strpos($commentOnly, "\t") === false) {
-                    continue;
-                }
-            }
+			$multiLineComment = false;
+			if ( ( $tokens[ $i ]['code'] === \T_COMMENT
+				|| isset( Tokens::$phpcsCommentTokens[ $tokens[ $i ]['code'] ] ) )
+				&& $tokens[ $i ]['column'] === 1
+				&& ( $tokens[ ( $i - 1 ) ]['code'] === \T_COMMENT
+				|| isset( Tokens::$phpcsCommentTokens[ $tokens[ ( $i - 1 ) ]['code'] ] ) )
+			) {
+				$multiLineComment = true;
+			}
 
-            $fix = $phpcsFile->addFixableError(
-                'Spaces must be used for mid-line alignment; tabs are not allowed',
-                $i,
-                'NonIndentTabsUsed'
-            );
+			if ( $multiLineComment === true ) {
+				// This is the subsequent line of a multi-line comment. Account for indentation.
+				$commentOnly = \ltrim( $origContent );
+				if ( $commentOnly === '' || \strpos( $commentOnly, "\t" ) === false ) {
+					continue;
+				}
+			}
 
-            if ($fix === false) {
-                continue;
-            }
+			$fix = $phpcsFile->addFixableError(
+				'Spaces must be used for mid-line alignment; tabs are not allowed',
+				$i,
+				'NonIndentTabsUsed'
+			);
 
-            $indent = '';
-            if ($multiLineComment === true) {
-                // Take the original indent (tabs/spaces) and combine with the tab-replaced comment content.
-                $indent           = \str_replace($commentOnly, '', $origContent);
-                $token['content'] = \ltrim($token['content']);
-            }
+			if ( $fix === false ) {
+				continue;
+			}
 
-            $phpcsFile->fixer->replaceToken($i, $indent . $token['content']);
-        }
+			$indent = '';
+			if ( $multiLineComment === true ) {
+				// Take the original indent (tabs/spaces) and combine with the tab-replaced comment content.
+				$indent           = \str_replace( $commentOnly, '', $origContent );
+				$token['content'] = \ltrim( $token['content'] );
+			}
 
-        // Scanned the whole file in one go. Don't scan this file again.
-        return $phpcsFile->numTokens;
-    }
+			$phpcsFile->fixer->replaceToken( $i, $indent . $token['content'] );
+		}
+
+		// Scanned the whole file in one go. Don't scan this file again.
+		return $phpcsFile->numTokens;
+	}
 }

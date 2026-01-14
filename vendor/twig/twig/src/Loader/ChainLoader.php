@@ -19,114 +19,108 @@ use Twig\Source;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class ChainLoader implements LoaderInterface
-{
-    /**
-     * @var array<string, bool>
-     */
-    private $hasSourceCache = [];
+final class ChainLoader implements LoaderInterface {
 
-    /**
-     * @param iterable<LoaderInterface> $loaders
-     */
-    public function __construct(
-        private iterable $loaders = [],
-    ) {
-    }
+	/**
+	 * @var array<string, bool>
+	 */
+	private $hasSourceCache = array();
 
-    public function addLoader(LoaderInterface $loader): void
-    {
-        $current = $this->loaders;
+	/**
+	 * @param iterable<LoaderInterface> $loaders
+	 */
+	public function __construct(
+		private iterable $loaders = array(),
+	) {
+	}
 
-        $this->loaders = (static function () use ($current, $loader): \Generator {
-            yield from $current;
-            yield $loader;
-        })();
+	public function addLoader( LoaderInterface $loader ): void {
+		$current = $this->loaders;
 
-        $this->hasSourceCache = [];
-    }
+		$this->loaders = ( static function () use ( $current, $loader ): \Generator {
+			yield from $current;
+			yield $loader;
+		} )();
 
-    /**
-     * @return LoaderInterface[]
-     */
-    public function getLoaders(): array
-    {
-        if (!\is_array($this->loaders)) {
-            $this->loaders = iterator_to_array($this->loaders, false);
-        }
+		$this->hasSourceCache = array();
+	}
 
-        return $this->loaders;
-    }
+	/**
+	 * @return LoaderInterface[]
+	 */
+	public function getLoaders(): array {
+		if ( ! \is_array( $this->loaders ) ) {
+			$this->loaders = iterator_to_array( $this->loaders, false );
+		}
 
-    public function getSourceContext(string $name): Source
-    {
-        $exceptions = [];
+		return $this->loaders;
+	}
 
-        foreach ($this->getLoaders() as $loader) {
-            if (!$loader->exists($name)) {
-                continue;
-            }
+	public function getSourceContext( string $name ): Source {
+		$exceptions = array();
 
-            try {
-                return $loader->getSourceContext($name);
-            } catch (LoaderError $e) {
-                $exceptions[] = $e->getMessage();
-            }
-        }
+		foreach ( $this->getLoaders() as $loader ) {
+			if ( ! $loader->exists( $name ) ) {
+				continue;
+			}
 
-        throw new LoaderError(\sprintf('Template "%s" is not defined%s.', $name, $exceptions ? ' ('.implode(', ', $exceptions).')' : ''));
-    }
+			try {
+				return $loader->getSourceContext( $name );
+			} catch ( LoaderError $e ) {
+				$exceptions[] = $e->getMessage();
+			}
+		}
 
-    public function exists(string $name): bool
-    {
-        if (isset($this->hasSourceCache[$name])) {
-            return $this->hasSourceCache[$name];
-        }
+		throw new LoaderError( \sprintf( 'Template "%s" is not defined%s.', $name, $exceptions ? ' (' . implode( ', ', $exceptions ) . ')' : '' ) );
+	}
 
-        foreach ($this->getLoaders() as $loader) {
-            if ($loader->exists($name)) {
-                return $this->hasSourceCache[$name] = true;
-            }
-        }
+	public function exists( string $name ): bool {
+		if ( isset( $this->hasSourceCache[ $name ] ) ) {
+			return $this->hasSourceCache[ $name ];
+		}
 
-        return $this->hasSourceCache[$name] = false;
-    }
+		foreach ( $this->getLoaders() as $loader ) {
+			if ( $loader->exists( $name ) ) {
+				return $this->hasSourceCache[ $name ] = true;
+			}
+		}
 
-    public function getCacheKey(string $name): string
-    {
-        $exceptions = [];
+		return $this->hasSourceCache[ $name ] = false;
+	}
 
-        foreach ($this->getLoaders() as $loader) {
-            if (!$loader->exists($name)) {
-                continue;
-            }
+	public function getCacheKey( string $name ): string {
+		$exceptions = array();
 
-            try {
-                return $loader->getCacheKey($name);
-            } catch (LoaderError $e) {
-                $exceptions[] = $loader::class.': '.$e->getMessage();
-            }
-        }
+		foreach ( $this->getLoaders() as $loader ) {
+			if ( ! $loader->exists( $name ) ) {
+				continue;
+			}
 
-        throw new LoaderError(\sprintf('Template "%s" is not defined%s.', $name, $exceptions ? ' ('.implode(', ', $exceptions).')' : ''));
-    }
+			try {
+				return $loader->getCacheKey( $name );
+			} catch ( LoaderError $e ) {
+				$exceptions[] = $loader::class . ': ' . $e->getMessage();
+			}
+		}
 
-    public function isFresh(string $name, int $time): bool
-    {
-        $exceptions = [];
+		throw new LoaderError( \sprintf( 'Template "%s" is not defined%s.', $name, $exceptions ? ' (' . implode( ', ', $exceptions ) . ')' : '' ) );
+	}
 
-        foreach ($this->getLoaders() as $loader) {
-            if (!$loader->exists($name)) {
-                continue;
-            }
+	public function isFresh( string $name, int $time ): bool {
+		$exceptions = array();
 
-            try {
-                return $loader->isFresh($name, $time);
-            } catch (LoaderError $e) {
-                $exceptions[] = $loader::class.': '.$e->getMessage();
-            }
-        }
+		foreach ( $this->getLoaders() as $loader ) {
+			if ( ! $loader->exists( $name ) ) {
+				continue;
+			}
 
-        throw new LoaderError(\sprintf('Template "%s" is not defined%s.', $name, $exceptions ? ' ('.implode(', ', $exceptions).')' : ''));
-    }
+			try {
+				return $loader->isFresh( $name, $time );
+			} catch ( LoaderError $e ) {
+				$exceptions[] = $loader::class . ': ' . $e->getMessage();
+			}
+		}
+
+		throw new LoaderError( \sprintf( 'Template "%s" is not defined%s.', $name, $exceptions ? ' (' . implode( ', ', $exceptions ) . ')' : '' ) );
+	}
 }

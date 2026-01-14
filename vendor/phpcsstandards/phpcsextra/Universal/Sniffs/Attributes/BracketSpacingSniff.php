@@ -21,196 +21,192 @@ use PHPCSUtils\Fixers\SpacesFixer;
  *
  * @since 1.5.0
  */
-final class BracketSpacingSniff implements Sniff
-{
+final class BracketSpacingSniff implements Sniff {
 
-    /**
-     * Name of the metric.
-     *
-     * @since 1.5.0
-     *
-     * @var string
-     */
-    const METRIC_NAME = 'Spaces on the inside of attribute brackets';
 
-    /**
-     * The amount of spacing to demand on the inside of attribute brackets.
-     *
-     * @since 1.5.0
-     *
-     * @var int
-     */
-    public $spacing = 0;
+	/**
+	 * Name of the metric.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @var string
+	 */
+	const METRIC_NAME = 'Spaces on the inside of attribute brackets';
 
-    /**
-     * Allow newlines instead of spaces.
-     *
-     * @since 1.5.0
-     *
-     * @var bool
-     */
-    public $ignoreNewlines = false;
+	/**
+	 * The amount of spacing to demand on the inside of attribute brackets.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @var int
+	 */
+	public $spacing = 0;
 
-    /**
-     * Returns an array of tokens this test wants to listen for.
-     *
-     * @since 1.5.0
-     *
-     * @return array<int|string>
-     */
-    public function register()
-    {
-        return [\T_ATTRIBUTE];
-    }
+	/**
+	 * Allow newlines instead of spaces.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @var bool
+	 */
+	public $ignoreNewlines = false;
 
-    /**
-     * Processes this test, when one of its tokens is encountered.
-     *
-     * @since 1.5.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token
-     *                                               in the stack passed in $tokens.
-     *
-     * @return void
-     */
-    public function process(File $phpcsFile, $stackPtr)
-    {
-        $tokens = $phpcsFile->getTokens();
+	/**
+	 * Returns an array of tokens this test wants to listen for.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @return array<int|string>
+	 */
+	public function register() {
+		return array( \T_ATTRIBUTE );
+	}
 
-        if (isset($tokens[$stackPtr]['attribute_closer']) === false) {
-            // Live coding/parse error. Ignore.
-            return;
-        }
+	/**
+	 * Processes this test, when one of its tokens is encountered.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token
+	 *                                               in the stack passed in $tokens.
+	 *
+	 * @return void
+	 */
+	public function process( File $phpcsFile, $stackPtr ) {
+		$tokens = $phpcsFile->getTokens();
 
-        if ($tokens[$stackPtr]['attribute_closer'] === ($stackPtr + 1)) {
-            // Empty attribute block. Ignore.
-            return;
-        }
+		if ( isset( $tokens[ $stackPtr ]['attribute_closer'] ) === false ) {
+			// Live coding/parse error. Ignore.
+			return;
+		}
 
-        $this->spacing = (int) $this->spacing;
+		if ( $tokens[ $stackPtr ]['attribute_closer'] === ( $stackPtr + 1 ) ) {
+			// Empty attribute block. Ignore.
+			return;
+		}
 
-        $this->processOpener($phpcsFile, $stackPtr);
-        $this->processCloser($phpcsFile, $tokens[$stackPtr]['attribute_closer']);
-    }
+		$this->spacing = (int) $this->spacing;
 
-    /**
-     * Processes the attribute block opener bracket.
-     *
-     * @since 1.5.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the attribute block opener
-     *                                               in the stack passed in $tokens.
-     *
-     * @return void
-     */
-    public function processOpener(File $phpcsFile, $stackPtr)
-    {
-        $tokens = $phpcsFile->getTokens();
+		$this->processOpener( $phpcsFile, $stackPtr );
+		$this->processCloser( $phpcsFile, $tokens[ $stackPtr ]['attribute_closer'] );
+	}
 
-        $nextNonWhitespace = $phpcsFile->findNext(\T_WHITESPACE, ($stackPtr + 1), null, true);
-        if ($this->ignoreNewlines === true
-            && $tokens[$stackPtr]['line'] !== $tokens[$nextNonWhitespace]['line']
-        ) {
-            if (($tokens[$stackPtr]['line'] + 1) === $tokens[$nextNonWhitespace]['line']) {
-                // Single new line.
-                $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'a new line');
-                return;
-            }
+	/**
+	 * Processes the attribute block opener bracket.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the attribute block opener
+	 *                                               in the stack passed in $tokens.
+	 *
+	 * @return void
+	 */
+	public function processOpener( File $phpcsFile, $stackPtr ) {
+		$tokens = $phpcsFile->getTokens();
 
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'multiple new lines');
+		$nextNonWhitespace = $phpcsFile->findNext( \T_WHITESPACE, ( $stackPtr + 1 ), null, true );
+		if ( $this->ignoreNewlines === true
+			&& $tokens[ $stackPtr ]['line'] !== $tokens[ $nextNonWhitespace ]['line']
+		) {
+			if ( ( $tokens[ $stackPtr ]['line'] + 1 ) === $tokens[ $nextNonWhitespace ]['line'] ) {
+				// Single new line.
+				$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'a new line' );
+				return;
+			}
 
-            $error = 'Blank line(s) found at the start of an attribute block';
-            $fix   = $phpcsFile->addFixableError($error, $stackPtr, 'BlankLineAtStart');
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'multiple new lines' );
 
-            if ($fix === true) {
-                $phpcsFile->fixer->beginChangeset();
-                $phpcsFile->fixer->addNewline($stackPtr);
+			$error = 'Blank line(s) found at the start of an attribute block';
+			$fix   = $phpcsFile->addFixableError( $error, $stackPtr, 'BlankLineAtStart' );
 
-                // Remove all blank lines, but don't remove the indentation of the line containing the next bit of code.
-                for ($i = ($stackPtr + 1); $i < $nextNonWhitespace; $i++) {
-                    if ($tokens[$i]['line'] === $tokens[$nextNonWhitespace]['line']) {
-                        break;
-                    }
+			if ( $fix === true ) {
+				$phpcsFile->fixer->beginChangeset();
+				$phpcsFile->fixer->addNewline( $stackPtr );
 
-                    $phpcsFile->fixer->replaceToken($i, '');
-                }
-                $phpcsFile->fixer->endChangeset();
-            }
-            return;
-        }
+				// Remove all blank lines, but don't remove the indentation of the line containing the next bit of code.
+				for ( $i = ( $stackPtr + 1 ); $i < $nextNonWhitespace; $i++ ) {
+					if ( $tokens[ $i ]['line'] === $tokens[ $nextNonWhitespace ]['line'] ) {
+						break;
+					}
 
-        SpacesFixer::checkAndFix(
-            $phpcsFile,
-            $stackPtr,
-            $nextNonWhitespace,
-            $this->spacing,
-            'Expected %s after the attribute block opener. Found: %s.',
-            'SpaceAfterOpener',
-            'error',
-            0,
-            self::METRIC_NAME
-        );
-    }
+					$phpcsFile->fixer->replaceToken( $i, '' );
+				}
+				$phpcsFile->fixer->endChangeset();
+			}
+			return;
+		}
 
-    /**
-     * Processes the attribute block closer bracket.
-     *
-     * @since 1.5.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the attribute block closer
-     *                                               in the stack passed in $tokens.
-     *
-     * @return void
-     */
-    public function processCloser(File $phpcsFile, $stackPtr)
-    {
-        $tokens = $phpcsFile->getTokens();
+		SpacesFixer::checkAndFix(
+			$phpcsFile,
+			$stackPtr,
+			$nextNonWhitespace,
+			$this->spacing,
+			'Expected %s after the attribute block opener. Found: %s.',
+			'SpaceAfterOpener',
+			'error',
+			0,
+			self::METRIC_NAME
+		);
+	}
 
-        $previousNonWhitespace = $phpcsFile->findPrevious(\T_WHITESPACE, ($stackPtr - 1), null, true);
-        if ($this->ignoreNewlines === true
-            && $tokens[$stackPtr]['line'] !== $tokens[$previousNonWhitespace]['line']
-        ) {
-            if (($tokens[$stackPtr]['line'] - 1) === $tokens[$previousNonWhitespace]['line']) {
-                // Single new line.
-                $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'a new line');
-                return;
-            }
+	/**
+	 * Processes the attribute block closer bracket.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the attribute block closer
+	 *                                               in the stack passed in $tokens.
+	 *
+	 * @return void
+	 */
+	public function processCloser( File $phpcsFile, $stackPtr ) {
+		$tokens = $phpcsFile->getTokens();
 
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'multiple new lines');
+		$previousNonWhitespace = $phpcsFile->findPrevious( \T_WHITESPACE, ( $stackPtr - 1 ), null, true );
+		if ( $this->ignoreNewlines === true
+			&& $tokens[ $stackPtr ]['line'] !== $tokens[ $previousNonWhitespace ]['line']
+		) {
+			if ( ( $tokens[ $stackPtr ]['line'] - 1 ) === $tokens[ $previousNonWhitespace ]['line'] ) {
+				// Single new line.
+				$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'a new line' );
+				return;
+			}
 
-            $error = 'Blank line(s) found at the end of an attribute block';
-            $fix   = $phpcsFile->addFixableError($error, $stackPtr, 'BlankLineAtEnd');
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'multiple new lines' );
 
-            if ($fix === true) {
-                $phpcsFile->fixer->beginChangeset();
-                $phpcsFile->fixer->addNewline($previousNonWhitespace);
+			$error = 'Blank line(s) found at the end of an attribute block';
+			$fix   = $phpcsFile->addFixableError( $error, $stackPtr, 'BlankLineAtEnd' );
 
-                // Remove all blank lines, but don't remove the indentation of the line containing the next bit of code.
-                for ($i = ($previousNonWhitespace + 1); $i < $stackPtr; $i++) {
-                    if ($tokens[$i]['line'] === $tokens[$stackPtr]['line']) {
-                        break;
-                    }
+			if ( $fix === true ) {
+				$phpcsFile->fixer->beginChangeset();
+				$phpcsFile->fixer->addNewline( $previousNonWhitespace );
 
-                    $phpcsFile->fixer->replaceToken($i, '');
-                }
-                $phpcsFile->fixer->endChangeset();
-            }
-            return;
-        }
+				// Remove all blank lines, but don't remove the indentation of the line containing the next bit of code.
+				for ( $i = ( $previousNonWhitespace + 1 ); $i < $stackPtr; $i++ ) {
+					if ( $tokens[ $i ]['line'] === $tokens[ $stackPtr ]['line'] ) {
+						break;
+					}
 
-        SpacesFixer::checkAndFix(
-            $phpcsFile,
-            $previousNonWhitespace,
-            $stackPtr,
-            $this->spacing,
-            'Expected %s before the attribute block closer. Found: %s.',
-            'SpaceBeforeCloser',
-            'error',
-            0,
-            self::METRIC_NAME
-        );
-    }
+					$phpcsFile->fixer->replaceToken( $i, '' );
+				}
+				$phpcsFile->fixer->endChangeset();
+			}
+			return;
+		}
+
+		SpacesFixer::checkAndFix(
+			$phpcsFile,
+			$previousNonWhitespace,
+			$stackPtr,
+			$this->spacing,
+			'Expected %s before the attribute block closer. Found: %s.',
+			'SpaceBeforeCloser',
+			'error',
+			0,
+			self::METRIC_NAME
+		);
+	}
 }

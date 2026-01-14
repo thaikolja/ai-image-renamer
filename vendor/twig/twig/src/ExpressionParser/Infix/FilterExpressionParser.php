@@ -26,60 +26,54 @@ use Twig\Token;
 /**
  * @internal
  */
-final class FilterExpressionParser extends AbstractExpressionParser implements InfixExpressionParserInterface, ExpressionParserDescriptionInterface
-{
-    use ArgumentsTrait;
+final class FilterExpressionParser extends AbstractExpressionParser implements InfixExpressionParserInterface, ExpressionParserDescriptionInterface {
 
-    private $readyNodes = [];
+	use ArgumentsTrait;
 
-    public function parse(Parser $parser, AbstractExpression $expr, Token $token): AbstractExpression
-    {
-        $stream = $parser->getStream();
-        $token = $stream->expect(Token::NAME_TYPE);
-        $line = $token->getLine();
+	private $readyNodes = array();
 
-        if (!$stream->test(Token::OPERATOR_TYPE, '(')) {
-            $arguments = new EmptyNode();
-        } else {
-            $arguments = $this->parseNamedArguments($parser);
-        }
+	public function parse( Parser $parser, AbstractExpression $expr, Token $token ): AbstractExpression {
+		$stream = $parser->getStream();
+		$token  = $stream->expect( Token::NAME_TYPE );
+		$line   = $token->getLine();
 
-        $filter = $parser->getFilter($token->getValue(), $line);
+		if ( ! $stream->test( Token::OPERATOR_TYPE, '(' ) ) {
+			$arguments = new EmptyNode();
+		} else {
+			$arguments = $this->parseNamedArguments( $parser );
+		}
 
-        $ready = true;
-        if (!isset($this->readyNodes[$class = $filter->getNodeClass()])) {
-            $this->readyNodes[$class] = (bool) (new \ReflectionClass($class))->getConstructor()->getAttributes(FirstClassTwigCallableReady::class);
-        }
+		$filter = $parser->getFilter( $token->getValue(), $line );
 
-        if (!$ready = $this->readyNodes[$class]) {
-            trigger_deprecation('twig/twig', '3.12', 'Twig node "%s" is not marked as ready for passing a "TwigFilter" in the constructor instead of its name; please update your code and then add #[FirstClassTwigCallableReady] attribute to the constructor.', $class);
-        }
+		$ready = true;
+		if ( ! isset( $this->readyNodes[ $class = $filter->getNodeClass() ] ) ) {
+			$this->readyNodes[ $class ] = (bool) ( new \ReflectionClass( $class ) )->getConstructor()->getAttributes( FirstClassTwigCallableReady::class );
+		}
 
-        return new $class($expr, $ready ? $filter : new ConstantExpression($filter->getName(), $line), $arguments, $line);
-    }
+		if ( ! $ready = $this->readyNodes[ $class ] ) {
+			trigger_deprecation( 'twig/twig', '3.12', 'Twig node "%s" is not marked as ready for passing a "TwigFilter" in the constructor instead of its name; please update your code and then add #[FirstClassTwigCallableReady] attribute to the constructor.', $class );
+		}
 
-    public function getName(): string
-    {
-        return '|';
-    }
+		return new $class( $expr, $ready ? $filter : new ConstantExpression( $filter->getName(), $line ), $arguments, $line );
+	}
 
-    public function getDescription(): string
-    {
-        return 'Twig filter call';
-    }
+	public function getName(): string {
+		return '|';
+	}
 
-    public function getPrecedence(): int
-    {
-        return 512;
-    }
+	public function getDescription(): string {
+		return 'Twig filter call';
+	}
 
-    public function getPrecedenceChange(): ?PrecedenceChange
-    {
-        return new PrecedenceChange('twig/twig', '3.21', 300);
-    }
+	public function getPrecedence(): int {
+		return 512;
+	}
 
-    public function getAssociativity(): InfixAssociativity
-    {
-        return InfixAssociativity::Left;
-    }
+	public function getPrecedenceChange(): ?PrecedenceChange {
+		return new PrecedenceChange( 'twig/twig', '3.21', 300 );
+	}
+
+	public function getAssociativity(): InfixAssociativity {
+		return InfixAssociativity::Left;
+	}
 }

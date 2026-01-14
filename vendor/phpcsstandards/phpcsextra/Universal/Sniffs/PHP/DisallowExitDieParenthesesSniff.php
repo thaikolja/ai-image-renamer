@@ -19,92 +19,90 @@ use PHP_CodeSniffer\Util\Tokens;
  *
  * @since 1.5.0
  */
-final class DisallowExitDieParenthesesSniff implements Sniff
-{
+final class DisallowExitDieParenthesesSniff implements Sniff {
 
-    /**
-     * Name of the metric.
-     *
-     * @since 1.5.0
-     *
-     * @var string
-     */
-    const METRIC_NAME = 'Exit/die with parentheses';
 
-    /**
-     * Returns an array of tokens this test wants to listen for.
-     *
-     * @since 1.5.0
-     *
-     * @return array<int|string>
-     */
-    public function register()
-    {
-        return [\T_EXIT];
-    }
+	/**
+	 * Name of the metric.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @var string
+	 */
+	const METRIC_NAME = 'Exit/die with parentheses';
 
-    /**
-     * Processes this test, when one of its tokens is encountered.
-     *
-     * @since 1.5.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token
-     *                                               in the stack passed in $tokens.
-     *
-     * @return void
-     */
-    public function process(File $phpcsFile, $stackPtr)
-    {
-        $tokens       = $phpcsFile->getTokens();
-        $nextNonEmpty = $phpcsFile->findNext(Tokens::$emptyTokens, ($stackPtr + 1), null, true);
-        if ($nextNonEmpty === false) {
-            // Live coding. Do not flag (yet).
-            return;
-        }
+	/**
+	 * Returns an array of tokens this test wants to listen for.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @return array<int|string>
+	 */
+	public function register() {
+		return array( \T_EXIT );
+	}
 
-        if ($tokens[$nextNonEmpty]['code'] !== \T_OPEN_PARENTHESIS) {
-            // No parentheses found.
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'no');
-            return;
-        }
+	/**
+	 * Processes this test, when one of its tokens is encountered.
+	 *
+	 * @since 1.5.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token
+	 *                                               in the stack passed in $tokens.
+	 *
+	 * @return void
+	 */
+	public function process( File $phpcsFile, $stackPtr ) {
+		$tokens       = $phpcsFile->getTokens();
+		$nextNonEmpty = $phpcsFile->findNext( Tokens::$emptyTokens, ( $stackPtr + 1 ), null, true );
+		if ( $nextNonEmpty === false ) {
+			// Live coding. Do not flag (yet).
+			return;
+		}
 
-        if (isset($tokens[$nextNonEmpty]['parenthesis_closer']) === false) {
-            // Incomplete set of parentheses. Ignore.
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'yes');
-            return;
-        }
+		if ( $tokens[ $nextNonEmpty ]['code'] !== \T_OPEN_PARENTHESIS ) {
+			// No parentheses found.
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'no' );
+			return;
+		}
 
-        $opener    = $nextNonEmpty;
-        $closer    = $tokens[$opener]['parenthesis_closer'];
-        $hasParams = $phpcsFile->findNext(Tokens::$emptyTokens, ($opener + 1), $closer, true);
-        if ($hasParams !== false) {
-            // There is something between the parentheses. Ignore.
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'yes, with parameter(s)');
-            return;
-        }
+		if ( isset( $tokens[ $nextNonEmpty ]['parenthesis_closer'] ) === false ) {
+			// Incomplete set of parentheses. Ignore.
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'yes' );
+			return;
+		}
 
-        $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'yes');
+		$opener    = $nextNonEmpty;
+		$closer    = $tokens[ $opener ]['parenthesis_closer'];
+		$hasParams = $phpcsFile->findNext( Tokens::$emptyTokens, ( $opener + 1 ), $closer, true );
+		if ( $hasParams !== false ) {
+			// There is something between the parentheses. Ignore.
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'yes, with parameter(s)' );
+			return;
+		}
 
-        $fix = $phpcsFile->addFixableError(
-            'Parentheses not allowed when calling %s without passing parameters',
-            $stackPtr,
-            'Found',
-            [\strtolower(\ltrim($tokens[$stackPtr]['content'], '\\'))]
-        );
+		$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'yes' );
 
-        if ($fix === true) {
-            $phpcsFile->fixer->beginChangeset();
+		$fix = $phpcsFile->addFixableError(
+			'Parentheses not allowed when calling %s without passing parameters',
+			$stackPtr,
+			'Found',
+			array( \strtolower( \ltrim( $tokens[ $stackPtr ]['content'], '\\' ) ) )
+		);
 
-            for ($i = ($stackPtr + 1); $i <= $closer; $i++) {
-                if (isset(Tokens::$commentTokens[$tokens[$i]['code']]) === true) {
-                    continue;
-                }
+		if ( $fix === true ) {
+			$phpcsFile->fixer->beginChangeset();
 
-                $phpcsFile->fixer->replaceToken($i, '');
-            }
+			for ( $i = ( $stackPtr + 1 ); $i <= $closer; $i++ ) {
+				if ( isset( Tokens::$commentTokens[ $tokens[ $i ]['code'] ] ) === true ) {
+					continue;
+				}
 
-            $phpcsFile->fixer->endChangeset();
-        }
-    }
+				$phpcsFile->fixer->replaceToken( $i, '' );
+			}
+
+			$phpcsFile->fixer->endChangeset();
+		}
+	}
 }

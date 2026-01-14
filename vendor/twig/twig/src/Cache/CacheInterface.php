@@ -20,27 +20,27 @@ namespace Twig\Cache;
  *
  * @author Andrew Tch <andrew@noop.lv>
  */
-interface CacheInterface
-{
-    /**
-     * Generates a cache key for the given template class name.
-     */
-    public function generateKey(string $name, string $className): string;
+interface CacheInterface {
 
-    /**
-     * Writes the compiled template to cache.
-     *
-     * @param string $content The template representation as a PHP class
-     */
-    public function write(string $key, string $content): void;
+	/**
+	 * Generates a cache key for the given template class name.
+	 */
+	public function generateKey( string $name, string $className ): string;
 
-    /**
-     * Loads a template from the cache.
-     */
-    public function load(string $key): void;
+	/**
+	 * Writes the compiled template to cache.
+	 *
+	 * @param string $content The template representation as a PHP class
+	 */
+	public function write( string $key, string $content ): void;
 
-    /**
-     * Returns the modification timestamp of a key.
-     */
-    public function getTimestamp(string $key): int;
+	/**
+	 * Loads a template from the cache.
+	 */
+	public function load( string $key ): void;
+
+	/**
+	 * Returns the modification timestamp of a key.
+	 */
+	public function getTimestamp( string $key ): int;
 }

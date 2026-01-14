@@ -19,170 +19,167 @@ use PHPCSUtils\Utils\ObjectDeclarations;
  *
  * @since 1.0.0
  */
-final class ModifierKeywordOrderSniff implements Sniff
-{
+final class ModifierKeywordOrderSniff implements Sniff {
 
-    /**
-     * Name of the metric.
-     *
-     * @since 1.0.0
-     *
-     * @var string
-     */
-    const METRIC_NAME = 'Class modifier keyword order';
 
-    /**
-     * Order preference: abstract/final readonly.
-     *
-     * @since 1.0.0
-     *
-     * @var string
-     */
-    const EXTEND_READONLY = 'extendability readonly';
+	/**
+	 * Name of the metric.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var string
+	 */
+	const METRIC_NAME = 'Class modifier keyword order';
 
-    /**
-     * Order preference: readonly abstract/final.
-     *
-     * @since 1.0.0
-     *
-     * @var string
-     */
-    const READONLY_EXTEND = 'readonly extendability';
+	/**
+	 * Order preference: abstract/final readonly.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var string
+	 */
+	const EXTEND_READONLY = 'extendability readonly';
 
-    /**
-     * Preferred order for the modifier keywords.
-     *
-     * Accepted values:
-     * - "extendability readonly".
-     * - or "readonly extendability".
-     *
-     * Defaults to "extendability readonly".
-     *
-     * @since 1.0.0
-     *
-     * @var string
-     */
-    public $order = self::EXTEND_READONLY;
+	/**
+	 * Order preference: readonly abstract/final.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var string
+	 */
+	const READONLY_EXTEND = 'readonly extendability';
 
-    /**
-     * Returns an array of tokens this test wants to listen for.
-     *
-     * @since 1.0.0
-     *
-     * @return array<int|string>
-     */
-    public function register()
-    {
-        return [\T_CLASS];
-    }
+	/**
+	 * Preferred order for the modifier keywords.
+	 *
+	 * Accepted values:
+	 * - "extendability readonly".
+	 * - or "readonly extendability".
+	 *
+	 * Defaults to "extendability readonly".
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var string
+	 */
+	public $order = self::EXTEND_READONLY;
 
-    /**
-     * Processes this test, when one of its tokens is encountered.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token
-     *                                               in the stack passed in $tokens.
-     *
-     * @return void
-     */
-    public function process(File $phpcsFile, $stackPtr)
-    {
-        $classProp = ObjectDeclarations::getClassProperties($phpcsFile, $stackPtr);
+	/**
+	 * Returns an array of tokens this test wants to listen for.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int|string>
+	 */
+	public function register() {
+		return array( \T_CLASS );
+	}
 
-        if ($classProp['readonly_token'] === false
-            || ($classProp['final_token'] === false && $classProp['abstract_token'] === false)
-        ) {
-            /*
-             * Either no modifier keywords found at all; or only one type of modifier
-             * keyword (abstract/final or readonly) declared, but not both. No ordering needed.
-             */
-            return;
-        }
+	/**
+	 * Processes this test, when one of its tokens is encountered.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token
+	 *                                               in the stack passed in $tokens.
+	 *
+	 * @return void
+	 */
+	public function process( File $phpcsFile, $stackPtr ) {
+		$classProp = ObjectDeclarations::getClassProperties( $phpcsFile, $stackPtr );
 
-        if ($classProp['final_token'] !== false && $classProp['abstract_token'] !== false) {
-            // Parse error. Ignore.
-            return;
-        }
+		if ( $classProp['readonly_token'] === false
+			|| ( $classProp['final_token'] === false && $classProp['abstract_token'] === false )
+		) {
+			/*
+			 * Either no modifier keywords found at all; or only one type of modifier
+			 * keyword (abstract/final or readonly) declared, but not both. No ordering needed.
+			 */
+			return;
+		}
 
-        $readonly = $classProp['readonly_token'];
+		if ( $classProp['final_token'] !== false && $classProp['abstract_token'] !== false ) {
+			// Parse error. Ignore.
+			return;
+		}
 
-        if ($classProp['final_token'] !== false) {
-            $extendability = $classProp['final_token'];
-        } else {
-            $extendability = $classProp['abstract_token'];
-        }
+		$readonly = $classProp['readonly_token'];
 
-        if ($readonly < $extendability) {
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, self::READONLY_EXTEND);
-        } else {
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, self::EXTEND_READONLY);
-        }
+		if ( $classProp['final_token'] !== false ) {
+			$extendability = $classProp['final_token'];
+		} else {
+			$extendability = $classProp['abstract_token'];
+		}
 
-        $message = 'Class modifier keywords are not in the correct order. Expected: "%s", found: "%s"';
+		if ( $readonly < $extendability ) {
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, self::READONLY_EXTEND );
+		} else {
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, self::EXTEND_READONLY );
+		}
 
-        switch ($this->order) {
-            case self::READONLY_EXTEND:
-                if ($readonly < $extendability) {
-                    // Order is correct. Nothing to do.
-                    return;
-                }
+		$message = 'Class modifier keywords are not in the correct order. Expected: "%s", found: "%s"';
 
-                $this->handleError($phpcsFile, $extendability, $readonly);
-                break;
+		switch ( $this->order ) {
+			case self::READONLY_EXTEND:
+				if ( $readonly < $extendability ) {
+					// Order is correct. Nothing to do.
+					return;
+				}
 
-            case self::EXTEND_READONLY:
-            default:
-                if ($extendability < $readonly) {
-                    // Order is correct. Nothing to do.
-                    return;
-                }
+				$this->handleError( $phpcsFile, $extendability, $readonly );
+				break;
 
-                $this->handleError($phpcsFile, $readonly, $extendability);
-                break;
-        }
-    }
+			case self::EXTEND_READONLY:
+			default:
+				if ( $extendability < $readonly ) {
+					// Order is correct. Nothing to do.
+					return;
+				}
 
-    /**
-     * Throw the error and potentially fix it.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile     The file being scanned.
-     * @param int                         $firstKeyword  The position of the first keyword found.
-     * @param int                         $secondKeyword The position of the second keyword token.
-     *
-     * @return void
-     */
-    private function handleError(File $phpcsFile, $firstKeyword, $secondKeyword)
-    {
-        $tokens = $phpcsFile->getTokens();
+				$this->handleError( $phpcsFile, $readonly, $extendability );
+				break;
+		}
+	}
 
-        $message = 'Class modifier keywords are not in the correct order. Expected: "%s", found: "%s"';
-        $data    = [
-            $tokens[$secondKeyword]['content'] . ' ' . $tokens[$firstKeyword]['content'],
-            $tokens[$firstKeyword]['content'] . ' ' . $tokens[$secondKeyword]['content'],
-        ];
+	/**
+	 * Throw the error and potentially fix it.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile     The file being scanned.
+	 * @param int                         $firstKeyword  The position of the first keyword found.
+	 * @param int                         $secondKeyword The position of the second keyword token.
+	 *
+	 * @return void
+	 */
+	private function handleError( File $phpcsFile, $firstKeyword, $secondKeyword ) {
+		$tokens = $phpcsFile->getTokens();
 
-        $fix = $phpcsFile->addFixableError($message, $firstKeyword, 'Incorrect', $data);
+		$message = 'Class modifier keywords are not in the correct order. Expected: "%s", found: "%s"';
+		$data    = array(
+			$tokens[ $secondKeyword ]['content'] . ' ' . $tokens[ $firstKeyword ]['content'],
+			$tokens[ $firstKeyword ]['content'] . ' ' . $tokens[ $secondKeyword ]['content'],
+		);
 
-        if ($fix === true) {
-            $phpcsFile->fixer->beginChangeset();
+		$fix = $phpcsFile->addFixableError( $message, $firstKeyword, 'Incorrect', $data );
 
-            $phpcsFile->fixer->replaceToken($secondKeyword, '');
+		if ( $fix === true ) {
+			$phpcsFile->fixer->beginChangeset();
 
-            // Prevent leaving behind trailing whitespace.
-            $i = ($secondKeyword + 1);
-            while ($tokens[$i]['code'] === \T_WHITESPACE) {
-                $phpcsFile->fixer->replaceToken($i, '');
-                ++$i;
-            }
+			$phpcsFile->fixer->replaceToken( $secondKeyword, '' );
 
-            // Use the original token content as the case used for keywords is not the concern of this sniff.
-            $phpcsFile->fixer->addContentBefore($firstKeyword, $tokens[$secondKeyword]['content'] . ' ');
+			// Prevent leaving behind trailing whitespace.
+			$i = ( $secondKeyword + 1 );
+			while ( $tokens[ $i ]['code'] === \T_WHITESPACE ) {
+				$phpcsFile->fixer->replaceToken( $i, '' );
+				++$i;
+			}
 
-            $phpcsFile->fixer->endChangeset();
-        }
-    }
+			// Use the original token content as the case used for keywords is not the concern of this sniff.
+			$phpcsFile->fixer->addContentBefore( $firstKeyword, $tokens[ $secondKeyword ]['content'] . ' ' );
+
+			$phpcsFile->fixer->endChangeset();
+		}
+	}
 }
