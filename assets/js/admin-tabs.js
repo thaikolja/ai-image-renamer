@@ -43,8 +43,8 @@
       // Update active panel
       $(".air-panel").removeClass("active").attr("hidden", true);
       $("#air-panel-" + tabId)
-        .addClass("active")
-        .removeAttr("hidden");
+          .addClass("active")
+          .removeAttr("hidden");
 
       // Update URL hash
       if (history.pushState) {

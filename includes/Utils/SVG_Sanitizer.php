@@ -41,7 +41,7 @@ class SVG_Sanitizer {
 	 * @var array
 	 */
 	private const ALLOWED_ELEMENTS
-		= array(
+		= [
 			'svg',
 			'symbol',
 			'path',
@@ -51,7 +51,7 @@ class SVG_Sanitizer {
 			'polygon',
 			'line',
 			'ellipse',
-		);
+		];
 
 	/**
 	 * Allowed SVG attributes.
@@ -59,7 +59,7 @@ class SVG_Sanitizer {
 	 * @var array
 	 */
 	private const ALLOWED_ATTRIBUTES
-		= array(
+		= [
 			'id',
 			'viewBox',
 			'xmlns',
@@ -82,12 +82,12 @@ class SVG_Sanitizer {
 			'y1',
 			'x2',
 			'y2',
-		);
+		];
 
 	/**
 	 * Validate and sanitize SVG content.
 	 *
-	 * @param  string $svg_content  The raw SVG content.
+	 * @param  string  $svg_content  The raw SVG content.
 	 *
 	 * @return string|false Sanitized SVG content or false if invalid.
 	 */
@@ -142,12 +142,12 @@ class SVG_Sanitizer {
 	/**
 	 * Check for potentially dangerous content in SVG.
 	 *
-	 * @param  string $content  The SVG content.
+	 * @param  string  $content  The SVG content.
 	 *
 	 * @return bool True if dangerous content is found.
 	 */
 	private static function contains_dangerous_content( string $content ): bool {
-		$dangerous_patterns = array(
+		$dangerous_patterns = [
 			// Script tags and event handlers
 			'<script',
 			'onload',
@@ -170,7 +170,7 @@ class SVG_Sanitizer {
 			'<foreignObject',
 			// Entity references (can be used for XXE)
 			'<!ENTITY',
-		);
+		];
 
 		$content_lower = strtolower( $content );
 
@@ -186,7 +186,7 @@ class SVG_Sanitizer {
 	/**
 	 * Validate the SVG structure.
 	 *
-	 * @param  \DOMDocument $dom  The parsed DOM document.
+	 * @param  \DOMDocument  $dom  The parsed DOM document.
 	 *
 	 * @return bool True if valid.
 	 */
@@ -218,7 +218,7 @@ class SVG_Sanitizer {
 	/**
 	 * Sanitize the DOM by removing disallowed elements and attributes.
 	 *
-	 * @param  \DOMDocument $dom  The DOM document to sanitize.
+	 * @param  \DOMDocument  $dom  The DOM document to sanitize.
 	 *
 	 * @return bool True if sanitization succeeded.
 	 */
@@ -228,7 +228,7 @@ class SVG_Sanitizer {
 
 		// Remove disallowed elements.
 		$all_elements       = $dom->getElementsByTagName( '*' );
-		$elements_to_remove = array();
+		$elements_to_remove = [];
 
 		foreach ( $all_elements as $element ) {
 			$local_name = $element->localName;
@@ -239,7 +239,7 @@ class SVG_Sanitizer {
 			}
 
 			// Remove disallowed attributes.
-			$attributes_to_remove = array();
+			$attributes_to_remove = [];
 			foreach ( $element->attributes as $attr ) {
 				if ( ! in_array( $attr->name, self::ALLOWED_ATTRIBUTES, true ) ) {
 					$attributes_to_remove[] = $attr;
@@ -264,7 +264,7 @@ class SVG_Sanitizer {
 	/**
 	 * Load and sanitize SVG from a file.
 	 *
-	 * @param  string $file_path  The path to the SVG file.
+	 * @param  string  $file_path  The path to the SVG file.
 	 *
 	 * @return string|false Sanitized SVG content or false if invalid.
 	 */
@@ -290,7 +290,7 @@ class SVG_Sanitizer {
 
 		// Check file extension.
 		$path_info = \pathinfo( $real_path );
-		if ( 'svg' !== strtolower( $path_info['extension'] ?? '' ) ) {
+		if ( 'svg' !== strtolower( $path_info[ 'extension' ] ?? '' ) ) {
 			return false;
 		}
 

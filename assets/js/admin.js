@@ -67,10 +67,10 @@
     // When user starts typing in the input field, clear the masked value
     $apiKeyInput.on("input", function () {
       const currentValue = $(this).val();
-      
+
       // If the value was masked and user started typing, clear it
-      if (originalMaskedValue && originalMaskedValue.includes("•") && 
-          currentValue !== originalMaskedValue && 
+      if (originalMaskedValue && originalMaskedValue.includes("•") &&
+          currentValue !== originalMaskedValue &&
           !currentValue.includes("•")) {
         // User is typing a new key, clear the field completely
         $(this).val(currentValue);
@@ -100,9 +100,9 @@
         url:    admin.ajaxUrl,
         method: "POST",
         data:   {
-          action:    "air_test_connection",
-          nonce:     admin.nonces.test_connection,
-          api_key:   apiKey,
+          action:     "air_test_connection",
+          nonce:      admin.nonces.test_connection,
+          api_key:    apiKey,
           is_new_key: hasEnteredNewKey ? 1 : 0,
         },
       })

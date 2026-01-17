@@ -1,34 +1,36 @@
 {# API Key Field Template #}
 <div class="air-api-key-container">
-    <label for="air_api_key" class="screen-reader-text">
+    <label
+            for="air_api_key"
+            class="screen-reader-text">
         {{ __('Groq API Key', 'ai-image-renamer') }}
     </label>
     <div class="air-api-key-wrapper">
         <input
-            type="text"
-            id="air_api_key"
-            name="{{ option_name }}[api_key]"
-            value="{{ display_key }}"
-            class="regular-text"
-            placeholder="{{ placeholder }}"
-            autocomplete="off" />
+                type="text"
+                id="air_api_key"
+                name="{{ option_name }}[api_key]"
+                value="{{ display_key }}"
+                class="regular-text"
+                placeholder="{{ placeholder }}"
+                autocomplete="off" />
 
         {% if saved %}
             <button
-                type="button"
-                id="air_delete_api_key"
-                class="button button-hero button-link-delete text-danger">
+                    type="button"
+                    id="air_delete_api_key"
+                    class="button button-hero button-link-delete text-danger">
                 {{ __('Delete Key', 'ai-image-renamer') }}
             </button>
         {% endif %}
     </div>
 </div>
 <p class="description">
-{% if saved %}
-    {{ __('Your Groq API key has been encrypted and saved. Type a new key to overwrite it.', 'ai-image-renamer') }}
-{% else %}
-    {{ __('Enter your Groq API key.', 'ai-image-renamer') }}
-{% endif %}
+    {% if saved %}
+        {{ __('Your Groq API key has been encrypted and saved. Type a new key to overwrite it.', 'ai-image-renamer') }}
+    {% else %}
+        {{ __('Enter your Groq API key.', 'ai-image-renamer') }}
+    {% endif %}
 </p>
 <p class="air-action-buttons">
     <a

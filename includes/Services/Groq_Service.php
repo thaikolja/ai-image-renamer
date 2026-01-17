@@ -34,7 +34,6 @@ namespace AIR\Services;
  * Handles communication with the Groq Vision API.
  */
 class Groq_Service {
-
 	/**
 	 * Groq API endpoint.
 	 *
@@ -170,14 +169,14 @@ class Groq_Service {
 
 		// Make a simple models request to verify the key.
 		$response = \wp_safe_remote_get( 'https://api.groq.com/openai/v1/models', [
-				'timeout' => 15,
-				'headers' => [
-					'Authorization' => 'Bearer ' . $api_key,
-					'Content-Type'  => 'application/json',
-					'Origin'        => \site_url(),
-					'Referer'       => \admin_url(),
-				],
-			] );
+			'timeout' => 15,
+			'headers' => [
+				'Authorization' => 'Bearer ' . $api_key,
+				'Content-Type'  => 'application/json',
+				'Origin'        => \site_url(),
+				'Referer'       => \admin_url(),
+			],
+		] );
 
 		if ( \is_wp_error( $response ) ) {
 			// Sanitize the error message.

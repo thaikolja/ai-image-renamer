@@ -1,7 +1,9 @@
 {# File Types Field Template #}
 {% for mime, label in available_types %}
-	<label class="air-file-type-label">
-		<input type="checkbox" name="{{ option_name }}[file_types][]" value="{{ mime }}" {{ mime in file_types ? 'checked' : '' }}/>
-		{{ label }}
-	</label>
+    <label class="air-file-type-label"> <input
+                type="checkbox"
+                name="{{ option_name }}[file_types][]"
+                value="{{ mime }}" {{ mime in file_types ? 'checked' : '' }}/>
+        {{ label }}
+    </label>
 {% endfor %}

@@ -59,16 +59,14 @@ class Rate_Limiter {
 	/**
 	 * Check if a request should be rate limited.
 	 *
-	 * @param  string $action        The action being performed.
-	 * @param  int    $max_requests  Maximum number of requests allowed.
-	 * @param  int    $time_window   Time window in seconds.
+	 * @param  string  $action        The action being performed.
+	 * @param  int     $max_requests  Maximum number of requests allowed.
+	 * @param  int     $time_window   Time window in seconds.
 	 *
 	 * @return bool True if the request is allowed, false if rate limited.
 	 */
 	public static function check_rate_limit(
-		string $action,
-		int $max_requests = self::DEFAULT_MAX_REQUESTS,
-		int $time_window = self::DEFAULT_TIME_WINDOW
+		string $action, int $max_requests = self::DEFAULT_MAX_REQUESTS, int $time_window = self::DEFAULT_TIME_WINDOW
 	): bool {
 		$user_id = self::get_user_identifier();
 		$key     = self::get_transient_key( $action, $user_id );
@@ -78,11 +76,11 @@ class Rate_Limiter {
 
 		if ( false === $data ) {
 			// First request in this window.
-			$data = array(
+			$data = [
 				'count'   => 1,
 				'expires' => \time() + $time_window,
 				'window'  => $time_window,
-			);
+			];
 
 			\set_transient( $key, $data, $time_window );
 
@@ -90,13 +88,13 @@ class Rate_Limiter {
 		}
 
 		// Check if the window has expired.
-		if ( \time() > $data['expires'] ) {
+		if ( \time() > $data[ 'expires' ] ) {
 			// Reset the counter.
-			$data = array(
+			$data = [
 				'count'   => 1,
 				'expires' => \time() + $time_window,
 				'window'  => $time_window,
-			);
+			];
 
 			\set_transient( $key, $data, $time_window );
 
@@ -104,13 +102,13 @@ class Rate_Limiter {
 		}
 
 		// Check if the limit has been exceeded.
-		if ( $data['count'] >= $max_requests ) {
+		if ( $data[ 'count' ] >= $max_requests ) {
 			return false;
 		}
 
 		// Increment the counter.
-		++$data['count'];
-		$remaining_time = $data['expires'] - \time();
+		++ $data[ 'count' ];
+		$remaining_time = $data[ 'expires' ] - \time();
 
 		\set_transient( $key, $data, $remaining_time );
 
@@ -120,16 +118,14 @@ class Rate_Limiter {
 	/**
 	 * Get the number of remaining requests for the current user.
 	 *
-	 * @param  string $action        The action being performed.
-	 * @param  int    $max_requests  Maximum number of requests allowed.
-	 * @param  int    $time_window   Time window in seconds.
+	 * @param  string  $action        The action being performed.
+	 * @param  int     $max_requests  Maximum number of requests allowed.
+	 * @param  int     $time_window   Time window in seconds.
 	 *
 	 * @return int Number of remaining requests.
 	 */
 	public static function get_remaining_requests(
-		string $action,
-		int $max_requests = self::DEFAULT_MAX_REQUESTS,
-		int $time_window = self::DEFAULT_TIME_WINDOW
+		string $action, int $max_requests = self::DEFAULT_MAX_REQUESTS, int $time_window = self::DEFAULT_TIME_WINDOW
 	): int {
 		$user_id = self::get_user_identifier();
 		$key     = self::get_transient_key( $action, $user_id );
@@ -141,17 +137,17 @@ class Rate_Limiter {
 		}
 
 		// Check if the window has expired.
-		if ( \time() > $data['expires'] ) {
+		if ( \time() > $data[ 'expires' ] ) {
 			return $max_requests;
 		}
 
-		return max( 0, $max_requests - $data['count'] );
+		return max( 0, $max_requests - $data[ 'count' ] );
 	}
 
 	/**
 	 * Get the time until the rate limit resets.
 	 *
-	 * @param  string $action  The action being performed.
+	 * @param  string  $action  The action being performed.
 	 *
 	 * @return int Seconds until reset, or 0 if not limited.
 	 */
@@ -165,7 +161,7 @@ class Rate_Limiter {
 			return 0;
 		}
 
-		$remaining = $data['expires'] - \time();
+		$remaining = $data[ 'expires' ] - \time();
 
 		return max( 0, $remaining );
 	}
@@ -173,7 +169,7 @@ class Rate_Limiter {
 	/**
 	 * Reset the rate limit for a specific action.
 	 *
-	 * @param  string $action  The action to reset.
+	 * @param  string  $action  The action to reset.
 	 *
 	 * @return void
 	 */
@@ -207,7 +203,7 @@ class Rate_Limiter {
 	 * @return string|null IP address or null if not available.
 	 */
 	private static function get_client_ip(): ?string {
-		$ip_keys = array(
+		$ip_keys = [
 			'HTTP_CF_CONNECTING_IP', // Cloudflare
 			'HTTP_CLIENT_IP',
 			'HTTP_X_FORWARDED_FOR',
@@ -216,7 +212,7 @@ class Rate_Limiter {
 			'HTTP_FORWARDED_FOR',
 			'HTTP_FORWARDED',
 			'REMOTE_ADDR',
-		);
+		];
 
 		foreach ( $ip_keys as $key ) {
 			if ( ! empty( $_SERVER[ $key ] ) ) {
@@ -225,7 +221,7 @@ class Rate_Limiter {
 				// Handle multiple IPs in X-Forwarded-For.
 				if ( str_contains( $ip, ',' ) ) {
 					$ips = explode( ',', $ip );
-					$ip  = \trim( $ips[0] );
+					$ip  = \trim( $ips[ 0 ] );
 				}
 
 				// Validate IP format.
@@ -241,8 +237,8 @@ class Rate_Limiter {
 	/**
 	 * Generate the transient key for rate limiting.
 	 *
-	 * @param  string $action   The action.
-	 * @param  string $user_id  The user identifier.
+	 * @param  string  $action   The action.
+	 * @param  string  $user_id  The user identifier.
 	 *
 	 * @return string The transient key.
 	 */
@@ -253,18 +249,16 @@ class Rate_Limiter {
 	/**
 	 * Send a rate limit error response.
 	 *
-	 * @param  string $action  The action being performed.
+	 * @param  string  $action  The action being performed.
 	 *
 	 * @return void
 	 */
 	public static function send_rate_limit_error( string $action ): void {
 		$remaining_time = self::get_reset_time( $action );
 
-		\wp_send_json_error(
-			array(
+		\wp_send_json_error( [
 				'message'     => \__( 'Rate limit exceeded. Please try again later.', 'ai-image-renamer' ),
 				'retry_after' => $remaining_time,
-			)
-		);
+			] );
 	}
 }

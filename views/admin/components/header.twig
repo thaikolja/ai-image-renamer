@@ -1,14 +1,21 @@
 {# Header Component - Plugin Branding #}
+{% set link = '?page=' ~ page_slug %}
 <div class="air-header">
     <div class="air-header-left">
-        <div class="air-header-logo">
-            <span class="dashicons dashicons-format-image"></span>
-        </div>
+        <a href="{{ link }}">
+            <div class="air-header-logo">
+                <span class="dashicons dashicons-format-image"></span>
+            </div>
+        </a>
         <div class="air-header-title">
-            <h1>{{ __('AI Image Renamer', 'ai-image-renamer') }}</h1>
+            <a href="{{ link }}">
+                <h1>{{ page_title }}</h1>
+            </a>
         </div>
     </div>
     <div class="air-header-right">
-        <span class="air-header-version">v{{ version }}</span>
+        <span class="air-header-version">
+            v{{ version }}
+        </span>
     </div>
 </div>
