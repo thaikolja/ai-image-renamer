@@ -32,44 +32,44 @@ namespace PHPCSUtils\Internal;
  *
  * @since 1.0.0
  */
-final class StableCollections
-{
+final class StableCollections {
 
-    /**
-     * Tokens which can open a short array or short list (PHPCS cross-version compatible).
-     *
-     * This array will ALWAYS include the `T_OPEN_SQUARE_BRACKET` token to allow for handling
-     * intermittent tokenizer issues related to the retokenization to `T_OPEN_SHORT_ARRAY`.
-     *
-     * @internal
-     * @ignore   This array is only for internal use by PHPCSUtils and is not part of the public API.
-     *
-     * @since 1.0.2
-     *
-     * @var array<int|string, int|string>
-     */
-    public static $shortArrayListOpenTokensBC = [
-        \T_OPEN_SHORT_ARRAY    => \T_OPEN_SHORT_ARRAY,
-        \T_OPEN_SQUARE_BRACKET => \T_OPEN_SQUARE_BRACKET,
-    ];
 
-    /**
-     * Tokens which are used for short lists.
-     *
-     * This array will ALWAYS include the `T_OPEN_SQUARE_BRACKET` and `T_CLOSE_SQUARE_BRACKET` tokens
-     * to allow for handling intermittent tokenizer issues related to the retokenization to `T_OPEN_SHORT_ARRAY`.
-     *
-     * @internal
-     * @ignore   This array is only for internal use by PHPCSUtils and is not part of the public API.
-     *
-     * @since 1.0.2
-     *
-     * @var array<int|string, int|string>
-     */
-    public static $shortArrayListTokensBC = [
-        \T_OPEN_SHORT_ARRAY     => \T_OPEN_SHORT_ARRAY,
-        \T_CLOSE_SHORT_ARRAY    => \T_CLOSE_SHORT_ARRAY,
-        \T_OPEN_SQUARE_BRACKET  => \T_OPEN_SQUARE_BRACKET,
-        \T_CLOSE_SQUARE_BRACKET => \T_CLOSE_SQUARE_BRACKET,
-    ];
+	/**
+	 * Tokens which can open a short array or short list (PHPCS cross-version compatible).
+	 *
+	 * This array will ALWAYS include the `T_OPEN_SQUARE_BRACKET` token to allow for handling
+	 * intermittent tokenizer issues related to the retokenization to `T_OPEN_SHORT_ARRAY`.
+	 *
+	 * @internal
+	 * @ignore   This array is only for internal use by PHPCSUtils and is not part of the public API.
+	 *
+	 * @since 1.0.2
+	 *
+	 * @var array<int|string, int|string>
+	 */
+	public static $shortArrayListOpenTokensBC = array(
+		\T_OPEN_SHORT_ARRAY    => \T_OPEN_SHORT_ARRAY,
+		\T_OPEN_SQUARE_BRACKET => \T_OPEN_SQUARE_BRACKET,
+	);
+
+	/**
+	 * Tokens which are used for short lists.
+	 *
+	 * This array will ALWAYS include the `T_OPEN_SQUARE_BRACKET` and `T_CLOSE_SQUARE_BRACKET` tokens
+	 * to allow for handling intermittent tokenizer issues related to the retokenization to `T_OPEN_SHORT_ARRAY`.
+	 *
+	 * @internal
+	 * @ignore   This array is only for internal use by PHPCSUtils and is not part of the public API.
+	 *
+	 * @since 1.0.2
+	 *
+	 * @var array<int|string, int|string>
+	 */
+	public static $shortArrayListTokensBC = array(
+		\T_OPEN_SHORT_ARRAY     => \T_OPEN_SHORT_ARRAY,
+		\T_CLOSE_SHORT_ARRAY    => \T_CLOSE_SHORT_ARRAY,
+		\T_OPEN_SQUARE_BRACKET  => \T_OPEN_SQUARE_BRACKET,
+		\T_CLOSE_SQUARE_BRACKET => \T_CLOSE_SQUARE_BRACKET,
+	);
 }

@@ -24,55 +24,51 @@ use Twig\Token;
 /**
  * @internal
  */
-final class GroupingExpressionParser extends AbstractExpressionParser implements PrefixExpressionParserInterface, ExpressionParserDescriptionInterface
-{
-    public function parse(Parser $parser, Token $token): AbstractExpression
-    {
-        $stream = $parser->getStream();
-        $expr = $parser->parseExpression($this->getPrecedence());
+final class GroupingExpressionParser extends AbstractExpressionParser implements PrefixExpressionParserInterface, ExpressionParserDescriptionInterface {
 
-        if ($stream->nextIf(Token::PUNCTUATION_TYPE, ')')) {
-            if (!$stream->test(Token::OPERATOR_TYPE, '=>')) {
-                return $expr->setExplicitParentheses();
-            }
+	public function parse( Parser $parser, Token $token ): AbstractExpression {
+		$stream = $parser->getStream();
+		$expr   = $parser->parseExpression( $this->getPrecedence() );
 
-            return new ListExpression([$expr], $token->getLine());
-        }
+		if ( $stream->nextIf( Token::PUNCTUATION_TYPE, ')' ) ) {
+			if ( ! $stream->test( Token::OPERATOR_TYPE, '=>' ) ) {
+				return $expr->setExplicitParentheses();
+			}
 
-        // determine if we are parsing an arrow function arguments
-        if (!$stream->test(Token::PUNCTUATION_TYPE, ',')) {
-            $stream->expect(Token::PUNCTUATION_TYPE, ')', 'An opened parenthesis is not properly closed');
-        }
+			return new ListExpression( array( $expr ), $token->getLine() );
+		}
 
-        $names = [$expr];
-        while (true) {
-            if ($stream->nextIf(Token::PUNCTUATION_TYPE, ')')) {
-                break;
-            }
-            $stream->expect(Token::PUNCTUATION_TYPE, ',');
-            $token = $stream->expect(Token::NAME_TYPE);
-            $names[] = new ContextVariable($token->getValue(), $token->getLine());
-        }
+		// determine if we are parsing an arrow function arguments
+		if ( ! $stream->test( Token::PUNCTUATION_TYPE, ',' ) ) {
+			$stream->expect( Token::PUNCTUATION_TYPE, ')', 'An opened parenthesis is not properly closed' );
+		}
 
-        if (!$stream->test(Token::OPERATOR_TYPE, '=>')) {
-            throw new SyntaxError('A list of variables must be followed by an arrow.', $stream->getCurrent()->getLine(), $stream->getSourceContext());
-        }
+		$names = array( $expr );
+		while ( true ) {
+			if ( $stream->nextIf( Token::PUNCTUATION_TYPE, ')' ) ) {
+				break;
+			}
+			$stream->expect( Token::PUNCTUATION_TYPE, ',' );
+			$token   = $stream->expect( Token::NAME_TYPE );
+			$names[] = new ContextVariable( $token->getValue(), $token->getLine() );
+		}
 
-        return new ListExpression($names, $token->getLine());
-    }
+		if ( ! $stream->test( Token::OPERATOR_TYPE, '=>' ) ) {
+			throw new SyntaxError( 'A list of variables must be followed by an arrow.', $stream->getCurrent()->getLine(), $stream->getSourceContext() );
+		}
 
-    public function getName(): string
-    {
-        return '(';
-    }
+		return new ListExpression( $names, $token->getLine() );
+	}
 
-    public function getDescription(): string
-    {
-        return 'Explicit group expression (a)';
-    }
+	public function getName(): string {
+		return '(';
+	}
 
-    public function getPrecedence(): int
-    {
-        return 0;
-    }
+	public function getDescription(): string {
+		return 'Explicit group expression (a)';
+	}
+
+	public function getPrecedence(): int {
+		return 0;
+	}
 }

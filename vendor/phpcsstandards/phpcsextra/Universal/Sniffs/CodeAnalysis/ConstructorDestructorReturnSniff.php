@@ -29,183 +29,181 @@ use PHPCSUtils\Utils\Scopes;
  *
  * @since 1.0.0
  */
-final class ConstructorDestructorReturnSniff implements Sniff
-{
+final class ConstructorDestructorReturnSniff implements Sniff {
 
-    /**
-     * PHP version as configured or 0 if unknown.
-     *
-     * @since 1.1.0
-     *
-     * @var int
-     */
-    private $phpVersion;
 
-    /**
-     * Registers the tokens that this sniff wants to listen for.
-     *
-     * @since 1.0.0
-     *
-     * @return array<int|string>
-     */
-    public function register()
-    {
-        return [\T_FUNCTION];
-    }
+	/**
+	 * PHP version as configured or 0 if unknown.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @var int
+	 */
+	private $phpVersion;
 
-    /**
-     * Processes this test, when one of its tokens is encountered.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token
-     *                                               in the stack passed in $tokens.
-     *
-     * @return void
-     */
-    public function process(File $phpcsFile, $stackPtr)
-    {
-        if (isset($this->phpVersion) === false || \defined('PHP_CODESNIFFER_IN_TESTS')) {
-            // Set default value to prevent this code from running every time the sniff is triggered.
-            $this->phpVersion = 0;
+	/**
+	 * Registers the tokens that this sniff wants to listen for.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int|string>
+	 */
+	public function register() {
+		return array( \T_FUNCTION );
+	}
 
-            $phpVersion = Helper::getConfigData('php_version');
-            if ($phpVersion !== null) {
-                $this->phpVersion = (int) $phpVersion;
-            }
-        }
+	/**
+	 * Processes this test, when one of its tokens is encountered.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token
+	 *                                               in the stack passed in $tokens.
+	 *
+	 * @return void
+	 */
+	public function process( File $phpcsFile, $stackPtr ) {
+		if ( isset( $this->phpVersion ) === false || \defined( 'PHP_CODESNIFFER_IN_TESTS' ) ) {
+			// Set default value to prevent this code from running every time the sniff is triggered.
+			$this->phpVersion = 0;
 
-        $scopePtr = Scopes::validDirectScope($phpcsFile, $stackPtr, Tokens::$ooScopeTokens);
-        if ($scopePtr === false) {
-            // Not an OO method.
-            return;
-        }
+			$phpVersion = Helper::getConfigData( 'php_version' );
+			if ( $phpVersion !== null ) {
+				$this->phpVersion = (int) $phpVersion;
+			}
+		}
 
-        $functionName   = FunctionDeclarations::getName($phpcsFile, $stackPtr);
-        $functionNameLC = \strtolower($functionName);
+		$scopePtr = Scopes::validDirectScope( $phpcsFile, $stackPtr, Tokens::$ooScopeTokens );
+		if ( $scopePtr === false ) {
+			// Not an OO method.
+			return;
+		}
 
-        if ($functionNameLC === '__construct' || $functionNameLC === '__destruct') {
-            $functionType = \sprintf('A "%s()" magic method', $functionNameLC);
-        } else {
-            // If the PHP version is explicitly set to PHP 8.0 or higher, ignore PHP 4-style constructors.
-            if ($this->phpVersion >= 80000) {
-                return;
-            }
+		$functionName   = FunctionDeclarations::getName( $phpcsFile, $stackPtr );
+		$functionNameLC = \strtolower( $functionName );
 
-            // This may be a PHP 4-style constructor which should be handled.
-            $OOName = ObjectDeclarations::getName($phpcsFile, $scopePtr);
+		if ( $functionNameLC === '__construct' || $functionNameLC === '__destruct' ) {
+			$functionType = \sprintf( 'A "%s()" magic method', $functionNameLC );
+		} else {
+			// If the PHP version is explicitly set to PHP 8.0 or higher, ignore PHP 4-style constructors.
+			if ( $this->phpVersion >= 80000 ) {
+				return;
+			}
 
-            if (empty($OOName) === true) {
-                // Anonymous class or parse error. The function can't be a PHP 4-style constructor.
-                return;
-            }
+			// This may be a PHP 4-style constructor which should be handled.
+			$OOName = ObjectDeclarations::getName( $phpcsFile, $scopePtr );
 
-            if (NamingConventions::isEqual($functionName, $OOName) === false) {
-                // Class and function name not the same, so not a PHP 4-style constructor.
-                return;
-            }
+			if ( empty( $OOName ) === true ) {
+				// Anonymous class or parse error. The function can't be a PHP 4-style constructor.
+				return;
+			}
 
-            if (Namespaces::determineNamespace($phpcsFile, $stackPtr) !== '') {
-                /*
-                 * Namespaced methods with the same name as the class are treated as
-                 * regular methods, so we can bow out if we're in a namespace.
-                 *
-                 * Note: the exception to this is PHP 5.3.0-5.3.2. This is currently
-                 * not dealt with.
-                 */
-                return;
-            }
+			if ( NamingConventions::isEqual( $functionName, $OOName ) === false ) {
+				// Class and function name not the same, so not a PHP 4-style constructor.
+				return;
+			}
 
-            $functionType = 'A PHP 4-style constructor';
-        }
+			if ( Namespaces::determineNamespace( $phpcsFile, $stackPtr ) !== '' ) {
+				/*
+				 * Namespaced methods with the same name as the class are treated as
+				 * regular methods, so we can bow out if we're in a namespace.
+				 *
+				 * Note: the exception to this is PHP 5.3.0-5.3.2. This is currently
+				 * not dealt with.
+				 */
+				return;
+			}
 
-        /*
-         * OK, so now we know for sure that this is a constructor/destructor method.
-         */
+			$functionType = 'A PHP 4-style constructor';
+		}
 
-        // Check for a return type.
-        $tokens     = $phpcsFile->getTokens();
-        $properties = FunctionDeclarations::getProperties($phpcsFile, $stackPtr);
-        if ($properties['return_type'] !== '' && $properties['return_type_token'] !== false) {
-            $data = [
-                $functionType,
-                $properties['return_type'],
-            ];
+		/*
+		 * OK, so now we know for sure that this is a constructor/destructor method.
+		 */
 
-            $fix = $phpcsFile->addFixableError(
-                '%s can not declare a return type. Found: %s',
-                $properties['return_type_token'],
-                'ReturnTypeFound',
-                $data
-            );
+		// Check for a return type.
+		$tokens     = $phpcsFile->getTokens();
+		$properties = FunctionDeclarations::getProperties( $phpcsFile, $stackPtr );
+		if ( $properties['return_type'] !== '' && $properties['return_type_token'] !== false ) {
+			$data = array(
+				$functionType,
+				$properties['return_type'],
+			);
 
-            if ($fix === true) {
-                $phpcsFile->fixer->beginChangeset();
+			$fix = $phpcsFile->addFixableError(
+				'%s can not declare a return type. Found: %s',
+				$properties['return_type_token'],
+				'ReturnTypeFound',
+				$data
+			);
 
-                $parensCloser = $tokens[$stackPtr]['parenthesis_closer'];
-                for ($i = ($parensCloser + 1); $i <= $properties['return_type_end_token']; $i++) {
-                    if (isset(Tokens::$commentTokens[$tokens[$i]['code']])) {
-                        // Ignore comments and leave them be.
-                        continue;
-                    }
+			if ( $fix === true ) {
+				$phpcsFile->fixer->beginChangeset();
 
-                    $phpcsFile->fixer->replaceToken($i, '');
-                }
+				$parensCloser = $tokens[ $stackPtr ]['parenthesis_closer'];
+				for ( $i = ( $parensCloser + 1 ); $i <= $properties['return_type_end_token']; $i++ ) {
+					if ( isset( Tokens::$commentTokens[ $tokens[ $i ]['code'] ] ) ) {
+						// Ignore comments and leave them be.
+						continue;
+					}
 
-                $phpcsFile->fixer->endChangeset();
-            }
-        }
+					$phpcsFile->fixer->replaceToken( $i, '' );
+				}
 
-        if (isset($tokens[$stackPtr]['scope_opener'], $tokens[$stackPtr]['scope_closer']) === false) {
-            // Abstract/interface method, live coding or parse error.
-            return;
-        }
+				$phpcsFile->fixer->endChangeset();
+			}
+		}
 
-        // Check for a value being returned.
-        $current = $tokens[$stackPtr]['scope_opener'];
-        $end     = $tokens[$stackPtr]['scope_closer'];
+		if ( isset( $tokens[ $stackPtr ]['scope_opener'], $tokens[ $stackPtr ]['scope_closer'] ) === false ) {
+			// Abstract/interface method, live coding or parse error.
+			return;
+		}
 
-        // Not searching for arrow functions as those have an implicit return, so won't use the `return` keyword.
-        $search            = Collections::functionDeclarationTokens();
-        $search[\T_RETURN] = \T_RETURN;
+		// Check for a value being returned.
+		$current = $tokens[ $stackPtr ]['scope_opener'];
+		$end     = $tokens[ $stackPtr ]['scope_closer'];
 
-        do {
-            $current = $phpcsFile->findNext($search, ($current + 1), $end);
-            if ($current === false) {
-                break;
-            }
+		// Not searching for arrow functions as those have an implicit return, so won't use the `return` keyword.
+		$search              = Collections::functionDeclarationTokens();
+		$search[ \T_RETURN ] = \T_RETURN;
 
-            if (isset(Collections::functionDeclarationTokens()[$tokens[$current]['code']])
-                && isset($tokens[$current]['scope_closer'])
-            ) {
-                // Skip over nested function/closure declarations.
-                $current = $tokens[$current]['scope_closer'];
-                continue;
-            }
+		do {
+			$current = $phpcsFile->findNext( $search, ( $current + 1 ), $end );
+			if ( $current === false ) {
+				break;
+			}
 
-            $next = $phpcsFile->findNext(Tokens::$emptyTokens, ($current + 1), $end, true);
-            if ($next === false
-                || $tokens[$next]['code'] === \T_SEMICOLON
-                || $tokens[$next]['code'] === \T_CLOSE_TAG
-            ) {
-                // Return statement without value.
-                continue;
-            }
+			if ( isset( Collections::functionDeclarationTokens()[ $tokens[ $current ]['code'] ] )
+				&& isset( $tokens[ $current ]['scope_closer'] )
+			) {
+				// Skip over nested function/closure declarations.
+				$current = $tokens[ $current ]['scope_closer'];
+				continue;
+			}
 
-            $endOfStatement = BCFile::findEndOfStatement($phpcsFile, $next);
+			$next = $phpcsFile->findNext( Tokens::$emptyTokens, ( $current + 1 ), $end, true );
+			if ( $next === false
+				|| $tokens[ $next ]['code'] === \T_SEMICOLON
+				|| $tokens[ $next ]['code'] === \T_CLOSE_TAG
+			) {
+				// Return statement without value.
+				continue;
+			}
 
-            $data = [
-                $functionType,
-                GetTokensAsString::compact($phpcsFile, $current, $endOfStatement, true),
-            ];
+			$endOfStatement = BCFile::findEndOfStatement( $phpcsFile, $next );
 
-            $phpcsFile->addWarning(
-                '%s can not return a value. Found: "%s"',
-                $current,
-                'ReturnValueFound',
-                $data
-            );
-        } while ($current < $end);
-    }
+			$data = array(
+				$functionType,
+				GetTokensAsString::compact( $phpcsFile, $current, $endOfStatement, true ),
+			);
+
+			$phpcsFile->addWarning(
+				'%s can not return a value. Found: "%s"',
+				$current,
+				'ReturnValueFound',
+				$data
+			);
+		} while ( $current < $end );
+	}
 }

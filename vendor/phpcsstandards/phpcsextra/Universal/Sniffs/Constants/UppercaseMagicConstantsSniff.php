@@ -21,69 +21,67 @@ use PHP_CodeSniffer\Util\Tokens;
  *
  * @since 1.0.0
  */
-final class UppercaseMagicConstantsSniff implements Sniff
-{
+final class UppercaseMagicConstantsSniff implements Sniff {
 
-    /**
-     * Name of the metric.
-     *
-     * @since 1.0.0
-     *
-     * @var string
-     */
-    const METRIC_NAME = 'Magic constant case';
 
-    /**
-     * Returns an array of tokens this test wants to listen for.
-     *
-     * @since 1.0.0
-     *
-     * @return array<int|string>
-     */
-    public function register()
-    {
-        return Tokens::$magicConstants;
-    }
+	/**
+	 * Name of the metric.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var string
+	 */
+	const METRIC_NAME = 'Magic constant case';
 
-    /**
-     * Processes this test, when one of its tokens is encountered.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token
-     *                                               in the stack passed in $tokens.
-     *
-     * @return void
-     */
-    public function process(File $phpcsFile, $stackPtr)
-    {
-        $tokens    = $phpcsFile->getTokens();
-        $content   = $tokens[$stackPtr]['content'];
-        $contentUC = \strtoupper($content);
-        if ($contentUC === $content) {
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'uppercase');
-            return;
-        }
+	/**
+	 * Returns an array of tokens this test wants to listen for.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int|string>
+	 */
+	public function register() {
+		return Tokens::$magicConstants;
+	}
 
-        $error     = 'Magic constants should be in uppercase. Expected: %s; found: %s';
-        $errorCode = '';
-        $data      = [
-            $contentUC,
-            $content,
-        ];
+	/**
+	 * Processes this test, when one of its tokens is encountered.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token
+	 *                                               in the stack passed in $tokens.
+	 *
+	 * @return void
+	 */
+	public function process( File $phpcsFile, $stackPtr ) {
+		$tokens    = $phpcsFile->getTokens();
+		$content   = $tokens[ $stackPtr ]['content'];
+		$contentUC = \strtoupper( $content );
+		if ( $contentUC === $content ) {
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'uppercase' );
+			return;
+		}
 
-        if (\strtolower($content) === $content) {
-            $errorCode = 'Lowercase';
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'lowercase');
-        } else {
-            $errorCode = 'Mixedcase';
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'mixed case');
-        }
+		$error     = 'Magic constants should be in uppercase. Expected: %s; found: %s';
+		$errorCode = '';
+		$data      = array(
+			$contentUC,
+			$content,
+		);
 
-        $fix = $phpcsFile->addFixableError($error, $stackPtr, $errorCode, $data);
-        if ($fix === true) {
-            $phpcsFile->fixer->replaceToken($stackPtr, $contentUC);
-        }
-    }
+		if ( \strtolower( $content ) === $content ) {
+			$errorCode = 'Lowercase';
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'lowercase' );
+		} else {
+			$errorCode = 'Mixedcase';
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'mixed case' );
+		}
+
+		$fix = $phpcsFile->addFixableError( $error, $stackPtr, $errorCode, $data );
+		if ( $fix === true ) {
+			$phpcsFile->fixer->replaceToken( $stackPtr, $contentUC );
+		}
+	}
 }

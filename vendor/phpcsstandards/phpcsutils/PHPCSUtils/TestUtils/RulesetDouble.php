@@ -24,34 +24,33 @@ use PHP_CodeSniffer\Ruleset;
  *
  * @since 1.1.0
  */
-final class RulesetDouble extends Ruleset
-{
+final class RulesetDouble extends Ruleset {
 
-    /**
-     * Initialise the ruleset that the run will use.
-     *
-     * @since 1.1.0
-     *
-     * @param \PHP_CodeSniffer\Config $config The config data for the run.
-     *
-     * @return void
-     */
-    public function __construct(Config $config)
-    {
-        try {
-            parent::__construct($config);
-        } catch (RuntimeException $e) {
-            /*
-             * In the UtilityMethodTestCase, we're using a fake sniff name for the tests.
-             * As PHPCS 4.0 will check more strictly that sniffs exist and comply with naming conventions,
-             * this means, as of PHPCS 4.0, the ruleset creation will end with an error.
-             * This error is not something we are concerned about, as we're not testing sniffs,
-             * so we should be able to safely ignore it.
-             */
-            if (\rtrim($e->getMessage()) !== 'ERROR: No sniffs were registered.') {
-                // Rethrow the exception to fail the test, as this is not the exception we expected.
-                throw $e;
-            }
-        }
-    }
+
+	/**
+	 * Initialise the ruleset that the run will use.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param \PHP_CodeSniffer\Config $config The config data for the run.
+	 *
+	 * @return void
+	 */
+	public function __construct( Config $config ) {
+		try {
+			parent::__construct( $config );
+		} catch ( RuntimeException $e ) {
+			/*
+			 * In the UtilityMethodTestCase, we're using a fake sniff name for the tests.
+			 * As PHPCS 4.0 will check more strictly that sniffs exist and comply with naming conventions,
+			 * this means, as of PHPCS 4.0, the ruleset creation will end with an error.
+			 * This error is not something we are concerned about, as we're not testing sniffs,
+			 * so we should be able to safely ignore it.
+			 */
+			if ( \rtrim( $e->getMessage() ) !== 'ERROR: No sniffs were registered.' ) {
+				// Rethrow the exception to fail the test, as this is not the exception we expected.
+				throw $e;
+			}
+		}
+	}
 }

@@ -21,27 +21,26 @@ use PHPCSUtils\Exceptions\RuntimeException;
  *
  * @since 1.1.0
  */
-final class LogicException extends RuntimeException
-{
+final class LogicException extends RuntimeException {
 
-    /**
-     * Create a new LogicException with a standardized start of the text.
-     *
-     * @param string $message Arbitrary message text.
-     *
-     * @return \PHPCSUtils\Exceptions\LogicException
-     */
-    public static function create($message)
-    {
-        $stack = \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS, 2);
 
-        return new self(
-            \sprintf(
-                '%s::%s(): %s',
-                $stack[1]['class'],
-                $stack[1]['function'],
-                $message
-            )
-        );
-    }
+	/**
+	 * Create a new LogicException with a standardized start of the text.
+	 *
+	 * @param string $message Arbitrary message text.
+	 *
+	 * @return \PHPCSUtils\Exceptions\LogicException
+	 */
+	public static function create( $message ) {
+		$stack = \debug_backtrace( \DEBUG_BACKTRACE_IGNORE_ARGS, 2 );
+
+		return new self(
+			\sprintf(
+				'%s::%s(): %s',
+				$stack[1]['class'],
+				$stack[1]['function'],
+				$message
+			)
+		);
+	}
 }

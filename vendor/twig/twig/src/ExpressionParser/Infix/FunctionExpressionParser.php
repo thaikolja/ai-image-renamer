@@ -27,64 +27,59 @@ use Twig\Token;
 /**
  * @internal
  */
-final class FunctionExpressionParser extends AbstractExpressionParser implements InfixExpressionParserInterface, ExpressionParserDescriptionInterface
-{
-    use ArgumentsTrait;
+final class FunctionExpressionParser extends AbstractExpressionParser implements InfixExpressionParserInterface, ExpressionParserDescriptionInterface {
 
-    private $readyNodes = [];
+	use ArgumentsTrait;
 
-    public function parse(Parser $parser, AbstractExpression $expr, Token $token): AbstractExpression
-    {
-        $line = $token->getLine();
-        if (!$expr instanceof NameExpression) {
-            throw new SyntaxError('Function name must be an identifier.', $line, $parser->getStream()->getSourceContext());
-        }
+	private $readyNodes = array();
 
-        $name = $expr->getAttribute('name');
+	public function parse( Parser $parser, AbstractExpression $expr, Token $token ): AbstractExpression {
+		$line = $token->getLine();
+		if ( ! $expr instanceof NameExpression ) {
+			throw new SyntaxError( 'Function name must be an identifier.', $line, $parser->getStream()->getSourceContext() );
+		}
 
-        if (null !== $alias = $parser->getImportedSymbol('function', $name)) {
-            return new MacroReferenceExpression($alias['node']->getNode('var'), $alias['name'], $this->parseCallableArguments($parser, $line, false), $line);
-        }
+		$name = $expr->getAttribute( 'name' );
 
-        $args = $this->parseNamedArguments($parser, false);
+		if ( null !== $alias = $parser->getImportedSymbol( 'function', $name ) ) {
+			return new MacroReferenceExpression( $alias['node']->getNode( 'var' ), $alias['name'], $this->parseCallableArguments( $parser, $line, false ), $line );
+		}
 
-        $function = $parser->getFunction($name, $line);
+		$args = $this->parseNamedArguments( $parser, false );
 
-        if ($function->getParserCallable()) {
-            $fakeNode = new EmptyNode($line);
-            $fakeNode->setSourceContext($parser->getStream()->getSourceContext());
+		$function = $parser->getFunction( $name, $line );
 
-            return ($function->getParserCallable())($parser, $fakeNode, $args, $line);
-        }
+		if ( $function->getParserCallable() ) {
+			$fakeNode = new EmptyNode( $line );
+			$fakeNode->setSourceContext( $parser->getStream()->getSourceContext() );
 
-        if (!isset($this->readyNodes[$class = $function->getNodeClass()])) {
-            $this->readyNodes[$class] = (bool) (new \ReflectionClass($class))->getConstructor()->getAttributes(FirstClassTwigCallableReady::class);
-        }
+			return ( $function->getParserCallable() )( $parser, $fakeNode, $args, $line );
+		}
 
-        if (!$ready = $this->readyNodes[$class]) {
-            trigger_deprecation('twig/twig', '3.12', 'Twig node "%s" is not marked as ready for passing a "TwigFunction" in the constructor instead of its name; please update your code and then add #[FirstClassTwigCallableReady] attribute to the constructor.', $class);
-        }
+		if ( ! isset( $this->readyNodes[ $class = $function->getNodeClass() ] ) ) {
+			$this->readyNodes[ $class ] = (bool) ( new \ReflectionClass( $class ) )->getConstructor()->getAttributes( FirstClassTwigCallableReady::class );
+		}
 
-        return new $class($ready ? $function : $function->getName(), $args, $line);
-    }
+		if ( ! $ready = $this->readyNodes[ $class ] ) {
+			trigger_deprecation( 'twig/twig', '3.12', 'Twig node "%s" is not marked as ready for passing a "TwigFunction" in the constructor instead of its name; please update your code and then add #[FirstClassTwigCallableReady] attribute to the constructor.', $class );
+		}
 
-    public function getName(): string
-    {
-        return '(';
-    }
+		return new $class( $ready ? $function : $function->getName(), $args, $line );
+	}
 
-    public function getDescription(): string
-    {
-        return 'Twig function call';
-    }
+	public function getName(): string {
+		return '(';
+	}
 
-    public function getPrecedence(): int
-    {
-        return 512;
-    }
+	public function getDescription(): string {
+		return 'Twig function call';
+	}
 
-    public function getAssociativity(): InfixAssociativity
-    {
-        return InfixAssociativity::Left;
-    }
+	public function getPrecedence(): int {
+		return 512;
+	}
+
+	public function getAssociativity(): InfixAssociativity {
+		return InfixAssociativity::Left;
+	}
 }

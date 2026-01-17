@@ -26,48 +26,45 @@ use Twig\Token;
  *
  * @internal
  */
-class IncludeTokenParser extends AbstractTokenParser
-{
-    public function parse(Token $token): Node
-    {
-        $expr = $this->parser->parseExpression();
+class IncludeTokenParser extends AbstractTokenParser {
 
-        [$variables, $only, $ignoreMissing] = $this->parseArguments();
+	public function parse( Token $token ): Node {
+		$expr = $this->parser->parseExpression();
 
-        return new IncludeNode($expr, $variables, $only, $ignoreMissing, $token->getLine());
-    }
+		[$variables, $only, $ignoreMissing] = $this->parseArguments();
 
-    /**
-     * @return array{0: ?AbstractExpression, 1: bool, 2: bool}
-     */
-    protected function parseArguments()
-    {
-        $stream = $this->parser->getStream();
+		return new IncludeNode( $expr, $variables, $only, $ignoreMissing, $token->getLine() );
+	}
 
-        $ignoreMissing = false;
-        if ($stream->nextIf(Token::NAME_TYPE, 'ignore')) {
-            $stream->expect(Token::NAME_TYPE, 'missing');
+	/**
+	 * @return array{0: ?AbstractExpression, 1: bool, 2: bool}
+	 */
+	protected function parseArguments() {
+		$stream = $this->parser->getStream();
 
-            $ignoreMissing = true;
-        }
+		$ignoreMissing = false;
+		if ( $stream->nextIf( Token::NAME_TYPE, 'ignore' ) ) {
+			$stream->expect( Token::NAME_TYPE, 'missing' );
 
-        $variables = null;
-        if ($stream->nextIf(Token::NAME_TYPE, 'with')) {
-            $variables = $this->parser->parseExpression();
-        }
+			$ignoreMissing = true;
+		}
 
-        $only = false;
-        if ($stream->nextIf(Token::NAME_TYPE, 'only')) {
-            $only = true;
-        }
+		$variables = null;
+		if ( $stream->nextIf( Token::NAME_TYPE, 'with' ) ) {
+			$variables = $this->parser->parseExpression();
+		}
 
-        $stream->expect(Token::BLOCK_END_TYPE);
+		$only = false;
+		if ( $stream->nextIf( Token::NAME_TYPE, 'only' ) ) {
+			$only = true;
+		}
 
-        return [$variables, $only, $ignoreMissing];
-    }
+		$stream->expect( Token::BLOCK_END_TYPE );
 
-    public function getTag(): string
-    {
-        return 'include';
-    }
+		return array( $variables, $only, $ignoreMissing );
+	}
+
+	public function getTag(): string {
+		return 'include';
+	}
 }

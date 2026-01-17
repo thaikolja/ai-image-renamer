@@ -23,49 +23,43 @@ use Twig\Token;
 /**
  * @internal
  */
-final class UnaryOperatorExpressionParser extends AbstractExpressionParser implements PrefixExpressionParserInterface, ExpressionParserDescriptionInterface
-{
-    public function __construct(
-        /** @var class-string<AbstractUnary> */
-        private string $nodeClass,
-        private string $name,
-        private int $precedence,
-        private ?PrecedenceChange $precedenceChange = null,
-        private ?string $description = null,
-        private array $aliases = [],
-    ) {
-    }
+final class UnaryOperatorExpressionParser extends AbstractExpressionParser implements PrefixExpressionParserInterface, ExpressionParserDescriptionInterface {
 
-    /**
-     * @return AbstractUnary
-     */
-    public function parse(Parser $parser, Token $token): AbstractExpression
-    {
-        return new ($this->nodeClass)($parser->parseExpression($this->precedence), $token->getLine());
-    }
+	public function __construct(
+		/** @var class-string<AbstractUnary> */
+		private string $nodeClass,
+		private string $name,
+		private int $precedence,
+		private ?PrecedenceChange $precedenceChange = null,
+		private ?string $description = null,
+		private array $aliases = array(),
+	) {
+	}
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
+	/**
+	 * @return AbstractUnary
+	 */
+	public function parse( Parser $parser, Token $token ): AbstractExpression {
+		return new ( $this->nodeClass )( $parser->parseExpression( $this->precedence ), $token->getLine() );
+	}
 
-    public function getDescription(): string
-    {
-        return $this->description ?? '';
-    }
+	public function getName(): string {
+		return $this->name;
+	}
 
-    public function getPrecedence(): int
-    {
-        return $this->precedence;
-    }
+	public function getDescription(): string {
+		return $this->description ?? '';
+	}
 
-    public function getPrecedenceChange(): ?PrecedenceChange
-    {
-        return $this->precedenceChange;
-    }
+	public function getPrecedence(): int {
+		return $this->precedence;
+	}
 
-    public function getAliases(): array
-    {
-        return $this->aliases;
-    }
+	public function getPrecedenceChange(): ?PrecedenceChange {
+		return $this->precedenceChange;
+	}
+
+	public function getAliases(): array {
+		return $this->aliases;
+	}
 }

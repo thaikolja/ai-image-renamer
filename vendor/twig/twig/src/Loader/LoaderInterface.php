@@ -19,31 +19,31 @@ use Twig\Source;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-interface LoaderInterface
-{
-    /**
-     * Returns the source context for a given template logical name.
-     *
-     * @throws LoaderError When $name is not found
-     */
-    public function getSourceContext(string $name): Source;
+interface LoaderInterface {
 
-    /**
-     * Gets the cache key to use for the cache for a given template name.
-     *
-     * @throws LoaderError When $name is not found
-     */
-    public function getCacheKey(string $name): string;
+	/**
+	 * Returns the source context for a given template logical name.
+	 *
+	 * @throws LoaderError When $name is not found
+	 */
+	public function getSourceContext( string $name ): Source;
 
-    /**
-     * @param int $time Timestamp of the last modification time of the cached template
-     *
-     * @throws LoaderError When $name is not found
-     */
-    public function isFresh(string $name, int $time): bool;
+	/**
+	 * Gets the cache key to use for the cache for a given template name.
+	 *
+	 * @throws LoaderError When $name is not found
+	 */
+	public function getCacheKey( string $name ): string;
 
-    /**
-     * @return bool
-     */
-    public function exists(string $name);
+	/**
+	 * @param int $time Timestamp of the last modification time of the cached template
+	 *
+	 * @throws LoaderError When $name is not found
+	 */
+	public function isFresh( string $name, int $time ): bool;
+
+	/**
+	 * @return bool
+	 */
+	public function exists( string $name );
 }

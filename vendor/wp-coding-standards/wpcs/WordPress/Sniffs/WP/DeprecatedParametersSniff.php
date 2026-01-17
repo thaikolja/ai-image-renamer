@@ -72,42 +72,42 @@ final class DeprecatedParametersSniff extends AbstractFunctionParameterSniff {
 	 *    );
 	 */
 	protected $target_functions = array(
-		'_future_post_hook' => array(
+		'_future_post_hook'                                => array(
 			1 => array(
 				'name'    => 'deprecated',
 				'value'   => null,
 				'version' => '2.3.0',
 			),
 		),
-		'_load_remote_block_patterns' => array(
+		'_load_remote_block_patterns'                      => array(
 			1 => array(
 				'name'    => 'deprecated',
 				'value'   => null,
 				'version' => '5.9.0',
 			),
 		),
-		'_wp_can_use_pcre_u' => array(
+		'_wp_can_use_pcre_u'                               => array(
 			1 => array(
 				'name'    => 'set',
 				'value'   => null,
 				'version' => '6.9.0',
 			),
 		),
-		'_wp_post_revision_fields' => array(
+		'_wp_post_revision_fields'                         => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => false,
 				'version' => '4.5.0',
 			),
 		),
-		'add_option' => array(
+		'add_option'                                       => array(
 			3 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '2.3.0',
 			),
 		),
-		'comments_link' => array(
+		'comments_link'                                    => array(
 			1 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
@@ -119,98 +119,98 @@ final class DeprecatedParametersSniff extends AbstractFunctionParameterSniff {
 				'version' => '1.3.0',
 			),
 		),
-		'convert_chars' => array(
+		'convert_chars'                                    => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '0.71',
 			),
 		),
-		'delete_plugins' => array(
+		'delete_plugins'                                   => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '4.0.0',
 			),
 		),
-		'discover_pingback_server_uri' => array(
+		'discover_pingback_server_uri'                     => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '2.7.0',
 			),
 		),
-		'get_blog_list' => array(
+		'get_blog_list'                                    => array(
 			3 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '3.0.0', // Was previously part of MU.
 			),
 		),
-		'get_category_parents' => array(
+		'get_category_parents'                             => array(
 			5 => array(
 				'name'    => 'deprecated',
 				'value'   => array(),
 				'version' => '4.8.0',
 			),
 		),
-		'get_delete_post_link' => array(
+		'get_delete_post_link'                             => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '3.0.0',
 			),
 		),
-		'get_last_updated' => array(
+		'get_last_updated'                                 => array(
 			1 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '3.0.0', // Was previously part of MU.
 			),
 		),
-		'get_site_option' => array(
+		'get_site_option'                                  => array(
 			3 => array(
 				'name'    => 'deprecated',
 				'value'   => true,
 				'version' => '4.4.0',
 			),
 		),
-		'get_terms' => array(
+		'get_terms'                                        => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '4.5.0',
 			),
 		),
-		'get_the_author' => array(
+		'get_the_author'                                   => array(
 			1 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '2.1.0',
 			),
 		),
-		'get_user_option' => array(
+		'get_user_option'                                  => array(
 			3 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '3.0.0',
 			),
 		),
-		'get_wp_title_rss' => array(
+		'get_wp_title_rss'                                 => array(
 			1 => array(
 				'name'    => 'deprecated',
 				'value'   => '&#8211;',
 				'version' => '4.4.0',
 			),
 		),
-		'global_terms' => array(
+		'global_terms'                                     => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '6.1.0',
 			),
 		),
-		'iframe_header' => array(
+		'iframe_header'                                    => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => false,
@@ -224,84 +224,84 @@ final class DeprecatedParametersSniff extends AbstractFunctionParameterSniff {
 				'version' => '6.5.3',
 			),
 		),
-		'install_search_form' => array(
+		'install_search_form'                              => array(
 			1 => array(
 				'name'    => 'deprecated',
 				'value'   => true,
 				'version' => '4.6.0',
 			),
 		),
-		'is_email' => array(
+		'is_email'                                         => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => false,
 				'version' => '3.0.0',
 			),
 		),
-		'load_plugin_textdomain' => array(
+		'load_plugin_textdomain'                           => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => false,
 				'version' => '2.7.0',
 			),
 		),
-		'newblog_notify_siteadmin' => array(
+		'newblog_notify_siteadmin'                         => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '3.0.0',
 			),
 		),
-		'permalink_single_rss' => array(
+		'permalink_single_rss'                             => array(
 			1 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '2.3.0',
 			),
 		),
-		'redirect_this_site' => array(
+		'redirect_this_site'                               => array(
 			1 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '3.0.0',
 			),
 		),
-		'register_meta' => array(
+		'register_meta'                                    => array(
 			4 => array(
 				'name'    => 'deprecated',
 				'value'   => null,
 				'version' => '4.6.0',
 			),
 		),
-		'safecss_filter_attr' => array(
+		'safecss_filter_attr'                              => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '2.8.1',
 			),
 		),
-		'switch_to_blog' => array(
+		'switch_to_blog'                                   => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => null,
 				'version' => '3.5.0', // Was previously part of MU.
 			),
 		),
-		'term_description' => array(
+		'term_description'                                 => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => null,
 				'version' => '4.9.2',
 			),
 		),
-		'the_attachment_link' => array(
+		'the_attachment_link'                              => array(
 			3 => array(
 				'name'    => 'deprecated',
 				'value'   => false,
 				'version' => '2.5.0',
 			),
 		),
-		'the_author' => array(
+		'the_author'                                       => array(
 			1 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
@@ -313,140 +313,140 @@ final class DeprecatedParametersSniff extends AbstractFunctionParameterSniff {
 				'version' => '1.5.0',
 			),
 		),
-		'the_author_posts_link' => array(
+		'the_author_posts_link'                            => array(
 			1 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '2.1.0',
 			),
 		),
-		'trackback_rdf' => array(
+		'trackback_rdf'                                    => array(
 			1 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '2.5.0',
 			),
 		),
-		'trackback_url' => array(
+		'trackback_url'                                    => array(
 			1 => array(
 				'name'    => 'deprecated_echo',
 				'value'   => true,
 				'version' => '2.5.0',
 			),
 		),
-		'unregister_setting' => array(
+		'unregister_setting'                               => array(
 			3 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '4.7.0',
 			),
 		),
-		'update_blog_option' => array(
+		'update_blog_option'                               => array(
 			4 => array(
 				'name'    => 'deprecated',
 				'value'   => null,
 				'version' => '3.1.0',
 			),
 		),
-		'update_blog_status' => array(
+		'update_blog_status'                               => array(
 			4 => array(
 				'name'    => 'deprecated',
 				'value'   => null,
 				'version' => '3.1.0',
 			),
 		),
-		'update_posts_count' => array(
+		'update_posts_count'                               => array(
 			1 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '3.0.0',
 			),
 		),
-		'update_user_status' => array(
+		'update_user_status'                               => array(
 			4 => array(
 				'name'    => 'deprecated',
 				'value'   => null,
 				'version' => '3.0.2',
 			),
 		),
-		'wp_count_terms' => array(
+		'wp_count_terms'                                   => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '5.6.0',
 			),
 		),
-		'wp_create_thumbnail' => array(
+		'wp_create_thumbnail'                              => array(
 			3 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '3.5.0',
 			),
 		),
-		'wp_get_http_headers' => array(
+		'wp_get_http_headers'                              => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => false,
 				'version' => '2.7.0',
 			),
 		),
-		'wp_get_sidebars_widgets' => array(
+		'wp_get_sidebars_widgets'                          => array(
 			1 => array(
 				'name'    => 'deprecated',
 				'value'   => true,
 				'version' => '2.8.1',
 			),
 		),
-		'wp_install' => array(
+		'wp_install'                                       => array(
 			5 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '2.6.0',
 			),
 		),
-		'wp_login' => array(
+		'wp_login'                                         => array(
 			3 => array(
 				'name'    => 'deprecated',
 				'value'   => '',
 				'version' => '2.5.0',
 			),
 		),
-		'wp_new_user_notification' => array(
+		'wp_new_user_notification'                         => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => null,
 				'version' => '4.3.1',
 			),
 		),
-		'wp_notify_postauthor' => array(
+		'wp_notify_postauthor'                             => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => null,
 				'version' => '3.8.0',
 			),
 		),
-		'wp_render_elements_support_styles' => array(
+		'wp_render_elements_support_styles'                => array(
 			1 => array(
 				'name'    => 'parsed_block',
 				'value'   => null,
 				'version' => '6.6.0',
 			),
 		),
-		'wp_title_rss' => array(
+		'wp_title_rss'                                     => array(
 			1 => array(
 				'name'    => 'deprecated',
 				'value'   => '&#8211;',
 				'version' => '4.4.0',
 			),
 		),
-		'wp_upload_bits' => array(
+		'wp_upload_bits'                                   => array(
 			2 => array(
 				'name'    => 'deprecated',
 				'value'   => null,
 				'version' => '2.0.0',
 			),
 		),
-		'xfn_check' => array(
+		'xfn_check'                                        => array(
 			3 => array(
 				'name'    => 'deprecated',
 				'value'   => '',

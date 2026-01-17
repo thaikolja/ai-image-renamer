@@ -19,41 +19,38 @@ use Twig\Node\Node;
 /**
  * @internal to be removed in Twig 4
  */
-final class YieldNotReadyNodeVisitor implements NodeVisitorInterface
-{
-    private $yieldReadyNodes = [];
+final class YieldNotReadyNodeVisitor implements NodeVisitorInterface {
 
-    public function __construct(
-        private bool $useYield,
-    ) {
-    }
+	private $yieldReadyNodes = array();
 
-    public function enterNode(Node $node, Environment $env): Node
-    {
-        $class = $node::class;
+	public function __construct(
+		private bool $useYield,
+	) {
+	}
 
-        if ($node instanceof AbstractExpression || isset($this->yieldReadyNodes[$class])) {
-            return $node;
-        }
+	public function enterNode( Node $node, Environment $env ): Node {
+		$class = $node::class;
 
-        if (!$this->yieldReadyNodes[$class] = (bool) (new \ReflectionClass($class))->getAttributes(YieldReady::class)) {
-            if ($this->useYield) {
-                throw new \LogicException(\sprintf('You cannot enable the "use_yield" option of Twig as node "%s" is not marked as ready for it; please make it ready and then flag it with the #[\Twig\Attribute\YieldReady] attribute.', $class));
-            }
+		if ( $node instanceof AbstractExpression || isset( $this->yieldReadyNodes[ $class ] ) ) {
+			return $node;
+		}
 
-            trigger_deprecation('twig/twig', '3.9', 'Twig node "%s" is not marked as ready for using "yield" instead of "echo"; please make it ready and then flag it with the #[\Twig\Attribute\YieldReady] attribute.', $class);
-        }
+		if ( ! $this->yieldReadyNodes[ $class ] = (bool) ( new \ReflectionClass( $class ) )->getAttributes( YieldReady::class ) ) {
+			if ( $this->useYield ) {
+				throw new \LogicException( \sprintf( 'You cannot enable the "use_yield" option of Twig as node "%s" is not marked as ready for it; please make it ready and then flag it with the #[\Twig\Attribute\YieldReady] attribute.', $class ) );
+			}
 
-        return $node;
-    }
+			trigger_deprecation( 'twig/twig', '3.9', 'Twig node "%s" is not marked as ready for using "yield" instead of "echo"; please make it ready and then flag it with the #[\Twig\Attribute\YieldReady] attribute.', $class );
+		}
 
-    public function leaveNode(Node $node, Environment $env): ?Node
-    {
-        return $node;
-    }
+		return $node;
+	}
 
-    public function getPriority(): int
-    {
-        return 255;
-    }
+	public function leaveNode( Node $node, Environment $env ): ?Node {
+		return $node;
+	}
+
+	public function getPriority(): int {
+		return 255;
+	}
 }

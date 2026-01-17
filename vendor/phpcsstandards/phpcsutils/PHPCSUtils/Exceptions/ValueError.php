@@ -25,31 +25,30 @@ use PHPCSUtils\Exceptions\RuntimeException;
  *
  * @since 1.1.0
  */
-final class ValueError extends RuntimeException
-{
+final class ValueError extends RuntimeException {
 
-    /**
-     * Create a new ValueError exception with a standardized start of the text.
-     *
-     * @param int    $position The argument position in the function signature. 1-based.
-     * @param string $name     The argument name in the function signature.
-     * @param string $message  Arbitrary message text.
-     *
-     * @return \PHPCSUtils\Exceptions\ValueError
-     */
-    public static function create($position, $name, $message)
-    {
-        $stack = \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS, 2);
 
-        return new self(
-            \sprintf(
-                '%s::%s(): The value of argument #%d (%s) %s.',
-                $stack[1]['class'],
-                $stack[1]['function'],
-                $position,
-                $name,
-                $message
-            )
-        );
-    }
+	/**
+	 * Create a new ValueError exception with a standardized start of the text.
+	 *
+	 * @param int    $position The argument position in the function signature. 1-based.
+	 * @param string $name     The argument name in the function signature.
+	 * @param string $message  Arbitrary message text.
+	 *
+	 * @return \PHPCSUtils\Exceptions\ValueError
+	 */
+	public static function create( $position, $name, $message ) {
+		$stack = \debug_backtrace( \DEBUG_BACKTRACE_IGNORE_ARGS, 2 );
+
+		return new self(
+			\sprintf(
+				'%s::%s(): The value of argument #%d (%s) %s.',
+				$stack[1]['class'],
+				$stack[1]['function'],
+				$position,
+				$name,
+				$message
+			)
+		);
+	}
 }

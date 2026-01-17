@@ -14,7 +14,7 @@ namespace Twig\Attribute;
 /**
  * Marks nodes that are ready to accept a TwigCallable instead of its name.
  */
-#[\Attribute(\Attribute::TARGET_METHOD)]
-final class FirstClassTwigCallableReady
-{
+#[\Attribute( \Attribute::TARGET_METHOD )]
+final class FirstClassTwigCallableReady {
+
 }

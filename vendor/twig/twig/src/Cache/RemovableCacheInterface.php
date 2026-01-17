@@ -14,7 +14,7 @@ namespace Twig\Cache;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  */
-interface RemovableCacheInterface
-{
-    public function remove(string $name, string $cls): void;
+interface RemovableCacheInterface {
+
+	public function remove( string $name, string $cls ): void;
 }

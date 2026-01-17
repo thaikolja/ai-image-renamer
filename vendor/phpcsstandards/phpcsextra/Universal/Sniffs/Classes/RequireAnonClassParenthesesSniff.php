@@ -19,63 +19,61 @@ use PHP_CodeSniffer\Util\Tokens;
  *
  * @since 1.0.0
  */
-final class RequireAnonClassParenthesesSniff implements Sniff
-{
+final class RequireAnonClassParenthesesSniff implements Sniff {
 
-    /**
-     * Name of the metric.
-     *
-     * @since 1.0.0
-     *
-     * @var string
-     */
-    const METRIC_NAME = 'Anon class declaration with parenthesis';
 
-    /**
-     * Returns an array of tokens this test wants to listen for.
-     *
-     * @since 1.0.0
-     *
-     * @return array<int|string>
-     */
-    public function register()
-    {
-        return [\T_ANON_CLASS];
-    }
+	/**
+	 * Name of the metric.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var string
+	 */
+	const METRIC_NAME = 'Anon class declaration with parenthesis';
 
-    /**
-     * Processes this test, when one of its tokens is encountered.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token
-     *                                               in the stack passed in $tokens.
-     *
-     * @return void
-     */
-    public function process(File $phpcsFile, $stackPtr)
-    {
-        $tokens       = $phpcsFile->getTokens();
-        $nextNonEmpty = $phpcsFile->findNext(Tokens::$emptyTokens, ($stackPtr + 1), null, true);
+	/**
+	 * Returns an array of tokens this test wants to listen for.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int|string>
+	 */
+	public function register() {
+		return array( \T_ANON_CLASS );
+	}
 
-        // Note: no need to check for `false` as PHPCS won't retokenize `class` to `T_ANON_CLASS` in that case.
-        if ($tokens[$nextNonEmpty]['code'] === \T_OPEN_PARENTHESIS) {
-            // Parentheses found.
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'yes');
-            return;
-        }
+	/**
+	 * Processes this test, when one of its tokens is encountered.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token
+	 *                                               in the stack passed in $tokens.
+	 *
+	 * @return void
+	 */
+	public function process( File $phpcsFile, $stackPtr ) {
+		$tokens       = $phpcsFile->getTokens();
+		$nextNonEmpty = $phpcsFile->findNext( Tokens::$emptyTokens, ( $stackPtr + 1 ), null, true );
 
-        $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'no');
+		// Note: no need to check for `false` as PHPCS won't retokenize `class` to `T_ANON_CLASS` in that case.
+		if ( $tokens[ $nextNonEmpty ]['code'] === \T_OPEN_PARENTHESIS ) {
+			// Parentheses found.
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'yes' );
+			return;
+		}
 
-        $fix = $phpcsFile->addFixableError(
-            'Parenthesis required when creating a new anonymous class.',
-            $stackPtr,
-            'Missing'
-        );
+		$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'no' );
 
-        if ($fix === true) {
-            $phpcsFile->fixer->addContent($stackPtr, '()');
-        }
-    }
+		$fix = $phpcsFile->addFixableError(
+			'Parenthesis required when creating a new anonymous class.',
+			$stackPtr,
+			'Missing'
+		);
+
+		if ( $fix === true ) {
+			$phpcsFile->fixer->addContent( $stackPtr, '()' );
+		}
+	}
 }

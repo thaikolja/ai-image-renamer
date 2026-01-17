@@ -27,243 +27,240 @@ use PHPCSUtils\Utils\Parentheses;
  *
  * @since 1.2.0
  */
-final class NoDoubleNegativeSniff implements Sniff
-{
+final class NoDoubleNegativeSniff implements Sniff {
 
-    /**
-     * Operators with lower precedence than the not-operator.
-     *
-     * Used to determine when to stop searching for `instanceof`.
-     *
-     * @since 1.2.0
-     *
-     * @var array<int|string, int|string>
-     */
-    private $operatorsWithLowerPrecedence;
 
-    /**
-     * Returns an array of tokens this test wants to listen for.
-     *
-     * @since 1.2.0
-     *
-     * @return array<int|string>
-     */
-    public function register()
-    {
-        // Collect all the operators only once.
-        $this->operatorsWithLowerPrecedence  = Tokens::$assignmentTokens;
-        $this->operatorsWithLowerPrecedence += Tokens::$booleanOperators;
-        $this->operatorsWithLowerPrecedence += Tokens::$comparisonTokens;
-        $this->operatorsWithLowerPrecedence += Tokens::$operators;
-        $this->operatorsWithLowerPrecedence += Collections::ternaryOperators();
+	/**
+	 * Operators with lower precedence than the not-operator.
+	 *
+	 * Used to determine when to stop searching for `instanceof`.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @var array<int|string, int|string>
+	 */
+	private $operatorsWithLowerPrecedence;
 
-        return [\T_BOOLEAN_NOT];
-    }
+	/**
+	 * Returns an array of tokens this test wants to listen for.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @return array<int|string>
+	 */
+	public function register() {
+		// Collect all the operators only once.
+		$this->operatorsWithLowerPrecedence  = Tokens::$assignmentTokens;
+		$this->operatorsWithLowerPrecedence += Tokens::$booleanOperators;
+		$this->operatorsWithLowerPrecedence += Tokens::$comparisonTokens;
+		$this->operatorsWithLowerPrecedence += Tokens::$operators;
+		$this->operatorsWithLowerPrecedence += Collections::ternaryOperators();
 
-    /**
-     * Processes this test, when one of its tokens is encountered.
-     *
-     * @since 1.2.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token
-     *                                               in the stack passed in $tokens.
-     *
-     * @return int|void Integer stack pointer to skip forward or void to continue
-     *                  normal file processing.
-     */
-    public function process(File $phpcsFile, $stackPtr)
-    {
-        $tokens = $phpcsFile->getTokens();
+		return array( \T_BOOLEAN_NOT );
+	}
 
-        $notCount = 1;
-        $lastNot  = $stackPtr;
-        for ($afterNot = ($stackPtr + 1); $afterNot < $phpcsFile->numTokens; $afterNot++) {
-            if (isset(Tokens::$emptyTokens[$tokens[$afterNot]['code']])) {
-                continue;
-            }
+	/**
+	 * Processes this test, when one of its tokens is encountered.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token
+	 *                                               in the stack passed in $tokens.
+	 *
+	 * @return int|void Integer stack pointer to skip forward or void to continue
+	 *                  normal file processing.
+	 */
+	public function process( File $phpcsFile, $stackPtr ) {
+		$tokens = $phpcsFile->getTokens();
 
-            if ($tokens[$afterNot]['code'] === \T_BOOLEAN_NOT) {
-                $lastNot = $afterNot;
-                ++$notCount;
-                continue;
-            }
+		$notCount = 1;
+		$lastNot  = $stackPtr;
+		for ( $afterNot = ( $stackPtr + 1 ); $afterNot < $phpcsFile->numTokens; $afterNot++ ) {
+			if ( isset( Tokens::$emptyTokens[ $tokens[ $afterNot ]['code'] ] ) ) {
+				continue;
+			}
 
-            break;
-        }
+			if ( $tokens[ $afterNot ]['code'] === \T_BOOLEAN_NOT ) {
+				$lastNot = $afterNot;
+				++$notCount;
+				continue;
+			}
 
-        if ($notCount === 1) {
-            // Singular unary not-operator. Nothing to do.
-            return;
-        }
+			break;
+		}
 
-        $found = \trim(GetTokensAsString::compact($phpcsFile, $stackPtr, $lastNot));
-        $data  = [$found];
+		if ( $notCount === 1 ) {
+			// Singular unary not-operator. Nothing to do.
+			return;
+		}
 
-        if (($notCount % 2) === 1) {
-            /*
-             * Oh dear... silly code time, found a triple negative (or other uneven number),
-             * this should just be a singular not-operator.
-             */
-            $fix = $phpcsFile->addFixableError(
-                'Triple negative (or more) detected. Use a singular not (!) operator instead. Found: %s',
-                $stackPtr,
-                'FoundTriple',
-                $data
-            );
+		$found = \trim( GetTokensAsString::compact( $phpcsFile, $stackPtr, $lastNot ) );
+		$data  = array( $found );
 
-            if ($fix === true) {
-                $phpcsFile->fixer->beginChangeset();
+		if ( ( $notCount % 2 ) === 1 ) {
+			/*
+			 * Oh dear... silly code time, found a triple negative (or other uneven number),
+			 * this should just be a singular not-operator.
+			 */
+			$fix = $phpcsFile->addFixableError(
+				'Triple negative (or more) detected. Use a singular not (!) operator instead. Found: %s',
+				$stackPtr,
+				'FoundTriple',
+				$data
+			);
 
-                $this->removeNotAndTrailingSpaces($phpcsFile, $stackPtr, $lastNot);
+			if ( $fix === true ) {
+				$phpcsFile->fixer->beginChangeset();
 
-                $phpcsFile->fixer->endChangeset();
-            }
+				$this->removeNotAndTrailingSpaces( $phpcsFile, $stackPtr, $lastNot );
 
-            // Only throw one error, even if there are more than two not-operators.
-            return $lastNot;
-        }
+				$phpcsFile->fixer->endChangeset();
+			}
 
-        /*
-         * Found a double negative, which should be a boolean cast.
-         */
+			// Only throw one error, even if there are more than two not-operators.
+			return $lastNot;
+		}
 
-        $fixable = true;
+		/*
+		 * Found a double negative, which should be a boolean cast.
+		 */
 
-        /*
-         * If whatever is being "cast" is within parentheses, we're good.
-         * If not, we need to prevent creating a change in behaviour
-         * when what follows is an `$x instanceof ...` expression, as
-         * the "instanceof" operator is right between a boolean cast
-         * and the ! operator precedence-wise.
-         *
-         * Note: this only applies to double negative, not triple negative.
-         *
-         * @link https://www.php.net/language.operators.precedence
-         */
-        if ($tokens[$afterNot]['code'] !== \T_OPEN_PARENTHESIS) {
-            $end = Parentheses::getLastCloser($phpcsFile, $stackPtr);
-            if ($end === false) {
-                $end = BCFile::findEndOfStatement($phpcsFile, $stackPtr);
-            }
+		$fixable = true;
 
-            for ($nextRelevant = $afterNot; $nextRelevant < $end; $nextRelevant++) {
-                if (isset(Tokens::$emptyTokens[$tokens[$nextRelevant]['code']])) {
-                    continue;
-                }
+		/*
+		 * If whatever is being "cast" is within parentheses, we're good.
+		 * If not, we need to prevent creating a change in behaviour
+		 * when what follows is an `$x instanceof ...` expression, as
+		 * the "instanceof" operator is right between a boolean cast
+		 * and the ! operator precedence-wise.
+		 *
+		 * Note: this only applies to double negative, not triple negative.
+		 *
+		 * @link https://www.php.net/language.operators.precedence
+		 */
+		if ( $tokens[ $afterNot ]['code'] !== \T_OPEN_PARENTHESIS ) {
+			$end = Parentheses::getLastCloser( $phpcsFile, $stackPtr );
+			if ( $end === false ) {
+				$end = BCFile::findEndOfStatement( $phpcsFile, $stackPtr );
+			}
 
-                if ($tokens[$nextRelevant]['code'] === \T_INSTANCEOF) {
-                    $fixable = false;
-                    break;
-                }
+			for ( $nextRelevant = $afterNot; $nextRelevant < $end; $nextRelevant++ ) {
+				if ( isset( Tokens::$emptyTokens[ $tokens[ $nextRelevant ]['code'] ] ) ) {
+					continue;
+				}
 
-                if (isset($this->operatorsWithLowerPrecedence[$tokens[$nextRelevant]['code']])) {
-                    // The expression the `!` belongs to has ended.
-                    break;
-                }
+				if ( $tokens[ $nextRelevant ]['code'] === \T_INSTANCEOF ) {
+					$fixable = false;
+					break;
+				}
 
-                // Skip over anything within some form of brackets.
-                if (isset($tokens[$nextRelevant]['scope_closer'])
-                    && ($nextRelevant === $tokens[$nextRelevant]['scope_opener']
-                    || $nextRelevant === $tokens[$nextRelevant]['scope_condition'])
-                ) {
-                    $nextRelevant = $tokens[$nextRelevant]['scope_closer'];
-                    continue;
-                }
+				if ( isset( $this->operatorsWithLowerPrecedence[ $tokens[ $nextRelevant ]['code'] ] ) ) {
+					// The expression the `!` belongs to has ended.
+					break;
+				}
 
-                if (isset($tokens[$nextRelevant]['bracket_opener'], $tokens[$nextRelevant]['bracket_closer'])
-                    && $nextRelevant === $tokens[$nextRelevant]['bracket_opener']
-                ) {
-                    $nextRelevant = $tokens[$nextRelevant]['bracket_closer'];
-                    continue;
-                }
+				// Skip over anything within some form of brackets.
+				if ( isset( $tokens[ $nextRelevant ]['scope_closer'] )
+					&& ( $nextRelevant === $tokens[ $nextRelevant ]['scope_opener']
+					|| $nextRelevant === $tokens[ $nextRelevant ]['scope_condition'] )
+				) {
+					$nextRelevant = $tokens[ $nextRelevant ]['scope_closer'];
+					continue;
+				}
 
-                if ($tokens[$nextRelevant]['code'] === \T_OPEN_PARENTHESIS
-                    && isset($tokens[$nextRelevant]['parenthesis_closer'])
-                ) {
-                    $nextRelevant = $tokens[$nextRelevant]['parenthesis_closer'];
-                    continue;
-                }
+				if ( isset( $tokens[ $nextRelevant ]['bracket_opener'], $tokens[ $nextRelevant ]['bracket_closer'] )
+					&& $nextRelevant === $tokens[ $nextRelevant ]['bracket_opener']
+				) {
+					$nextRelevant = $tokens[ $nextRelevant ]['bracket_closer'];
+					continue;
+				}
 
-                // Skip over attributes (just in case).
-                if ($tokens[$nextRelevant]['code'] === \T_ATTRIBUTE
-                    && isset($tokens[$nextRelevant]['attribute_closer'])
-                ) {
-                    $nextRelevant = $tokens[$nextRelevant]['attribute_closer'];
-                    continue;
-                }
-            }
-        }
+				if ( $tokens[ $nextRelevant ]['code'] === \T_OPEN_PARENTHESIS
+					&& isset( $tokens[ $nextRelevant ]['parenthesis_closer'] )
+				) {
+					$nextRelevant = $tokens[ $nextRelevant ]['parenthesis_closer'];
+					continue;
+				}
 
-        $error = 'Double negative detected. Use a (bool) cast %s instead. Found: %s';
-        $code  = 'FoundDouble';
-        $data  = [
-            '',
-            $found,
-        ];
+				// Skip over attributes (just in case).
+				if ( $tokens[ $nextRelevant ]['code'] === \T_ATTRIBUTE
+					&& isset( $tokens[ $nextRelevant ]['attribute_closer'] )
+				) {
+					$nextRelevant = $tokens[ $nextRelevant ]['attribute_closer'];
+					continue;
+				}
+			}
+		}
 
-        if ($fixable === false) {
-            $code    = 'FoundDoubleWithInstanceof';
-            $data[0] = 'and parentheses around the instanceof expression';
+		$error = 'Double negative detected. Use a (bool) cast %s instead. Found: %s';
+		$code  = 'FoundDouble';
+		$data  = array(
+			'',
+			$found,
+		);
 
-            // Don't auto-fix in combination with instanceof.
-            $phpcsFile->addError($error, $stackPtr, $code, $data);
+		if ( $fixable === false ) {
+			$code    = 'FoundDoubleWithInstanceof';
+			$data[0] = 'and parentheses around the instanceof expression';
 
-            // Only throw one error, even if there are more than two not-operators.
-            return $lastNot;
-        }
+			// Don't auto-fix in combination with instanceof.
+			$phpcsFile->addError( $error, $stackPtr, $code, $data );
 
-        $fix = $phpcsFile->addFixableError($error, $stackPtr, $code, $data);
+			// Only throw one error, even if there are more than two not-operators.
+			return $lastNot;
+		}
 
-        if ($fix === true) {
-            $phpcsFile->fixer->beginChangeset();
+		$fix = $phpcsFile->addFixableError( $error, $stackPtr, $code, $data );
 
-            $this->removeNotAndTrailingSpaces($phpcsFile, $stackPtr, $lastNot);
+		if ( $fix === true ) {
+			$phpcsFile->fixer->beginChangeset();
 
-            $phpcsFile->fixer->replaceToken($lastNot, '(bool)');
+			$this->removeNotAndTrailingSpaces( $phpcsFile, $stackPtr, $lastNot );
 
-            $phpcsFile->fixer->endChangeset();
-        }
+			$phpcsFile->fixer->replaceToken( $lastNot, '(bool)' );
 
-        // Only throw one error, even if there are more than two not-operators.
-        return $lastNot;
-    }
+			$phpcsFile->fixer->endChangeset();
+		}
 
-    /**
-     * Remove boolean not-operators and trailing whitespace after those,
-     * but don't remove comments or trailing whitespace after comments.
-     *
-     * @since 1.2.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token
-     *                                               in the stack passed in $tokens.
-     * @param int                         $lastNot   The position of the last boolean not token
-     *                                               in the chain.
-     *
-     * @return void
-     */
-    private function removeNotAndTrailingSpaces(File $phpcsFile, $stackPtr, $lastNot)
-    {
-        $tokens = $phpcsFile->getTokens();
-        $ignore = false;
+		// Only throw one error, even if there are more than two not-operators.
+		return $lastNot;
+	}
 
-        for ($i = $stackPtr; $i < $lastNot; $i++) {
-            if (isset(Tokens::$commentTokens[$tokens[$i]['code']])) {
-                // Ignore comments and whitespace after comments.
-                $ignore = true;
-                continue;
-            }
+	/**
+	 * Remove boolean not-operators and trailing whitespace after those,
+	 * but don't remove comments or trailing whitespace after comments.
+	 *
+	 * @since 1.2.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token
+	 *                                               in the stack passed in $tokens.
+	 * @param int                         $lastNot   The position of the last boolean not token
+	 *                                               in the chain.
+	 *
+	 * @return void
+	 */
+	private function removeNotAndTrailingSpaces( File $phpcsFile, $stackPtr, $lastNot ) {
+		$tokens = $phpcsFile->getTokens();
+		$ignore = false;
 
-            if ($tokens[$i]['code'] === \T_WHITESPACE && $ignore === false) {
-                $phpcsFile->fixer->replaceToken($i, '');
-                continue;
-            }
+		for ( $i = $stackPtr; $i < $lastNot; $i++ ) {
+			if ( isset( Tokens::$commentTokens[ $tokens[ $i ]['code'] ] ) ) {
+				// Ignore comments and whitespace after comments.
+				$ignore = true;
+				continue;
+			}
 
-            if ($tokens[$i]['code'] === \T_BOOLEAN_NOT) {
-                $ignore = false;
-                $phpcsFile->fixer->replaceToken($i, '');
-            }
-        }
-    }
+			if ( $tokens[ $i ]['code'] === \T_WHITESPACE && $ignore === false ) {
+				$phpcsFile->fixer->replaceToken( $i, '' );
+				continue;
+			}
+
+			if ( $tokens[ $i ]['code'] === \T_BOOLEAN_NOT ) {
+				$ignore = false;
+				$phpcsFile->fixer->replaceToken( $i, '' );
+			}
+		}
+	}
 }

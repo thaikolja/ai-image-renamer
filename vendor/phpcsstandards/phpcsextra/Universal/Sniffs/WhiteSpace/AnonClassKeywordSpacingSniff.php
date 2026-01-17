@@ -20,60 +20,58 @@ use PHPCSUtils\Fixers\SpacesFixer;
  *
  * @since 1.0.0
  */
-final class AnonClassKeywordSpacingSniff implements Sniff
-{
+final class AnonClassKeywordSpacingSniff implements Sniff {
 
-    /**
-     * The amount of spacing to demand between the class keyword and the open parenthesis.
-     *
-     * @since 1.0.0
-     *
-     * @var int
-     */
-    public $spacing = 0;
 
-    /**
-     * Returns an array of tokens this test wants to listen for.
-     *
-     * @since 1.0.0
-     *
-     * @return array<int|string>
-     */
-    public function register()
-    {
-        return [\T_ANON_CLASS];
-    }
+	/**
+	 * The amount of spacing to demand between the class keyword and the open parenthesis.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var int
+	 */
+	public $spacing = 0;
 
-    /**
-     * Processes this test, when one of its tokens is encountered.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token
-     *                                               in the stack passed in $tokens.
-     *
-     * @return void
-     */
-    public function process(File $phpcsFile, $stackPtr)
-    {
-        $tokens       = $phpcsFile->getTokens();
-        $nextNonEmpty = $phpcsFile->findNext(Tokens::$emptyTokens, ($stackPtr + 1), null, true);
-        if ($nextNonEmpty === false || $tokens[$nextNonEmpty]['code'] !== \T_OPEN_PARENTHESIS) {
-            // No parentheses, nothing to do.
-            return;
-        }
+	/**
+	 * Returns an array of tokens this test wants to listen for.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int|string>
+	 */
+	public function register() {
+		return array( \T_ANON_CLASS );
+	}
 
-        SpacesFixer::checkAndFix(
-            $phpcsFile,
-            $stackPtr,
-            $nextNonEmpty,
-            (int) $this->spacing,
-            'There must be %1$s between the class keyword and the open parenthesis for an anonymous class. Found: %2$s',
-            'Incorrect',
-            'error',
-            0,
-            'Anon class: space between keyword and open parenthesis'
-        );
-    }
+	/**
+	 * Processes this test, when one of its tokens is encountered.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token
+	 *                                               in the stack passed in $tokens.
+	 *
+	 * @return void
+	 */
+	public function process( File $phpcsFile, $stackPtr ) {
+		$tokens       = $phpcsFile->getTokens();
+		$nextNonEmpty = $phpcsFile->findNext( Tokens::$emptyTokens, ( $stackPtr + 1 ), null, true );
+		if ( $nextNonEmpty === false || $tokens[ $nextNonEmpty ]['code'] !== \T_OPEN_PARENTHESIS ) {
+			// No parentheses, nothing to do.
+			return;
+		}
+
+		SpacesFixer::checkAndFix(
+			$phpcsFile,
+			$stackPtr,
+			$nextNonEmpty,
+			(int) $this->spacing,
+			'There must be %1$s between the class keyword and the open parenthesis for an anonymous class. Found: %2$s',
+			'Incorrect',
+			'error',
+			0,
+			'Anon class: space between keyword and open parenthesis'
+		);
+	}
 }

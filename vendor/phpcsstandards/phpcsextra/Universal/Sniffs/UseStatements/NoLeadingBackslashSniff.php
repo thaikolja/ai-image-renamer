@@ -24,155 +24,152 @@ use PHPCSUtils\Utils\UseStatements;
  *
  * @since 1.0.0
  */
-final class NoLeadingBackslashSniff implements Sniff
-{
+final class NoLeadingBackslashSniff implements Sniff {
 
-    /**
-     * Name of the metric.
-     *
-     * @since 1.0.0
-     *
-     * @var string
-     */
-    const METRIC_NAME = 'Import use with leading backslash';
 
-    /**
-     * Returns an array of tokens this test wants to listen for.
-     *
-     * @since 1.0.0
-     *
-     * @return array<int|string>
-     */
-    public function register()
-    {
-        return [\T_USE];
-    }
+	/**
+	 * Name of the metric.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var string
+	 */
+	const METRIC_NAME = 'Import use with leading backslash';
 
-    /**
-     * Processes this test, when one of its tokens is encountered.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token in the
-     *                                               stack passed in $tokens.
-     *
-     * @return void
-     */
-    public function process(File $phpcsFile, $stackPtr)
-    {
-        if (UseStatements::isImportUse($phpcsFile, $stackPtr) === false) {
-            // Trait or closure use statement.
-            return;
-        }
+	/**
+	 * Returns an array of tokens this test wants to listen for.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int|string>
+	 */
+	public function register() {
+		return array( \T_USE );
+	}
 
-        $endOfStatement = $phpcsFile->findNext([\T_SEMICOLON, \T_CLOSE_TAG, \T_OPEN_USE_GROUP], ($stackPtr + 1));
-        if ($endOfStatement === false) {
-            // Live coding or parse error.
-            return;
-        }
+	/**
+	 * Processes this test, when one of its tokens is encountered.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token in the
+	 *                                               stack passed in $tokens.
+	 *
+	 * @return void
+	 */
+	public function process( File $phpcsFile, $stackPtr ) {
+		if ( UseStatements::isImportUse( $phpcsFile, $stackPtr ) === false ) {
+			// Trait or closure use statement.
+			return;
+		}
 
-        $tokens  = $phpcsFile->getTokens();
-        $current = $stackPtr;
+		$endOfStatement = $phpcsFile->findNext( array( \T_SEMICOLON, \T_CLOSE_TAG, \T_OPEN_USE_GROUP ), ( $stackPtr + 1 ) );
+		if ( $endOfStatement === false ) {
+			// Live coding or parse error.
+			return;
+		}
 
-        do {
-            $continue = $this->processImport($phpcsFile, $current, $endOfStatement);
-            if ($continue === false) {
-                break;
-            }
+		$tokens  = $phpcsFile->getTokens();
+		$current = $stackPtr;
 
-            // Move the stackPtr forward to the next part of the use statement, if any.
-            $current = $phpcsFile->findNext(\T_COMMA, ($current + 1), $endOfStatement);
-        } while ($current !== false);
+		do {
+			$continue = $this->processImport( $phpcsFile, $current, $endOfStatement );
+			if ( $continue === false ) {
+				break;
+			}
 
-        if ($tokens[$endOfStatement]['code'] !== \T_OPEN_USE_GROUP) {
-            // Finished the statement.
-            return;
-        }
+			// Move the stackPtr forward to the next part of the use statement, if any.
+			$current = $phpcsFile->findNext( \T_COMMA, ( $current + 1 ), $endOfStatement );
+		} while ( $current !== false );
 
-        $current        = $endOfStatement; // Group open brace.
-        $endOfStatement = $phpcsFile->findNext([\T_CLOSE_USE_GROUP], ($endOfStatement + 1));
-        if ($endOfStatement === false) {
-            // Live coding or parse error.
-            return;
-        }
+		if ( $tokens[ $endOfStatement ]['code'] !== \T_OPEN_USE_GROUP ) {
+			// Finished the statement.
+			return;
+		}
 
-        do {
-            $continue = $this->processImport($phpcsFile, $current, $endOfStatement, true);
-            if ($continue === false) {
-                break;
-            }
+		$current        = $endOfStatement; // Group open brace.
+		$endOfStatement = $phpcsFile->findNext( array( \T_CLOSE_USE_GROUP ), ( $endOfStatement + 1 ) );
+		if ( $endOfStatement === false ) {
+			// Live coding or parse error.
+			return;
+		}
 
-            // Move the stackPtr forward to the next part of the use statement, if any.
-            $current = $phpcsFile->findNext(\T_COMMA, ($current + 1), $endOfStatement);
-        } while ($current !== false);
-    }
+		do {
+			$continue = $this->processImport( $phpcsFile, $current, $endOfStatement, true );
+			if ( $continue === false ) {
+				break;
+			}
 
-    /**
-     * Examine an individual import statement.
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile      The file being scanned.
-     * @param int                         $stackPtr       The position of the current token.
-     * @param int                         $endOfStatement End token for the current import statement.
-     * @param bool                        $groupUse       Whether the current statement is a partial one
-     *                                                    within a group use statement.
-     *
-     * @return bool Whether or not to continue examining this import use statement.
-     */
-    private function processImport(File $phpcsFile, $stackPtr, $endOfStatement, $groupUse = false)
-    {
-        $tokens = $phpcsFile->getTokens();
+			// Move the stackPtr forward to the next part of the use statement, if any.
+			$current = $phpcsFile->findNext( \T_COMMA, ( $current + 1 ), $endOfStatement );
+		} while ( $current !== false );
+	}
 
-        $nextNonEmpty = $phpcsFile->findNext(Tokens::$emptyTokens, ($stackPtr + 1), $endOfStatement, true);
-        if ($nextNonEmpty === false) {
-            // Reached the end of the statement.
-            return false;
-        }
+	/**
+	 * Examine an individual import statement.
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile      The file being scanned.
+	 * @param int                         $stackPtr       The position of the current token.
+	 * @param int                         $endOfStatement End token for the current import statement.
+	 * @param bool                        $groupUse       Whether the current statement is a partial one
+	 *                                                    within a group use statement.
+	 *
+	 * @return bool Whether or not to continue examining this import use statement.
+	 */
+	private function processImport( File $phpcsFile, $stackPtr, $endOfStatement, $groupUse = false ) {
+		$tokens = $phpcsFile->getTokens();
 
-        // Skip past 'function'/'const' keyword.
-        $contentLC = \strtolower($tokens[$nextNonEmpty]['content']);
-        if ($tokens[$nextNonEmpty]['code'] === \T_STRING
-            && ($contentLC === 'function' || $contentLC === 'const')
-        ) {
-            $nextNonEmpty = $phpcsFile->findNext(Tokens::$emptyTokens, ($nextNonEmpty + 1), $endOfStatement, true);
-            if ($nextNonEmpty === false) {
-                // Reached the end of the statement.
-                return false;
-            }
-        }
+		$nextNonEmpty = $phpcsFile->findNext( Tokens::$emptyTokens, ( $stackPtr + 1 ), $endOfStatement, true );
+		if ( $nextNonEmpty === false ) {
+			// Reached the end of the statement.
+			return false;
+		}
 
-        if ($tokens[$nextNonEmpty]['code'] === \T_NS_SEPARATOR
-            || $tokens[$nextNonEmpty]['code'] === \T_NAME_FULLY_QUALIFIED
-        ) {
-            $phpcsFile->recordMetric($nextNonEmpty, self::METRIC_NAME, 'yes');
+		// Skip past 'function'/'const' keyword.
+		$contentLC = \strtolower( $tokens[ $nextNonEmpty ]['content'] );
+		if ( $tokens[ $nextNonEmpty ]['code'] === \T_STRING
+			&& ( $contentLC === 'function' || $contentLC === 'const' )
+		) {
+			$nextNonEmpty = $phpcsFile->findNext( Tokens::$emptyTokens, ( $nextNonEmpty + 1 ), $endOfStatement, true );
+			if ( $nextNonEmpty === false ) {
+				// Reached the end of the statement.
+				return false;
+			}
+		}
 
-            $error = 'An import use statement should never start with a leading backslash';
-            $code  = 'LeadingBackslashFound';
+		if ( $tokens[ $nextNonEmpty ]['code'] === \T_NS_SEPARATOR
+			|| $tokens[ $nextNonEmpty ]['code'] === \T_NAME_FULLY_QUALIFIED
+		) {
+			$phpcsFile->recordMetric( $nextNonEmpty, self::METRIC_NAME, 'yes' );
 
-            if ($groupUse === true) {
-                $error = 'Parse error: partial import use statement in a use group starting with a leading backslash';
-                $code  = 'LeadingBackslashFoundInGroup';
-            }
+			$error = 'An import use statement should never start with a leading backslash';
+			$code  = 'LeadingBackslashFound';
 
-            $fix = $phpcsFile->addFixableError($error, $nextNonEmpty, $code);
+			if ( $groupUse === true ) {
+				$error = 'Parse error: partial import use statement in a use group starting with a leading backslash';
+				$code  = 'LeadingBackslashFoundInGroup';
+			}
 
-            if ($fix === true) {
-                if ($tokens[$nextNonEmpty]['code'] === \T_NS_SEPARATOR) {
-                    // PHPCS 3.x.
-                    if ($tokens[$nextNonEmpty - 1]['code'] !== \T_WHITESPACE) {
-                        $phpcsFile->fixer->replaceToken($nextNonEmpty, ' ');
-                    } else {
-                        $phpcsFile->fixer->replaceToken($nextNonEmpty, '');
-                    }
-                } else {
-                    // PHPCS 4.x / T_NAME_FULLY_QUALIFIED.
-                    $phpcsFile->fixer->replaceToken($nextNonEmpty, \ltrim($tokens[$nextNonEmpty]['content'], '\\'));
-                }
-            }
-        } else {
-            $phpcsFile->recordMetric($nextNonEmpty, self::METRIC_NAME, 'no');
-        }
+			$fix = $phpcsFile->addFixableError( $error, $nextNonEmpty, $code );
 
-        return true;
-    }
+			if ( $fix === true ) {
+				if ( $tokens[ $nextNonEmpty ]['code'] === \T_NS_SEPARATOR ) {
+					// PHPCS 3.x.
+					if ( $tokens[ $nextNonEmpty - 1 ]['code'] !== \T_WHITESPACE ) {
+						$phpcsFile->fixer->replaceToken( $nextNonEmpty, ' ' );
+					} else {
+						$phpcsFile->fixer->replaceToken( $nextNonEmpty, '' );
+					}
+				} else {
+					// PHPCS 4.x / T_NAME_FULLY_QUALIFIED.
+					$phpcsFile->fixer->replaceToken( $nextNonEmpty, \ltrim( $tokens[ $nextNonEmpty ]['content'], '\\' ) );
+				}
+			}
+		} else {
+			$phpcsFile->recordMetric( $nextNonEmpty, self::METRIC_NAME, 'no' );
+		}
+
+		return true;
+	}
 }
