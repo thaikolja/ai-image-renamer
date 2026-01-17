@@ -18,30 +18,29 @@ use BadMethodCallException;
  *
  * @since 1.0.0
  */
-final class TestFileNotFound extends BadMethodCallException
-{
+final class TestFileNotFound extends BadMethodCallException {
 
-    /**
-     * Create a new "test file not found" exception with a standardized text.
-     *
-     * @since 1.0.0
-     *
-     * @param string          $message  The Exception message to throw.
-     * @param int             $code     The Exception code.
-     * @param \Throwable|null $previous The previous exception used for the exception chaining.
-     *
-     * @return void
-     */
-    public function __construct($message = '', $code = 0, $previous = null)
-    {
-        if ($message === '') {
-            $message = \sprintf(
-                'Failed to find a tokenized test case file.%sMake sure the UtilityMethodTestCase::setUpTestFile()'
-                . ' method has run before calling UtilityMethodTestCase::getTargetToken()',
-                \PHP_EOL
-            );
-        }
 
-        parent::__construct($message, $code, $previous);
-    }
+	/**
+	 * Create a new "test file not found" exception with a standardized text.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string          $message  The Exception message to throw.
+	 * @param int             $code     The Exception code.
+	 * @param \Throwable|null $previous The previous exception used for the exception chaining.
+	 *
+	 * @return void
+	 */
+	public function __construct( $message = '', $code = 0, $previous = null ) {
+		if ( $message === '' ) {
+			$message = \sprintf(
+				'Failed to find a tokenized test case file.%sMake sure the UtilityMethodTestCase::setUpTestFile()'
+				. ' method has run before calling UtilityMethodTestCase::getTargetToken()',
+				\PHP_EOL
+			);
+		}
+
+		parent::__construct( $message, $code, $previous );
+	}
 }

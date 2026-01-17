@@ -4,47 +4,47 @@ namespace Defuse\Crypto;
 
 /**
  * Class DerivedKeys
+ *
  * @package Defuse\Crypto
  */
-final class DerivedKeys
-{
-    /**
-     * @var string
-     */
-    private $akey = '';
+final class DerivedKeys {
 
-    /**
-     * @var string
-     */
-    private $ekey = '';
+	/**
+	 * @var string
+	 */
+	private $akey = '';
 
-    /**
-     * Returns the authentication key.
-     * @return string
-     */
-    public function getAuthenticationKey()
-    {
-        return $this->akey;
-    }
+	/**
+	 * @var string
+	 */
+	private $ekey = '';
 
-    /**
-     * Returns the encryption key.
-     * @return string
-     */
-    public function getEncryptionKey()
-    {
-        return $this->ekey;
-    }
+	/**
+	 * Returns the authentication key.
+	 *
+	 * @return string
+	 */
+	public function getAuthenticationKey() {
+		return $this->akey;
+	}
 
-    /**
-     * Constructor for DerivedKeys.
-     *
-     * @param string $akey
-     * @param string $ekey
-     */
-    public function __construct($akey, $ekey)
-    {
-        $this->akey = $akey;
-        $this->ekey = $ekey;
-    }
+	/**
+	 * Returns the encryption key.
+	 *
+	 * @return string
+	 */
+	public function getEncryptionKey() {
+		return $this->ekey;
+	}
+
+	/**
+	 * Constructor for DerivedKeys.
+	 *
+	 * @param string $akey
+	 * @param string $ekey
+	 */
+	public function __construct( $akey, $ekey ) {
+		$this->akey = $akey;
+		$this->ekey = $ekey;
+	}
 }

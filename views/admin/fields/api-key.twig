@@ -1,0 +1,47 @@
+{# API Key Field Template #}
+<div class="air-api-key-container">
+    <label
+            for="air_api_key"
+            class="screen-reader-text">
+        {{ __('Groq API Key', 'ai-image-renamer') }}
+    </label> <input
+            type="text"
+            id="air_api_key"
+            name="{{ option_name }}[api_key]"
+            value="{{ display_key }}"
+            class="regular-text"
+            placeholder="{{ placeholder }}"
+            autocomplete="off" />
+
+{% if saved %}
+    <button
+            type="button"
+            id="air_delete_api_key"
+            class="button button-link-delete">
+        {{ __('Delete Key', 'ai-image-renamer') }}
+    </button>
+{% endif %}
+</div>
+<p class="description">
+{% if saved %}
+    {{ __('Your Groq API key has been encrypted and saved. Type a new key to overwrite it.', 'ai-image-renamer') }}
+{% else %}
+    {{ __('Enter your Groq API key.', 'ai-image-renamer') }}
+{% endif %}
+</p>
+<p class="air-action-buttons">
+    <a
+            href="https://console.groq.com/keys"
+            target="_blank"
+            class="button button-primary air-button-with-icon"> <span class="dashicons dashicons-admin-network"></span>
+        {{ __('Get Free Groq API Key', 'ai-image-renamer') }}
+    </a>
+    <button
+            type="button"
+            id="air_test_connection"
+            class="button button-secondary air-button-with-icon">
+        <span class="dashicons dashicons-update"></span>
+        {{ __('Test Connection', 'ai-image-renamer') }}
+    </button>
+    <span id="air_test_result"></span>
+</p>

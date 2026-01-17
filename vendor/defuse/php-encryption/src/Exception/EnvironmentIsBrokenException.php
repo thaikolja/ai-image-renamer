@@ -2,6 +2,6 @@
 
 namespace Defuse\Crypto\Exception;
 
-class EnvironmentIsBrokenException extends \Defuse\Crypto\Exception\CryptoException
-{
+class EnvironmentIsBrokenException extends \Defuse\Crypto\Exception\CryptoException {
+
 }

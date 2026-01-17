@@ -22,85 +22,83 @@ use PHP_CodeSniffer\Util\Tokens;
  *
  * @since 1.0.0
  */
-final class LowercaseClassResolutionKeywordSniff implements Sniff
-{
+final class LowercaseClassResolutionKeywordSniff implements Sniff {
 
-    /**
-     * Name of the metric.
-     *
-     * @since 1.0.0
-     *
-     * @var string
-     */
-    const METRIC_NAME = 'Magic ::class constant case';
 
-    /**
-     * Returns an array of tokens this test wants to listen for.
-     *
-     * @since 1.0.0
-     *
-     * @return array<int|string>
-     */
-    public function register()
-    {
-        return [\T_STRING];
-    }
+	/**
+	 * Name of the metric.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var string
+	 */
+	const METRIC_NAME = 'Magic ::class constant case';
 
-    /**
-     * Processes this test, when one of its tokens is encountered.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token
-     *                                               in the stack passed in $tokens.
-     *
-     * @return void
-     */
-    public function process(File $phpcsFile, $stackPtr)
-    {
-        $tokens    = $phpcsFile->getTokens();
-        $content   = $tokens[$stackPtr]['content'];
-        $contentLC = \strtolower($content);
+	/**
+	 * Returns an array of tokens this test wants to listen for.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int|string>
+	 */
+	public function register() {
+		return array( \T_STRING );
+	}
 
-        if ($contentLC !== 'class') {
-            return;
-        }
+	/**
+	 * Processes this test, when one of its tokens is encountered.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token
+	 *                                               in the stack passed in $tokens.
+	 *
+	 * @return void
+	 */
+	public function process( File $phpcsFile, $stackPtr ) {
+		$tokens    = $phpcsFile->getTokens();
+		$content   = $tokens[ $stackPtr ]['content'];
+		$contentLC = \strtolower( $content );
 
-        $nextToken = $phpcsFile->findNext(Tokens::$emptyTokens, ($stackPtr + 1), null, true);
-        if ($nextToken !== false && $tokens[$nextToken]['code'] === \T_OPEN_PARENTHESIS) {
-            // Function call or declaration for a function called "class".
-            return;
-        }
+		if ( $contentLC !== 'class' ) {
+			return;
+		}
 
-        $prevToken = $phpcsFile->findPrevious(Tokens::$emptyTokens, ($stackPtr - 1), null, true);
-        if ($prevToken === false || $tokens[$prevToken]['code'] !== \T_DOUBLE_COLON) {
-            return;
-        }
+		$nextToken = $phpcsFile->findNext( Tokens::$emptyTokens, ( $stackPtr + 1 ), null, true );
+		if ( $nextToken !== false && $tokens[ $nextToken ]['code'] === \T_OPEN_PARENTHESIS ) {
+			// Function call or declaration for a function called "class".
+			return;
+		}
 
-        if ($contentLC === $content) {
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'lowercase');
-            return;
-        }
+		$prevToken = $phpcsFile->findPrevious( Tokens::$emptyTokens, ( $stackPtr - 1 ), null, true );
+		if ( $prevToken === false || $tokens[ $prevToken ]['code'] !== \T_DOUBLE_COLON ) {
+			return;
+		}
 
-        $error = "The ::class keyword for class name resolution must be in lowercase. Expected: '::%s'; found: '::%s'";
-        $data  = [
-            $contentLC,
-            $content,
-        ];
+		if ( $contentLC === $content ) {
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'lowercase' );
+			return;
+		}
 
-        $errorCode = '';
-        if (\strtoupper($content) === $content) {
-            $errorCode = 'Uppercase';
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'uppercase');
-        } else {
-            $errorCode = 'Mixedcase';
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'mixed case');
-        }
+		$error = "The ::class keyword for class name resolution must be in lowercase. Expected: '::%s'; found: '::%s'";
+		$data  = array(
+			$contentLC,
+			$content,
+		);
 
-        $fix = $phpcsFile->addFixableError($error, $stackPtr, $errorCode, $data);
-        if ($fix === true) {
-            $phpcsFile->fixer->replaceToken($stackPtr, $contentLC);
-        }
-    }
+		$errorCode = '';
+		if ( \strtoupper( $content ) === $content ) {
+			$errorCode = 'Uppercase';
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'uppercase' );
+		} else {
+			$errorCode = 'Mixedcase';
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'mixed case' );
+		}
+
+		$fix = $phpcsFile->addFixableError( $error, $stackPtr, $errorCode, $data );
+		if ( $fix === true ) {
+			$phpcsFile->fixer->replaceToken( $stackPtr, $contentLC );
+		}
+	}
 }

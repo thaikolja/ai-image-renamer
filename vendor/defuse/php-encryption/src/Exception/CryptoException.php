@@ -2,6 +2,6 @@
 
 namespace Defuse\Crypto\Exception;
 
-class CryptoException extends \Exception
-{
+class CryptoException extends \Exception {
+
 }

@@ -23,224 +23,221 @@ use PHPCSUtils\Tokens\Collections;
  *
  * @since 1.0.0
  */
-final class Arrays
-{
+final class Arrays {
 
-    /**
-     * The tokens to target to find the double arrow in an array item.
-     *
-     * @since 1.0.0
-     *
-     * @var array<int|string, int|string>
-     */
-    private static $doubleArrowTargets = [
-        \T_DOUBLE_ARROW     => \T_DOUBLE_ARROW,
 
-        // Nested arrays.
-        \T_ARRAY            => \T_ARRAY,
-        \T_OPEN_SHORT_ARRAY => \T_OPEN_SHORT_ARRAY,
+	/**
+	 * The tokens to target to find the double arrow in an array item.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var array<int|string, int|string>
+	 */
+	private static $doubleArrowTargets = array(
+		\T_DOUBLE_ARROW     => \T_DOUBLE_ARROW,
 
-        // Inline function, control structures and other things to skip over.
-        \T_LIST             => \T_LIST,
-        \T_FN               => \T_FN,
-        \T_MATCH            => \T_MATCH,
-        \T_ATTRIBUTE        => \T_ATTRIBUTE,
-    ];
+		// Nested arrays.
+		\T_ARRAY            => \T_ARRAY,
+		\T_OPEN_SHORT_ARRAY => \T_OPEN_SHORT_ARRAY,
 
-    /**
-     * Determine whether a T_OPEN/CLOSE_SHORT_ARRAY token is a short array construct
-     * and not a short list.
-     *
-     * This method also accepts `T_OPEN/CLOSE_SQUARE_BRACKET` tokens to allow it to be
-     * PHPCS cross-version compatible as the short array tokenizing has been plagued by
-     * a number of bugs over time.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the short array bracket token.
-     *
-     * @return bool `TRUE` if the token passed is the open/close bracket of a short array.
-     *              `FALSE` if the token is a short list bracket, a plain square bracket
-     *              or not one of the accepted tokens.
-     */
-    public static function isShortArray(File $phpcsFile, $stackPtr)
-    {
-        return IsShortArrayOrListWithCache::isShortArray($phpcsFile, $stackPtr);
-    }
+		// Inline function, control structures and other things to skip over.
+		\T_LIST             => \T_LIST,
+		\T_FN               => \T_FN,
+		\T_MATCH            => \T_MATCH,
+		\T_ATTRIBUTE        => \T_ATTRIBUTE,
+	);
 
-    /**
-     * Find the array opener and closer based on a T_ARRAY or T_OPEN_SHORT_ARRAY token.
-     *
-     * This method also accepts `T_OPEN_SQUARE_BRACKET` tokens to allow it to be
-     * PHPCS cross-version compatible as the short array tokenizing has been plagued by
-     * a number of bugs over time, which affects the short array determination.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile    The file being scanned.
-     * @param int                         $stackPtr     The position of the `T_ARRAY` or `T_OPEN_SHORT_ARRAY`
-     *                                                  token in the stack.
-     * @param true|null                   $isShortArray Short-circuit the short array check for `T_OPEN_SHORT_ARRAY`
-     *                                                  tokens if it isn't necessary.
-     *                                                  Efficiency tweak for when this has already been established,
-     *                                                  i.e. when encountering a nested array while walking the
-     *                                                  tokens in an array.
-     *                                                  Use with care.
-     *
-     * @return array<string, int>|false An array with the token pointers; or `FALSE` if this is not a
-     *                                  (short) array token or if the opener/closer could not be determined.
-     *                                  The format of the array return value is:
-     *                                  ```php
-     *                                  array(
-     *                                    'opener' => integer, // Stack pointer to the array open bracket.
-     *                                    'closer' => integer, // Stack pointer to the array close bracket.
-     *                                  )
-     *                                  ```
-     */
-    public static function getOpenClose(File $phpcsFile, $stackPtr, $isShortArray = null)
-    {
-        $tokens = $phpcsFile->getTokens();
+	/**
+	 * Determine whether a T_OPEN/CLOSE_SHORT_ARRAY token is a short array construct
+	 * and not a short list.
+	 *
+	 * This method also accepts `T_OPEN/CLOSE_SQUARE_BRACKET` tokens to allow it to be
+	 * PHPCS cross-version compatible as the short array tokenizing has been plagued by
+	 * a number of bugs over time.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the short array bracket token.
+	 *
+	 * @return bool `TRUE` if the token passed is the open/close bracket of a short array.
+	 *              `FALSE` if the token is a short list bracket, a plain square bracket
+	 *              or not one of the accepted tokens.
+	 */
+	public static function isShortArray( File $phpcsFile, $stackPtr ) {
+		return IsShortArrayOrListWithCache::isShortArray( $phpcsFile, $stackPtr );
+	}
 
-        // Is this one of the tokens this function handles ?
-        if (isset($tokens[$stackPtr]) === false
-            || isset(Collections::arrayOpenTokensBC()[$tokens[$stackPtr]['code']]) === false
-        ) {
-            return false;
-        }
+	/**
+	 * Find the array opener and closer based on a T_ARRAY or T_OPEN_SHORT_ARRAY token.
+	 *
+	 * This method also accepts `T_OPEN_SQUARE_BRACKET` tokens to allow it to be
+	 * PHPCS cross-version compatible as the short array tokenizing has been plagued by
+	 * a number of bugs over time, which affects the short array determination.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile    The file being scanned.
+	 * @param int                         $stackPtr     The position of the `T_ARRAY` or `T_OPEN_SHORT_ARRAY`
+	 *                                                  token in the stack.
+	 * @param true|null                   $isShortArray Short-circuit the short array check for `T_OPEN_SHORT_ARRAY`
+	 *                                                  tokens if it isn't necessary.
+	 *                                                  Efficiency tweak for when this has already been established,
+	 *                                                  i.e. when encountering a nested array while walking the
+	 *                                                  tokens in an array.
+	 *                                                  Use with care.
+	 *
+	 * @return array<string, int>|false An array with the token pointers; or `FALSE` if this is not a
+	 *                                  (short) array token or if the opener/closer could not be determined.
+	 *                                  The format of the array return value is:
+	 *                                  ```php
+	 *                                  array(
+	 *                                    'opener' => integer, // Stack pointer to the array open bracket.
+	 *                                    'closer' => integer, // Stack pointer to the array close bracket.
+	 *                                  )
+	 *                                  ```
+	 */
+	public static function getOpenClose( File $phpcsFile, $stackPtr, $isShortArray = null ) {
+		$tokens = $phpcsFile->getTokens();
 
-        switch ($tokens[$stackPtr]['code']) {
-            case \T_ARRAY:
-                if (isset($tokens[$stackPtr]['parenthesis_opener'])) {
-                    $opener = $tokens[$stackPtr]['parenthesis_opener'];
+		// Is this one of the tokens this function handles ?
+		if ( isset( $tokens[ $stackPtr ] ) === false
+			|| isset( Collections::arrayOpenTokensBC()[ $tokens[ $stackPtr ]['code'] ] ) === false
+		) {
+			return false;
+		}
 
-                    if (isset($tokens[$opener]['parenthesis_closer'])) {
-                        $closer = $tokens[$opener]['parenthesis_closer'];
-                    }
-                }
-                break;
+		switch ( $tokens[ $stackPtr ]['code'] ) {
+			case \T_ARRAY:
+				if ( isset( $tokens[ $stackPtr ]['parenthesis_opener'] ) ) {
+					$opener = $tokens[ $stackPtr ]['parenthesis_opener'];
 
-            case \T_OPEN_SHORT_ARRAY:
-            case \T_OPEN_SQUARE_BRACKET:
-                if ($isShortArray === true || self::isShortArray($phpcsFile, $stackPtr) === true) {
-                    $opener = $stackPtr;
-                    $closer = $tokens[$stackPtr]['bracket_closer'];
-                }
-                break;
-        }
+					if ( isset( $tokens[ $opener ]['parenthesis_closer'] ) ) {
+						$closer = $tokens[ $opener ]['parenthesis_closer'];
+					}
+				}
+				break;
 
-        if (isset($opener, $closer)) {
-            return [
-                'opener' => $opener,
-                'closer' => $closer,
-            ];
-        }
+			case \T_OPEN_SHORT_ARRAY:
+			case \T_OPEN_SQUARE_BRACKET:
+				if ( $isShortArray === true || self::isShortArray( $phpcsFile, $stackPtr ) === true ) {
+					$opener = $stackPtr;
+					$closer = $tokens[ $stackPtr ]['bracket_closer'];
+				}
+				break;
+		}
 
-        return false;
-    }
+		if ( isset( $opener, $closer ) ) {
+			return array(
+				'opener' => $opener,
+				'closer' => $closer,
+			);
+		}
 
-    /**
-     * Get the stack pointer position of the double arrow within an array item.
-     *
-     * Expects to be passed the array item start and end tokens as retrieved via
-     * {@see \PHPCSUtils\Utils\PassedParameters::getParameters()}.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being examined.
-     * @param int                         $start     Stack pointer to the start of the array item.
-     * @param int                         $end       Stack pointer to the last token in the array item.
-     *
-     * @return int|false Stack pointer to the double arrow if this array item has a key; or `FALSE` otherwise.
-     *
-     * @throws \PHPCSUtils\Exceptions\TypeError           If the $start or $end parameters are not integers.
-     * @throws \PHPCSUtils\Exceptions\OutOfBoundsStackPtr If the tokens passed do not exist in the $phpcsFile.
-     * @throws \PHPCSUtils\Exceptions\LogicException      If $end pointer is before the $start pointer.
-     */
-    public static function getDoubleArrowPtr(File $phpcsFile, $start, $end)
-    {
-        $tokens = $phpcsFile->getTokens();
+		return false;
+	}
 
-        if (\is_int($start) === false) {
-            throw TypeError::create(2, '$start', 'integer', $start);
-        }
+	/**
+	 * Get the stack pointer position of the double arrow within an array item.
+	 *
+	 * Expects to be passed the array item start and end tokens as retrieved via
+	 * {@see \PHPCSUtils\Utils\PassedParameters::getParameters()}.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being examined.
+	 * @param int                         $start     Stack pointer to the start of the array item.
+	 * @param int                         $end       Stack pointer to the last token in the array item.
+	 *
+	 * @return int|false Stack pointer to the double arrow if this array item has a key; or `FALSE` otherwise.
+	 *
+	 * @throws \PHPCSUtils\Exceptions\TypeError           If the $start or $end parameters are not integers.
+	 * @throws \PHPCSUtils\Exceptions\OutOfBoundsStackPtr If the tokens passed do not exist in the $phpcsFile.
+	 * @throws \PHPCSUtils\Exceptions\LogicException      If $end pointer is before the $start pointer.
+	 */
+	public static function getDoubleArrowPtr( File $phpcsFile, $start, $end ) {
+		$tokens = $phpcsFile->getTokens();
 
-        if (\is_int($end) === false) {
-            throw TypeError::create(3, '$end', 'integer', $end);
-        }
+		if ( \is_int( $start ) === false ) {
+			throw TypeError::create( 2, '$start', 'integer', $start );
+		}
 
-        if (isset($tokens[$start]) === false) {
-            throw OutOfBoundsStackPtr::create(2, '$start', $start);
-        }
+		if ( \is_int( $end ) === false ) {
+			throw TypeError::create( 3, '$end', 'integer', $end );
+		}
 
-        if (isset($tokens[$end]) === false) {
-            throw OutOfBoundsStackPtr::create(3, '$end', $end);
-        }
+		if ( isset( $tokens[ $start ] ) === false ) {
+			throw OutOfBoundsStackPtr::create( 2, '$start', $start );
+		}
 
-        if ($start > $end) {
-            throw LogicException::create(
-                \sprintf('The $start token must be before the $end token. Received: $start %d, $end %d', $start, $end)
-            );
-        }
+		if ( isset( $tokens[ $end ] ) === false ) {
+			throw OutOfBoundsStackPtr::create( 3, '$end', $end );
+		}
 
-        $cacheId = "$start-$end";
-        if (Cache::isCached($phpcsFile, __METHOD__, $cacheId) === true) {
-            return Cache::get($phpcsFile, __METHOD__, $cacheId);
-        }
+		if ( $start > $end ) {
+			throw LogicException::create(
+				\sprintf( 'The $start token must be before the $end token. Received: $start %d, $end %d', $start, $end )
+			);
+		}
 
-        $targets  = self::$doubleArrowTargets;
-        $targets += Collections::closedScopes();
+		$cacheId = "$start-$end";
+		if ( Cache::isCached( $phpcsFile, __METHOD__, $cacheId ) === true ) {
+			return Cache::get( $phpcsFile, __METHOD__, $cacheId );
+		}
 
-        $doubleArrow = ($start - 1);
-        $returnValue = false;
-        ++$end;
-        do {
-            $doubleArrow = $phpcsFile->findNext(
-                $targets,
-                ($doubleArrow + 1),
-                $end
-            );
+		$targets  = self::$doubleArrowTargets;
+		$targets += Collections::closedScopes();
 
-            if ($doubleArrow === false) {
-                break;
-            }
+		$doubleArrow = ( $start - 1 );
+		$returnValue = false;
+		++$end;
+		do {
+			$doubleArrow = $phpcsFile->findNext(
+				$targets,
+				( $doubleArrow + 1 ),
+				$end
+			);
 
-            if ($tokens[$doubleArrow]['code'] === \T_DOUBLE_ARROW) {
-                $returnValue = $doubleArrow;
-                break;
-            }
+			if ( $doubleArrow === false ) {
+				break;
+			}
 
-            // Skip over closed scopes which may contain foreach structures or generators.
-            if ((isset(Collections::closedScopes()[$tokens[$doubleArrow]['code']]) === true
-                || $tokens[$doubleArrow]['code'] === \T_FN
-                || $tokens[$doubleArrow]['code'] === \T_MATCH)
-                && isset($tokens[$doubleArrow]['scope_closer']) === true
-            ) {
-                $doubleArrow = $tokens[$doubleArrow]['scope_closer'];
-                continue;
-            }
+			if ( $tokens[ $doubleArrow ]['code'] === \T_DOUBLE_ARROW ) {
+				$returnValue = $doubleArrow;
+				break;
+			}
 
-            // Skip over attributes which may contain arrays as a passed parameters.
-            if ($tokens[$doubleArrow]['code'] === \T_ATTRIBUTE
-                && isset($tokens[$doubleArrow]['attribute_closer'])
-            ) {
-                $doubleArrow = $tokens[$doubleArrow]['attribute_closer'];
-                continue;
-            }
+			// Skip over closed scopes which may contain foreach structures or generators.
+			if ( ( isset( Collections::closedScopes()[ $tokens[ $doubleArrow ]['code'] ] ) === true
+				|| $tokens[ $doubleArrow ]['code'] === \T_FN
+				|| $tokens[ $doubleArrow ]['code'] === \T_MATCH )
+				&& isset( $tokens[ $doubleArrow ]['scope_closer'] ) === true
+			) {
+				$doubleArrow = $tokens[ $doubleArrow ]['scope_closer'];
+				continue;
+			}
 
-            // Skip over potentially keyed long lists.
-            if ($tokens[$doubleArrow]['code'] === \T_LIST
-                && isset($tokens[$doubleArrow]['parenthesis_closer'])
-            ) {
-                $doubleArrow = $tokens[$doubleArrow]['parenthesis_closer'];
-                continue;
-            }
+			// Skip over attributes which may contain arrays as a passed parameters.
+			if ( $tokens[ $doubleArrow ]['code'] === \T_ATTRIBUTE
+				&& isset( $tokens[ $doubleArrow ]['attribute_closer'] )
+			) {
+				$doubleArrow = $tokens[ $doubleArrow ]['attribute_closer'];
+				continue;
+			}
 
-            // Start of nested long/short array.
-            break;
-        } while ($doubleArrow < $end);
+			// Skip over potentially keyed long lists.
+			if ( $tokens[ $doubleArrow ]['code'] === \T_LIST
+				&& isset( $tokens[ $doubleArrow ]['parenthesis_closer'] )
+			) {
+				$doubleArrow = $tokens[ $doubleArrow ]['parenthesis_closer'];
+				continue;
+			}
 
-        Cache::set($phpcsFile, __METHOD__, $cacheId, $returnValue);
-        return $returnValue;
-    }
+			// Start of nested long/short array.
+			break;
+		} while ( $doubleArrow < $end );
+
+		Cache::set( $phpcsFile, __METHOD__, $cacheId, $returnValue );
+		return $returnValue;
+	}
 }

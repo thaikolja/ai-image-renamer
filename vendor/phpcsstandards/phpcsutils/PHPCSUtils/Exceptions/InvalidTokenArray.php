@@ -17,28 +17,27 @@ use PHPCSUtils\Exceptions\RuntimeException;
  *
  * @since 1.0.0
  */
-final class InvalidTokenArray extends RuntimeException
-{
+final class InvalidTokenArray extends RuntimeException {
 
-    /**
-     * Create a new invalid token array exception with a standardized text.
-     *
-     * @since 1.0.0
-     *
-     * @param string $name The name of the token array requested.
-     *
-     * @return \PHPCSUtils\Exceptions\InvalidTokenArray
-     */
-    public static function create($name)
-    {
-        $stack = \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS, 2);
 
-        return new self(
-            \sprintf(
-                'Call to undefined method %s::%s()',
-                $stack[1]['class'],
-                $name
-            )
-        );
-    }
+	/**
+	 * Create a new invalid token array exception with a standardized text.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $name The name of the token array requested.
+	 *
+	 * @return \PHPCSUtils\Exceptions\InvalidTokenArray
+	 */
+	public static function create( $name ) {
+		$stack = \debug_backtrace( \DEBUG_BACKTRACE_IGNORE_ARGS, 2 );
+
+		return new self(
+			\sprintf(
+				'Call to undefined method %s::%s()',
+				$stack[1]['class'],
+				$name
+			)
+		);
+	}
 }

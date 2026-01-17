@@ -46,173 +46,168 @@ use PHP_CodeSniffer\Files\File;
  *
  * @since 1.0.0
  */
-final class Cache
-{
+final class Cache {
 
-    /**
-     * Whether caching is enabled or not.
-     *
-     * Note: this switch is ONLY intended for use within test suites and should never
-     * be touched in any other circumstances!
-     *
-     * Don't forget to always turn the cache back on in a `tear_down()` method!
-     *
-     * @since 1.0.0
-     *
-     * @var bool
-     */
-    public static $enabled = true;
 
-    /**
-     * Results cache.
-     *
-     * @since 1.0.0
-     *
-     * @var array<int, array<string, array<string, array<string|int, mixed>>>>
-     *            Format: $cache[$loop][$fileName][$key][$id] = mixed $value;
-     */
-    private static $cache = [];
+	/**
+	 * Whether caching is enabled or not.
+	 *
+	 * Note: this switch is ONLY intended for use within test suites and should never
+	 * be touched in any other circumstances!
+	 *
+	 * Don't forget to always turn the cache back on in a `tear_down()` method!
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var bool
+	 */
+	public static $enabled = true;
 
-    /**
-     * Check whether a result has been cached for a certain utility function.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param string                      $key       The key to identify a particular set of results.
-     *                                               It is recommended to pass __METHOD__ to this parameter.
-     * @param int|string                  $id        Unique identifier for these results.
-     *                                               Generally speaking this will be the $stackPtr passed
-     *                                               to the utility function, but it can also something else,
-     *                                               like a serialization of args passed to a function or an
-     *                                               md5 hash of an input.
-     *
-     * @return bool
-     */
-    public static function isCached(File $phpcsFile, $key, $id)
-    {
-        if (self::$enabled === false) {
-            return false;
-        }
+	/**
+	 * Results cache.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var array<int, array<string, array<string, array<string|int, mixed>>>>
+	 *            Format: $cache[$loop][$fileName][$key][$id] = mixed $value;
+	 */
+	private static $cache = array();
 
-        $fileName = $phpcsFile->getFilename();
-        $loop     = $phpcsFile->fixer->enabled === true ? $phpcsFile->fixer->loops : 0;
+	/**
+	 * Check whether a result has been cached for a certain utility function.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param string                      $key       The key to identify a particular set of results.
+	 *                                               It is recommended to pass __METHOD__ to this parameter.
+	 * @param int|string                  $id        Unique identifier for these results.
+	 *                                               Generally speaking this will be the $stackPtr passed
+	 *                                               to the utility function, but it can also something else,
+	 *                                               like a serialization of args passed to a function or an
+	 *                                               md5 hash of an input.
+	 *
+	 * @return bool
+	 */
+	public static function isCached( File $phpcsFile, $key, $id ) {
+		if ( self::$enabled === false ) {
+			return false;
+		}
 
-        return isset(self::$cache[$loop][$fileName][$key])
-            && \array_key_exists($id, self::$cache[$loop][$fileName][$key]);
-    }
+		$fileName = $phpcsFile->getFilename();
+		$loop     = $phpcsFile->fixer->enabled === true ? $phpcsFile->fixer->loops : 0;
 
-    /**
-     * Retrieve a previously cached result for a certain utility function.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param string                      $key       The key to identify a particular set of results.
-     *                                               It is recommended to pass __METHOD__ to this parameter.
-     * @param int|string                  $id        Unique identifier for these results.
-     *                                               Generally speaking this will be the $stackPtr passed
-     *                                               to the utility function, but it can also something else,
-     *                                               like a serialization of args passed to a function or an
-     *                                               md5 hash of an input.
-     *
-     * @return mixed
-     */
-    public static function get(File $phpcsFile, $key, $id)
-    {
-        if (self::$enabled === false) {
-            return null;
-        }
+		return isset( self::$cache[ $loop ][ $fileName ][ $key ] )
+			&& \array_key_exists( $id, self::$cache[ $loop ][ $fileName ][ $key ] );
+	}
 
-        $fileName = $phpcsFile->getFilename();
-        $loop     = $phpcsFile->fixer->enabled === true ? $phpcsFile->fixer->loops : 0;
+	/**
+	 * Retrieve a previously cached result for a certain utility function.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param string                      $key       The key to identify a particular set of results.
+	 *                                               It is recommended to pass __METHOD__ to this parameter.
+	 * @param int|string                  $id        Unique identifier for these results.
+	 *                                               Generally speaking this will be the $stackPtr passed
+	 *                                               to the utility function, but it can also something else,
+	 *                                               like a serialization of args passed to a function or an
+	 *                                               md5 hash of an input.
+	 *
+	 * @return mixed
+	 */
+	public static function get( File $phpcsFile, $key, $id ) {
+		if ( self::$enabled === false ) {
+			return null;
+		}
 
-        if (isset(self::$cache[$loop][$fileName][$key])
-            && \array_key_exists($id, self::$cache[$loop][$fileName][$key])
-        ) {
-            return self::$cache[$loop][$fileName][$key][$id];
-        }
+		$fileName = $phpcsFile->getFilename();
+		$loop     = $phpcsFile->fixer->enabled === true ? $phpcsFile->fixer->loops : 0;
 
-        return null;
-    }
+		if ( isset( self::$cache[ $loop ][ $fileName ][ $key ] )
+			&& \array_key_exists( $id, self::$cache[ $loop ][ $fileName ][ $key ] )
+		) {
+			return self::$cache[ $loop ][ $fileName ][ $key ][ $id ];
+		}
 
-    /**
-     * Retrieve all previously cached results for a certain utility function and a certain file.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param string                      $key       The key to identify a particular set of results.
-     *                                               It is recommended to pass __METHOD__ to this parameter.
-     *
-     * @return array<string|int, mixed>
-     */
-    public static function getForFile(File $phpcsFile, $key)
-    {
-        if (self::$enabled === false) {
-            return [];
-        }
+		return null;
+	}
 
-        $fileName = $phpcsFile->getFilename();
-        $loop     = $phpcsFile->fixer->enabled === true ? $phpcsFile->fixer->loops : 0;
+	/**
+	 * Retrieve all previously cached results for a certain utility function and a certain file.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param string                      $key       The key to identify a particular set of results.
+	 *                                               It is recommended to pass __METHOD__ to this parameter.
+	 *
+	 * @return array<string|int, mixed>
+	 */
+	public static function getForFile( File $phpcsFile, $key ) {
+		if ( self::$enabled === false ) {
+			return array();
+		}
 
-        if (isset(self::$cache[$loop][$fileName])
-            && \array_key_exists($key, self::$cache[$loop][$fileName])
-        ) {
-            return self::$cache[$loop][$fileName][$key];
-        }
+		$fileName = $phpcsFile->getFilename();
+		$loop     = $phpcsFile->fixer->enabled === true ? $phpcsFile->fixer->loops : 0;
 
-        return [];
-    }
+		if ( isset( self::$cache[ $loop ][ $fileName ] )
+			&& \array_key_exists( $key, self::$cache[ $loop ][ $fileName ] )
+		) {
+			return self::$cache[ $loop ][ $fileName ][ $key ];
+		}
 
-    /**
-     * Cache the result for a certain utility function.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param string                      $key       The key to identify a particular set of results.
-     *                                               It is recommended to pass __METHOD__ to this parameter.
-     * @param int|string                  $id        Unique identifier for these results.
-     *                                               Generally speaking this will be the $stackPtr passed
-     *                                               to the utility function, but it can also something else,
-     *                                               like a serialization of args passed to a function or an
-     *                                               md5 hash of an input.
-     * @param mixed                       $value     An arbitrary value to write to the cache.
-     *
-     * @return mixed
-     */
-    public static function set(File $phpcsFile, $key, $id, $value)
-    {
-        if (self::$enabled === false) {
-            return;
-        }
+		return array();
+	}
 
-        $fileName = $phpcsFile->getFilename();
-        $loop     = $phpcsFile->fixer->enabled === true ? $phpcsFile->fixer->loops : 0;
+	/**
+	 * Cache the result for a certain utility function.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param string                      $key       The key to identify a particular set of results.
+	 *                                               It is recommended to pass __METHOD__ to this parameter.
+	 * @param int|string                  $id        Unique identifier for these results.
+	 *                                               Generally speaking this will be the $stackPtr passed
+	 *                                               to the utility function, but it can also something else,
+	 *                                               like a serialization of args passed to a function or an
+	 *                                               md5 hash of an input.
+	 * @param mixed                       $value     An arbitrary value to write to the cache.
+	 *
+	 * @return mixed
+	 */
+	public static function set( File $phpcsFile, $key, $id, $value ) {
+		if ( self::$enabled === false ) {
+			return;
+		}
 
-        /*
-         * If this is a phpcbf run and we've reached the next loop, clear the cache
-         * of all previous loops to free up memory.
-         */
-        if (isset(self::$cache[$loop]) === false
-            && empty(self::$cache) === false
-        ) {
-            self::clear();
-        }
+		$fileName = $phpcsFile->getFilename();
+		$loop     = $phpcsFile->fixer->enabled === true ? $phpcsFile->fixer->loops : 0;
 
-        self::$cache[$loop][$fileName][$key][$id] = $value;
-    }
+		/*
+		 * If this is a phpcbf run and we've reached the next loop, clear the cache
+		 * of all previous loops to free up memory.
+		 */
+		if ( isset( self::$cache[ $loop ] ) === false
+			&& empty( self::$cache ) === false
+		) {
+			self::clear();
+		}
 
-    /**
-     * Clear the cache.
-     *
-     * @since 1.0.0
-     *
-     * @return void
-     */
-    public static function clear()
-    {
-        self::$cache = [];
-    }
+		self::$cache[ $loop ][ $fileName ][ $key ][ $id ] = $value;
+	}
+
+	/**
+	 * Clear the cache.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public static function clear() {
+		self::$cache = array();
+	}
 }

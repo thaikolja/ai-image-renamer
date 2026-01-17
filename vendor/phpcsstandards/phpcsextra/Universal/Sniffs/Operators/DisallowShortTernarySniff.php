@@ -23,54 +23,52 @@ use PHPCSUtils\Utils\Operators;
  *
  * @since 1.0.0
  */
-final class DisallowShortTernarySniff implements Sniff
-{
+final class DisallowShortTernarySniff implements Sniff {
 
-    /**
-     * Name of the metric.
-     *
-     * @since 1.0.0
-     *
-     * @var string
-     */
-    const METRIC_NAME = 'Ternary usage';
 
-    /**
-     * Registers the tokens that this sniff wants to listen for.
-     *
-     * @since 1.0.0
-     *
-     * @return array<int|string>
-     */
-    public function register()
-    {
-        return [\T_INLINE_THEN];
-    }
+	/**
+	 * Name of the metric.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @var string
+	 */
+	const METRIC_NAME = 'Ternary usage';
 
-    /**
-     * Processes this test, when one of its tokens is encountered.
-     *
-     * @since 1.0.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token
-     *                                               in the stack passed in $tokens.
-     *
-     * @return void
-     */
-    public function process(File $phpcsFile, $stackPtr)
-    {
-        if (Operators::isShortTernary($phpcsFile, $stackPtr) === false) {
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'long');
-            return;
-        }
+	/**
+	 * Registers the tokens that this sniff wants to listen for.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array<int|string>
+	 */
+	public function register() {
+		return array( \T_INLINE_THEN );
+	}
 
-        $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'short');
+	/**
+	 * Processes this test, when one of its tokens is encountered.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token
+	 *                                               in the stack passed in $tokens.
+	 *
+	 * @return void
+	 */
+	public function process( File $phpcsFile, $stackPtr ) {
+		if ( Operators::isShortTernary( $phpcsFile, $stackPtr ) === false ) {
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'long' );
+			return;
+		}
 
-        $phpcsFile->addError(
-            'Using short ternaries is not allowed as they are rarely used correctly',
-            $stackPtr,
-            'Found'
-        );
-    }
+		$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'short' );
+
+		$phpcsFile->addError(
+			'Using short ternaries is not allowed as they are rarely used correctly',
+			$stackPtr,
+			'Found'
+		);
+	}
 }

@@ -24,77 +24,67 @@ use Twig\TwigTest;
  *
  * @internal
  */
-final class StagingExtension extends AbstractExtension
-{
-    private $functions = [];
-    private $filters = [];
-    private $visitors = [];
-    private $tokenParsers = [];
-    private $tests = [];
+final class StagingExtension extends AbstractExtension {
 
-    public function addFunction(TwigFunction $function): void
-    {
-        if (isset($this->functions[$function->getName()])) {
-            throw new \LogicException(\sprintf('Function "%s" is already registered.', $function->getName()));
-        }
+	private $functions    = array();
+	private $filters      = array();
+	private $visitors     = array();
+	private $tokenParsers = array();
+	private $tests        = array();
 
-        $this->functions[$function->getName()] = $function;
-    }
+	public function addFunction( TwigFunction $function ): void {
+		if ( isset( $this->functions[ $function->getName() ] ) ) {
+			throw new \LogicException( \sprintf( 'Function "%s" is already registered.', $function->getName() ) );
+		}
 
-    public function getFunctions(): array
-    {
-        return $this->functions;
-    }
+		$this->functions[ $function->getName() ] = $function;
+	}
 
-    public function addFilter(TwigFilter $filter): void
-    {
-        if (isset($this->filters[$filter->getName()])) {
-            throw new \LogicException(\sprintf('Filter "%s" is already registered.', $filter->getName()));
-        }
+	public function getFunctions(): array {
+		return $this->functions;
+	}
 
-        $this->filters[$filter->getName()] = $filter;
-    }
+	public function addFilter( TwigFilter $filter ): void {
+		if ( isset( $this->filters[ $filter->getName() ] ) ) {
+			throw new \LogicException( \sprintf( 'Filter "%s" is already registered.', $filter->getName() ) );
+		}
 
-    public function getFilters(): array
-    {
-        return $this->filters;
-    }
+		$this->filters[ $filter->getName() ] = $filter;
+	}
 
-    public function addNodeVisitor(NodeVisitorInterface $visitor): void
-    {
-        $this->visitors[] = $visitor;
-    }
+	public function getFilters(): array {
+		return $this->filters;
+	}
 
-    public function getNodeVisitors(): array
-    {
-        return $this->visitors;
-    }
+	public function addNodeVisitor( NodeVisitorInterface $visitor ): void {
+		$this->visitors[] = $visitor;
+	}
 
-    public function addTokenParser(TokenParserInterface $parser): void
-    {
-        if (isset($this->tokenParsers[$parser->getTag()])) {
-            throw new \LogicException(\sprintf('Tag "%s" is already registered.', $parser->getTag()));
-        }
+	public function getNodeVisitors(): array {
+		return $this->visitors;
+	}
 
-        $this->tokenParsers[$parser->getTag()] = $parser;
-    }
+	public function addTokenParser( TokenParserInterface $parser ): void {
+		if ( isset( $this->tokenParsers[ $parser->getTag() ] ) ) {
+			throw new \LogicException( \sprintf( 'Tag "%s" is already registered.', $parser->getTag() ) );
+		}
 
-    public function getTokenParsers(): array
-    {
-        return $this->tokenParsers;
-    }
+		$this->tokenParsers[ $parser->getTag() ] = $parser;
+	}
 
-    public function addTest(TwigTest $test): void
-    {
-        if (isset($this->tests[$test->getName()])) {
-            throw new \LogicException(\sprintf('Test "%s" is already registered.', $test->getName()));
-        }
+	public function getTokenParsers(): array {
+		return $this->tokenParsers;
+	}
 
-        $this->tests[$test->getName()] = $test;
-    }
+	public function addTest( TwigTest $test ): void {
+		if ( isset( $this->tests[ $test->getName() ] ) ) {
+			throw new \LogicException( \sprintf( 'Test "%s" is already registered.', $test->getName() ) );
+		}
 
-    public function getTests(): array
-    {
-        return $this->tests;
-    }
+		$this->tests[ $test->getName() ] = $test;
+	}
+
+	public function getTests(): array {
+		return $this->tests;
+	}
 }

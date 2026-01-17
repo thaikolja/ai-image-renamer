@@ -56,18 +56,24 @@ define( 'AIR_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 if ( file_exists( AIR_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
 	require_once AIR_PLUGIN_DIR . 'vendor/autoload.php';
 } else {
-	add_action( 'admin_notices', function () {
-		echo '<div class="notice notice-error"><p>';
-		esc_html_e( 'AI Image Renamer: Composer dependencies not installed. Please run "composer install" in the plugin directory.', 'ai-image-renamer' );
-		echo '</p></div>';
-	} );
+	add_action(
+		'admin_notices',
+		function () {
+			echo '<div class="notice notice-error"><p>';
+			esc_html_e( 'AI Image Renamer: Composer dependencies not installed. Please run "composer install" in the plugin directory.', 'ai-image-renamer' );
+			echo '</p></div>';
+		}
+	);
 
 	return;
 }
 
 // Bootstrap the plugin.
-add_action( 'plugins_loaded', function () {
-	load_plugin_textdomain( 'ai-image-renamer', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-	$plugin = new Plugin();
-	$plugin->init();
-} );
+add_action(
+	'plugins_loaded',
+	function () {
+		load_plugin_textdomain( 'ai-image-renamer', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+		$plugin = new Plugin();
+		$plugin->init();
+	}
+);

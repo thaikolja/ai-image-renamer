@@ -32,44 +32,49 @@ use Twig\Token;
  *
  * @internal
  */
-final class UseTokenParser extends AbstractTokenParser
-{
-    public function parse(Token $token): Node
-    {
-        $template = $this->parser->parseExpression();
-        $stream = $this->parser->getStream();
+final class UseTokenParser extends AbstractTokenParser {
 
-        if (!$template instanceof ConstantExpression) {
-            throw new SyntaxError('The template references in a "use" statement must be a string.', $stream->getCurrent()->getLine(), $stream->getSourceContext());
-        }
+	public function parse( Token $token ): Node {
+		$template = $this->parser->parseExpression();
+		$stream   = $this->parser->getStream();
 
-        $targets = [];
-        if ($stream->nextIf('with')) {
-            while (true) {
-                $name = $stream->expect(Token::NAME_TYPE)->getValue();
+		if ( ! $template instanceof ConstantExpression ) {
+			throw new SyntaxError( 'The template references in a "use" statement must be a string.', $stream->getCurrent()->getLine(), $stream->getSourceContext() );
+		}
 
-                $alias = $name;
-                if ($stream->nextIf('as')) {
-                    $alias = $stream->expect(Token::NAME_TYPE)->getValue();
-                }
+		$targets = array();
+		if ( $stream->nextIf( 'with' ) ) {
+			while ( true ) {
+				$name = $stream->expect( Token::NAME_TYPE )->getValue();
 
-                $targets[$name] = new ConstantExpression($alias, -1);
+				$alias = $name;
+				if ( $stream->nextIf( 'as' ) ) {
+					$alias = $stream->expect( Token::NAME_TYPE )->getValue();
+				}
 
-                if (!$stream->nextIf(Token::PUNCTUATION_TYPE, ',')) {
-                    break;
-                }
-            }
-        }
+				$targets[ $name ] = new ConstantExpression( $alias, -1 );
 
-        $stream->expect(Token::BLOCK_END_TYPE);
+				if ( ! $stream->nextIf( Token::PUNCTUATION_TYPE, ',' ) ) {
+					break;
+				}
+			}
+		}
 
-        $this->parser->addTrait(new Nodes(['template' => $template, 'targets' => new Nodes($targets)]));
+		$stream->expect( Token::BLOCK_END_TYPE );
 
-        return new EmptyNode($token->getLine());
-    }
+		$this->parser->addTrait(
+			new Nodes(
+				array(
+					'template' => $template,
+					'targets'  => new Nodes( $targets ),
+				)
+			)
+		);
 
-    public function getTag(): string
-    {
-        return 'use';
-    }
+		return new EmptyNode( $token->getLine() );
+	}
+
+	public function getTag(): string {
+		return 'use';
+	}
 }

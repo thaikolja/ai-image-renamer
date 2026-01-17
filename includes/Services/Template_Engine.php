@@ -42,8 +42,6 @@ use Twig\TwigFunction;
  */
 class Template_Engine
 {
-
-
 	/**
 	 * Twig environment instance.
 	 *
@@ -92,14 +90,41 @@ class Template_Engine
 			$cache_path = false;
 		}
 
-		$loader = new FilesystemLoader($views_path);
+		/**
+		 * Filter the template paths for Twig.
+		 * Pro can prepend its own views directory to override templates.
+		 * First path in the array takes precedence.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param array $paths Array of absolute paths to template directories.
+		 */
+		$template_paths = \apply_filters('air_template_paths', [$views_path]);
 
-		$this->twig = new Environment($loader, [
-			'cache'       => (WP_DEBUG || false === $cache_path) ? false : $cache_path,
-			'auto_reload' => true,
-			'debug'       => WP_DEBUG,
-			'autoescape'  => 'html', // Enable auto-escaping for security
-		]);
+		// Validate and filter paths - only include existing directories.
+		$valid_paths = [];
+		foreach ($template_paths as $path) {
+			if (\is_string($path) && \is_dir($path)) {
+				$valid_paths[] = $path;
+			}
+		}
+
+		// Ensure we always have at least the core views path.
+		if (empty($valid_paths)) {
+			$valid_paths = [$views_path];
+		}
+
+		$loader = new FilesystemLoader($valid_paths);
+
+		$this->twig = new Environment(
+			$loader,
+			[
+				'cache'       => (WP_DEBUG || false === $cache_path) ? false : $cache_path,
+				'auto_reload' => true,
+				'debug'       => WP_DEBUG,
+				'autoescape'  => 'html', // Enable auto-escaping for security
+			]
+		);
 
 		// Add WordPress-specific globals and functions.
 		$this->register_globals();
@@ -125,44 +150,79 @@ class Template_Engine
 	private function register_functions(): void
 	{
 		// WordPress translation functions.
-		$this->twig->addFunction(new TwigFunction('__', function (string $text, string $domain = 'ai-image-renamer'): string {
-			return \__($text, $domain); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
-		}));
+		$this->twig->addFunction(
+			new TwigFunction(
+				'__',
+				function (string $text, string $domain = 'ai-image-renamer'): string {
+					return \__($text, $domain); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
+				}
+			)
+		);
 
-		$this->twig->addFunction(new TwigFunction('esc_html', function (string $text): string {
-			return \esc_html($text);
-		}));
+		$this->twig->addFunction(
+			new TwigFunction(
+				'esc_html',
+				function (string $text): string {
+					return \esc_html($text);
+				}
+			)
+		);
 
-		$this->twig->addFunction(new TwigFunction('esc_attr', function (string $text): string {
-			return \esc_attr($text);
-		}));
+		$this->twig->addFunction(
+			new TwigFunction(
+				'esc_attr',
+				function (string $text): string {
+					return \esc_attr($text);
+				}
+			)
+		);
 
-		$this->twig->addFunction(new TwigFunction('wp_nonce_field', function (string $action, string $name = '_wpnonce', bool $referer = true, bool $echo = false): string {
-			return \wp_nonce_field($action, $name, $referer, $echo);
-		}));
+		$this->twig->addFunction(
+			new TwigFunction(
+				'wp_nonce_field',
+				function (string $action, string $name = '_wpnonce', bool $referer = true, bool $echo = false): string {
+					return \wp_nonce_field($action, $name, $referer, $echo);
+				}
+			)
+		);
 
-		$this->twig->addFunction(new TwigFunction('settings_fields', function (string $option_group): void {
-			\settings_fields($option_group);
-		}));
+		$this->twig->addFunction(
+			new TwigFunction(
+				'settings_fields',
+				function (string $option_group): void {
+					\settings_fields($option_group);
+				}
+			)
+		);
 
-		$this->twig->addFunction(new TwigFunction('do_settings_sections', function (string $page): void {
-			\do_settings_sections($page);
-		}));
+		$this->twig->addFunction(
+			new TwigFunction(
+				'do_settings_sections',
+				function (string $page): void {
+					\do_settings_sections($page);
+				}
+			)
+		);
 
-		$this->twig->addFunction(new TwigFunction('submit_button', function (string $text = '', string $type = 'primary', string $name = 'submit', bool $wrap = true, $other_attributes = null): void {
-			\submit_button($text, $type, $name, $wrap, $other_attributes);
-		}));
+		$this->twig->addFunction(
+			new TwigFunction(
+				'submit_button',
+				function (string $text = '', string $type = 'primary', string $name = 'submit', bool $wrap = true, $other_attributes = null): void {
+					\submit_button($text, $type, $name, $wrap, $other_attributes);
+				}
+			)
+		);
 	}
 
 	/**
 	 * Render a Twig template.
 	 *
-	 * @param  string  $template  The template filename (relative to views/).
-	 * @param  array   $context   Variables to pass to the template.
+	 * @param  string $template  The template filename (relative to views/).
+	 * @param  array  $context   Variables to pass to the template.
 	 *
 	 * @return string The rendered HTML.
 	 */
-	final public function render(string $template, array $context = []): string
+	final public function render(string $template, array $context = array()): string
 	{
 		try {
 			return $this->twig->render($template, $context);

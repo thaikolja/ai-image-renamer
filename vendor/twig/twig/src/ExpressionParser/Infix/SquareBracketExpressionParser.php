@@ -27,65 +27,60 @@ use Twig\Token;
 /**
  * @internal
  */
-final class SquareBracketExpressionParser extends AbstractExpressionParser implements InfixExpressionParserInterface, ExpressionParserDescriptionInterface
-{
-    public function parse(Parser $parser, AbstractExpression $expr, Token $token): AbstractExpression
-    {
-        $stream = $parser->getStream();
-        $lineno = $token->getLine();
-        $arguments = new ArrayExpression([], $lineno);
+final class SquareBracketExpressionParser extends AbstractExpressionParser implements InfixExpressionParserInterface, ExpressionParserDescriptionInterface {
 
-        // slice?
-        $slice = false;
-        if ($stream->test(Token::PUNCTUATION_TYPE, ':')) {
-            $slice = true;
-            $attribute = new ConstantExpression(0, $token->getLine());
-        } else {
-            $attribute = $parser->parseExpression();
-        }
+	public function parse( Parser $parser, AbstractExpression $expr, Token $token ): AbstractExpression {
+		$stream    = $parser->getStream();
+		$lineno    = $token->getLine();
+		$arguments = new ArrayExpression( array(), $lineno );
 
-        if ($stream->nextIf(Token::PUNCTUATION_TYPE, ':')) {
-            $slice = true;
-        }
+		// slice?
+		$slice = false;
+		if ( $stream->test( Token::PUNCTUATION_TYPE, ':' ) ) {
+			$slice     = true;
+			$attribute = new ConstantExpression( 0, $token->getLine() );
+		} else {
+			$attribute = $parser->parseExpression();
+		}
 
-        if ($slice) {
-            if ($stream->test(Token::PUNCTUATION_TYPE, ']')) {
-                $length = new ConstantExpression(null, $token->getLine());
-            } else {
-                $length = $parser->parseExpression();
-            }
+		if ( $stream->nextIf( Token::PUNCTUATION_TYPE, ':' ) ) {
+			$slice = true;
+		}
 
-            $filter = $parser->getFilter('slice', $token->getLine());
-            $arguments = new Nodes([$attribute, $length]);
-            $filter = new ($filter->getNodeClass())($expr, $filter, $arguments, $token->getLine());
+		if ( $slice ) {
+			if ( $stream->test( Token::PUNCTUATION_TYPE, ']' ) ) {
+				$length = new ConstantExpression( null, $token->getLine() );
+			} else {
+				$length = $parser->parseExpression();
+			}
 
-            $stream->expect(Token::PUNCTUATION_TYPE, ']');
+			$filter    = $parser->getFilter( 'slice', $token->getLine() );
+			$arguments = new Nodes( array( $attribute, $length ) );
+			$filter    = new ( $filter->getNodeClass() )( $expr, $filter, $arguments, $token->getLine() );
 
-            return $filter;
-        }
+			$stream->expect( Token::PUNCTUATION_TYPE, ']' );
 
-        $stream->expect(Token::PUNCTUATION_TYPE, ']');
+			return $filter;
+		}
 
-        return new GetAttrExpression($expr, $attribute, $arguments, Template::ARRAY_CALL, $lineno);
-    }
+		$stream->expect( Token::PUNCTUATION_TYPE, ']' );
 
-    public function getName(): string
-    {
-        return '[';
-    }
+		return new GetAttrExpression( $expr, $attribute, $arguments, Template::ARRAY_CALL, $lineno );
+	}
 
-    public function getDescription(): string
-    {
-        return 'Array access';
-    }
+	public function getName(): string {
+		return '[';
+	}
 
-    public function getPrecedence(): int
-    {
-        return 512;
-    }
+	public function getDescription(): string {
+		return 'Array access';
+	}
 
-    public function getAssociativity(): InfixAssociativity
-    {
-        return InfixAssociativity::Left;
-    }
+	public function getPrecedence(): int {
+		return 512;
+	}
+
+	public function getAssociativity(): InfixAssociativity {
+		return InfixAssociativity::Left;
+	}
 }

@@ -21,100 +21,98 @@ use PHPCSUtils\Utils\Scopes;
  *
  * @since 1.1.0
  */
-final class RequireFinalMethodsInTraitsSniff implements Sniff
-{
+final class RequireFinalMethodsInTraitsSniff implements Sniff {
 
-    /**
-     * Name of the metric.
-     *
-     * @since 1.1.0
-     *
-     * @var string
-     */
-    const METRIC_NAME = 'Non-private method in trait is abstract or final ?';
 
-    /**
-     * Returns an array of tokens this test wants to listen for.
-     *
-     * @since 1.1.0
-     *
-     * @return array<int|string>
-     */
-    public function register()
-    {
-        return [\T_FUNCTION];
-    }
+	/**
+	 * Name of the metric.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @var string
+	 */
+	const METRIC_NAME = 'Non-private method in trait is abstract or final ?';
 
-    /**
-     * Processes this test, when one of its tokens is encountered.
-     *
-     * @since 1.1.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token
-     *                                               in the stack passed in $tokens.
-     *
-     * @return void
-     */
-    public function process(File $phpcsFile, $stackPtr)
-    {
-        $tokens = $phpcsFile->getTokens();
-        if (isset($tokens[$stackPtr]['parenthesis_opener']) === false) {
-            // Parse error/live coding.
-            return;
-        }
+	/**
+	 * Returns an array of tokens this test wants to listen for.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return array<int|string>
+	 */
+	public function register() {
+		return array( \T_FUNCTION );
+	}
 
-        $scopePtr = Scopes::validDirectScope($phpcsFile, $stackPtr, \T_TRAIT);
-        if ($scopePtr === false) {
-            // Not a trait method.
-            return;
-        }
+	/**
+	 * Processes this test, when one of its tokens is encountered.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token
+	 *                                               in the stack passed in $tokens.
+	 *
+	 * @return void
+	 */
+	public function process( File $phpcsFile, $stackPtr ) {
+		$tokens = $phpcsFile->getTokens();
+		if ( isset( $tokens[ $stackPtr ]['parenthesis_opener'] ) === false ) {
+			// Parse error/live coding.
+			return;
+		}
 
-        $methodProps = FunctionDeclarations::getProperties($phpcsFile, $stackPtr);
-        if ($methodProps['scope'] === 'private') {
-            // Private methods can't be final.
-            return;
-        }
+		$scopePtr = Scopes::validDirectScope( $phpcsFile, $stackPtr, \T_TRAIT );
+		if ( $scopePtr === false ) {
+			// Not a trait method.
+			return;
+		}
 
-        if ($methodProps['is_final'] === true) {
-            // Already final, nothing to do.
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'final');
-            return;
-        }
+		$methodProps = FunctionDeclarations::getProperties( $phpcsFile, $stackPtr );
+		if ( $methodProps['scope'] === 'private' ) {
+			// Private methods can't be final.
+			return;
+		}
 
-        if ($methodProps['is_abstract'] === true) {
-            // Abstract classes can't be final.
-            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'abstract');
-            return;
-        }
+		if ( $methodProps['is_final'] === true ) {
+			// Already final, nothing to do.
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'final' );
+			return;
+		}
 
-        $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'not abstract, not final');
+		if ( $methodProps['is_abstract'] === true ) {
+			// Abstract classes can't be final.
+			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'abstract' );
+			return;
+		}
 
-        $methodName = FunctionDeclarations::getName($phpcsFile, $stackPtr);
-        $magic      = '';
-        $code       = 'NonFinalMethodFound';
-        if (FunctionDeclarations::isMagicMethodName($methodName) === true) {
-            // Use separate error code for magic methods.
-            $magic = 'magic ';
-            $code  = 'NonFinalMagicMethodFound';
-        }
+		$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'not abstract, not final' );
 
-        $data = [
-            $methodProps['scope'],
-            $magic,
-            $methodName,
-            ObjectDeclarations::getName($phpcsFile, $scopePtr),
-        ];
+		$methodName = FunctionDeclarations::getName( $phpcsFile, $stackPtr );
+		$magic      = '';
+		$code       = 'NonFinalMethodFound';
+		if ( FunctionDeclarations::isMagicMethodName( $methodName ) === true ) {
+			// Use separate error code for magic methods.
+			$magic = 'magic ';
+			$code  = 'NonFinalMagicMethodFound';
+		}
 
-        $fix = $phpcsFile->addFixableError(
-            'The non-abstract, %s %smethod "%s()" in trait %s should be declared as final.',
-            $stackPtr,
-            $code,
-            $data
-        );
+		$data = array(
+			$methodProps['scope'],
+			$magic,
+			$methodName,
+			ObjectDeclarations::getName( $phpcsFile, $scopePtr ),
+		);
 
-        if ($fix === true) {
-            $phpcsFile->fixer->addContentBefore($stackPtr, 'final ');
-        }
-    }
+		$fix = $phpcsFile->addFixableError(
+			'The non-abstract, %s %smethod "%s()" in trait %s should be declared as final.',
+			$stackPtr,
+			$code,
+			$data
+		);
+
+		if ( $fix === true ) {
+			$phpcsFile->fixer->addContentBefore( $stackPtr, 'final ' );
+		}
+	}
 }

@@ -14,40 +14,40 @@ namespace Twig;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  */
-interface TwigCallableInterface extends \Stringable
-{
-    public function getName(): string;
+interface TwigCallableInterface extends \Stringable {
 
-    public function getType(): string;
+	public function getName(): string;
 
-    public function getDynamicName(): string;
+	public function getType(): string;
 
-    /**
-     * @return callable|array{class-string, string}|null
-     */
-    public function getCallable();
+	public function getDynamicName(): string;
 
-    public function getNodeClass(): string;
+	/**
+	 * @return callable|array{class-string, string}|null
+	 */
+	public function getCallable();
 
-    public function needsCharset(): bool;
+	public function getNodeClass(): string;
 
-    public function needsEnvironment(): bool;
+	public function needsCharset(): bool;
 
-    public function needsContext(): bool;
+	public function needsEnvironment(): bool;
 
-    public function withDynamicArguments(string $name, string $dynamicName, array $arguments): self;
+	public function needsContext(): bool;
 
-    public function getArguments(): array;
+	public function withDynamicArguments( string $name, string $dynamicName, array $arguments ): self;
 
-    public function isVariadic(): bool;
+	public function getArguments(): array;
 
-    public function isDeprecated(): bool;
+	public function isVariadic(): bool;
 
-    public function getDeprecatingPackage(): string;
+	public function isDeprecated(): bool;
 
-    public function getDeprecatedVersion(): string;
+	public function getDeprecatingPackage(): string;
 
-    public function getAlternative(): ?string;
+	public function getDeprecatedVersion(): string;
 
-    public function getMinimalNumberOfRequiredArguments(): int;
+	public function getAlternative(): ?string;
+
+	public function getMinimalNumberOfRequiredArguments(): int;
 }

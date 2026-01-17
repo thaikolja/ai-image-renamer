@@ -19,215 +19,213 @@ use PHP_CodeSniffer\Util\Tokens;
  *
  * @since 1.1.0
  */
-final class NoLongClosuresSniff implements Sniff
-{
+final class NoLongClosuresSniff implements Sniff {
 
-    /**
-     * Name of the metric.
-     *
-     * @since 1.1.0
-     *
-     * @var string
-     */
-    const METRIC_NAME_CODE = 'Closure length (code only)';
 
-    /**
-     * Name of the metric.
-     *
-     * @since 1.1.0
-     *
-     * @var string
-     */
-    const METRIC_NAME_COMMENTS = 'Closure length (code + comments)';
+	/**
+	 * Name of the metric.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @var string
+	 */
+	const METRIC_NAME_CODE = 'Closure length (code only)';
 
-    /**
-     * Name of the metric.
-     *
-     * @since 1.1.0
-     *
-     * @var string
-     */
-    const METRIC_NAME_ALL = 'Closure length (code + comments + blank lines)';
+	/**
+	 * Name of the metric.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @var string
+	 */
+	const METRIC_NAME_COMMENTS = 'Closure length (code + comments)';
 
-    /**
-     * Maximum number of lines allowed before a closure is considered a "long" closure.
-     *
-     * Defaults to 5 lines, i.e. when a closure contains 6 lines, a warning will be thrown.
-     *
-     * @since 1.1.0
-     *
-     * @var int
-     */
-    public $recommendedLines = 5;
+	/**
+	 * Name of the metric.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @var string
+	 */
+	const METRIC_NAME_ALL = 'Closure length (code + comments + blank lines)';
 
-    /**
-     * Maximum number of lines allowed before a closure is considered a "long" closure.
-     *
-     * Defaults to 8 lines, i.e. when a closure contains 9 lines, an error will be thrown.
-     *
-     * @since 1.1.0
-     *
-     * @var int
-     */
-    public $maxLines = 8;
+	/**
+	 * Maximum number of lines allowed before a closure is considered a "long" closure.
+	 *
+	 * Defaults to 5 lines, i.e. when a closure contains 6 lines, a warning will be thrown.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @var int
+	 */
+	public $recommendedLines = 5;
 
-    /**
-     * Whether or not to exclude lines which only contain documentation in the line count.
-     *
-     * Defaults to `true`.
-     *
-     * @since 1.1.0
-     *
-     * @var bool
-     */
-    public $ignoreCommentLines = true;
+	/**
+	 * Maximum number of lines allowed before a closure is considered a "long" closure.
+	 *
+	 * Defaults to 8 lines, i.e. when a closure contains 9 lines, an error will be thrown.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @var int
+	 */
+	public $maxLines = 8;
 
-    /**
-     * Whether or not to exclude empty lines from the line count.
-     *
-     * Defaults to `true`.
-     *
-     * @since 1.1.0
-     *
-     * @var bool
-     */
-    public $ignoreEmptyLines = true;
+	/**
+	 * Whether or not to exclude lines which only contain documentation in the line count.
+	 *
+	 * Defaults to `true`.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @var bool
+	 */
+	public $ignoreCommentLines = true;
 
-    /**
-     * Returns an array of tokens this test wants to listen for.
-     *
-     * @since 1.1.0
-     *
-     * @return array<int|string>
-     */
-    public function register()
-    {
-        return [\T_CLOSURE];
-    }
+	/**
+	 * Whether or not to exclude empty lines from the line count.
+	 *
+	 * Defaults to `true`.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @var bool
+	 */
+	public $ignoreEmptyLines = true;
 
-    /**
-     * Processes this test, when one of its tokens is encountered.
-     *
-     * @since 1.1.0
-     *
-     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-     * @param int                         $stackPtr  The position of the current token
-     *                                               in the stack passed in $tokens.
-     *
-     * @return void
-     */
-    public function process(File $phpcsFile, $stackPtr)
-    {
-        $this->recommendedLines = (int) $this->recommendedLines;
-        $this->maxLines         = (int) $this->maxLines;
+	/**
+	 * Returns an array of tokens this test wants to listen for.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @return array<int|string>
+	 */
+	public function register() {
+		return array( \T_CLOSURE );
+	}
 
-        $tokens = $phpcsFile->getTokens();
+	/**
+	 * Processes this test, when one of its tokens is encountered.
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+	 * @param int                         $stackPtr  The position of the current token
+	 *                                               in the stack passed in $tokens.
+	 *
+	 * @return void
+	 */
+	public function process( File $phpcsFile, $stackPtr ) {
+		$this->recommendedLines = (int) $this->recommendedLines;
+		$this->maxLines         = (int) $this->maxLines;
 
-        if (isset($tokens[$stackPtr]['scope_opener'], $tokens[$stackPtr]['scope_closer']) === false) {
-            // Live coding/parse error. Shouldn't be possible as in that case tokenizer won't retokenize to T_CLOSURE.
-            return; // @codeCoverageIgnore
-        }
+		$tokens = $phpcsFile->getTokens();
 
-        $opener = $tokens[$stackPtr]['scope_opener'];
-        $closer = $tokens[$stackPtr]['scope_closer'];
+		if ( isset( $tokens[ $stackPtr ]['scope_opener'], $tokens[ $stackPtr ]['scope_closer'] ) === false ) {
+			// Live coding/parse error. Shouldn't be possible as in that case tokenizer won't retokenize to T_CLOSURE.
+			return; // @codeCoverageIgnore
+		}
 
-        $currentLine = $tokens[$opener]['line'];
-        $closerLine  = $tokens[$closer]['line'];
+		$opener = $tokens[ $stackPtr ]['scope_opener'];
+		$closer = $tokens[ $stackPtr ]['scope_closer'];
 
-        $codeLines    = 0;
-        $commentLines = 0;
-        $blankLines   = 0;
+		$currentLine = $tokens[ $opener ]['line'];
+		$closerLine  = $tokens[ $closer ]['line'];
 
-        // Check whether the line of the scope opener needs to be counted, but ignore trailing comments on that line.
-        $firstNonEmpty = $phpcsFile->findNext(Tokens::$emptyTokens, ($opener + 1), $closer, true);
-        if ($firstNonEmpty !== false && $tokens[$firstNonEmpty]['line'] === $currentLine) {
-            ++$codeLines;
-        }
+		$codeLines    = 0;
+		$commentLines = 0;
+		$blankLines   = 0;
 
-        // Check whether the line of the scope closer needs to be counted.
-        if ($closerLine !== $currentLine) {
-            $hasCommentTokens = false;
-            $hasCodeTokens    = false;
-            for ($i = ($closer - 1); $tokens[$i]['line'] === $closerLine && $i > $opener; $i--) {
-                if (isset(Tokens::$emptyTokens[$tokens[$i]['code']]) === false) {
-                    $hasCodeTokens = true;
-                } elseif (isset(Tokens::$commentTokens[$tokens[$i]['code']]) === true) {
-                    $hasCommentTokens = true;
-                }
-            }
+		// Check whether the line of the scope opener needs to be counted, but ignore trailing comments on that line.
+		$firstNonEmpty = $phpcsFile->findNext( Tokens::$emptyTokens, ( $opener + 1 ), $closer, true );
+		if ( $firstNonEmpty !== false && $tokens[ $firstNonEmpty ]['line'] === $currentLine ) {
+			++$codeLines;
+		}
 
-            if ($hasCodeTokens === true) {
-                ++$codeLines;
-            } elseif ($hasCommentTokens === true) {
-                ++$commentLines;
-            }
-        }
+		// Check whether the line of the scope closer needs to be counted.
+		if ( $closerLine !== $currentLine ) {
+			$hasCommentTokens = false;
+			$hasCodeTokens    = false;
+			for ( $i = ( $closer - 1 ); $tokens[ $i ]['line'] === $closerLine && $i > $opener; $i-- ) {
+				if ( isset( Tokens::$emptyTokens[ $tokens[ $i ]['code'] ] ) === false ) {
+					$hasCodeTokens = true;
+				} elseif ( isset( Tokens::$commentTokens[ $tokens[ $i ]['code'] ] ) === true ) {
+					$hasCommentTokens = true;
+				}
+			}
 
-        // We've already examined the opener line, so move to the next line.
-        for ($i = ($opener + 1); $tokens[$i]['line'] === $currentLine && $i < $closer; $i++);
-        $currentLine = $tokens[$i]['line'];
+			if ( $hasCodeTokens === true ) {
+				++$codeLines;
+			} elseif ( $hasCommentTokens === true ) {
+				++$commentLines;
+			}
+		}
 
-        // Walk tokens.
-        while ($currentLine !== $closerLine) {
-            $hasCommentTokens = false;
-            $hasCodeTokens    = false;
+		// We've already examined the opener line, so move to the next line.
+		for ($i = ( $opener + 1 ); $tokens[ $i ]['line'] === $currentLine && $i < $closer; $i++);
+		$currentLine = $tokens[ $i ]['line'];
 
-            while ($tokens[$i]['line'] === $currentLine) {
-                if (isset(Tokens::$emptyTokens[$tokens[$i]['code']]) === false) {
-                    $hasCodeTokens = true;
-                } elseif (isset(Tokens::$commentTokens[$tokens[$i]['code']]) === true) {
-                    $hasCommentTokens = true;
-                }
+		// Walk tokens.
+		while ( $currentLine !== $closerLine ) {
+			$hasCommentTokens = false;
+			$hasCodeTokens    = false;
 
-                ++$i;
-            }
+			while ( $tokens[ $i ]['line'] === $currentLine ) {
+				if ( isset( Tokens::$emptyTokens[ $tokens[ $i ]['code'] ] ) === false ) {
+					$hasCodeTokens = true;
+				} elseif ( isset( Tokens::$commentTokens[ $tokens[ $i ]['code'] ] ) === true ) {
+					$hasCommentTokens = true;
+				}
 
-            if ($hasCodeTokens === true) {
-                ++$codeLines;
-            } elseif ($hasCommentTokens === true) {
-                ++$commentLines;
-            } else {
-                // Only option left is that this is an empty line.
-                ++$blankLines;
-            }
+				++$i;
+			}
 
-            $currentLine = $tokens[$i]['line'];
-        }
+			if ( $hasCodeTokens === true ) {
+				++$codeLines;
+			} elseif ( $hasCommentTokens === true ) {
+				++$commentLines;
+			} else {
+				// Only option left is that this is an empty line.
+				++$blankLines;
+			}
 
-        $nonBlankLines = ($codeLines + $commentLines);
-        $totalLines    = ($codeLines + $commentLines + $blankLines);
-        $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME_CODE, $codeLines . ' lines');
-        $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME_COMMENTS, $nonBlankLines . ' lines');
-        $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME_ALL, $totalLines . ' lines');
+			$currentLine = $tokens[ $i ]['line'];
+		}
 
-        $lines = $codeLines;
-        if ($this->ignoreCommentLines === false) {
-            $lines += $commentLines;
-        }
-        if ($this->ignoreEmptyLines === false) {
-            $lines += $blankLines;
-        }
+		$nonBlankLines = ( $codeLines + $commentLines );
+		$totalLines    = ( $codeLines + $commentLines + $blankLines );
+		$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME_CODE, $codeLines . ' lines' );
+		$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME_COMMENTS, $nonBlankLines . ' lines' );
+		$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME_ALL, $totalLines . ' lines' );
 
-        $errorSuffix = ' Declare a named function instead. Found closure containing %s lines';
+		$lines = $codeLines;
+		if ( $this->ignoreCommentLines === false ) {
+			$lines += $commentLines;
+		}
+		if ( $this->ignoreEmptyLines === false ) {
+			$lines += $blankLines;
+		}
 
-        if ($lines > $this->maxLines) {
-            $phpcsFile->addError(
-                'Closures which are longer than %s lines are forbidden.' . $errorSuffix,
-                $stackPtr,
-                'ExceedsMaximum',
-                [$this->maxLines, $lines]
-            );
+		$errorSuffix = ' Declare a named function instead. Found closure containing %s lines';
 
-            return;
-        }
+		if ( $lines > $this->maxLines ) {
+			$phpcsFile->addError(
+				'Closures which are longer than %s lines are forbidden.' . $errorSuffix,
+				$stackPtr,
+				'ExceedsMaximum',
+				array( $this->maxLines, $lines )
+			);
 
-        if ($lines > $this->recommendedLines) {
-            $phpcsFile->addWarning(
-                'It is recommended for closures to contain %s lines or less.' . $errorSuffix,
-                $stackPtr,
-                'ExceedsRecommended',
-                [$this->recommendedLines, $lines]
-            );
-        }
-    }
+			return;
+		}
+
+		if ( $lines > $this->recommendedLines ) {
+			$phpcsFile->addWarning(
+				'It is recommended for closures to contain %s lines or less.' . $errorSuffix,
+				$stackPtr,
+				'ExceedsRecommended',
+				array( $this->recommendedLines, $lines )
+			);
+		}
+	}
 }

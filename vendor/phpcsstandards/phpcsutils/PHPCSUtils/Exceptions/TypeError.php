@@ -21,33 +21,32 @@ use PHPCSUtils\Exceptions\RuntimeException;
  *
  * @since 1.1.0
  */
-final class TypeError extends RuntimeException
-{
+final class TypeError extends RuntimeException {
 
-    /**
-     * Create a new TypeError exception with a standardized text.
-     *
-     * @param int    $position The argument position in the function signature. 1-based.
-     * @param string $name     The argument name in the function signature.
-     * @param string $expected The argument type expected as a string.
-     * @param mixed  $received The actual argument received.
-     *
-     * @return \PHPCSUtils\Exceptions\TypeError
-     */
-    public static function create($position, $name, $expected, $received)
-    {
-        $stack = \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS, 2);
 
-        return new self(
-            \sprintf(
-                '%s::%s(): Argument #%d (%s) must be of type %s, %s given.',
-                $stack[1]['class'],
-                $stack[1]['function'],
-                $position,
-                $name,
-                $expected,
-                \gettype($received)
-            )
-        );
-    }
+	/**
+	 * Create a new TypeError exception with a standardized text.
+	 *
+	 * @param int    $position The argument position in the function signature. 1-based.
+	 * @param string $name     The argument name in the function signature.
+	 * @param string $expected The argument type expected as a string.
+	 * @param mixed  $received The actual argument received.
+	 *
+	 * @return \PHPCSUtils\Exceptions\TypeError
+	 */
+	public static function create( $position, $name, $expected, $received ) {
+		$stack = \debug_backtrace( \DEBUG_BACKTRACE_IGNORE_ARGS, 2 );
+
+		return new self(
+			\sprintf(
+				'%s::%s(): Argument #%d (%s) must be of type %s, %s given.',
+				$stack[1]['class'],
+				$stack[1]['function'],
+				$position,
+				$name,
+				$expected,
+				\gettype( $received )
+			)
+		);
+	}
 }

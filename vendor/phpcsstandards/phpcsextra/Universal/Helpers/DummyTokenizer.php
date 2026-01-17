@@ -19,42 +19,39 @@ use PHP_CodeSniffer\Tokenizers\Tokenizer;
  *
  * @since 1.0.0
  */
-final class DummyTokenizer extends Tokenizer
-{
+final class DummyTokenizer extends Tokenizer {
 
-    /**
-     * Initialise and (don't) run the tokenizer.
-     *
-     * @param string                         $content The content to tokenize,
-     * @param \PHP_CodeSniffer\Config | null $config  The config data for the run.
-     * @param string                         $eolChar The EOL char used in the content.
-     *
-     * @return void
-     */
-    public function __construct($content, $config, $eolChar = '\n')
-    {
-        $this->eolChar = $eolChar;
-        $this->config  = $config;
-    }
 
-    /**
-     * Creates an array of tokens when given some content.
-     *
-     * @param string $code The code to tokenize.
-     *
-     * @return array<int, array<string, mixed>>
-     */
-    protected function tokenize($code)
-    {
-        return [];
-    }
+	/**
+	 * Initialise and (don't) run the tokenizer.
+	 *
+	 * @param string                         $content The content to tokenize,
+	 * @param \PHP_CodeSniffer\Config | null $config  The config data for the run.
+	 * @param string                         $eolChar The EOL char used in the content.
+	 *
+	 * @return void
+	 */
+	public function __construct( $content, $config, $eolChar = '\n' ) {
+		$this->eolChar = $eolChar;
+		$this->config  = $config;
+	}
 
-    /**
-     * Performs additional processing after main tokenizing.
-     *
-     * @return void
-     */
-    protected function processAdditional()
-    {
-    }
+	/**
+	 * Creates an array of tokens when given some content.
+	 *
+	 * @param string $code The code to tokenize.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	protected function tokenize( $code ) {
+		return array();
+	}
+
+	/**
+	 * Performs additional processing after main tokenizing.
+	 *
+	 * @return void
+	 */
+	protected function processAdditional() {
+	}
 }

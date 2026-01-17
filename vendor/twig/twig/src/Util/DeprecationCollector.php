@@ -18,60 +18,62 @@ use Twig\Source;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class DeprecationCollector
-{
-    public function __construct(
-        private Environment $twig,
-    ) {
-    }
+final class DeprecationCollector {
 
-    /**
-     * Returns deprecations for templates contained in a directory.
-     *
-     * @param string $dir A directory where templates are stored
-     * @param string $ext Limit the loaded templates by extension
-     *
-     * @return array An array of deprecations
-     */
-    public function collectDir(string $dir, string $ext = '.twig'): array
-    {
-        $iterator = new \RegexIterator(
-            new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($dir), \RecursiveIteratorIterator::LEAVES_ONLY
-            ), '{'.preg_quote($ext).'$}'
-        );
+	public function __construct(
+		private Environment $twig,
+	) {
+	}
 
-        return $this->collect(new TemplateDirIterator($iterator));
-    }
+	/**
+	 * Returns deprecations for templates contained in a directory.
+	 *
+	 * @param string $dir A directory where templates are stored
+	 * @param string $ext Limit the loaded templates by extension
+	 *
+	 * @return array An array of deprecations
+	 */
+	public function collectDir( string $dir, string $ext = '.twig' ): array {
+		$iterator = new \RegexIterator(
+			new \RecursiveIteratorIterator(
+				new \RecursiveDirectoryIterator( $dir ),
+				\RecursiveIteratorIterator::LEAVES_ONLY
+			),
+			'{' . preg_quote( $ext ) . '$}'
+		);
 
-    /**
-     * Returns deprecations for passed templates.
-     *
-     * @param \Traversable $iterator An iterator of templates (where keys are template names and values the contents of the template)
-     *
-     * @return array An array of deprecations
-     */
-    public function collect(\Traversable $iterator): array
-    {
-        $deprecations = [];
-        set_error_handler(function ($type, $msg) use (&$deprecations) {
-            if (\E_USER_DEPRECATED === $type) {
-                $deprecations[] = $msg;
-            }
+		return $this->collect( new TemplateDirIterator( $iterator ) );
+	}
 
-            return false;
-        });
+	/**
+	 * Returns deprecations for passed templates.
+	 *
+	 * @param \Traversable $iterator An iterator of templates (where keys are template names and values the contents of the template)
+	 *
+	 * @return array An array of deprecations
+	 */
+	public function collect( \Traversable $iterator ): array {
+		$deprecations = array();
+		set_error_handler(
+			function ( $type, $msg ) use ( &$deprecations ) {
+				if ( \E_USER_DEPRECATED === $type ) {
+					$deprecations[] = $msg;
+				}
 
-        foreach ($iterator as $name => $contents) {
-            try {
-                $this->twig->parse($this->twig->tokenize(new Source($contents, $name)));
-            } catch (SyntaxError $e) {
-                // ignore templates containing syntax errors
-            }
-        }
+				return false;
+			}
+		);
 
-        restore_error_handler();
+		foreach ( $iterator as $name => $contents ) {
+			try {
+				$this->twig->parse( $this->twig->tokenize( new Source( $contents, $name ) ) );
+			} catch ( SyntaxError $e ) {
+				// ignore templates containing syntax errors
+			}
+		}
 
-        return $deprecations;
-    }
+		restore_error_handler();
+
+		return $deprecations;
+	}
 }

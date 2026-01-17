@@ -17,9 +17,8 @@ use Twig\Extension\DebugExtension;
  *
  * @deprecated since Twig 3.9
  */
-function twig_var_dump(Environment $env, $context, ...$vars)
-{
-    trigger_deprecation('twig/twig', '3.9', 'Using the internal "%s" function is deprecated.', __FUNCTION__);
+function twig_var_dump( Environment $env, $context, ...$vars ) {
+	trigger_deprecation( 'twig/twig', '3.9', 'Using the internal "%s" function is deprecated.', __FUNCTION__ );
 
-    DebugExtension::dump($env, $context, ...$vars);
+	DebugExtension::dump( $env, $context, ...$vars );
 }

@@ -19,6 +19,6 @@ use PHP_CodeSniffer\Exceptions\RuntimeException as PHPCSRuntimeException;
  *
  * @since 1.1.0
  */
-class RuntimeException extends PHPCSRuntimeException
-{
+class RuntimeException extends PHPCSRuntimeException {
+
 }

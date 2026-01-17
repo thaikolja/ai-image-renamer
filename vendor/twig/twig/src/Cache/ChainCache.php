@@ -19,70 +19,64 @@ namespace Twig\Cache;
  *
  * @author Quentin Devos <quentin@devos.pm>
  */
-final class ChainCache implements CacheInterface, RemovableCacheInterface
-{
-    /**
-     * @param iterable<CacheInterface> $caches The ordered list of caches used to store and fetch cached items
-     */
-    public function __construct(
-        private iterable $caches,
-    ) {
-    }
+final class ChainCache implements CacheInterface, RemovableCacheInterface {
 
-    public function generateKey(string $name, string $className): string
-    {
-        return $className.'#'.$name;
-    }
+	/**
+	 * @param iterable<CacheInterface> $caches The ordered list of caches used to store and fetch cached items
+	 */
+	public function __construct(
+		private iterable $caches,
+	) {
+	}
 
-    public function write(string $key, string $content): void
-    {
-        $splitKey = $this->splitKey($key);
+	public function generateKey( string $name, string $className ): string {
+		return $className . '#' . $name;
+	}
 
-        foreach ($this->caches as $cache) {
-            $cache->write($cache->generateKey(...$splitKey), $content);
-        }
-    }
+	public function write( string $key, string $content ): void {
+		$splitKey = $this->splitKey( $key );
 
-    public function load(string $key): void
-    {
-        [$name, $className] = $this->splitKey($key);
+		foreach ( $this->caches as $cache ) {
+			$cache->write( $cache->generateKey( ...$splitKey ), $content );
+		}
+	}
 
-        foreach ($this->caches as $cache) {
-            $cache->load($cache->generateKey($name, $className));
+	public function load( string $key ): void {
+		[$name, $className] = $this->splitKey( $key );
 
-            if (class_exists($className, false)) {
-                break;
-            }
-        }
-    }
+		foreach ( $this->caches as $cache ) {
+			$cache->load( $cache->generateKey( $name, $className ) );
 
-    public function getTimestamp(string $key): int
-    {
-        $splitKey = $this->splitKey($key);
+			if ( class_exists( $className, false ) ) {
+				break;
+			}
+		}
+	}
 
-        foreach ($this->caches as $cache) {
-            if (0 < $timestamp = $cache->getTimestamp($cache->generateKey(...$splitKey))) {
-                return $timestamp;
-            }
-        }
+	public function getTimestamp( string $key ): int {
+		$splitKey = $this->splitKey( $key );
 
-        return 0;
-    }
+		foreach ( $this->caches as $cache ) {
+			if ( 0 < $timestamp = $cache->getTimestamp( $cache->generateKey( ...$splitKey ) ) ) {
+				return $timestamp;
+			}
+		}
 
-    public function remove(string $name, string $cls): void
-    {
-        foreach ($this->caches as $cache) {
-            if ($cache instanceof RemovableCacheInterface) {
-                $cache->remove($name, $cls);
-            }
-        }
-    }
+		return 0;
+	}
 
-    /**
-     * @return string[]
-     */
-    private function splitKey(string $key): array
-    {
-        return array_reverse(explode('#', $key, 2));
-    }
+	public function remove( string $name, string $cls ): void {
+		foreach ( $this->caches as $cache ) {
+			if ( $cache instanceof RemovableCacheInterface ) {
+				$cache->remove( $name, $cls );
+			}
+		}
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private function splitKey( string $key ): array {
+		return array_reverse( explode( '#', $key, 2 ) );
+	}
 }

@@ -29,40 +29,37 @@ use Twig\Token;
  *
  * @internal
  */
-final class SandboxTokenParser extends AbstractTokenParser
-{
-    public function parse(Token $token): Node
-    {
-        $stream = $this->parser->getStream();
-        trigger_deprecation('twig/twig', '3.15', \sprintf('The "sandbox" tag is deprecated in "%s" at line %d.', $stream->getSourceContext()->getName(), $token->getLine()));
+final class SandboxTokenParser extends AbstractTokenParser {
 
-        $stream->expect(Token::BLOCK_END_TYPE);
-        $body = $this->parser->subparse([$this, 'decideBlockEnd'], true);
-        $stream->expect(Token::BLOCK_END_TYPE);
+	public function parse( Token $token ): Node {
+		$stream = $this->parser->getStream();
+		trigger_deprecation( 'twig/twig', '3.15', \sprintf( 'The "sandbox" tag is deprecated in "%s" at line %d.', $stream->getSourceContext()->getName(), $token->getLine() ) );
 
-        // in a sandbox tag, only include tags are allowed
-        if (!$body instanceof IncludeNode) {
-            foreach ($body as $node) {
-                if ($node instanceof TextNode && ctype_space($node->getAttribute('data'))) {
-                    continue;
-                }
+		$stream->expect( Token::BLOCK_END_TYPE );
+		$body = $this->parser->subparse( array( $this, 'decideBlockEnd' ), true );
+		$stream->expect( Token::BLOCK_END_TYPE );
 
-                if (!$node instanceof IncludeNode) {
-                    throw new SyntaxError('Only "include" tags are allowed within a "sandbox" section.', $node->getTemplateLine(), $stream->getSourceContext());
-                }
-            }
-        }
+		// in a sandbox tag, only include tags are allowed
+		if ( ! $body instanceof IncludeNode ) {
+			foreach ( $body as $node ) {
+				if ( $node instanceof TextNode && ctype_space( $node->getAttribute( 'data' ) ) ) {
+					continue;
+				}
 
-        return new SandboxNode($body, $token->getLine());
-    }
+				if ( ! $node instanceof IncludeNode ) {
+					throw new SyntaxError( 'Only "include" tags are allowed within a "sandbox" section.', $node->getTemplateLine(), $stream->getSourceContext() );
+				}
+			}
+		}
 
-    public function decideBlockEnd(Token $token): bool
-    {
-        return $token->test('endsandbox');
-    }
+		return new SandboxNode( $body, $token->getLine() );
+	}
 
-    public function getTag(): string
-    {
-        return 'sandbox';
-    }
+	public function decideBlockEnd( Token $token ): bool {
+		return $token->test( 'endsandbox' );
+	}
+
+	public function getTag(): string {
+		return 'sandbox';
+	}
 }
