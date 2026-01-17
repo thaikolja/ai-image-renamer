@@ -1,0 +1,15 @@
+{# Model Selection Field Template #}
+<div class="air-model-selector">
+	{% set is_first = true %}
+	{% for id, info in models %}
+		{% set is_checked = (current == id) %}
+		<label class="air-model-card {{ is_checked ? 'selected' : '' }}">
+			<input type="radio" {% if is_first %} id="air_model" {% endif %} name="{{ option_name }}[model]" value="{{ id }}" {{ is_checked ? 'checked' : '' }}/>
+			<span class="air-model-content">
+				<strong>{{ info.label }}</strong>
+				<span class="air-model-description">{{ info.desc }}</span>
+			</span>
+		</label>
+		{% set is_first = false %}
+	{% endfor %}
+</div>

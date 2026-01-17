@@ -1,12 +1,12 @@
 === AI Image Renamer ===
-Contributors: thaikolja
-Tags: images, seo, ai, media, automation, groq, rename, vision-api
-Requires at least: 6.0
-Tested up to: 6.7
-Requires PHP: 8.2
-Stable tag: 1.0.0
-License: GPLv2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Contributors:       thaikolja
+Tags:               rename files, ai, automation, images, seo
+Requires at least:  6.0
+Tested up to:       6.7
+Requires PHP:       8.2
+Stable tag:         1.0.0
+License:            GPLv2 or later
+License URI:        https://www.gnu.org/licenses/gpl-2.0.html
 
 Automatically rename uploaded images using AI for SEO-friendly, descriptive filenames. Powered by Groq's free Vision API.
 
@@ -233,4 +233,3 @@ For support, please use the [WordPress.org support forums](https://wordpress.org
 == Contribute ==
 
 This plugin is open source! Contributions are welcome on GitHub.
-

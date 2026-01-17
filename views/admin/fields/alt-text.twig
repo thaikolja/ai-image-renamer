@@ -1,0 +1,5 @@
+{# Alt Text Toggle Field Template #}
+<label>
+	<input type="checkbox" id="air_set_alt_text" name="{{ option_name }}[set_alt_text]" value="1" {{ set_alt ? 'checked' : '' }}/>
+	{{ __('Automatically set images\' "alt" attribute from the filename.', 'ai-image-renamer') }}
+</label>
