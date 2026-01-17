@@ -41,9 +41,8 @@ use AIR\Services\Template_Engine;
  * Bootstraps all plugin components.
  * Provides extension points for Pro add-on via hooks and public getters.
  */
-class Plugin {
-
-
+class Plugin
+{
 	/**
 	 * Singleton instance.
 	 *
@@ -91,8 +90,9 @@ class Plugin {
 	 *
 	 * @return Plugin
 	 */
-	public static function get_instance(): Plugin {
-		if ( null === self::$instance ) {
+	public static function get_instance(): Plugin
+	{
+		if (null === self::$instance) {
 			self::$instance = new self();
 		}
 
@@ -104,14 +104,15 @@ class Plugin {
 	 *
 	 * @return void
 	 */
-	final public function init(): void {
+	final public function init(): void
+	{
 		// Store instance for singleton access.
 		self::$instance = $this;
 
 		// Initialize services.
 		$this->encryption_service = new Encryption_Service();
 		$this->template_engine    = new Template_Engine();
-		$this->groq_service       = new Groq_Service( $this->encryption_service );
+		$this->groq_service       = new Groq_Service($this->encryption_service);
 
 		/**
 		 * Fires after core services are initialized but before components.
@@ -121,16 +122,16 @@ class Plugin {
 		 *
 		 * @param Plugin $plugin The plugin instance.
 		 */
-		\do_action( 'air_services_loaded', $this );
+		\do_action('air_services_loaded', $this);
 
 		// Initialize admin settings page.
-		if ( \is_admin() ) {
-			$this->settings_page = new Settings_Page( $this->template_engine, $this->encryption_service, $this->groq_service );
+		if (\is_admin()) {
+			$this->settings_page = new Settings_Page($this->template_engine, $this->encryption_service, $this->groq_service);
 			$this->settings_page->init();
 		}
 
 		// Initialize upload hook.
-		$this->image_uploader = new Image_Uploader( $this->groq_service );
+		$this->image_uploader = new Image_Uploader($this->groq_service);
 		$this->image_uploader->init();
 
 		/**
@@ -141,7 +142,7 @@ class Plugin {
 		 *
 		 * @param Plugin $plugin The plugin instance.
 		 */
-		\do_action( 'air_loaded', $this );
+		\do_action('air_loaded', $this);
 	}
 
 	/**
@@ -149,7 +150,8 @@ class Plugin {
 	 *
 	 * @return Encryption_Service
 	 */
-	public function get_encryption_service(): Encryption_Service {
+	public function get_encryption_service(): Encryption_Service
+	{
 		return $this->encryption_service;
 	}
 
@@ -158,7 +160,8 @@ class Plugin {
 	 *
 	 * @return Template_Engine
 	 */
-	public function get_template_engine(): Template_Engine {
+	public function get_template_engine(): Template_Engine
+	{
 		return $this->template_engine;
 	}
 
@@ -167,7 +170,8 @@ class Plugin {
 	 *
 	 * @return Groq_Service
 	 */
-	public function get_groq_service(): Groq_Service {
+	public function get_groq_service(): Groq_Service
+	{
 		return $this->groq_service;
 	}
 
@@ -176,7 +180,8 @@ class Plugin {
 	 *
 	 * @return Settings_Page|null
 	 */
-	public function get_settings_page(): ?Settings_Page {
+	public function get_settings_page(): ?Settings_Page
+	{
 		return $this->settings_page;
 	}
 
@@ -185,7 +190,8 @@ class Plugin {
 	 *
 	 * @return Image_Uploader|null
 	 */
-	public function get_image_uploader(): ?Image_Uploader {
+	public function get_image_uploader(): ?Image_Uploader
+	{
 		return $this->image_uploader;
 	}
 
@@ -194,7 +200,8 @@ class Plugin {
 	 *
 	 * @return bool
 	 */
-	public function is_pro_active(): bool {
-		return \class_exists( 'AIR_Pro\\Pro' ) && \apply_filters( 'air_pro_is_licensed', false );
+	public function is_pro_active(): bool
+	{
+		return \class_exists('AIR_Pro\\Pro') && \apply_filters('air_pro_is_licensed', false);
 	}
 }

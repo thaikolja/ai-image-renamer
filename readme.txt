@@ -7,14 +7,13 @@ Requires PHP:       8.2
 Stable tag:         1.0.0
 License:            GPLv2 or later
 License URI:        https://www.gnu.org/licenses/gpl-2.0.html
+Donate:             https://www.paypal.me/koljathai
 
 Automatically rename uploaded images using AI for SEO-friendly, descriptive filenames. Powered by Groq's free Vision API.
 
 == Description ==
 
-**AI Image Renamer** transforms your WordPress media management by automatically generating SEO-friendly, descriptive filenames for uploaded images using Groq's powerful Vision API.
-
-Say goodbye to `IMG_1234.jpg` and hello to `golden-retriever-playing-park.jpg` – all without any manual work!
+**AI Image Renamer** transforms your WordPress media management by automatically generating SEO-friendly, descriptive filenames for uploaded images using Groq's powerful Vision API. Say goodbye to `IMG_1234.jpg` and hello to `golden-retriever-playing-park.jpg` – all without any manual work!
 
 = Key Features =
 
@@ -59,8 +58,10 @@ Say goodbye to `IMG_1234.jpg` and hello to `golden-retriever-playing-park.jpg` �
 
 * API keys are encrypted before storage using `defuse/php-encryption`
 * Images are sent to Groq's API only during upload processing
-* No data is stored on external servers
+* No data is stored on external servers by this plugin
 * Fully GDPR compliant
+
+**Data sent to Groq API:** When you upload an image, the plugin sends the image data (base64 encoded) to Groq's servers for AI analysis. The response containing descriptive keywords is used to rename the file. See the Third-Party Services section below for more details.
 
 == Installation ==
 
@@ -214,10 +215,39 @@ Initial release. Automatic image renaming with AI-powered descriptions.
 
 = Developer Resources =
 
-* GitHub Repository: [https://github.com/thaikolja/ai-image-renamer](https://github.com/thaikolja/ai-image-renamer)
+* GitHub Repository: [https://github.com/thaikolja/wp-ai-image-renamer](https://github.com/thaikolja/wp-ai-image-renamer)
+* GitLab Repository: [https://gitlab.com/thaikolja/wp-ai-image-renamer](https://gitlab.com/thaikolja/wp-ai-image-renamer)
 * Documentation: [https://docs.kolja-nolte.com/ai-image-renamer](https://docs.kolja-nolte.com/ai-image-renamer)
-* Report Issues: [https://github.com/thaikolja/ai-image-renamer/issues](https://github.com/thaikolja/ai-image-renamer/issues)
+* Report Issues: [https://github.com/thaikolja/wp-ai-image-renamer/issues](https://github.com/thaikolja/wp-ai-image-renamer/issues)
 * Support Forum: [https://wordpress.org/support/plugin/ai-image-renamer/](https://wordpress.org/support/plugin/ai-image-renamer/)
+
+== Third-Party Services ==
+
+This plugin connects to external third-party services to provide its functionality. By using this plugin, you agree to the terms of service and privacy policies of these providers.
+
+= Groq API =
+
+This plugin uses the [Groq API](https://groq.com/) to analyze uploaded images and generate descriptive keywords for SEO-friendly filenames.
+
+**What data is sent:**
+
+* Image data (base64 encoded) is sent to Groq's servers when you upload an image to WordPress
+* A text prompt asking the AI to describe the image
+
+**When data is sent:**
+
+* Only when "Enable Auto-Rename" is turned on in the plugin settings
+* Only during the image upload process
+* Only for image types you have enabled in the settings (JPEG, PNG, WebP, GIF)
+
+**Service links:**
+
+* Groq Website: [https://groq.com/](https://groq.com/)
+* Terms of Service: [https://groq.com/terms-of-use/](https://groq.com/terms-of-use/)
+* Privacy Policy: [https://groq.com/privacy-policy/](https://groq.com/privacy-policy/)
+* API Documentation: [https://console.groq.com/docs](https://console.groq.com/docs)
+
+**Note:** You must obtain your own API key from [console.groq.com](https://console.groq.com/keys) to use this plugin. Groq offers a generous free tier.
 
 == Credits ==
 

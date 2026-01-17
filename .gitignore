@@ -2,3 +2,7 @@
 .idea
 cache/
 .vscode/
+*.md
+!README.md
+!CHANGELOG.md
+!CONTRIBUTING.md
