@@ -1,6 +1,6 @@
 {# Hero Section Template - API Configuration #}
 <div class="air-settings-hero">
-	<div class="air-hero-column air-hero-column-narrow postbox">
+	<div class="air-hero-column air-hero-column-narrow postbox air-setup-guide">
 		<div class="postbox-header">
 			<div class="handle-actions">
 				<button type="button" class="handlediv" aria-expanded="true">
@@ -9,31 +9,72 @@
 			</div>
 			<h2 class="hndle ui-sortable-handle">
 				<span>
-					<span class="dashicons dashicons-editor-help"></span>
-					{{ __('How does it work?', 'ai-image-renamer') }}</span>
+					<span class="dashicons dashicons-info"></span>
+					{{ __('Get Started', 'ai-image-renamer') }}
+					<span class="air-version-badge">{{ __('Free Version', 'ai-image-renamer') }}</span>
+				</span>
 			</h2>
 		</div>
 		<div class="inside">
-			<p>{{ __('The plugin uses the powerful Groq Vision API to analyze your uploaded images. It extracts descriptive keywords and automatically renames your files for better SEO and accessibility.', 'ai-image-renamer') }}</p>
+			<p>{{ __('Follow these steps to start renaming your images automatically using AI:', 'ai-image-renamer') }}</p>
+			<ol class="air-setup-steps">
+				<li>
+					<strong>{{ __('Get API Key', 'ai-image-renamer') }}</strong>
+					<span>{{ __('Sign up for a free account at the', 'ai-image-renamer') }} <a href="https://console.groq.com/keys" target="_blank">{{ __('Groq Console', 'ai-image-renamer') }}</a>.</span>
+				</li>
+				<li>
+					<strong>{{ __('Configure Plugin', 'ai-image-renamer') }}</strong>
+					<span>{{ __('Enter your API key below and save the settings.', 'ai-image-renamer') }}</span>
+				</li>
+				<li>
+					<strong>{{ __('Enable Auto-Rename', 'ai-image-renamer') }}</strong>
+					<span>{{ __('Toggle "Enable Auto-Rename" to start processing new uploads.', 'ai-image-renamer') }}</span>
+				</li>
+			</ol>
 		</div>
 	</div>
-	<div class="air-hero-column air-hero-column-wide postbox pro">
-		<div class="postbox-header">
-			<div class="handle-actions">
-				<button type="button" class="handlediv" aria-expanded="true">
-					<span class="toggle-indicator" aria-hidden="true"></span>
-				</button>
-			</div>
+	<div class="air-hero-column air-hero-column-wide postbox air-pro-upsell">
+		<div class="postbox-header air-pro-header">
 			<h2 class="hndle ui-sortable-handle">
 				<span>
-					<span class="dashicons dashicons-smiley"></span>
-					{{ __('Is it free?', 'ai-image-renamer') }}</span>
+					<span class="dashicons dashicons-star-filled"></span>
+					{{ __('Upgrade to Pro', 'ai-image-renamer') }}
+					<span class="air-pro-badge">{{ __('Coming Soon', 'ai-image-renamer') }}</span>
+				</span>
 			</h2>
 		</div>
 		<div class="inside">
-			<p>{{ __('Yes! This plugin leverages Groq\'s generous free tier. Simply get your free API key from the Groq console and start renaming your images without any costs.', 'ai-image-renamer') }}</p>
-            <p>{{ __('Unlock advanced features like bulk renaming, custom naming patterns, and support for 20+ languages. Coming soon to take your media management to the next level.', 'ai-image-renamer') }}</p>
-        </div>
-    </div>
+			<p class="air-pro-tagline">{{ __('Take your media management to the next level with powerful Pro features.', 'ai-image-renamer') }}</p>
+			<ul class="air-pro-features">
+				<li>
+					<span class="dashicons dashicons-yes-alt"></span>
+					<strong>{{ __('Bulk Rename', 'ai-image-renamer') }}</strong>
+					<span>{{ __('Rename thousands of existing images at once', 'ai-image-renamer') }}</span>
+				</li>
+				<li>
+					<span class="dashicons dashicons-yes-alt"></span>
+					<strong>{{ __('Rename History', 'ai-image-renamer') }}</strong>
+					<span>{{ __('Track all changes with one-click undo', 'ai-image-renamer') }}</span>
+				</li>
+				<li>
+					<span class="dashicons dashicons-yes-alt"></span>
+					<strong>{{ __('All AI Models', 'ai-image-renamer') }}</strong>
+					<span>{{ __('Access to all current and future models', 'ai-image-renamer') }}</span>
+				</li>
+				<li>
+					<span class="dashicons dashicons-yes-alt"></span>
+					<strong>{{ __('Unlimited Keywords', 'ai-image-renamer') }}</strong>
+					<span>{{ __('Generate up to 10 keywords per image', 'ai-image-renamer') }}</span>
+				</li>
+			</ul>
+			<div class="air-pro-cta">
+				<a href="https://aiimagerenamer.com/pro?utm_source=plugin&utm_medium=settings&utm_campaign=upsell" class="button button-primary button-hero air-pro-button" target="_blank" rel="noopener">
+					<span class="dashicons dashicons-external"></span>
+					{{ __('Learn More About Pro', 'ai-image-renamer') }}
+				</a>
+				<span class="air-pro-price">{{ __('Starting at $49/year', 'ai-image-renamer') }}</span>
+			</div>
+		</div>
+	</div>
 </div>
 

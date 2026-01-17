@@ -7,7 +7,7 @@ Requires PHP:       8.2
 Stable tag:         1.0.0
 License:            GPLv2 or later
 License URI:        https://www.gnu.org/licenses/gpl-2.0.html
-Donate:             https://www.paypal.me/koljathai
+Donate:             https://www.paypal.com/paypalme/thaikolja/10/
 
 Automatically rename uploaded images using AI for SEO-friendly, descriptive filenames. Powered by Groq's free Vision API.
 

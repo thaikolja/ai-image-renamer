@@ -221,9 +221,6 @@
 			}
 		}
 
-		&.pro {
-			background-color: var(--wp-blue-light);
-		}
 
 		/* Width variants */
 		&-narrow {
@@ -245,7 +242,198 @@
 				max-width: 100%;
 			}
 		}
+
+		/* Setup Guide Styling */
+		&.air-setup-guide {
+			.air-version-badge {
+				display:        inline-block;
+				background:     var(--wp-gray-light);
+				color:          var(--wp-text);
+				font-size:      10px;
+				font-weight:    600;
+				padding:        2px 6px;
+				border-radius:  3px;
+				margin-left:    8px;
+				text-transform: uppercase;
+				vertical-align: middle;
+				border:         1px solid var(--wp-border);
+			}
+
+			.air-setup-steps {
+				margin:  15px 0 0 0;
+				padding: 0;
+				counter-reset: step-counter;
+				list-style: none;
+
+				li {
+					position:      relative;
+					padding-left:  30px;
+					margin-bottom: 15px;
+
+					&:last-child {
+						margin-bottom: 0;
+					}
+
+					&::before {
+						counter-increment: step-counter;
+						content:           counter(step-counter);
+						position:          absolute;
+						left:              0;
+						top:               0;
+						width:             20px;
+						height:            20px;
+						background-color:  var(--wp-blue);
+						color:             white;
+						border-radius:     50%;
+						text-align:        center;
+						line-height:       20px;
+						font-size:         12px;
+						font-weight:       600;
+					}
+
+					strong {
+						display: block;
+						color:   var(--wp-text);
+						margin-bottom: 2px;
+					}
+
+					span {
+						font-size: 13px;
+						color:     var(--wp-gray-dark);
+					}
+				}
+			}
+		}
+
+		/* Pro Upsell Card Styling */
+		&.air-pro-upsell {
+			background:   linear-gradient(135deg, #f0f6fc 0%, #e8f4fd 100%);
+			border-color: var(--wp-blue);
+			overflow:     hidden;
+
+			.air-pro-header {
+				background:    linear-gradient(135deg, #2271b1 0%, #135e96 100%);
+				border-bottom: none;
+
+				.hndle {
+					color: var(--wp-white);
+
+					.dashicons {
+						color: #ffd700;
+					}
+				}
+			}
+
+			.air-pro-badge {
+				display:          inline-block;
+				background:       linear-gradient(135deg, #ffd700 0%, #ffb700 100%);
+				color:            #1d2327;
+				font-size:        11px;
+				font-weight:      600;
+				padding:          3px 8px;
+				border-radius:    3px;
+				margin-left:      10px;
+				text-transform:   uppercase;
+				letter-spacing:   0.5px;
+				vertical-align:   middle;
+			}
+
+			.air-pro-tagline {
+				font-size:     15px;
+				color:         var(--wp-text);
+				margin-bottom: 15px;
+				font-weight:   500;
+			}
+
+			.air-pro-features {
+				list-style:    none;
+				margin:        0 0 20px 0;
+				padding:       0;
+				display:       grid;
+				grid-template-columns: 1fr 1fr;
+				gap:           12px;
+
+				@media (max-width: 600px) {
+					grid-template-columns: 1fr;
+				}
+
+				li {
+					display:       flex;
+					align-items:   flex-start;
+					flex-wrap:     wrap;
+					gap:           6px;
+					padding:       10px 12px;
+					background:    rgba(255, 255, 255, 0.7);
+					border-radius: var(--air-border-radius);
+					border:        1px solid rgba(34, 113, 177, 0.15);
+					transition:    var(--air-transition);
+
+					&:hover {
+						background:  rgba(255, 255, 255, 0.95);
+						transform:   translateX(3px);
+						box-shadow:  0 2px 8px rgba(34, 113, 177, 0.1);
+					}
+
+					.dashicons {
+						color:       var(--wp-green);
+						flex-shrink: 0;
+						margin:      0;
+					}
+
+					strong {
+						color:     var(--wp-text);
+						font-size: 13px;
+					}
+
+					span:last-child {
+						flex-basis: 100%;
+						padding-left: 28px;
+						font-size: 12px;
+						color:     var(--wp-gray-dark);
+						line-height: 1.4;
+					}
+				}
+			}
+
+			.air-pro-cta {
+				display:     flex;
+				align-items: center;
+				gap:         15px;
+				flex-wrap:   wrap;
+
+				.air-pro-button {
+					display:     flex;
+					align-items: center;
+					gap:         8px;
+					background:  linear-gradient(135deg, #2271b1 0%, #135e96 100%);
+					border:      none;
+					box-shadow:  0 3px 10px rgba(34, 113, 177, 0.3);
+					transition:  all 0.3s ease;
+					animation:   air-pulse 2s infinite;
+
+					&:hover {
+						background:  linear-gradient(135deg, #135e96 0%, #0a4570 100%);
+						transform:   translateY(-2px);
+						box-shadow:  0 5px 15px rgba(34, 113, 177, 0.4);
+					}
+
+					.dashicons {
+						margin:    0;
+						font-size: 18px;
+						width:     18px;
+						height:    18px;
+					}
+				}
+
+				.air-pro-price {
+					font-size:   14px;
+					color:       var(--wp-gray-dark);
+					font-weight: 500;
+				}
+			}
+		}
 	}
+
 
 	/* API Key Field Container */
 	.air-api-key-container {
@@ -288,4 +476,14 @@
 	fill:           currentColor;
 	margin-right:   0.5rem;
 	display:        inline-block;
+}
+
+/* Pro CTA Button Pulse Animation */
+@keyframes air-pulse {
+	0%, 100% {
+		box-shadow: 0 3px 10px rgba(34, 113, 177, 0.3);
+	}
+	50% {
+		box-shadow: 0 3px 15px rgba(34, 113, 177, 0.5);
+	}
 }
