@@ -81,7 +81,7 @@ class API_Key_Validator {
 				'valid'   => false,
 				'message' => \sprintf(
 					/* translators: %s: API key prefix */
-					\__( 'Invalid API key format. Must start with <code>%s</code>.', 'ai-image-renamer' ),
+					\__( 'Invalid API key format. Groq API keys start with <code>%s</code>', 'ai-image-renamer' ),
 					self::GROQ_KEY_PREFIX
 				),
 			);
@@ -94,7 +94,7 @@ class API_Key_Validator {
 				'valid'   => false,
 				'message' => \sprintf(
 					/* translators: %d: Minimum length */
-					\__( 'API key is too short. Must be at least %d characters.', 'ai-image-renamer' ),
+					\__( 'The API key is too short. It must be at least %d characters long.', 'ai-image-renamer' ),
 					self::MIN_LENGTH
 				),
 			);
@@ -105,7 +105,7 @@ class API_Key_Validator {
 				'valid'   => false,
 				'message' => \sprintf(
 					/* translators: %d: Maximum length */
-					\__( 'API key is too long. Must be at most %d characters.', 'ai-image-renamer' ),
+					\__( 'The API key is too long. It must be at most %d characters long.', 'ai-image-renamer' ),
 					self::MAX_LENGTH
 				),
 			);
@@ -117,7 +117,7 @@ class API_Key_Validator {
 		if ( ! preg_match( $pattern, $api_key ) ) {
 			return array(
 				'valid'   => false,
-				'message' => \__( 'API key contains invalid characters. Only alphanumeric characters, hyphens, and underscores are allowed.', 'ai-image-renamer' ),
+				'message' => \__( 'The API key contains invalid characters. <strong>Only alphanumeric characters, hyphens, and underscores</strong> are allowed.', 'ai-image-renamer' ),
 			);
 		}
 
@@ -125,7 +125,7 @@ class API_Key_Validator {
 		if ( self::contains_suspicious_patterns( $api_key ) ) {
 			return array(
 				'valid'   => false,
-				'message' => \__( 'API key contains invalid patterns.', 'ai-image-renamer' ),
+				'message' => \__( 'The API key contains invalid patterns.', 'ai-image-renamer' ),
 			);
 		}
 
