@@ -585,11 +585,68 @@ class Settings_Page
 			return;
 		}
 
-		echo $this->template_engine->render(
+		$options       = \get_option(self::OPTION_NAME, $this->get_defaults());
+		$encrypted_key = $options['api_key'] ?? '';
+		$decrypted_key = '';
+
+		if (! empty($encrypted_key)) {
+			$decrypted_key = $this->encryption_service->decrypt($encrypted_key);
+			if (false === $decrypted_key) {
+				$decrypted_key = '';
+			}
+		}
+
+		$saved       = ! empty($encrypted_key);
+		$display_key = $saved && ! empty($decrypted_key)
+			? \AIR\Utils\API_Key_Validator::mask_for_display($decrypted_key)
+			: '';
+		$placeholder = $saved ? __('Type to overwrite existing key...', 'ai-image-renamer') : 'gsk_...';
+
+		// File types
+		$file_types = $options['file_types'] ?? [];
+		$available_types = [
+			'image/jpeg' => 'JPEG',
+			'image/png'  => 'PNG',
+			'image/webp' => 'WebP',
+			'image/gif'  => 'GIF',
+		];
+		$available_types = \apply_filters('air_available_file_types', $available_types);
+
+		// Models
+		$current = $options['model'] ?? 'meta-llama/llama-4-maverick-17b-128e-instruct';
+		$models  = [
+			'meta-llama/llama-4-maverick-17b-128e-instruct' => [
+				'label' => 'Maverick',
+				'desc'  => 'High-performance model for detailed analysis.',
+			],
+			'meta-llama/llama-4-scout-17b-16e-instruct' => [
+				'label' => 'Scout',
+				'desc'  => 'Lightweight model for speed.',
+			],
+		];
+		$models = \apply_filters('air_available_models', $models, $current);
+
+		echo $this->template_engine->render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			'admin/settings.twig',
-			[ // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				'page_slug'    => self::PAGE_SLUG,
-				'option_group' => self::OPTION_GROUP,
+			[
+				'page_slug'       => self::PAGE_SLUG,
+				'option_group'    => self::OPTION_GROUP,
+				'option_name'     => self::OPTION_NAME,
+				'version'         => AIR_VERSION,
+				// API Key
+				'display_key'     => $display_key,
+				'placeholder'     => $placeholder,
+				'saved'           => $saved,
+				// General
+				'enabled'         => $options['enabled'] ?? true,
+				'set_alt_text'    => $options['set_alt_text'] ?? false,
+				// File Types
+				'file_types'      => $file_types,
+				'available_types' => $available_types,
+				// Advanced
+				'current'         => $current,
+				'models'          => $models,
+				'max_keywords'    => $options['max_keywords'] ?? 5,
 			]
 		);
 	}
@@ -611,6 +668,7 @@ class Settings_Page
 		\wp_enqueue_style('air-admin', AIR_PLUGIN_URL . 'assets/css/admin.css', [], (string) filemtime(AIR_PLUGIN_DIR . 'assets/css/admin.css'));
 
 		\wp_enqueue_script('air-admin', AIR_PLUGIN_URL . 'assets/js/admin.js', ['jquery'], AIR_VERSION, true);
+		\wp_enqueue_script('air-admin-tabs', AIR_PLUGIN_URL . 'assets/js/admin-tabs.js', ['jquery'], AIR_VERSION, true);
 
 		\wp_localize_script(
 			'air-admin',
@@ -636,11 +694,10 @@ class Settings_Page
 			]
 		);
 
-		// Inject SVG sprite for icon support.
 		\add_action(
 			'admin_footer',
 			function () use ($hook) {
-				if ('tools_page_' . self::PAGE_SLUG !== $hook) {
+				if ('media_page_' . self::PAGE_SLUG !== $hook) {
 					return;
 				}
 

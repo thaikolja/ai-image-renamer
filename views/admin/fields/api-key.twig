@@ -1,10 +1,10 @@
 {# API Key Field Template #}
 <div class="air-api-key-container">
-    <label
-            for="air_api_key"
-            class="screen-reader-text">
+    <label for="air_api_key" class="screen-reader-text">
         {{ __('Groq API Key', 'ai-image-renamer') }}
-    </label> <input
+    </label>
+    <div class="air-api-key-wrapper">
+        <input
             type="text"
             id="air_api_key"
             name="{{ option_name }}[api_key]"
@@ -13,14 +13,15 @@
             placeholder="{{ placeholder }}"
             autocomplete="off" />
 
-{% if saved %}
-    <button
-            type="button"
-            id="air_delete_api_key"
-            class="button button-link-delete">
-        {{ __('Delete Key', 'ai-image-renamer') }}
-    </button>
-{% endif %}
+        {% if saved %}
+            <button
+                type="button"
+                id="air_delete_api_key"
+                class="button button-hero button-link-delete text-danger">
+                {{ __('Delete Key', 'ai-image-renamer') }}
+            </button>
+        {% endif %}
+    </div>
 </div>
 <p class="description">
 {% if saved %}

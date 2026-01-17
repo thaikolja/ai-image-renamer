@@ -1,12 +1,161 @@
-{# Admin Settings Page Template #}
-<div class="wrap air-settings">
-    <h1>{{ __('AI Image Renamer Settings', 'ai-image-renamer') }}</h1>
+{# Admin Settings Page Template - Modern Tab Layout #}
+<div class="wrap air-settings-wrap">
+	{# Header #}
+	{% include 'admin/components/header.twig' %}
 
-    <form
-            method="post"
-            action="options.php">
-        {{ settings_fields(option_group)|raw }}
-        {{ do_settings_sections(page_slug)|raw }}
-        {{ submit_button(__('Save Settings', 'ai-image-renamer'))|raw }}
-    </form>
+	<div class="air-settings-container">
+		{# Tab Navigation (Sidebar) #}
+		<aside class="air-settings-nav">
+			{% include 'admin/components/tabs.twig' %}
+		</aside>
+
+		{# Main Content Area #}
+		<main class="air-settings-content">
+			<form method="post" action="options.php" id="air-settings-form">
+				{{ settings_fields(option_group)|raw }}
+
+				{# API Configuration Panel #}
+				<div id="air-panel-api" class="air-panel active" role="tabpanel" aria-labelledby="air-tab-api">
+					<div class="air-card">
+						<div class="air-card-header">
+							<h2>
+								<span class="dashicons dashicons-admin-network"></span>
+								{{ __('API Configuration', 'ai-image-renamer') }}
+							</h2>
+							<p class="air-card-description">{{ __('Connect to the Groq Vision API to enable AI-powered image renaming.', 'ai-image-renamer') }}</p>
+						</div>
+						<div class="air-card-body">
+							{% include 'admin/fields/api-key.twig' with {option_name: option_name, display_key: display_key, placeholder: placeholder, saved: saved} %}
+						</div>
+					</div>
+				</div>
+
+				{# General Settings Panel #}
+				<div id="air-panel-general" class="air-panel" role="tabpanel" aria-labelledby="air-tab-general" hidden>
+					<div class="air-card">
+						<div class="air-card-header">
+							<h2>
+								<span class="dashicons dashicons-admin-settings"></span>
+								{{ __('General Settings', 'ai-image-renamer') }}
+							</h2>
+							<p class="air-card-description">{{ __('Configure basic plugin behavior.', 'ai-image-renamer') }}</p>
+						</div>
+						<div class="air-card-body">
+							<div class="air-setting-row">
+								<div class="air-setting-label">
+									<label for="air_enabled">{{ __('Enable Auto-Rename', 'ai-image-renamer') }}</label>
+									<p class="air-setting-description">{{ __('Automatically rename images when uploaded to the Media Library.', 'ai-image-renamer') }}</p>
+								</div>
+								<div class="air-setting-control">
+									<label class="air-toggle">
+										<input type="checkbox" id="air_enabled" name="{{ option_name }}[enabled]" value="1" {{ enabled ? 'checked' : '' }}>
+										<span class="air-toggle-slider"></span>
+									</label>
+								</div>
+							</div>
+							<div class="air-setting-row">
+								<div class="air-setting-label">
+									<label for="air_set_alt_text">{{ __('Populate Alt Text', 'ai-image-renamer') }}</label>
+									<p class="air-setting-description">{{ __('Use the generated description as the image alt attribute for accessibility.', 'ai-image-renamer') }}</p>
+								</div>
+								<div class="air-setting-control">
+									<label class="air-toggle">
+										<input type="checkbox" id="air_set_alt_text" name="{{ option_name }}[set_alt_text]" value="1" {{ set_alt_text ? 'checked' : '' }}>
+										<span class="air-toggle-slider"></span>
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				{# File Types Panel #}
+				<div id="air-panel-filetypes" class="air-panel" role="tabpanel" aria-labelledby="air-tab-filetypes" hidden>
+					<div class="air-card">
+						<div class="air-card-header">
+							<h2>
+								<span class="dashicons dashicons-format-image"></span>
+								{{ __('File Types', 'ai-image-renamer') }}
+							</h2>
+							<p class="air-card-description">{{ __('Select which image formats to process.', 'ai-image-renamer') }}</p>
+						</div>
+						<div class="air-card-body">
+							<div class="air-filetypes-grid">
+								{% for mime, label in available_types %}
+								<label class="air-filetype-card {{ mime in file_types ? 'selected' : '' }}">
+									<input type="checkbox" name="{{ option_name }}[file_types][]" value="{{ mime }}" {{ mime in file_types ? 'checked' : '' }}>
+									<span class="air-filetype-icon">
+										{% if mime == 'image/jpeg' %}
+										<span class="dashicons dashicons-format-image"></span>
+										{% elseif mime == 'image/png' %}
+										<span class="dashicons dashicons-format-image"></span>
+										{% elseif mime == 'image/webp' %}
+										<span class="dashicons dashicons-format-image"></span>
+										{% elseif mime == 'image/gif' %}
+										<span class="dashicons dashicons-images-alt"></span>
+										{% endif %}
+									</span>
+									<span class="air-filetype-label">{{ label }}</span>
+								</label>
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+				</div>
+
+				{# Advanced Settings Panel #}
+				<div id="air-panel-advanced" class="air-panel" role="tabpanel" aria-labelledby="air-tab-advanced" hidden>
+					<div class="air-card">
+						<div class="air-card-header">
+							<h2>
+								<span class="dashicons dashicons-admin-tools"></span>
+								{{ __('Advanced Settings', 'ai-image-renamer') }}
+							</h2>
+							<p class="air-card-description">{{ __('Fine-tune AI behavior and output.', 'ai-image-renamer') }}</p>
+						</div>
+						<div class="air-card-body">
+							<div class="air-setting-row">
+								<div class="air-setting-label">
+									<label for="air_model">{{ __('AI Model', 'ai-image-renamer') }}</label>
+									<p class="air-setting-description">{{ __('Choose the vision model for image analysis.', 'ai-image-renamer') }}</p>
+								</div>
+								<div class="air-setting-control">
+									<div class="air-model-cards">
+										{% for model_id, model in models %}
+										<label class="air-model-card {{ current == model_id ? 'selected' : '' }}">
+											<input type="radio" name="{{ option_name }}[model]" value="{{ model_id }}" {{ current == model_id ? 'checked' : '' }}>
+											<span class="air-model-info">
+												<strong>{{ model.label }}</strong>
+												<span>{{ model.desc }}</span>
+											</span>
+										</label>
+										{% endfor %}
+									</div>
+								</div>
+							</div>
+							<div class="air-setting-row">
+								<div class="air-setting-label">
+									<label for="air_max_keywords">{{ __('Max Keywords', 'ai-image-renamer') }}</label>
+									<p class="air-setting-description">{{ __('Maximum number of keywords to include in the filename (1-10).', 'ai-image-renamer') }}</p>
+								</div>
+								<div class="air-setting-control">
+									<input type="number" id="air_max_keywords" name="{{ option_name }}[max_keywords]" value="{{ max_keywords }}" min="1" max="10" class="small-text">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				{# Submit Button #}
+				<div class="air-submit-row">
+					{{ submit_button(__('Save Settings', 'ai-image-renamer'))|raw }}
+				</div>
+			</form>
+		</main>
+
+		{# Sidebar #}
+		<aside class="air-settings-sidebar">
+			{% include 'admin/sidebar.twig' %}
+		</aside>
+	</div>
 </div>

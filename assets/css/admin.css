@@ -1,489 +1,753 @@
 /*
- * @name:           AI Image Renamer
- * @wordpress       Uses AI to rename images during upload for SEO-friendly filenames.
- * @author          Kolja Nolte <kolja.nolte@gmail.com>
- * @copyright       2025-2026 (C) Kolja Nolte
- * @see             https://docs.kolja-nolte.com/wp-ai-image-renamer/
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * Released under the GNU General Public License v2 or later.
- * See: https://www.gnu.org/licenses/gpl-2.0.html
+ * AI Image Renamer - Modern Admin Styles
  *
  * @package AIR
  * @license GPL-2.0-or-later
  */
 
+/* ========================================
+   CSS Variables
+   ======================================== */
 :root {
-	--air-max-width:     1200px;
-	--air-border-radius: 4px;
-	--air-transition:    all 0.2s ease;
-	--air-gap-sm:        10px;
-	--air-gap-md:        12px;
-	--air-gap-lg:        20px;
+  /* Layout */
+  --air-max-width:     1200px;
+  --air-border-radius: 6px;
+  --air-transition:    all 0.2s ease;
+  --air-gap-sm:        10px;
+  --air-gap-md:        16px;
+  --air-gap-lg:        24px;
 
-	/* WordPress color palette */
-	--wp-blue:           #2271b1;
-	--wp-blue-light:     #f0f6fc;
-	--wp-green:          #00a32a;
-	--wp-red:            #d63638;
-	--wp-gray:           #72777c;
-	--wp-gray-dark:      #646970;
-	--wp-gray-light:     #dcdcde;
-	--wp-border:         #c3c4c7;
-	--wp-text:           #1d2327;
-	--wp-white:          #ffffff;
+  /* Colors */
+  --air-primary:       #2271b1;
+  --air-primary-dark:  #135e96;
+  --air-primary-light: #f0f6fc;
+  --air-success:       #00a32a;
+  --air-error:         #d63638;
+  --air-warning:       #dba617;
+
+  /* Neutrals */
+  --air-white:         #ffffff;
+  --air-gray-50:       #f9fafb;
+  --air-gray-100:      #f3f4f6;
+  --air-gray-200:      #e5e7eb;
+  --air-gray-300:      #d1d5db;
+  --air-gray-400:      #9ca3af;
+  --air-gray-500:      #6b7280;
+  --air-gray-600:      #4b5563;
+  --air-gray-700:      #374151;
+  --air-gray-800:      #1f2937;
+  --air-gray-900:      #111827;
+
+  /* Shadows */
+  --air-shadow-sm:     0 1px 2px rgba(0, 0, 0, 0.05);
+  --air-shadow-md:     0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --air-shadow-lg:     0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
-/* Settings page wrapper */
-.air-settings {
-	max-width: var(--air-max-width);
-
-	h2 {
-		display:     flex;
-		align-items: center;
-
-		& .dashicons {
-			vertical-align: text-bottom;
-			margin-right:   8px;
-			width:          20px;
-			height:         20px;
-			font-size:      20px;
-		}
-	}
-
-	.form-table {
-		th {
-			width: 200px;
-
-			& .dashicons {
-				vertical-align: text-bottom;
-				margin-right:   8px;
-				width:          20px;
-				height:         20px;
-				font-size:      20px;
-			}
-		}
-
-		td {
-			p.description {
-				color:  var(--wp-gray-dark);
-				margin: var(--air-gap-md) 0;
-			}
-
-			label {
-				display:      inline-block;
-				margin-right: 15px;
-			}
-		}
-	}
-
-	/* Form inputs */
-	textarea.large-text {
-		width:     100%;
-		max-width: 500px;
-	}
-
-	input.regular-text {
-		width:     100%;
-		max-width: 400px;
-	}
-
-	/* Test connection result */
-	#air_test_result {
-		margin-left: var(--air-gap-sm);
-		font-weight: 500;
-
-		&.success { color: var(--wp-green); }
-		&.error   { color: var(--wp-red); }
-		&.testing { color: var(--wp-gray); }
-	}
-
-	/* Card-style Model Selector */
-	.air-model-selector {
-		display:        flex !important;
-		flex-direction: row !important;
-		flex-wrap:      nowrap !important;
-		gap:            15px;
-		max-width:      600px;
-
-		/* High specificity for model cards to override generic labels */
-		& label.air-model-card {
-			position:      relative;
-			display:       flex !important;
-			align-items:   center !important;
-			flex:          1;
-			min-width:     200px;
-			padding:       15px !important;
-			background:    var(--wp-white);
-			border:        1px solid var(--wp-gray-light);
-			border-radius: var(--air-border-radius);
-			cursor:        pointer;
-			transition:    var(--air-transition);
-			box-sizing:    border-box;
-			margin:        0 !important;
-
-			&:hover {
-				border-color: var(--wp-blue);
-				transform:    translateY(-1px);
-				box-shadow:   0 2px 5px rgba(0, 0, 0, 0.05);
-			}
-
-			&.selected {
-				border-color:     var(--wp-blue);
-				background-color: var(--wp-blue-light);
-
-				& .air-icon {
-					color: var(--wp-blue);
-				}
-			}
-
-			input[type="radio"] {
-				margin:      0 15px 0 0 !important;
-				flex-shrink: 0;
-			}
-		}
-	}
-
-	.air-model-content {
-		flex-grow: 1;
-
-		strong {
-			display:       block;
-			margin-bottom: 2px;
-			color:         var(--wp-text);
-			font-size:     14px;
-		}
-
-		p,
-		.air-model-description {
-			display:     block;
-			margin:      0;
-			font-size:   13px;
-			color:       var(--wp-gray-dark);
-			line-height: 1.3;
-		}
-	}
-
-	/* Settings Hero Card */
-	.air-settings-hero {
-		display:     flex !important;
-		gap:         var(--air-gap-lg);
-		margin:      var(--air-gap-lg) 0 30px 0;
-		max-width:   1200px;
-		align-items: stretch;
-
-		& .dashicons {
-			vertical-align: text-bottom;
-			margin-right:   8px;
-			width:          20px;
-			height:         20px;
-			font-size:      20px;
-		}
-
-		@media (max-width: 782px) {
-			flex-direction: column;
-		}
-	}
-
-	/* Hero Column as a Postbox */
-	.air-hero-column {
-		&.postbox {
-			flex:           1;
-			display:        flex;
-			flex-direction: column;
-			margin:         0;
-			min-width:      250px;
-			height:         auto;
-
-			.postbox-header {
-				border-bottom: 1px solid var(--wp-border);
-			}
-
-			.hndle {
-				cursor: default;
-			}
-
-			.inside {
-				flex-grow:       0;
-				margin:          0;
-				padding:         0 var(--air-gap-md) var(--air-gap-md) var(--air-gap-md);
-				display:         flex;
-				flex-direction:  column;
-				justify-content: center;
-
-				p {
-					font-size: 14px;
-				}
-			}
-		}
-
-
-		/* Width variants */
-		&-narrow {
-			flex:      0 0 33.33%;
-			max-width: 33.33%;
-
-			@media (max-width: 782px) {
-				flex:      1 1 100%;
-				max-width: 100%;
-			}
-		}
-
-		&-wide {
-			flex:      0 0 66.67%;
-			max-width: 66.67%;
-
-			@media (max-width: 782px) {
-				flex:      1 1 100%;
-				max-width: 100%;
-			}
-		}
-
-		/* Setup Guide Styling */
-		&.air-setup-guide {
-			.air-version-badge {
-				display:        inline-block;
-				background:     var(--wp-gray-light);
-				color:          var(--wp-text);
-				font-size:      10px;
-				font-weight:    600;
-				padding:        2px 6px;
-				border-radius:  3px;
-				margin-left:    8px;
-				text-transform: uppercase;
-				vertical-align: middle;
-				border:         1px solid var(--wp-border);
-			}
-
-			.air-setup-steps {
-				margin:  15px 0 0 0;
-				padding: 0;
-				counter-reset: step-counter;
-				list-style: none;
-
-				li {
-					position:      relative;
-					padding-left:  30px;
-					margin-bottom: 15px;
-
-					&:last-child {
-						margin-bottom: 0;
-					}
-
-					&::before {
-						counter-increment: step-counter;
-						content:           counter(step-counter);
-						position:          absolute;
-						left:              0;
-						top:               0;
-						width:             20px;
-						height:            20px;
-						background-color:  var(--wp-blue);
-						color:             white;
-						border-radius:     50%;
-						text-align:        center;
-						line-height:       20px;
-						font-size:         12px;
-						font-weight:       600;
-					}
-
-					strong {
-						display: block;
-						color:   var(--wp-text);
-						margin-bottom: 2px;
-					}
-
-					span {
-						font-size: 13px;
-						color:     var(--wp-gray-dark);
-					}
-				}
-			}
-		}
-
-		/* Pro Upsell Card Styling */
-		&.air-pro-upsell {
-			background:   linear-gradient(135deg, #f0f6fc 0%, #e8f4fd 100%);
-			border-color: var(--wp-blue);
-			overflow:     hidden;
-
-			.air-pro-header {
-				background:    linear-gradient(135deg, #2271b1 0%, #135e96 100%);
-				border-bottom: none;
-
-				.hndle {
-					color: var(--wp-white);
-
-					.dashicons {
-						color: #ffd700;
-					}
-				}
-			}
-
-			.air-pro-badge {
-				display:          inline-block;
-				background:       linear-gradient(135deg, #ffd700 0%, #ffb700 100%);
-				color:            #1d2327;
-				font-size:        11px;
-				font-weight:      600;
-				padding:          3px 8px;
-				border-radius:    3px;
-				margin-left:      10px;
-				text-transform:   uppercase;
-				letter-spacing:   0.5px;
-				vertical-align:   middle;
-			}
-
-			.air-pro-tagline {
-				font-size:     15px;
-				color:         var(--wp-text);
-				margin-bottom: 15px;
-				font-weight:   500;
-			}
-
-			.air-pro-features {
-				list-style:    none;
-				margin:        0 0 20px 0;
-				padding:       0;
-				display:       grid;
-				grid-template-columns: 1fr 1fr;
-				gap:           12px;
-
-				@media (max-width: 600px) {
-					grid-template-columns: 1fr;
-				}
-
-				li {
-					display:       flex;
-					align-items:   flex-start;
-					flex-wrap:     wrap;
-					gap:           6px;
-					padding:       10px 12px;
-					background:    rgba(255, 255, 255, 0.7);
-					border-radius: var(--air-border-radius);
-					border:        1px solid rgba(34, 113, 177, 0.15);
-					transition:    var(--air-transition);
-
-					&:hover {
-						background:  rgba(255, 255, 255, 0.95);
-						transform:   translateX(3px);
-						box-shadow:  0 2px 8px rgba(34, 113, 177, 0.1);
-					}
-
-					.dashicons {
-						color:       var(--wp-green);
-						flex-shrink: 0;
-						margin:      0;
-					}
-
-					strong {
-						color:     var(--wp-text);
-						font-size: 13px;
-					}
-
-					span:last-child {
-						flex-basis: 100%;
-						padding-left: 28px;
-						font-size: 12px;
-						color:     var(--wp-gray-dark);
-						line-height: 1.4;
-					}
-				}
-			}
-
-			.air-pro-cta {
-				display:     flex;
-				align-items: center;
-				gap:         15px;
-				flex-wrap:   wrap;
-
-				.air-pro-button {
-					display:     flex;
-					align-items: center;
-					gap:         8px;
-					background:  linear-gradient(135deg, #2271b1 0%, #135e96 100%);
-					border:      none;
-					box-shadow:  0 3px 10px rgba(34, 113, 177, 0.3);
-					transition:  all 0.3s ease;
-					animation:   air-pulse 2s infinite;
-
-					&:hover {
-						background:  linear-gradient(135deg, #135e96 0%, #0a4570 100%);
-						transform:   translateY(-2px);
-						box-shadow:  0 5px 15px rgba(34, 113, 177, 0.4);
-					}
-
-					.dashicons {
-						margin:    0;
-						font-size: 18px;
-						width:     18px;
-						height:    18px;
-					}
-				}
-
-				.air-pro-price {
-					font-size:   14px;
-					color:       var(--wp-gray-dark);
-					font-weight: 500;
-				}
-			}
-		}
-	}
-
-
-	/* API Key Field Container */
-	.air-api-key-container {
-		display:     flex;
-		gap:         var(--air-gap-sm);
-		align-items: center;
-	}
-
-	/* Action Buttons Container */
-	.air-action-buttons {
-		display:     flex;
-		align-items: center;
-		gap:         var(--air-gap-md);
-	}
-
-	/* Button with Icon Styling */
-	.air-button-with-icon {
-		display:     flex;
-		align-items: center;
-		gap:         var(--air-gap-md);
-
-		& .dashicons {
-			margin:         0 !important;
-			line-height:    1;
-			vertical-align: middle;
-		}
-	}
-
-	/* File Type Checkbox Labels */
-	.air-file-type-label {
-		margin-right: 15px;
-	}
+/* ========================================
+   Page Wrapper
+   ======================================== */
+.air-settings-wrap {
+  margin:       0;
+  padding:      0;
+  max-width:    none;
+  background:   var(--air-gray-100);
+  margin-left:  -20px;
+  margin-right: 0;
+  min-height:   calc(100vh - 32px);
 }
 
-/* SVG Icon Support */
-.air-icon {
-	width:          20px;
-	height:         20px;
-	vertical-align: middle;
-	fill:           currentColor;
-	margin-right:   0.5rem;
-	display:        inline-block;
+/* ========================================
+   Header
+   ======================================== */
+.air-header {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     center;
+  padding:         16px 24px;
+  background:      var(--air-white);
+  border-bottom:   1px solid var(--air-gray-200);
+  position:        sticky;
+  top:             32px;
+  z-index:         100;
 }
 
-/* Pro CTA Button Pulse Animation */
+.air-header-left {
+  display:     flex;
+  align-items: center;
+  gap:         12px;
+}
+
+.air-header-logo {
+  width:           48px;
+  height:          48px;
+  background:      linear-gradient(135deg, var(--air-primary) 0%, var(--air-primary-dark) 100%);
+  border-radius:   10px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  box-shadow:      var(--air-shadow-md);
+}
+
+.air-header-logo .dashicons {
+  color:     var(--air-white);
+  font-size: 24px;
+  width:     24px;
+  height:    24px;
+}
+
+.air-header-title h1 {
+  margin:      0;
+  font-size:   20px;
+  font-weight: 600;
+  color:       var(--air-gray-900);
+  line-height: 1.2;
+}
+
+.air-header-version {
+  display:       inline-block;
+  background:    var(--air-gray-200);
+  color:         var(--air-gray-600);
+  font-size:     11px;
+  font-weight:   500;
+  padding:       2px 8px;
+  border-radius: 4px;
+  margin-left:   8px;
+}
+
+.air-header-breadcrumb {
+  font-size:      12px;
+  color:          var(--air-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight:    500;
+}
+
+/* ========================================
+   Settings Container (Grid Layout)
+   ======================================== */
+.air-settings-container {
+  display:               grid;
+  grid-template-columns: 200px minmax(0, 1fr) 280px;
+  gap:                   var(--air-gap-lg);
+  padding:               var(--air-gap-lg);
+}
+
+@media (max-width: 1200px) {
+  .air-settings-container {
+    grid-template-columns: 180px minmax(0, 1fr);
+  }
+
+  .air-settings-sidebar {
+    display: none;
+  }
+}
+
+
+/* ========================================
+   Tab Navigation (Vertical Sidebar)
+   ======================================== */
+.air-tabs {
+  display:        flex;
+  flex-direction: column;
+  gap:            4px;
+  position:       sticky;
+  top:            120px;
+  width:          100%;
+}
+
+.air-tab {
+  display:       flex;
+  align-items:   center;
+  gap:           12px;
+  padding:       12px 16px;
+  background:    transparent;
+  border:        none;
+  border-left:   3px solid transparent;
+  border-radius: 0 var(--air-border-radius) var(--air-border-radius) 0;
+  cursor:        pointer;
+  transition:    var(--air-transition);
+  text-align:    left;
+  font-size:     14px;
+  color:         var(--air-gray-600);
+  font-weight:   500;
+}
+
+.air-tab:hover {
+  background: var(--air-gray-200);
+  color:      var(--air-gray-800);
+}
+
+.air-tab.active {
+  background:        var(--air-primary-light);
+  border-left-color: var(--air-primary);
+  color:             var(--air-primary);
+}
+
+.air-tab .dashicons {
+  font-size: 18px;
+  width:     18px;
+  height:    18px;
+}
+
+.air-tab-label {
+  flex: 1;
+}
+
+/* ========================================
+   Content Area
+   ======================================== */
+.air-settings-content {
+  min-width: 0;
+}
+
+/* ========================================
+   Panels
+   ======================================== */
+.air-panel {
+  display: none;
+}
+
+.air-panel.active {
+  display: block;
+}
+
+/* ========================================
+   Cards
+   ======================================== */
+.air-card {
+  background:    var(--air-white);
+  border:        1px solid var(--air-gray-200);
+  border-radius: var(--air-border-radius);
+  box-shadow:    var(--air-shadow-sm);
+  margin-bottom: var(--air-gap-lg);
+  overflow:      hidden;
+}
+
+.air-card-header {
+  padding:       var(--air-gap-md) var(--air-gap-lg);
+  border-bottom: 1px solid var(--air-gray-200);
+  background:    var(--air-gray-50);
+}
+
+.air-card-header h2 {
+  display:     flex;
+  align-items: center;
+  gap:         10px;
+  margin:      0 0 4px 0;
+  font-size:   16px;
+  font-weight: 600;
+  color:       var(--air-gray-900);
+}
+
+.air-card-header h2 .dashicons {
+  color:     var(--air-primary);
+  font-size: 20px;
+  width:     20px;
+  height:    20px;
+}
+
+.air-card-description {
+  margin:    0;
+  font-size: 13px;
+  color:     var(--air-gray-500);
+}
+
+.air-card-body {
+  padding: var(--air-gap-lg);
+}
+
+/* ========================================
+   Setting Rows
+   ======================================== */
+.air-setting-row {
+  display:       flex;
+  align-items:   flex-start;
+  gap:           var(--air-gap-lg);
+  padding:       var(--air-gap-md) 0;
+  border-bottom: 1px solid var(--air-gray-200);
+}
+
+.air-setting-row:first-child {
+  padding-top: 0;
+}
+
+.air-setting-row:last-child {
+  padding-bottom: 0;
+  border-bottom:  none;
+}
+
+.air-setting-label {
+  flex:      1;
+  min-width: 0;
+}
+
+.air-setting-label label {
+  display:     block;
+  font-size:   14px;
+  font-weight: 600;
+  color:       var(--air-gray-800);
+  margin:      0 0 4px 0;
+}
+
+.air-setting-description {
+  margin:      0;
+  font-size:   13px;
+  color:       var(--air-gray-500);
+  line-height: 1.4;
+}
+
+.air-setting-control {
+  flex-shrink: 0;
+}
+
+/* ========================================
+   iOS-Style Toggle Switch
+   ======================================== */
+.air-toggle {
+  position: relative;
+  display:  inline-block;
+  width:    44px;
+  height:   24px;
+}
+
+.air-toggle input {
+  opacity: 0;
+  width:   0;
+  height:  0;
+}
+
+.air-toggle-slider {
+  position:         absolute;
+  cursor:           pointer;
+  top:              0;
+  left:             0;
+  right:            0;
+  bottom:           0;
+  background-color: var(--air-gray-300);
+  transition:       var(--air-transition);
+  border-radius:    24px;
+}
+
+.air-toggle-slider:before {
+  position:         absolute;
+  content:          "";
+  height:           18px;
+  width:            18px;
+  left:             3px;
+  bottom:           3px;
+  background-color: var(--air-white);
+  transition:       var(--air-transition);
+  border-radius:    50%;
+  box-shadow:       var(--air-shadow-sm);
+}
+
+.air-toggle input:checked + .air-toggle-slider {
+  background-color: var(--air-primary);
+}
+
+.air-toggle input:checked + .air-toggle-slider:before {
+  transform: translateX(20px);
+}
+
+.air-toggle input:focus + .air-toggle-slider {
+  box-shadow: 0 0 0 3px rgba(34, 113, 177, 0.2);
+}
+
+/* ========================================
+   File Types Grid
+   ======================================== */
+.air-filetypes-grid {
+  display:               grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap:                   var(--air-gap-md);
+}
+
+.air-filetype-card {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            8px;
+  padding:        var(--air-gap-md);
+  background:     var(--air-gray-50);
+  border:         2px solid var(--air-gray-200);
+  border-radius:  var(--air-border-radius);
+  cursor:         pointer;
+  transition:     var(--air-transition);
+  text-align:     center;
+}
+
+.air-filetype-card:hover {
+  border-color: var(--air-primary);
+  background:   var(--air-primary-light);
+}
+
+.air-filetype-card:has(input:checked) {
+  border-color: var(--air-primary);
+  background:   var(--air-primary-light);
+}
+
+.air-filetype-card:not(:has(input:checked)):not(:hover) {
+  border-color: var(--air-gray-200);
+  background:   var(--air-gray-50);
+}
+
+.air-filetype-card input {
+  position: absolute;
+  opacity:  0;
+}
+
+.air-filetype-icon .dashicons {
+  font-size: 32px;
+  width:     32px;
+  height:    32px;
+  color:     var(--air-gray-500);
+}
+
+.air-filetype-card.selected .air-filetype-icon .dashicons {
+  color: var(--air-primary);
+}
+
+.air-filetype-label {
+  font-size:   13px;
+  font-weight: 500;
+  color:       var(--air-gray-700);
+}
+
+/* ========================================
+   Model Selection Cards
+   ======================================== */
+.air-model-cards {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--air-gap-sm);
+  width:          100%;
+  max-width:      400px;
+}
+
+.air-model-card {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--air-gap-md);
+  padding:       var(--air-gap-md);
+  background:    var(--air-gray-50);
+  border:        2px solid var(--air-gray-200);
+  border-radius: var(--air-border-radius);
+  cursor:        pointer;
+  transition:    var(--air-transition);
+}
+
+.air-model-card:hover {
+  border-color: var(--air-primary);
+}
+
+.air-model-card.selected {
+  border-color: var(--air-primary);
+  background:   var(--air-primary-light);
+}
+
+.air-model-card input[type="radio"] {
+  margin: 0;
+}
+
+.air-model-info {
+  flex: 1;
+}
+
+.air-model-info strong {
+  display:   block;
+  font-size: 14px;
+  color:     var(--air-gray-800);
+  margin:    0 0 2px 0;
+}
+
+.air-model-info span {
+  font-size: 12px;
+  color:     var(--air-gray-500);
+}
+
+/* ========================================
+   API Key Field (Inside Card)
+   ======================================== */
+.air-card-body .air-api-key-container {
+  margin-bottom: var(--air-gap-md);
+}
+
+.air-card-body .air-api-key-wrapper {
+  display:     flex;
+  align-items: center;
+  gap:         var(--air-gap-sm);
+  flex-wrap:   wrap;
+}
+
+.air-card-body .air-api-key-wrapper input[type="password"],
+.air-card-body .air-api-key-wrapper input[type="text"] {
+  width:         100%;
+  max-width:     400px;
+  padding:       10px 14px;
+  font-size:     14px;
+  border:        1px solid var(--air-gray-300);
+  border-radius: var(--air-border-radius);
+  transition:    var(--air-transition);
+}
+
+.air-card-body .air-api-key-wrapper input:focus {
+  border-color: var(--air-primary);
+  box-shadow:   0 0 0 3px rgba(34, 113, 177, 0.1);
+  outline:      none;
+}
+
+#air_delete_api_key {
+  color:           var(--air-error);
+  text-decoration: none;
+  font-size:       13px;
+}
+
+#air_delete_api_key:hover {
+  color:           #b32d2e; /* Darker red */
+  text-decoration: underline;
+}
+
+.air-card-body .air-action-buttons {
+  display:   flex;
+  gap:       var(--air-gap-sm);
+  flex-wrap: wrap;
+}
+
+.air-button-with-icon {
+  display:     inline-flex;
+  align-items: center;
+  gap:         6px;
+}
+
+.air-button-with-icon .dashicons {
+  font-size:      18px;
+  width:          18px;
+  height:         18px;
+  line-height:    1;
+  vertical-align: middle;
+}
+
+/* ========================================
+   Submit Row
+   ======================================== */
+.air-submit-row {
+  margin-top: var(--air-gap-lg);
+}
+
+.air-submit-row .button-primary {
+  padding:     10px 24px;
+  font-size:   14px;
+  height:      auto;
+  line-height: 1.4;
+}
+
+/* ========================================
+   Sidebar (Pro Upsell)
+   ======================================== */
+.air-settings-sidebar {
+  position: sticky;
+  top:      120px;
+}
+
+.air-settings-sidebar .air-pro-upsell {
+  background:    linear-gradient(135deg, #f0f6fc 0%, #e8f4fd 100%);
+  border-color:  var(--air-primary);
+  border-radius: var(--air-border-radius);
+  overflow:      hidden;
+}
+
+.air-settings-sidebar .air-pro-header {
+  background:    linear-gradient(135deg, var(--air-primary) 0%, var(--air-primary-dark) 100%);
+  padding:       var(--air-gap-md);
+  border-bottom: none;
+}
+
+.air-settings-sidebar .air-pro-header .hndle {
+  color:   var(--air-white);
+  margin:  0;
+  padding: 0;
+}
+
+.air-settings-sidebar .air-pro-header .dashicons {
+  color: #ffd700;
+}
+
+.air-settings-sidebar .air-pro-badge {
+  display:        inline-block;
+  background:     linear-gradient(135deg, #ffd700 0%, #ffb700 100%);
+  color:          var(--air-gray-900);
+  font-size:      10px;
+  font-weight:    600;
+  padding:        2px 6px;
+  border-radius:  3px;
+  margin-left:    8px;
+  text-transform: uppercase;
+}
+
+.air-settings-sidebar .air-pro-tagline {
+  font-size:   13px;
+  color:       var(--air-gray-700);
+  margin:      0 0 var(--air-gap-md) 0;
+  line-height: 1.4;
+}
+
+.air-settings-sidebar .air-pro-features {
+  list-style: none;
+  margin:     0 0 var(--air-gap-md) 0;
+  padding:    0;
+}
+
+.air-settings-sidebar .air-pro-features li {
+  display:       flex;
+  align-items:   flex-start;
+  gap:           8px;
+  padding:       8px;
+  background:    rgba(255, 255, 255, 0.6);
+  border-radius: 4px;
+  margin-bottom: 6px;
+  transition:    var(--air-transition);
+}
+
+.air-settings-sidebar .air-pro-features li:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.air-settings-sidebar .air-pro-features .dashicons {
+  color:       var(--air-success);
+  flex-shrink: 0;
+  margin-top:  2px;
+}
+
+.air-settings-sidebar .air-pro-features strong {
+  display:   block;
+  font-size: 13px;
+  color:     var(--air-gray-800);
+}
+
+.air-settings-sidebar .air-pro-features span:not(.dashicons) {
+  display:     block;
+  font-size:   11px;
+  color:       var(--air-gray-600);
+  line-height: 1.3;
+}
+
+.air-settings-sidebar .air-pro-cta {
+  display:        flex;
+  flex-direction: column;
+  gap:            8px;
+}
+
+.air-settings-sidebar .air-pro-button {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             8px;
+  width:           100%;
+  padding:         12px;
+  background:      linear-gradient(135deg, var(--air-primary) 0%, var(--air-primary-dark) 100%);
+  color:           var(--air-white);
+  border:          none;
+  border-radius:   var(--air-border-radius);
+  font-size:       14px;
+  font-weight:     500;
+  cursor:          pointer;
+  transition:      var(--air-transition);
+  text-decoration: none;
+}
+
+.air-settings-sidebar .air-pro-button:hover {
+  transform:  translateY(-2px);
+  box-shadow: var(--air-shadow-lg);
+}
+
+.air-settings-sidebar .air-pro-price {
+  text-align:  center;
+  font-size:   12px;
+  color:       var(--air-gray-600);
+  font-weight: 500;
+}
+
+/* ========================================
+   Test Connection Feedback
+   ======================================== */
+#air_test_result {
+  padding:       8px 12px;
+  border-radius: var(--air-border-radius);
+  font-size:     13px;
+  font-weight:   500;
+}
+
+#air_test_result.success {
+  background: #d1fae5;
+  color:      #065f46;
+}
+
+#air_test_result.error {
+  background: #fee2e2;
+  color:      #991b1b;
+}
+
+#air_test_result.testing {
+  background: var(--air-gray-100);
+  color:      var(--air-gray-600);
+}
+
+/* ========================================
+   Animations
+   ======================================== */
 @keyframes air-pulse {
-	0%, 100% {
-		box-shadow: 0 3px 10px rgba(34, 113, 177, 0.3);
-	}
-	50% {
-		box-shadow: 0 3px 15px rgba(34, 113, 177, 0.5);
-	}
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(34, 113, 177, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(34, 113, 177, 0);
+  }
+}
+
+/* ========================================
+   Mobile Responsiveness
+   ======================================== */
+@media (max-width: 782px) {
+  .air-settings-container {
+    grid-template-columns: 1fr;
+    padding:               var(--air-gap-md);
+  }
+
+  /* Show tabs as horizontal scrollable row on mobile */
+  .air-settings-nav {
+    order:   -1;
+    display: flex;
+  }
+
+  .air-tabs {
+    flex-direction: row;
+    overflow-x:     auto;
+    gap:            0;
+    position:       static;
+    margin-bottom:  var(--air-gap-md);
+    background:     var(--air-white);
+    border-radius:  var(--air-border-radius);
+    padding:        4px;
+    box-shadow:     var(--air-shadow-sm);
+  }
+
+  .air-tab {
+    flex:            1 0 auto;
+    border-left:     none;
+    border-bottom:   3px solid transparent;
+    border-radius:   var(--air-border-radius) var(--air-border-radius) 0 0;
+    padding:         10px 14px;
+    justify-content: center;
+    text-align:      center;
+  }
+
+  .air-tab.active {
+    border-bottom-color: var(--air-primary);
+    border-left-color:   transparent;
+  }
+
+  .air-tab-label {
+    display: none;
+  }
 }

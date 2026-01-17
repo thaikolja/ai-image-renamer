@@ -1,80 +1,35 @@
-{# Hero Section Template - API Configuration #}
-<div class="air-settings-hero">
-	<div class="air-hero-column air-hero-column-narrow postbox air-setup-guide">
-		<div class="postbox-header">
-			<div class="handle-actions">
-				<button type="button" class="handlediv" aria-expanded="true">
-					<span class="toggle-indicator" aria-hidden="true"></span>
-				</button>
-			</div>
-			<h2 class="hndle ui-sortable-handle">
+{# Hero Section Template - Setup Guide #}
+<div class="air-setup-guide postbox">
+	<div class="postbox-header">
+		<div class="handle-actions">
+			<button type="button" class="handlediv" aria-expanded="true">
+				<span class="toggle-indicator" aria-hidden="true"></span>
+			</button>
+		</div>
+		<h2 class="hndle ui-sortable-handle">
 				<span>
 					<span class="dashicons dashicons-info"></span>
 					{{ __('Get Started', 'ai-image-renamer') }}
 					<span class="air-version-badge">{{ __('Free Version', 'ai-image-renamer') }}</span>
 				</span>
-			</h2>
-		</div>
-		<div class="inside">
-			<p>{{ __('Follow these steps to start renaming your images automatically using AI:', 'ai-image-renamer') }}</p>
-			<ol class="air-setup-steps">
-				<li>
-					<strong>{{ __('Get API Key', 'ai-image-renamer') }}</strong>
-					<span>{{ __('Sign up for a free account at the', 'ai-image-renamer') }} <a href="https://console.groq.com/keys" target="_blank">{{ __('Groq Console', 'ai-image-renamer') }}</a>.</span>
-				</li>
-				<li>
-					<strong>{{ __('Configure Plugin', 'ai-image-renamer') }}</strong>
-					<span>{{ __('Enter your API key below and save the settings.', 'ai-image-renamer') }}</span>
-				</li>
-				<li>
-					<strong>{{ __('Enable Auto-Rename', 'ai-image-renamer') }}</strong>
-					<span>{{ __('Toggle "Enable Auto-Rename" to start processing new uploads.', 'ai-image-renamer') }}</span>
-				</li>
-			</ol>
-		</div>
+		</h2>
 	</div>
-	<div class="air-hero-column air-hero-column-wide postbox air-pro-upsell">
-		<div class="postbox-header air-pro-header">
-			<h2 class="hndle ui-sortable-handle">
-				<span>
-					<span class="dashicons dashicons-star-filled"></span>
-					{{ __('Upgrade to Pro', 'ai-image-renamer') }}
-					<span class="air-pro-badge">{{ __('Coming Soon', 'ai-image-renamer') }}</span>
-				</span>
-			</h2>
-		</div>
-		<div class="inside">
-			<p class="air-pro-tagline">{{ __('Take your media management to the next level with powerful Pro features.', 'ai-image-renamer') }}</p>
-			<ul class="air-pro-features">
-				<li>
-					<span class="dashicons dashicons-yes-alt"></span>
-					<strong>{{ __('Bulk Rename', 'ai-image-renamer') }}</strong>
-					<span>{{ __('Rename thousands of existing images at once', 'ai-image-renamer') }}</span>
-				</li>
-				<li>
-					<span class="dashicons dashicons-yes-alt"></span>
-					<strong>{{ __('Rename History', 'ai-image-renamer') }}</strong>
-					<span>{{ __('Track all changes with one-click undo', 'ai-image-renamer') }}</span>
-				</li>
-				<li>
-					<span class="dashicons dashicons-yes-alt"></span>
-					<strong>{{ __('All AI Models', 'ai-image-renamer') }}</strong>
-					<span>{{ __('Access to all current and future models', 'ai-image-renamer') }}</span>
-				</li>
-				<li>
-					<span class="dashicons dashicons-yes-alt"></span>
-					<strong>{{ __('Unlimited Keywords', 'ai-image-renamer') }}</strong>
-					<span>{{ __('Generate up to 10 keywords per image', 'ai-image-renamer') }}</span>
-				</li>
-			</ul>
-			<div class="air-pro-cta">
-				<a href="https://aiimagerenamer.com/pro?utm_source=plugin&utm_medium=settings&utm_campaign=upsell" class="button button-primary button-hero air-pro-button" target="_blank" rel="noopener">
-					<span class="dashicons dashicons-external"></span>
-					{{ __('Learn More About Pro', 'ai-image-renamer') }}
-				</a>
-				<span class="air-pro-price">{{ __('Starting at $49/year', 'ai-image-renamer') }}</span>
-			</div>
-		</div>
+	<div class="inside">
+		<p>{{ __('Follow these steps to start renaming your images automatically using AI:', 'ai-image-renamer') }}</p>
+		<ol class="air-setup-steps">
+			<li>
+				<strong>{{ __('Get API Key', 'ai-image-renamer') }}</strong>
+				<span>{{ __('Sign up for a free account at the', 'ai-image-renamer') }} <a href="https://console.groq.com/keys" target="_blank">{{ __('Groq Console', 'ai-image-renamer') }}</a>.</span>
+			</li>
+			<li>
+				<strong>{{ __('Configure Plugin', 'ai-image-renamer') }}</strong>
+				<span>{{ __('Enter your API key below and save the settings.', 'ai-image-renamer') }}</span>
+			</li>
+			<li>
+				<strong>{{ __('Enable Auto-Rename', 'ai-image-renamer') }}</strong>
+				<span>{{ __('Toggle "Enable Auto-Rename" to start processing new uploads.', 'ai-image-renamer') }}</span>
+			</li>
+		</ol>
 	</div>
 </div>
 
