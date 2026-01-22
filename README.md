@@ -1,10 +1,12 @@
-# AI Image Renamer (WordPress Plugin)
-
-**Automatically rename uploaded images with AI for SEO-friendly, descriptive filenames. Powered by Groq’s Vision API.**
+# AI Image Renamer
 
 [![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-0073aa)](https://wordpress.org/) [![PHP](https://img.shields.io/badge/PHP-8.2%2B-777bb4)](https://www.php.net/) [![License: GPL v2+](https://img.shields.io/badge/License-GPLv2%2B-3da639)](https://www.gnu.org/licenses/gpl-2.0.html)
 
-> Note: This repository contains a WordPress plugin. It runs inside WordPress, not as a standalone PHP app.
+A **WordPress** plugin to automatically rename uploaded images with AI for **SEO-friendly**, descriptive filenames and `alt="..."` attributes. Powered by **Groq’s Vision API**. 
+
+> [!IMPORTANT]
+>
+> This is a **WordPress Plugin**. It requires a WordPress installation to function and cannot be run as a standalone PHP application.
 
 ## What it does
 
@@ -18,13 +20,24 @@ When you upload an image to the WordPress Media Library, the plugin:
 
 If the API call fails, the plugin falls back to the original filename, so uploads won’t break.
 
+## Example
+
+- Before: `IMG_1234.JPEG`
+- After: `golden-retriever-playing-fetch-sunny-park.jpg`
+
 ## Features
 
-- AI-powered file naming (Groq Vision)
-- SEO-friendly, human-readable filenames
-- Optional auto alt-text
-- Encrypted API key storage (`defuse/php-encryption`)
-- Configurable models, prompt, keyword limit, supported file types
+> [!NOTE]
+>
+> The code stored in this repository is only for the free version of **AI Image Renamer**. A pro version of this plugin with dozens of additional features will follow shortly. 
+
+- **Native WordPress Integration:** Seamlessly hooks into the media upload process.
+- **AI-Powered:** Uses Groq Vision for accurate image analysis.
+- **Modern Admin UI:** customized settings page with a Quick Start guide and diagnostics.
+- **SEO Optimization:** Generates human-readable, keyword-rich filenames.
+- **Accessibility:** Optional auto-generation of alt text.
+- **Secure:** Encrypted API key storage using `defuse/php-encryption`.
+- **Customizable:** Configure models, prompts, keyword limits, and supported file types.
 
 ## Requirements
 
@@ -51,6 +64,8 @@ cd ai-image-renamer
 composer install --no-dev --optimize-autoloader
 ```
 
+> [!CAUTION]
+>
 > Without `vendor/` the plugin shows an admin notice (“Composer dependencies not installed…”). That’s expected.
 
 ## Configuration (WP Admin)
@@ -75,20 +90,16 @@ You can generate a strong random value locally:
 php -r "echo bin2hex(random_bytes(32)), PHP_EOL;"
 ```
 
-## Example
-
-- Before: `IMG_1234.JPEG`
-- After: `golden-retriever-playing-fetch-sunny-park.jpg`
-
 ## Security & Privacy
 
-- API keys are encrypted before being stored.
+- API keys are encrypted before being stored and cannot be read once added.
 - Images are only transmitted to Groq during upload processing.
 - No image data is stored on external servers by this plugin.
+- No telemetry or "[Phoning home](https://en.wikipedia.org/wiki/Phoning_home)".
 
 ## Troubleshooting
 
-### “Composer dependencies not installed”
+### “Composer dependencies not installed.”
 
 Run:
 
@@ -106,9 +117,11 @@ inside the plugin directory.
 
 ## Links
 
-- Plugin documentation: https://docs.kolja-nolte.com/ai-image-renamer
-- Plugin page (WordPress.org): https://wordpress.org/plugins/ai-image-renamer
-- Issues: https://github.com/thaikolja/ai-image-renamer/issues
+* [Official Documentation](https://docs.kolja-nolte.com/ai-image-renamer)
+
+* [Support forum](https://github.com/thaikolja/ai-image-renamer/issues)
+* **AI Image Renamer** [on WordPress.org](https://wordpress.org/plugins/ai-image-renamer)
+* [Reviews](https://wordpress.org/plugins/ai-image-renamer/#reviews)
 
 ## License
 

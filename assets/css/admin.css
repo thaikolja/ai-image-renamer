@@ -978,3 +978,120 @@
     outline:      none;
   }
 }
+/* ========================================
+   Introduction Card
+   ======================================== */
+.air-intro-card {
+  margin-bottom: var(--air-gap-lg);
+  border-left:   4px solid var(--air-primary);
+
+  .air-card-body {
+    padding: 24px;
+  }
+
+  .air-intro-content {
+    display:     flex;
+    align-items: flex-start;
+    gap:         20px;
+
+    .air-intro-icon {
+      background:      var(--air-primary-light);
+      color:           var(--air-primary);
+      width:           48px;
+      height:          48px;
+      border-radius:   50%;
+      display:         flex;
+      align-items:     center;
+      justify-content: center;
+      flex-shrink:     0;
+
+      .dashicons {
+        font-size: 24px;
+        width:     24px;
+        height:    24px;
+      }
+    }
+
+    .air-intro-text {
+      flex: 1;
+
+      .air-intro-title {
+        margin:      0 0 8px 0;
+        font-size:   20px;
+        font-weight: 600;
+        color:       var(--air-gray-900);
+      }
+
+      .air-intro-description {
+        margin:      0 0 24px 0;
+        font-size:   15px;
+        color:       var(--air-gray-600);
+        line-height: 1.6;
+        max-width:   750px;
+      }
+
+      .air-intro-subtitle {
+        font-size:      12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color:          var(--air-gray-500);
+        font-weight:    700;
+        margin:         0 0 12px 0;
+      }
+
+      .air-intro-steps {
+        display:     flex;
+        align-items: flex-start;
+        gap:         24px;
+        flex-wrap:   wrap;
+
+        .air-step {
+          display:     flex;
+          gap:         12px;
+          max-width:   240px;
+
+          .air-step-indicator {
+            background:      var(--air-gray-800);
+            color:           var(--air-white);
+            width:           28px;
+            height:          28px;
+            border-radius:   50%;
+            display:         flex;
+            align-items:     center;
+            justify-content: center;
+            font-size:       13px;
+            font-weight:     700;
+            flex-shrink:     0;
+            margin-top:      2px;
+          }
+
+          .air-step-content {
+            display:        flex;
+            flex-direction: column;
+            gap:            4px;
+
+            .air-step-title {
+              font-size:   14px;
+              font-weight: 600;
+              color:       var(--air-gray-800);
+            }
+
+            .air-step-desc {
+              font-size:   13px;
+              color:       var(--air-gray-600);
+              line-height: 1.4;
+            }
+          }
+        }
+
+        .air-step-separator {
+          width:      1px;
+          height:     40px;
+          background: var(--air-gray-200);
+          align-self: center;
+        }
+      }
+    }
+
+  }
+}
