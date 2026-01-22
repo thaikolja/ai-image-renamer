@@ -1,9 +1,31 @@
-{# File Types Field Template #}
-{% for mime, label in available_types %}
-    <label class="air-file-type-label"> <input
-                type="checkbox"
-                name="{{ option_name }}[file_types][]"
-                value="{{ mime }}" {{ mime in file_types ? 'checked' : '' }}/>
-        {{ label }}
-    </label>
-{% endfor %}
+{# File Types Template #}
+<div class="air-card">
+	<div class="air-card-header">
+		<h2>
+			<span class="dashicons dashicons-format-image"></span>
+			{{ __('File Types', 'ai-image-renamer') }}
+		</h2>
+		<p class="air-card-description">{{ __('Select which image formats to process.', 'ai-image-renamer') }}</p>
+	</div>
+	<div class="air-card-body">
+		<div class="air-filetypes-grid">
+			{% for mime, label in available_types %}
+				<label class="air-filetype-card {{ mime in file_types ? 'selected' : '' }}">
+					<input type="checkbox" name="{{ option_name }}[file_types][]" value="{{ mime }}" {{ mime in file_types ? 'checked' : '' }}>
+					<span class="air-filetype-icon">
+						{% if mime == 'image/jpeg' %}
+							<span class="dashicons dashicons-format-image"></span>
+						{% elseif mime == 'image/png' %}
+							<span class="dashicons dashicons-format-image"></span>
+						{% elseif mime == 'image/webp' %}
+							<span class="dashicons dashicons-format-image"></span>
+						{% elseif mime == 'image/gif' %}
+							<span class="dashicons dashicons-images-alt"></span>
+						{% endif %}
+					</span>
+					<span class="air-filetype-label">{{ label }}</span>
+				</label>
+			{% endfor %}
+		</div>
+	</div>
+</div>

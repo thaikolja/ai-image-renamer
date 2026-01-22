@@ -1,0 +1,56 @@
+{# Advanced Settings Template #}
+<div class="air-card">
+	<div class="air-card-header">
+		<h2>
+			<span class="dashicons dashicons-admin-tools"></span>
+			{{ __('Advanced Settings', 'ai-image-renamer') }}
+		</h2>
+		<p class="air-card-description">{{ __('Fine-tune AI behavior and output.', 'ai-image-renamer') }}</p>
+	</div>
+	<div
+		class="air-card-body">
+		{# Max Keywords Setting #}
+		<div class="air-setting-row">
+			<div class="air-setting-label">
+				<label for="air_max_keywords">{{ __('Max Keywords', 'ai-image-renamer') }}</label>
+				<p class="air-setting-description">{{ __('Maximum number of keywords to include in the filename (1-10).', 'ai-image-renamer') }}</p>
+			</div>
+			<div class="air-setting-control">
+				<input type="number" id="air_max_keywords" name="{{ option_name }}[max_keywords]" value="{{ max_keywords }}" min="1" max="10" class="small-text">
+			</div>
+		</div>
+	</div>
+</div>
+
+{# Diagnostics Card #}
+<div class="air-card" style="margin-top: 20px;">
+	<div class="air-card-header">
+		<h2>
+			<span class="dashicons dashicons-info"></span>
+			{{ __('System Diagnostics', 'ai-image-renamer') }}
+		</h2>
+		<p class="air-card-description">{{ __('Server information and system requirements.', 'ai-image-renamer') }}</p>
+	</div>
+	<div class="air-card-body">
+		<table class="widefat air-diagnostics-table" style="border:none; box-shadow:none;">
+			<tbody>
+				{% for key, data in diagnostics %}
+					<tr style="{% if loop.index is even %}background-color: #f6f7f7;{% endif %}">
+						<td style="padding: 12px 15px;">
+							<strong style="display:block; margin-bottom: 4px; font-size: 14px; color: #1d2327;">{{ data.label }}</strong>
+							<span style="display:block; font-size: 12px; color: #646970;">{{ data.desc }}</span>
+						</td>
+						<td style="text-align: right; vertical-align: middle; padding: 12px 15px;">
+							<code style="font-size: 13px; background: #fff; padding: 3px 6px; border-radius: 4px; border: 1px solid #dcdcde;">{{ data.value }}</code>
+							{% if data.ok %}
+								<span class="dashicons dashicons-yes" style="color: #46b450; font-size: 20px; width: 20px; height: 20px; vertical-align: middle; margin-left: 8px;"></span>
+							{% else %}
+								<span class="dashicons dashicons-warning" style="color: #dba617; font-size: 20px; width: 20px; height: 20px; vertical-align: middle; margin-left: 8px;"></span>
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>

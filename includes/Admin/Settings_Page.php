@@ -626,13 +626,36 @@ class Settings_Page
 				'max_keywords'    => $options['max_keywords'] ?? 5,
 				'asset_url'       => \plugins_url('assets', \dirname(__DIR__, 2) . '/ai-image-renamer.php'),
 				'diagnostics'     => [
-					'php_version'     => PHP_VERSION,
-					'wp_version'      => get_bloginfo('version'),
-					'memory_limit'    => ini_get('memory_limit'),
-					'upload_max_size' => ini_get('upload_max_filesize'),
-					'post_max_size'   => ini_get('post_max_size'),
-					'curl_enabled'    => function_exists('curl_version'),
-					'gd_enabled'      => extension_loaded('gd'),
+					'php' => [
+						'label'  => __('PHP Version', 'ai-image-renamer'),
+						'value'  => PHP_VERSION,
+						'ok'     => version_compare(PHP_VERSION, '8.2', '>='),
+						'desc'   => __('Required: 8.2 or higher', 'ai-image-renamer'),
+					],
+					'wp' => [
+						'label'  => __('WordPress', 'ai-image-renamer'),
+						'value'  => get_bloginfo('version'),
+						'ok'     => version_compare(get_bloginfo('version'), '6.0', '>='),
+						'desc'   => __('Required: 6.0 or higher', 'ai-image-renamer'),
+					],
+					'memory' => [
+						'label'  => __('Memory Limit', 'ai-image-renamer'),
+						'value'  => ini_get('memory_limit'),
+						'ok'     => true, // Informational
+						'desc'   => __('Allocated memory for script execution', 'ai-image-renamer'),
+					],
+					'upload' => [
+						'label'  => __('Max Upload Size', 'ai-image-renamer'),
+						'value'  => ini_get('upload_max_filesize'),
+						'ok'     => true, // Informational
+						'desc'   => __('Maximum file size set by server', 'ai-image-renamer'),
+					],
+					'curl' => [
+						'label'  => __('cURL Enabled', 'ai-image-renamer'),
+						'value'  => function_exists('curl_version') ? __('Yes', 'ai-image-renamer') : __('No', 'ai-image-renamer'),
+						'ok'     => function_exists('curl_version'),
+						'desc'   => __('Required for API communication', 'ai-image-renamer'),
+					],
 				],
 			]
 		);

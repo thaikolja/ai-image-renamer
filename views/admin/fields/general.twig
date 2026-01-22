@@ -1,0 +1,36 @@
+{# General Settings Template #}
+<div class="air-card">
+	<div class="air-card-header">
+		<h2>
+			<span class="dashicons dashicons-admin-settings"></span>
+			{{ __('General Settings', 'ai-image-renamer') }}
+		</h2>
+		<p class="air-card-description">{{ __('Configure basic plugin behavior.', 'ai-image-renamer') }}</p>
+	</div>
+	<div class="air-card-body">
+		<div class="air-setting-row">
+			<div class="air-setting-label">
+				<label for="air_enabled">{{ __('Enable Auto-Rename', 'ai-image-renamer') }}</label>
+				<p class="air-setting-description">{{ __('Automatically rename images when uploaded to the Media Library.', 'ai-image-renamer') }}</p>
+			</div>
+			<div class="air-setting-control">
+				<label class="air-toggle">
+					<input type="checkbox" id="air_enabled" name="{{ option_name }}[enabled]" value="1" {{ enabled ? 'checked' : '' }}>
+					<span class="air-toggle-slider"></span>
+				</label>
+			</div>
+		</div>
+		<div class="air-setting-row">
+			<div class="air-setting-label">
+				<label for="air_set_alt_text">{{ __('Populate Alt Text', 'ai-image-renamer') }}</label>
+				<p class="air-setting-description">{{ __('Use the generated description as the image alt attribute for accessibility.', 'ai-image-renamer') }}</p>
+			</div>
+			<div class="air-setting-control">
+				<label class="air-toggle">
+					<input type="checkbox" id="air_set_alt_text" name="{{ option_name }}[set_alt_text]" value="1" {{ set_alt_text ? 'checked' : '' }}>
+					<span class="air-toggle-slider"></span>
+				</label>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,24 @@
+{# Models Panel Template #}
+<div class="air-card">
+	<div class="air-card-header">
+		<h2>
+			<span class="dashicons dashicons-grid-view"></span>
+			{{ __('AI Models', 'ai-image-renamer') }}
+		</h2>
+		<p class="air-card-description">{{ __('Choose the vision model used for analyzing images.', 'ai-image-renamer') }}</p>
+	</div>
+	<div class="air-card-body">
+		<div class="air-setting-row air-setting-row--stacked">
+			<div class="air-setting-control">
+				<div class="air-model-cards">
+					{% include 'admin/fields/model.twig' with {
+						models: models,
+						current: current,
+						option_name: option_name,
+						asset_url: asset_url
+					} %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
