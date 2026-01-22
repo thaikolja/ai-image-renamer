@@ -112,9 +112,54 @@
         font-weight:   500;
         padding:       2px 8px;
         border-radius: 4px;
-        margin-left:   8px;
       }
     }
+
+    .air-header-right {
+      display:     flex;
+      align-items: center;
+      gap:         12px;
+
+      .air-header-version {
+        display:       inline-block;
+        background:    var(--air-gray-200);
+        color:         var(--air-gray-600);
+        font-size:     11px;
+        font-weight:   500;
+        padding:       2px 8px;
+        border-radius: 4px;
+      }
+
+      .air-header-icon-link {
+        display:         flex;
+        align-items:     center;
+        justify-content: center;
+        color:           var(--air-gray-400);
+        text-decoration: none;
+        transition:      var(--air-transition);
+        width:           28px;
+        height:          28px;
+        border-radius:   4px;
+
+        &:hover {
+          color:      var(--air-primary);
+          background: var(--air-primary-light);
+        }
+
+        .dashicons {
+          font-size: 18px;
+          width:     18px;
+          height:    18px;
+        }
+
+        svg {
+          width:  16px;
+          height: 16px;
+          fill:   currentColor;
+        }
+      }
+    }
+
 
     .air-header-breadcrumb {
       font-size:      14px;
@@ -208,6 +253,7 @@
       font-size:     14px;
       color:         var(--air-gray-600);
       font-weight:   500;
+      text-decoration: none;
 
       &:hover {
         background: var(--air-gray-200);
@@ -276,6 +322,37 @@
           width:     20px;
           height:    20px;
         }
+
+        .air-doc-badge {
+          margin-left:     auto;
+          display:         inline-flex;
+          align-items:     center;
+          gap:             6px;
+          text-decoration: none;
+          font-size:       13px;
+          font-weight:     500;
+          color:           var(--air-primary);
+          background:      var(--air-primary-light);
+          padding:         6px 12px;
+          border-radius:   99px;
+          transition:      var(--air-transition);
+          line-height:     1;
+
+          .dashicons {
+            font-size:   16px;
+            width:       16px;
+            height:      16px;
+            color:       var(--air-primary);
+            display:     block;
+            line-height: 1;
+            position:    relative;
+            top:         1px;
+          }
+
+          &:hover {
+             background-color: #dbeafe; /* Slightly darker than primary-light for interaction */
+          }
+        }
       }
 
       .air-card-description {
@@ -322,6 +399,62 @@
         display:   flex;
         gap:       var(--air-gap-sm);
         flex-wrap: wrap;
+      }
+    }
+  }
+
+  /* Diagnostics Table */
+  .air-diagnostics-table {
+    border: none;
+    box-shadow: none;
+
+    tr:nth-child(even) {
+      background-color: var(--air-gray-50);
+    }
+
+    td {
+      padding:        12px 15px;
+      vertical-align: middle;
+
+      strong {
+        display:       block;
+        margin-bottom: 4px;
+        font-size:     14px;
+        color:         var(--air-gray-900);
+      }
+
+      span {
+        display: block;
+        font-size: 12px;
+        color:   var(--air-gray-500);
+      }
+
+      &:last-child {
+        text-align: right;
+
+        code {
+          font-size:     13px;
+          background:    var(--air-white);
+          padding:       3px 6px;
+          border-radius: 4px;
+          border:        1px solid var(--air-gray-300);
+        }
+
+        .dashicons {
+          font-size:      20px;
+          width:          20px;
+          height:         20px;
+          vertical-align: middle;
+          margin-left:    8px;
+
+          &.dashicons-yes {
+            color: var(--air-success);
+          }
+
+          &.dashicons-warning {
+            color: var(--air-warning);
+          }
+        }
       }
     }
   }
@@ -798,7 +931,7 @@
     }
 
     &:focus + .air-toggle-slider {
-      box-shadow: 0 0 0 3px rgba(34, 113, 177, 0.2);
+      box-shadow: 0 0 1px var(--air-primary);
     }
   }
 
@@ -809,9 +942,9 @@
     left:             0;
     right:            0;
     bottom:           0;
-    background-color: var(--air-gray-300);
-    transition:       var(--air-transition);
-    border-radius:    24px;
+    background-color: #ccc;
+    transition:       .4s;
+    border-radius:    34px;
 
     &:before {
       position:         absolute;
@@ -820,71 +953,28 @@
       width:            18px;
       left:             3px;
       bottom:           3px;
-      background-color: var(--air-white);
-      transition:       var(--air-transition);
+      background-color: white;
+      transition:       .4s;
       border-radius:    50%;
-      box-shadow:       var(--air-shadow-sm);
     }
   }
 }
 
-.air-button-with-icon {
-  display:     inline-flex;
-  align-items: center;
-  gap:         6px;
-
-  .dashicons {
-    font-size:      18px;
-    width:          18px;
-    height:         18px;
-    line-height:    1;
-    vertical-align: middle;
-  }
-}
-
-/* Test Connection Feedback */
-#air_test_result {
-  padding:       8px 12px;
-  border-radius: var(--air-border-radius);
+/* Modern Number Input */
+.air-number-input {
+  padding:       4px 12px;
+  border:        1px solid var(--air-gray-300);
+  border-radius: 99px; /* Pill shape like the toggle */
   font-size:     14px;
-  font-weight:   500;
+  color:         var(--air-gray-800);
+  width:         80px;
+  height:        28px; /* Slightly taller than toggle but compact */
+  transition:    var(--air-transition);
+  text-align:    center;
 
-  &.success {
-    background: #d1fae5;
-    color:      #065f46;
-  }
-
-  &.error {
-    background: #fee2e2;
-    color:      #991b1b;
-  }
-
-  &.testing {
-    background: var(--air-gray-100);
-    color:      var(--air-gray-600);
+  &:focus {
+    border-color: var(--air-primary);
+    box-shadow:   0 0 0 2px var(--air-primary-light);
+    outline:      none;
   }
 }
-
-#air_delete_api_key {
-  color:           var(--air-error);
-  text-decoration: none;
-  font-size:       14px;
-
-  &:hover {
-    color:           #b32d2e; /* Darker red */
-    text-decoration: underline;
-  }
-}
-
-/* ========================================
-   Animations
-   ======================================== */
-@keyframes air-pulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(34, 113, 177, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 0 8px rgba(34, 113, 177, 0);
-  }
-}
-

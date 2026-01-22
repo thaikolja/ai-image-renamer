@@ -118,7 +118,6 @@ class Plugin {
 		 * @param  Plugin  $plugin  The plugin instance.
 		 *
 		 * @since 1.0.0
-		 *
 		 */
 		\do_action( 'air_services_loaded', $this );
 
@@ -139,7 +138,6 @@ class Plugin {
 		 * @param  Plugin  $plugin  The plugin instance.
 		 *
 		 * @since 1.0.0
-		 *
 		 */
 		\do_action( 'air_loaded', $this );
 	}

@@ -1,3 +1,22 @@
+/*
+ * @name:           AI Image Renamer
+ * @wordpress       Uses AI to rename images during upload for SEO-friendly filenames.
+ * @author          Kolja Nolte <kolja.nolte@gmail.com>
+ * @copyright       2025-2026 (C) Kolja Nolte
+ * @see             https://docs.kolja-nolte.com/wp-ai-image-renamer/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Released under the GNU General Public License v2 or later.
+ * See: https://www.gnu.org/licenses/gpl-2.0.html
+ *
+ * @package AIR
+ * @license GPL-2.0-or-later
+ */
+
 /**
  * AI Image Renamer - Tab Navigation
  *
@@ -31,10 +50,14 @@
      * @param {Event} e Click event.
      */
     switchTab: function (e) {
-      e.preventDefault();
-
       const $tab = $(e.currentTarget);
       const tabId = $tab.data("tab");
+
+      if (!tabId) {
+        return;
+      }
+
+      e.preventDefault();
 
       // Update active tab
       $(".air-tab").removeClass("active").attr("aria-selected", "false");
@@ -43,8 +66,8 @@
       // Update active panel
       $(".air-panel").removeClass("active").attr("hidden", true);
       $("#air-panel-" + tabId)
-        .addClass("active")
-        .removeAttr("hidden");
+          .addClass("active")
+          .removeAttr("hidden");
 
       // Update URL hash
       if (history.pushState) {
@@ -72,7 +95,7 @@
     handleHashNavigation: function () {
       const hash = window.location.hash.substring(1);
 
-      if (hash && $('.air-tab[data-tab="' + hash + '"]').length) {
+      if (hash && $(`.air-tab[data-tab="${hash}"]`).length) {
         $('.air-tab[data-tab="' + hash + '"]').trigger("click");
       }
     },
