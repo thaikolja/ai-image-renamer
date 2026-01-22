@@ -43,14 +43,26 @@
       // Update active panel
       $(".air-panel").removeClass("active").attr("hidden", true);
       $("#air-panel-" + tabId)
-          .addClass("active")
-          .removeAttr("hidden");
+        .addClass("active")
+        .removeAttr("hidden");
 
       // Update URL hash
       if (history.pushState) {
         history.pushState(null, null, "#" + tabId);
       } else {
         window.location.hash = tabId;
+      }
+
+      // Update _wp_http_referer to include the hash so redirects return to this tab
+      const $referer = $('input[name="_wp_http_referer"]');
+      if ($referer.length) {
+        let refererVal = $referer.val();
+        // Remove existing hash if present
+        const hashIndex = refererVal.indexOf("#");
+        if (hashIndex !== -1) {
+          refererVal = refererVal.substring(0, hashIndex);
+        }
+        $referer.val(refererVal + "#" + tabId);
       }
     },
 

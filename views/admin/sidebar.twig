@@ -24,23 +24,40 @@
             </li>
             <li>
                 <span class="dashicons dashicons-yes-alt"></span>
-                <strong>{{ __('All AI Models', 'ai-image-renamer') }}</strong>
-                <span>{{ __('Access to all current and future models', 'ai-image-renamer') }}</span>
+                <strong>{{ __('Use all AI Models', 'ai-image-renamer') }}</strong>
+                <span>{{ __('Change from Groq to GPT, Gemini, or others', 'ai-image-renamer') }}</span>
             </li>
             <li>
                 <span class="dashicons dashicons-yes-alt"></span>
                 <strong>{{ __('Unlimited Keywords', 'ai-image-renamer') }}</strong>
-                <span>{{ __('Generate up to 10 keywords per image', 'ai-image-renamer') }}</span>
+                <span>{{ __('Generate as many keywords as you like', 'ai-image-renamer') }}</span>
             </li>
         </ul>
-        <div class="air-pro-cta">
+
+    </div>
+</div>
+
+{# Donation Box #}
+<div class="air-sidebar air-donation-box postbox">
+    <div class="postbox-header air-donation-header">
+        <h2 class="hndle ui-sortable-handle">
+			<span>
+				<span class="dashicons dashicons-heart"></span>
+				{{ __('Support This Plugin', 'ai-image-renamer') }}
+			</span>
+        </h2>
+    </div>
+    <div class="inside">
+        <p class="air-donation-tagline">{{ __('If AI Image Renamer has helped you, consider buying me a coffee! Your support keeps this plugin free and actively maintained.', 'ai-image-renamer') }}</p>
+        <p class="air-donation-tagline">{{ __('The first three donors receive the upcoming "Pro" version for free! No strings attached.', 'ai-image-renamer') }}</p>
+        <div class="air-donation-cta">
             <a
-                    href="https://aiimagerenamer.com/pro?utm_source=plugin&utm_medium=settings&utm_campaign=upsell"
-                    class="button button-primary button-hero air-pro-button"
+                    href="https://www.paypal.me/thaikolja/10"
+                    class="button button-primary button-hero air-donation-button"
                     target="_blank"
-                    rel="noopener"> <span class="dashicons dashicons-external"></span>
-                {{ __('Learn More About Pro', 'ai-image-renamer') }}
-            </a> <span class="air-pro-price">{{ __('Starting at $49/year', 'ai-image-renamer') }}</span>
+                    rel="noopener"> <span class="dashicons dashicons-coffee"></span>
+                {{ __('Donate via PayPal', 'ai-image-renamer') }}
+            </a>
         </div>
     </div>
 </div>
