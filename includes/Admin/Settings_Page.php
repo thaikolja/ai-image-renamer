@@ -122,9 +122,9 @@ class Settings_Page {
      */
     final public function add_settings_page(): void {
         \add_submenu_page( 'upload.php', 'AI Image Renamer', 'AI Image Renamer', 'manage_options', self::PAGE_SLUG, [
-                $this,
-                'render_settings_page',
-            ] );
+            $this,
+            'render_settings_page',
+        ] );
     }
 
     /**
@@ -134,10 +134,10 @@ class Settings_Page {
      */
     final public function register_settings(): void {
         \register_setting( self::OPTION_GROUP, self::OPTION_NAME, [
-                'type'              => 'array',
-                'sanitize_callback' => [ $this, 'sanitize_settings' ],
-                'default'           => $this->get_defaults(),
-            ] );
+            'type'              => 'array',
+            'sanitize_callback' => [ $this, 'sanitize_settings' ],
+            'default'           => $this->get_defaults(),
+        ] );
 
         // Main settings section.
         \add_settings_section( 'air_main_section', '<span class="dashicons dashicons-admin-settings"></span> ' . \__( 'API Configuration', 'ai-image-renamer' ), function () {
@@ -146,27 +146,27 @@ class Settings_Page {
 
         // Enable/Disable toggle.
         \add_settings_field( 'enabled', '<label for="air_enabled"><span class="dashicons dashicons-lightbulb"></span> ' . \__( 'Enable Auto-Rename', 'ai-image-renamer' ) . '</label>', [
-                $this,
-                'render_enabled_field',
-            ], self::PAGE_SLUG, 'air_main_section' );
+            $this,
+            'render_enabled_field',
+        ], self::PAGE_SLUG, 'air_main_section' );
 
         // API Key field.
         \add_settings_field( 'api_key', '<label for="air_api_key"><span class="dashicons dashicons-admin-network"></span> ' . \__( 'Groq API Key', 'ai-image-renamer' ) . '</label>', [
-                $this,
-                'render_api_key_field',
-            ], self::PAGE_SLUG, 'air_main_section' );
+            $this,
+            'render_api_key_field',
+        ], self::PAGE_SLUG, 'air_main_section' );
 
         // Model Selection.
         \add_settings_field( 'model', '<label for="air_model"><span class="dashicons dashicons-products"></span> ' . \__( 'AI Model', 'ai-image-renamer' ) . '</label>', [
-                $this,
-                'render_model_field',
-            ], self::PAGE_SLUG, 'air_main_section' );
+            $this,
+            'render_model_field',
+        ], self::PAGE_SLUG, 'air_main_section' );
 
         // Alt text toggle.
         \add_settings_field( 'set_alt_text', '<label for="air_set_alt_text"><span class="dashicons dashicons-text"></span> ' . \__( 'Use as <code>alt=""</code>', 'ai-image-renamer' ) . '</label>', [
-                $this,
-                'render_alt_text_field',
-            ], self::PAGE_SLUG, 'air_main_section' );
+            $this,
+            'render_alt_text_field',
+        ], self::PAGE_SLUG, 'air_main_section' );
 
         // File types section.
         \add_settings_section( 'air_file_types_section', '<span class="dashicons dashicons-format-image"></span> ' . \__( 'File Types', 'ai-image-renamer' ), function () {
@@ -174,9 +174,9 @@ class Settings_Page {
         }, self::PAGE_SLUG );
 
         \add_settings_field( 'file_types', '<span class="dashicons dashicons-images-alt2"></span> ' . \__( 'Allowed Types', 'ai-image-renamer' ), [
-                $this,
-                'render_file_types_field',
-            ], self::PAGE_SLUG, 'air_file_types_section' );
+            $this,
+            'render_file_types_field',
+        ], self::PAGE_SLUG, 'air_file_types_section' );
 
         // Advanced section.
         \add_settings_section( 'air_advanced_section', '<span class="dashicons dashicons-admin-tools"></span> ' . \__( 'Advanced Settings', 'ai-image-renamer' ), function () {
@@ -184,9 +184,9 @@ class Settings_Page {
         }, self::PAGE_SLUG );
 
         \add_settings_field( 'max_keywords', '<label for="air_max_keywords"><span class="dashicons dashicons-editor-ol"></span> ' . \__( 'Max Keywords', 'ai-image-renamer' ) . '</label>', [
-                $this,
-                'render_max_keywords_field',
-            ], self::PAGE_SLUG, 'air_advanced_section' );
+            $this,
+            'render_max_keywords_field',
+        ], self::PAGE_SLUG, 'air_advanced_section' );
 
         /**
          * Fires after all core settings fields are registered.
@@ -364,11 +364,11 @@ class Settings_Page {
 
         echo $this->template_engine->render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             'admin/fields/api-key.twig', [
-                'option_name' => self::OPTION_NAME,
-                'display_key' => $display_key,
-                'placeholder' => $placeholder,
-                'saved'       => $saved,
-            ] );
+            'option_name' => self::OPTION_NAME,
+            'display_key' => $display_key,
+            'placeholder' => $placeholder,
+            'saved'       => $saved,
+        ] );
     }
 
     /**
@@ -453,9 +453,9 @@ class Settings_Page {
 
         echo $this->template_engine->render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             'admin/fields/enabled.twig', [
-                'option_name' => self::OPTION_NAME,
-                'enabled'     => $enabled,
-            ] );
+            'option_name' => self::OPTION_NAME,
+            'enabled'     => $enabled,
+        ] );
     }
 
     /**
@@ -469,9 +469,9 @@ class Settings_Page {
 
         echo $this->template_engine->render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             'admin/fields/alt-text.twig', [
-                'option_name' => self::OPTION_NAME,
-                'set_alt'     => $set_alt,
-            ] );
+            'option_name' => self::OPTION_NAME,
+            'set_alt'     => $set_alt,
+        ] );
     }
 
     /**
@@ -487,10 +487,10 @@ class Settings_Page {
 
         echo $this->template_engine->render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             'admin/fields/file-types.twig', [
-                'option_name'     => self::OPTION_NAME,
-                'file_types'      => $file_types,
-                'available_types' => $available_types,
-            ] );
+            'option_name'     => self::OPTION_NAME,
+            'file_types'      => $file_types,
+            'available_types' => $available_types,
+        ] );
     }
 
     /**
@@ -504,9 +504,9 @@ class Settings_Page {
 
         echo $this->template_engine->render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             'admin/fields/max-keywords.twig', [
-                'option_name'  => self::OPTION_NAME,
-                'max_keywords' => $max_keywords,
-            ] );
+            'option_name'  => self::OPTION_NAME,
+            'max_keywords' => $max_keywords,
+        ] );
     }
 
     /**
@@ -521,11 +521,11 @@ class Settings_Page {
 
         echo $this->template_engine->render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             'admin/fields/model.twig', [
-                'option_name' => self::OPTION_NAME,
-                'current'     => $current,
-                'models'      => $models,
-                'asset_url'   => \plugins_url( 'assets', \dirname( __DIR__, 2 ) . '/ai-image-renamer.php' ),
-            ] );
+            'option_name' => self::OPTION_NAME,
+            'current'     => $current,
+            'models'      => $models,
+            'asset_url'   => \plugins_url( 'assets', \dirname( __DIR__, 2 ) . '/ai-image-renamer.php' ),
+        ] );
     }
 
     /**
@@ -563,55 +563,55 @@ class Settings_Page {
 
         echo $this->template_engine->render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             'admin/settings.twig', [
-                'page_slug'       => self::PAGE_SLUG,
-                'option_group'    => self::OPTION_GROUP,
-                'option_name'     => self::OPTION_NAME,
-                'version'         => AIR_VERSION,
-                'page_title'      => get_admin_page_title(),
-                'display_key'     => $display_key,
-                'placeholder'     => $placeholder,
-                'saved'           => $saved,
-                'enabled'         => $options[ 'enabled' ] ?? true,
-                'set_alt_text'    => $options[ 'set_alt_text' ] ?? false,
-                'file_types'      => $file_types,
-                'available_types' => $available_types,
-                'current'         => $current,
-                'models'          => $models,
-                'max_keywords'    => $options[ 'max_keywords' ] ?? 5,
-                'asset_url'       => \plugins_url( 'assets', \dirname( __DIR__, 2 ) . '/ai-image-renamer.php' ),
-                'diagnostics'     => [
-                    'php'    => [
-                        'label' => __( 'PHP Version', 'ai-image-renamer' ),
-                        'value' => PHP_VERSION,
-                        'ok'    => version_compare( PHP_VERSION, '8.2', '>=' ),
-                        'desc'  => __( 'Required: 8.2 or higher', 'ai-image-renamer' ),
-                    ],
-                    'wp'     => [
-                        'label' => __( 'WordPress', 'ai-image-renamer' ),
-                        'value' => get_bloginfo( 'version' ),
-                        'ok'    => version_compare( get_bloginfo( 'version' ), '6.0', '>=' ),
-                        'desc'  => __( 'Required: 6.0 or higher', 'ai-image-renamer' ),
-                    ],
-                    'memory' => [
-                        'label' => __( 'Memory Limit', 'ai-image-renamer' ),
-                        'value' => ini_get( 'memory_limit' ),
-                        'ok'    => true, // Informational
-                        'desc'  => __( 'Allocated memory for script execution', 'ai-image-renamer' ),
-                    ],
-                    'upload' => [
-                        'label' => __( 'Max Upload Size', 'ai-image-renamer' ),
-                        'value' => ini_get( 'upload_max_filesize' ),
-                        'ok'    => true, // Informational
-                        'desc'  => __( 'Maximum file size set by server', 'ai-image-renamer' ),
-                    ],
-                    'curl'   => [
-                        'label' => __( 'cURL Enabled', 'ai-image-renamer' ),
-                        'value' => function_exists( 'curl_version' ) ? __( 'Yes', 'ai-image-renamer' ) : __( 'No', 'ai-image-renamer' ),
-                        'ok'    => function_exists( 'curl_version' ),
-                        'desc'  => __( 'Required for API communication', 'ai-image-renamer' ),
-                    ],
+            'page_slug'       => self::PAGE_SLUG,
+            'option_group'    => self::OPTION_GROUP,
+            'option_name'     => self::OPTION_NAME,
+            'version'         => AIR_VERSION,
+            'page_title'      => get_admin_page_title(),
+            'display_key'     => $display_key,
+            'placeholder'     => $placeholder,
+            'saved'           => $saved,
+            'enabled'         => $options[ 'enabled' ] ?? true,
+            'set_alt_text'    => $options[ 'set_alt_text' ] ?? false,
+            'file_types'      => $file_types,
+            'available_types' => $available_types,
+            'current'         => $current,
+            'models'          => $models,
+            'max_keywords'    => $options[ 'max_keywords' ] ?? 5,
+            'asset_url'       => \plugins_url( 'assets', \dirname( __DIR__, 2 ) . '/ai-image-renamer.php' ),
+            'diagnostics'     => [
+                'php'    => [
+                    'label' => __( 'PHP Version', 'ai-image-renamer' ),
+                    'value' => PHP_VERSION,
+                    'ok'    => version_compare( PHP_VERSION, '8.2', '>=' ),
+                    'desc'  => __( 'Required: 8.2 or higher', 'ai-image-renamer' ),
                 ],
-            ] );
+                'wp'     => [
+                    'label' => __( 'WordPress', 'ai-image-renamer' ),
+                    'value' => get_bloginfo( 'version' ),
+                    'ok'    => version_compare( get_bloginfo( 'version' ), '6.0', '>=' ),
+                    'desc'  => __( 'Required: 6.0 or higher', 'ai-image-renamer' ),
+                ],
+                'memory' => [
+                    'label' => __( 'Memory Limit', 'ai-image-renamer' ),
+                    'value' => ini_get( 'memory_limit' ),
+                    'ok'    => true, // Informational
+                    'desc'  => __( 'Allocated memory for script execution', 'ai-image-renamer' ),
+                ],
+                'upload' => [
+                    'label' => __( 'Max Upload Size', 'ai-image-renamer' ),
+                    'value' => ini_get( 'upload_max_filesize' ),
+                    'ok'    => true, // Informational
+                    'desc'  => __( 'Maximum file size set by server', 'ai-image-renamer' ),
+                ],
+                'curl'   => [
+                    'label' => __( 'cURL Enabled', 'ai-image-renamer' ),
+                    'value' => function_exists( 'curl_version' ) ? __( 'Yes', 'ai-image-renamer' ) : __( 'No', 'ai-image-renamer' ),
+                    'ok'    => function_exists( 'curl_version' ),
+                    'desc'  => __( 'Required for API communication', 'ai-image-renamer' ),
+                ],
+            ],
+        ] );
     }
 
 
@@ -633,24 +633,24 @@ class Settings_Page {
         \wp_enqueue_script( 'air-admin-tabs', AIR_PLUGIN_URL . 'assets/js/admin-tabs.js', [ 'jquery' ], AIR_VERSION, true );
 
         \wp_localize_script( 'air-admin', 'airAdmin', [
-                'ajaxUrl' => \admin_url( 'admin-ajax.php' ),
-                'nonces'  => [
-                    'test_connection'           => \wp_create_nonce( 'air_test_connection' ),
-                    'delete_api_key'            => \wp_create_nonce( 'air_delete_api_key' ),
-                    'dismiss_encryption_notice' => \wp_create_nonce( 'air_dismiss_encryption_notice' ),
-                ],
-                'strings' => [
-                    'testing'           => \__( 'Testing...', 'ai-image-renamer' ),
-                    'success'           => \__( 'Connection successful!', 'ai-image-renamer' ),
-                    'error'             => \__( 'Connection failed:', 'ai-image-renamer' ),
-                    'no_key'            => \__( 'No API key configured.', 'ai-image-renamer' ),
-                    'delete_confirm'    => \__( 'Are you sure you want to delete the API Key? This action cannot be undone.', 'ai-image-renamer' ),
-                    'deleting'          => \__( 'Deleting...', 'ai-image-renamer' ),
-                    'enter_key'         => \__( 'Enter your Groq API key.', 'ai-image-renamer' ),
-                    'request_failed'    => \__( 'Request failed:', 'ai-image-renamer' ),
-                    'delete_key_button' => \__( 'Delete Key', 'ai-image-renamer' ),
-                ],
-            ] );
+            'ajaxUrl' => \admin_url( 'admin-ajax.php' ),
+            'nonces'  => [
+                'test_connection'           => \wp_create_nonce( 'air_test_connection' ),
+                'delete_api_key'            => \wp_create_nonce( 'air_delete_api_key' ),
+                'dismiss_encryption_notice' => \wp_create_nonce( 'air_dismiss_encryption_notice' ),
+            ],
+            'strings' => [
+                'testing'           => \__( 'Testing...', 'ai-image-renamer' ),
+                'success'           => \__( 'Connection successful!', 'ai-image-renamer' ),
+                'error'             => \__( 'Connection failed:', 'ai-image-renamer' ),
+                'no_key'            => \__( 'No API key configured.', 'ai-image-renamer' ),
+                'delete_confirm'    => \__( 'Are you sure you want to delete the API Key? This action cannot be undone.', 'ai-image-renamer' ),
+                'deleting'          => \__( 'Deleting...', 'ai-image-renamer' ),
+                'enter_key'         => \__( 'Enter your Groq API key.', 'ai-image-renamer' ),
+                'request_failed'    => \__( 'Request failed:', 'ai-image-renamer' ),
+                'delete_key_button' => \__( 'Delete Key', 'ai-image-renamer' ),
+            ],
+        ] );
 
         \add_action( 'admin_footer', function () use ( $hook ) {
             if ( 'media_page_' . self::PAGE_SLUG !== $hook ) {
