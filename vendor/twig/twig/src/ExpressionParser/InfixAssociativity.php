@@ -11,8 +11,8 @@
 
 namespace Twig\ExpressionParser;
 
-enum InfixAssociativity {
-
-	case Left;
-	case Right;
+enum InfixAssociativity
+{
+    case Left;
+    case Right;
 }

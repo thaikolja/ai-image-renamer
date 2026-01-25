@@ -14,6 +14,6 @@ namespace Twig\Extension;
 /**
  * @author Grégoire Pineau <lyrixx@lyrixx.info>
  */
-interface RuntimeExtensionInterface {
-
+interface RuntimeExtensionInterface
+{
 }

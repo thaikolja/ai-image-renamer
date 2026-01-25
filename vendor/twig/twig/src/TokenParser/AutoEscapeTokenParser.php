@@ -22,34 +22,37 @@ use Twig\Token;
  *
  * @internal
  */
-final class AutoEscapeTokenParser extends AbstractTokenParser {
+final class AutoEscapeTokenParser extends AbstractTokenParser
+{
+    public function parse(Token $token): Node
+    {
+        $lineno = $token->getLine();
+        $stream = $this->parser->getStream();
 
-	public function parse( Token $token ): Node {
-		$lineno = $token->getLine();
-		$stream = $this->parser->getStream();
+        if ($stream->test(Token::BLOCK_END_TYPE)) {
+            $value = 'html';
+        } else {
+            $expr = $this->parser->parseExpression();
+            if (!$expr instanceof ConstantExpression) {
+                throw new SyntaxError('An escaping strategy must be a string or false.', $stream->getCurrent()->getLine(), $stream->getSourceContext());
+            }
+            $value = $expr->getAttribute('value');
+        }
 
-		if ( $stream->test( Token::BLOCK_END_TYPE ) ) {
-			$value = 'html';
-		} else {
-			$expr = $this->parser->parseExpression();
-			if ( ! $expr instanceof ConstantExpression ) {
-				throw new SyntaxError( 'An escaping strategy must be a string or false.', $stream->getCurrent()->getLine(), $stream->getSourceContext() );
-			}
-			$value = $expr->getAttribute( 'value' );
-		}
+        $stream->expect(Token::BLOCK_END_TYPE);
+        $body = $this->parser->subparse([$this, 'decideBlockEnd'], true);
+        $stream->expect(Token::BLOCK_END_TYPE);
 
-		$stream->expect( Token::BLOCK_END_TYPE );
-		$body = $this->parser->subparse( array( $this, 'decideBlockEnd' ), true );
-		$stream->expect( Token::BLOCK_END_TYPE );
+        return new AutoEscapeNode($value, $body, $lineno);
+    }
 
-		return new AutoEscapeNode( $value, $body, $lineno );
-	}
+    public function decideBlockEnd(Token $token): bool
+    {
+        return $token->test('endautoescape');
+    }
 
-	public function decideBlockEnd( Token $token ): bool {
-		return $token->test( 'endautoescape' );
-	}
-
-	public function getTag(): string {
-		return 'autoescape';
-	}
+    public function getTag(): string
+    {
+        return 'autoescape';
+    }
 }

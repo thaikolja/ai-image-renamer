@@ -23,26 +23,31 @@ use Twig\Token;
 /**
  * @internal
  */
-final class ArrowExpressionParser extends AbstractExpressionParser implements InfixExpressionParserInterface, ExpressionParserDescriptionInterface {
+final class ArrowExpressionParser extends AbstractExpressionParser implements InfixExpressionParserInterface, ExpressionParserDescriptionInterface
+{
+    public function parse(Parser $parser, AbstractExpression $expr, Token $token): AbstractExpression
+    {
+        // As the expression of the arrow function is independent from the current precedence, we want a precedence of 0
+        return new ArrowFunctionExpression($parser->parseExpression(), $expr, $token->getLine());
+    }
 
-	public function parse( Parser $parser, AbstractExpression $expr, Token $token ): AbstractExpression {
-		// As the expression of the arrow function is independent from the current precedence, we want a precedence of 0
-		return new ArrowFunctionExpression( $parser->parseExpression(), $expr, $token->getLine() );
-	}
+    public function getName(): string
+    {
+        return '=>';
+    }
 
-	public function getName(): string {
-		return '=>';
-	}
+    public function getDescription(): string
+    {
+        return 'Arrow function (x => expr)';
+    }
 
-	public function getDescription(): string {
-		return 'Arrow function (x => expr)';
-	}
+    public function getPrecedence(): int
+    {
+        return 250;
+    }
 
-	public function getPrecedence(): int {
-		return 250;
-	}
-
-	public function getAssociativity(): InfixAssociativity {
-		return InfixAssociativity::Left;
-	}
+    public function getAssociativity(): InfixAssociativity
+    {
+        return InfixAssociativity::Left;
+    }
 }

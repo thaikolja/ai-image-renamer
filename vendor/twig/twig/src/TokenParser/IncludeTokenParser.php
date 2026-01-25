@@ -26,45 +26,48 @@ use Twig\Token;
  *
  * @internal
  */
-class IncludeTokenParser extends AbstractTokenParser {
+class IncludeTokenParser extends AbstractTokenParser
+{
+    public function parse(Token $token): Node
+    {
+        $expr = $this->parser->parseExpression();
 
-	public function parse( Token $token ): Node {
-		$expr = $this->parser->parseExpression();
+        [$variables, $only, $ignoreMissing] = $this->parseArguments();
 
-		[$variables, $only, $ignoreMissing] = $this->parseArguments();
+        return new IncludeNode($expr, $variables, $only, $ignoreMissing, $token->getLine());
+    }
 
-		return new IncludeNode( $expr, $variables, $only, $ignoreMissing, $token->getLine() );
-	}
+    /**
+     * @return array{0: ?AbstractExpression, 1: bool, 2: bool}
+     */
+    protected function parseArguments()
+    {
+        $stream = $this->parser->getStream();
 
-	/**
-	 * @return array{0: ?AbstractExpression, 1: bool, 2: bool}
-	 */
-	protected function parseArguments() {
-		$stream = $this->parser->getStream();
+        $ignoreMissing = false;
+        if ($stream->nextIf(Token::NAME_TYPE, 'ignore')) {
+            $stream->expect(Token::NAME_TYPE, 'missing');
 
-		$ignoreMissing = false;
-		if ( $stream->nextIf( Token::NAME_TYPE, 'ignore' ) ) {
-			$stream->expect( Token::NAME_TYPE, 'missing' );
+            $ignoreMissing = true;
+        }
 
-			$ignoreMissing = true;
-		}
+        $variables = null;
+        if ($stream->nextIf(Token::NAME_TYPE, 'with')) {
+            $variables = $this->parser->parseExpression();
+        }
 
-		$variables = null;
-		if ( $stream->nextIf( Token::NAME_TYPE, 'with' ) ) {
-			$variables = $this->parser->parseExpression();
-		}
+        $only = false;
+        if ($stream->nextIf(Token::NAME_TYPE, 'only')) {
+            $only = true;
+        }
 
-		$only = false;
-		if ( $stream->nextIf( Token::NAME_TYPE, 'only' ) ) {
-			$only = true;
-		}
+        $stream->expect(Token::BLOCK_END_TYPE);
 
-		$stream->expect( Token::BLOCK_END_TYPE );
+        return [$variables, $only, $ignoreMissing];
+    }
 
-		return array( $variables, $only, $ignoreMissing );
-	}
-
-	public function getTag(): string {
-		return 'include';
-	}
+    public function getTag(): string
+    {
+        return 'include';
+    }
 }

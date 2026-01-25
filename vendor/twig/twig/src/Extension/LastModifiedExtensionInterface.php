@@ -11,13 +11,13 @@
 
 namespace Twig\Extension;
 
-interface LastModifiedExtensionInterface extends ExtensionInterface {
-
-	/**
-	 * Returns the last modification time of the extension for cache invalidation.
-	 *
-	 * This timestamp should be the last time the source code of the extension class
-	 * and all its dependencies were modified (including the Runtime class).
-	 */
-	public function getLastModified(): int;
+interface LastModifiedExtensionInterface extends ExtensionInterface
+{
+    /**
+     * Returns the last modification time of the extension for cache invalidation.
+     *
+     * This timestamp should be the last time the source code of the extension class
+     * and all its dependencies were modified (including the Runtime class).
+     */
+    public function getLastModified(): int;
 }

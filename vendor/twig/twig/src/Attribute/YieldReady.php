@@ -14,7 +14,7 @@ namespace Twig\Attribute;
 /**
  * Marks nodes that are ready for using "yield" instead of "echo" or "print()" for rendering.
  */
-#[\Attribute( \Attribute::TARGET_CLASS )]
-final class YieldReady {
-
+#[\Attribute(\Attribute::TARGET_CLASS)]
+final class YieldReady
+{
 }

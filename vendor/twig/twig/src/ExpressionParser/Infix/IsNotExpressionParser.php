@@ -19,13 +19,15 @@ use Twig\Token;
 /**
  * @internal
  */
-final class IsNotExpressionParser extends IsExpressionParser {
+final class IsNotExpressionParser extends IsExpressionParser
+{
+    public function parse(Parser $parser, AbstractExpression $expr, Token $token): AbstractExpression
+    {
+        return new NotUnary(parent::parse($parser, $expr, $token), $token->getLine());
+    }
 
-	public function parse( Parser $parser, AbstractExpression $expr, Token $token ): AbstractExpression {
-		return new NotUnary( parent::parse( $parser, $expr, $token ), $token->getLine() );
-	}
-
-	public function getName(): string {
-		return 'is not';
-	}
+    public function getName(): string
+    {
+        return 'is not';
+    }
 }

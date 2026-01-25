@@ -16,22 +16,27 @@ namespace Twig\Cache;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class NullCache implements CacheInterface, RemovableCacheInterface {
+final class NullCache implements CacheInterface, RemovableCacheInterface
+{
+    public function generateKey(string $name, string $className): string
+    {
+        return '';
+    }
 
-	public function generateKey( string $name, string $className ): string {
-		return '';
-	}
+    public function write(string $key, string $content): void
+    {
+    }
 
-	public function write( string $key, string $content ): void {
-	}
+    public function load(string $key): void
+    {
+    }
 
-	public function load( string $key ): void {
-	}
+    public function getTimestamp(string $key): int
+    {
+        return 0;
+    }
 
-	public function getTimestamp( string $key ): int {
-		return 0;
-	}
-
-	public function remove( string $name, string $cls ): void {
-	}
+    public function remove(string $name, string $cls): void
+    {
+    }
 }

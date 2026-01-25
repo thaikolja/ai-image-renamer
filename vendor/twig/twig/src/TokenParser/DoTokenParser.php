@@ -20,17 +20,19 @@ use Twig\Token;
  *
  * @internal
  */
-final class DoTokenParser extends AbstractTokenParser {
+final class DoTokenParser extends AbstractTokenParser
+{
+    public function parse(Token $token): Node
+    {
+        $expr = $this->parser->parseExpression();
 
-	public function parse( Token $token ): Node {
-		$expr = $this->parser->parseExpression();
+        $this->parser->getStream()->expect(Token::BLOCK_END_TYPE);
 
-		$this->parser->getStream()->expect( Token::BLOCK_END_TYPE );
+        return new DoNode($expr, $token->getLine());
+    }
 
-		return new DoNode( $expr, $token->getLine() );
-	}
-
-	public function getTag(): string {
-		return 'do';
-	}
+    public function getTag(): string
+    {
+        return 'do';
+    }
 }

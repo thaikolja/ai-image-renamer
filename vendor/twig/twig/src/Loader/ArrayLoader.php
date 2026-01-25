@@ -26,45 +26,50 @@ use Twig\Source;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-final class ArrayLoader implements LoaderInterface {
+final class ArrayLoader implements LoaderInterface
+{
+    /**
+     * @param array $templates An array of templates (keys are the names, and values are the source code)
+     */
+    public function __construct(
+        private array $templates = [],
+    ) {
+    }
 
-	/**
-	 * @param array $templates An array of templates (keys are the names, and values are the source code)
-	 */
-	public function __construct(
-		private array $templates = array(),
-	) {
-	}
+    public function setTemplate(string $name, string $template): void
+    {
+        $this->templates[$name] = $template;
+    }
 
-	public function setTemplate( string $name, string $template ): void {
-		$this->templates[ $name ] = $template;
-	}
+    public function getSourceContext(string $name): Source
+    {
+        if (!isset($this->templates[$name])) {
+            throw new LoaderError(\sprintf('Template "%s" is not defined.', $name));
+        }
 
-	public function getSourceContext( string $name ): Source {
-		if ( ! isset( $this->templates[ $name ] ) ) {
-			throw new LoaderError( \sprintf( 'Template "%s" is not defined.', $name ) );
-		}
+        return new Source($this->templates[$name], $name);
+    }
 
-		return new Source( $this->templates[ $name ], $name );
-	}
+    public function exists(string $name): bool
+    {
+        return isset($this->templates[$name]);
+    }
 
-	public function exists( string $name ): bool {
-		return isset( $this->templates[ $name ] );
-	}
+    public function getCacheKey(string $name): string
+    {
+        if (!isset($this->templates[$name])) {
+            throw new LoaderError(\sprintf('Template "%s" is not defined.', $name));
+        }
 
-	public function getCacheKey( string $name ): string {
-		if ( ! isset( $this->templates[ $name ] ) ) {
-			throw new LoaderError( \sprintf( 'Template "%s" is not defined.', $name ) );
-		}
+        return $name.':'.$this->templates[$name];
+    }
 
-		return $name . ':' . $this->templates[ $name ];
-	}
+    public function isFresh(string $name, int $time): bool
+    {
+        if (!isset($this->templates[$name])) {
+            throw new LoaderError(\sprintf('Template "%s" is not defined.', $name));
+        }
 
-	public function isFresh( string $name, int $time ): bool {
-		if ( ! isset( $this->templates[ $name ] ) ) {
-			throw new LoaderError( \sprintf( 'Template "%s" is not defined.', $name ) );
-		}
-
-		return true;
-	}
+        return true;
+    }
 }

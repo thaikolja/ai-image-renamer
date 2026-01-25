@@ -24,11 +24,11 @@
   },
   "require":     {
     "php":                   ">=8.2",
-    "twig/twig":             "^3.0",
-    "defuse/php-encryption": "^2.0"
+    "twig/twig":             "~v3.22.2",
+    "defuse/php-encryption": "^v2.4.0"
   },
   "require-dev": {
-    "kint-php/kint":             "^6.1",
+    "kint-php/kint":             "^6.1.0",
     "phpstan/phpstan":           "^1.11",
     "squizlabs/php_codesniffer": "^3.10",
     "wp-coding-standards/wpcs":  "^3.0"

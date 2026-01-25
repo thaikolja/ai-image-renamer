@@ -1,7 +1,7 @@
 .DS_Store
-.idea
-cache/
+.idea/
 .vscode/
+cache/
 *.md
 !README.md
 !CHANGELOG.md

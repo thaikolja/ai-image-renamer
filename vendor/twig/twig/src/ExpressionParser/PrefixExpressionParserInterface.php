@@ -16,10 +16,10 @@ use Twig\Node\Expression\AbstractExpression;
 use Twig\Parser;
 use Twig\Token;
 
-interface PrefixExpressionParserInterface extends ExpressionParserInterface {
-
-	/**
-	 * @throws SyntaxError
-	 */
-	public function parse( Parser $parser, Token $token ): AbstractExpression;
+interface PrefixExpressionParserInterface extends ExpressionParserInterface
+{
+    /**
+     * @throws SyntaxError
+     */
+    public function parse(Parser $parser, Token $token): AbstractExpression;
 }

@@ -16,24 +16,27 @@ namespace Twig\ExpressionParser;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class PrecedenceChange {
+class PrecedenceChange
+{
+    public function __construct(
+        private string $package,
+        private string $version,
+        private int $newPrecedence,
+    ) {
+    }
 
-	public function __construct(
-		private string $package,
-		private string $version,
-		private int $newPrecedence,
-	) {
-	}
+    public function getPackage(): string
+    {
+        return $this->package;
+    }
 
-	public function getPackage(): string {
-		return $this->package;
-	}
+    public function getVersion(): string
+    {
+        return $this->version;
+    }
 
-	public function getVersion(): string {
-		return $this->version;
-	}
-
-	public function getNewPrecedence(): int {
-		return $this->newPrecedence;
-	}
+    public function getNewPrecedence(): int
+    {
+        return $this->newPrecedence;
+    }
 }

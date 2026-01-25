@@ -11,7 +11,7 @@
 
 namespace Twig\ExpressionParser;
 
-interface ExpressionParserDescriptionInterface {
-
-	public function getDescription(): string;
+interface ExpressionParserDescriptionInterface
+{
+    public function getDescription(): string;
 }

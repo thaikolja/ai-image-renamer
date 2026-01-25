@@ -18,7 +18,7 @@ use Twig\Source;
  *
  * @author Yaakov Saxon
  */
-interface SourcePolicyInterface {
-
-	public function enableSandbox( Source $source ): bool;
+interface SourcePolicyInterface
+{
+    public function enableSandbox(Source $source): bool;
 }

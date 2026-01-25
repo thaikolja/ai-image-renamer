@@ -16,12 +16,12 @@ use Twig\Node\Expression\AbstractExpression;
 use Twig\Parser;
 use Twig\Token;
 
-interface InfixExpressionParserInterface extends ExpressionParserInterface {
+interface InfixExpressionParserInterface extends ExpressionParserInterface
+{
+    /**
+     * @throws SyntaxError
+     */
+    public function parse(Parser $parser, AbstractExpression $left, Token $token): AbstractExpression;
 
-	/**
-	 * @throws SyntaxError
-	 */
-	public function parse( Parser $parser, AbstractExpression $left, Token $token ): AbstractExpression;
-
-	public function getAssociativity(): InfixAssociativity;
+    public function getAssociativity(): InfixAssociativity;
 }

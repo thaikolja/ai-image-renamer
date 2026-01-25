@@ -19,256 +19,272 @@ use Twig\Source;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class FilesystemLoader implements LoaderInterface {
+class FilesystemLoader implements LoaderInterface
+{
+    /** Identifier of the main namespace. */
+    public const MAIN_NAMESPACE = '__main__';
 
-	/** Identifier of the main namespace. */
-	public const MAIN_NAMESPACE = '__main__';
+    /**
+     * @var array<string, list<string>>
+     */
+    protected $paths = [];
+    protected $cache = [];
+    protected $errorCache = [];
 
-	/**
-	 * @var array<string, list<string>>
-	 */
-	protected $paths      = array();
-	protected $cache      = array();
-	protected $errorCache = array();
+    private $rootPath;
 
-	private $rootPath;
+    /**
+     * @param string|string[] $paths    A path or an array of paths where to look for templates
+     * @param string|null     $rootPath The root path common to all relative paths (null for getcwd())
+     */
+    public function __construct($paths = [], ?string $rootPath = null)
+    {
+        $this->rootPath = ($rootPath ?? getcwd()).\DIRECTORY_SEPARATOR;
+        if (null !== $rootPath && false !== ($realPath = realpath($rootPath))) {
+            $this->rootPath = $realPath.\DIRECTORY_SEPARATOR;
+        }
 
-	/**
-	 * @param string|string[] $paths    A path or an array of paths where to look for templates
-	 * @param string|null     $rootPath The root path common to all relative paths (null for getcwd())
-	 */
-	public function __construct( $paths = array(), ?string $rootPath = null ) {
-		$this->rootPath = ( $rootPath ?? getcwd() ) . \DIRECTORY_SEPARATOR;
-		if ( null !== $rootPath && false !== ( $realPath = realpath( $rootPath ) ) ) {
-			$this->rootPath = $realPath . \DIRECTORY_SEPARATOR;
-		}
+        if ($paths) {
+            $this->setPaths($paths);
+        }
+    }
 
-		if ( $paths ) {
-			$this->setPaths( $paths );
-		}
-	}
+    /**
+     * Returns the paths to the templates.
+     *
+     * @return list<string>
+     */
+    public function getPaths(string $namespace = self::MAIN_NAMESPACE): array
+    {
+        return $this->paths[$namespace] ?? [];
+    }
 
-	/**
-	 * Returns the paths to the templates.
-	 *
-	 * @return list<string>
-	 */
-	public function getPaths( string $namespace = self::MAIN_NAMESPACE ): array {
-		return $this->paths[ $namespace ] ?? array();
-	}
+    /**
+     * Returns the path namespaces.
+     *
+     * The main namespace is always defined.
+     *
+     * @return list<string>
+     */
+    public function getNamespaces(): array
+    {
+        return array_keys($this->paths);
+    }
 
-	/**
-	 * Returns the path namespaces.
-	 *
-	 * The main namespace is always defined.
-	 *
-	 * @return list<string>
-	 */
-	public function getNamespaces(): array {
-		return array_keys( $this->paths );
-	}
+    /**
+     * @param string|string[] $paths A path or an array of paths where to look for templates
+     */
+    public function setPaths($paths, string $namespace = self::MAIN_NAMESPACE): void
+    {
+        if (!\is_array($paths)) {
+            $paths = [$paths];
+        }
 
-	/**
-	 * @param string|string[] $paths A path or an array of paths where to look for templates
-	 */
-	public function setPaths( $paths, string $namespace = self::MAIN_NAMESPACE ): void {
-		if ( ! \is_array( $paths ) ) {
-			$paths = array( $paths );
-		}
+        $this->paths[$namespace] = [];
+        foreach ($paths as $path) {
+            $this->addPath($path, $namespace);
+        }
+    }
 
-		$this->paths[ $namespace ] = array();
-		foreach ( $paths as $path ) {
-			$this->addPath( $path, $namespace );
-		}
-	}
+    /**
+     * @throws LoaderError
+     */
+    public function addPath(string $path, string $namespace = self::MAIN_NAMESPACE): void
+    {
+        // invalidate the cache
+        $this->cache = $this->errorCache = [];
 
-	/**
-	 * @throws LoaderError
-	 */
-	public function addPath( string $path, string $namespace = self::MAIN_NAMESPACE ): void {
-		// invalidate the cache
-		$this->cache = $this->errorCache = array();
+        $checkPath = $this->isAbsolutePath($path) ? $path : $this->rootPath.$path;
+        if (!is_dir($checkPath)) {
+            throw new LoaderError(\sprintf('The "%s" directory does not exist ("%s").', $path, $checkPath));
+        }
 
-		$checkPath = $this->isAbsolutePath( $path ) ? $path : $this->rootPath . $path;
-		if ( ! is_dir( $checkPath ) ) {
-			throw new LoaderError( \sprintf( 'The "%s" directory does not exist ("%s").', $path, $checkPath ) );
-		}
+        $this->paths[$namespace][] = rtrim($path, '/\\');
+    }
 
-		$this->paths[ $namespace ][] = rtrim( $path, '/\\' );
-	}
+    /**
+     * @throws LoaderError
+     */
+    public function prependPath(string $path, string $namespace = self::MAIN_NAMESPACE): void
+    {
+        // invalidate the cache
+        $this->cache = $this->errorCache = [];
 
-	/**
-	 * @throws LoaderError
-	 */
-	public function prependPath( string $path, string $namespace = self::MAIN_NAMESPACE ): void {
-		// invalidate the cache
-		$this->cache = $this->errorCache = array();
+        $checkPath = $this->isAbsolutePath($path) ? $path : $this->rootPath.$path;
+        if (!is_dir($checkPath)) {
+            throw new LoaderError(\sprintf('The "%s" directory does not exist ("%s").', $path, $checkPath));
+        }
 
-		$checkPath = $this->isAbsolutePath( $path ) ? $path : $this->rootPath . $path;
-		if ( ! is_dir( $checkPath ) ) {
-			throw new LoaderError( \sprintf( 'The "%s" directory does not exist ("%s").', $path, $checkPath ) );
-		}
+        $path = rtrim($path, '/\\');
 
-		$path = rtrim( $path, '/\\' );
+        if (!isset($this->paths[$namespace])) {
+            $this->paths[$namespace][] = $path;
+        } else {
+            array_unshift($this->paths[$namespace], $path);
+        }
+    }
 
-		if ( ! isset( $this->paths[ $namespace ] ) ) {
-			$this->paths[ $namespace ][] = $path;
-		} else {
-			array_unshift( $this->paths[ $namespace ], $path );
-		}
-	}
+    public function getSourceContext(string $name): Source
+    {
+        if (null === $path = $this->findTemplate($name)) {
+            return new Source('', $name, '');
+        }
 
-	public function getSourceContext( string $name ): Source {
-		if ( null === $path = $this->findTemplate( $name ) ) {
-			return new Source( '', $name, '' );
-		}
+        return new Source(file_get_contents($path), $name, $path);
+    }
 
-		return new Source( file_get_contents( $path ), $name, $path );
-	}
+    public function getCacheKey(string $name): string
+    {
+        if (null === $path = $this->findTemplate($name)) {
+            return '';
+        }
+        $len = \strlen($this->rootPath);
+        if (0 === strncmp($this->rootPath, $path, $len)) {
+            return substr($path, $len);
+        }
 
-	public function getCacheKey( string $name ): string {
-		if ( null === $path = $this->findTemplate( $name ) ) {
-			return '';
-		}
-		$len = \strlen( $this->rootPath );
-		if ( 0 === strncmp( $this->rootPath, $path, $len ) ) {
-			return substr( $path, $len );
-		}
+        return $path;
+    }
 
-		return $path;
-	}
+    /**
+     * @return bool
+     */
+    public function exists(string $name)
+    {
+        $name = $this->normalizeName($name);
 
-	/**
-	 * @return bool
-	 */
-	public function exists( string $name ) {
-		$name = $this->normalizeName( $name );
+        if (isset($this->cache[$name])) {
+            return true;
+        }
 
-		if ( isset( $this->cache[ $name ] ) ) {
-			return true;
-		}
+        return null !== $this->findTemplate($name, false);
+    }
 
-		return null !== $this->findTemplate( $name, false );
-	}
+    public function isFresh(string $name, int $time): bool
+    {
+        // false support to be removed in 3.0
+        if (null === $path = $this->findTemplate($name)) {
+            return false;
+        }
 
-	public function isFresh( string $name, int $time ): bool {
-		// false support to be removed in 3.0
-		if ( null === $path = $this->findTemplate( $name ) ) {
-			return false;
-		}
+        return filemtime($path) < $time;
+    }
 
-		return filemtime( $path ) < $time;
-	}
+    /**
+     * @return string|null
+     */
+    protected function findTemplate(string $name, bool $throw = true)
+    {
+        $name = $this->normalizeName($name);
 
-	/**
-	 * @return string|null
-	 */
-	protected function findTemplate( string $name, bool $throw = true ) {
-		$name = $this->normalizeName( $name );
+        if (isset($this->cache[$name])) {
+            return $this->cache[$name];
+        }
 
-		if ( isset( $this->cache[ $name ] ) ) {
-			return $this->cache[ $name ];
-		}
+        if (isset($this->errorCache[$name])) {
+            if (!$throw) {
+                return null;
+            }
 
-		if ( isset( $this->errorCache[ $name ] ) ) {
-			if ( ! $throw ) {
-				return null;
-			}
+            throw new LoaderError($this->errorCache[$name]);
+        }
 
-			throw new LoaderError( $this->errorCache[ $name ] );
-		}
+        try {
+            [$namespace, $shortname] = $this->parseName($name);
 
-		try {
-			[$namespace, $shortname] = $this->parseName( $name );
+            $this->validateName($shortname);
+        } catch (LoaderError $e) {
+            if (!$throw) {
+                return null;
+            }
 
-			$this->validateName( $shortname );
-		} catch ( LoaderError $e ) {
-			if ( ! $throw ) {
-				return null;
-			}
+            throw $e;
+        }
 
-			throw $e;
-		}
+        if (!isset($this->paths[$namespace])) {
+            $this->errorCache[$name] = \sprintf('There are no registered paths for namespace "%s".', $namespace);
 
-		if ( ! isset( $this->paths[ $namespace ] ) ) {
-			$this->errorCache[ $name ] = \sprintf( 'There are no registered paths for namespace "%s".', $namespace );
+            if (!$throw) {
+                return null;
+            }
 
-			if ( ! $throw ) {
-				return null;
-			}
+            throw new LoaderError($this->errorCache[$name]);
+        }
 
-			throw new LoaderError( $this->errorCache[ $name ] );
-		}
+        foreach ($this->paths[$namespace] as $path) {
+            if (!$this->isAbsolutePath($path)) {
+                $path = $this->rootPath.$path;
+            }
 
-		foreach ( $this->paths[ $namespace ] as $path ) {
-			if ( ! $this->isAbsolutePath( $path ) ) {
-				$path = $this->rootPath . $path;
-			}
+            if (is_file($path.'/'.$shortname)) {
+                if (false !== $realpath = realpath($path.'/'.$shortname)) {
+                    return $this->cache[$name] = $realpath;
+                }
 
-			if ( is_file( $path . '/' . $shortname ) ) {
-				if ( false !== $realpath = realpath( $path . '/' . $shortname ) ) {
-					return $this->cache[ $name ] = $realpath;
-				}
+                return $this->cache[$name] = $path.'/'.$shortname;
+            }
+        }
 
-				return $this->cache[ $name ] = $path . '/' . $shortname;
-			}
-		}
+        $this->errorCache[$name] = \sprintf('Unable to find template "%s" (looked into: %s).', $name, implode(', ', $this->paths[$namespace]));
 
-		$this->errorCache[ $name ] = \sprintf( 'Unable to find template "%s" (looked into: %s).', $name, implode( ', ', $this->paths[ $namespace ] ) );
+        if (!$throw) {
+            return null;
+        }
 
-		if ( ! $throw ) {
-			return null;
-		}
+        throw new LoaderError($this->errorCache[$name]);
+    }
 
-		throw new LoaderError( $this->errorCache[ $name ] );
-	}
+    private function normalizeName(string $name): string
+    {
+        return preg_replace('#/{2,}#', '/', str_replace('\\', '/', $name));
+    }
 
-	private function normalizeName( string $name ): string {
-		return preg_replace( '#/{2,}#', '/', str_replace( '\\', '/', $name ) );
-	}
+    private function parseName(string $name, string $default = self::MAIN_NAMESPACE): array
+    {
+        if (isset($name[0]) && '@' == $name[0]) {
+            if (false === $pos = strpos($name, '/')) {
+                throw new LoaderError(\sprintf('Malformed namespaced template name "%s" (expecting "@namespace/template_name").', $name));
+            }
 
-	private function parseName( string $name, string $default = self::MAIN_NAMESPACE ): array {
-		if ( isset( $name[0] ) && '@' == $name[0] ) {
-			if ( false === $pos = strpos( $name, '/' ) ) {
-				throw new LoaderError( \sprintf( 'Malformed namespaced template name "%s" (expecting "@namespace/template_name").', $name ) );
-			}
+            $namespace = substr($name, 1, $pos - 1);
+            $shortname = substr($name, $pos + 1);
 
-			$namespace = substr( $name, 1, $pos - 1 );
-			$shortname = substr( $name, $pos + 1 );
+            return [$namespace, $shortname];
+        }
 
-			return array( $namespace, $shortname );
-		}
+        return [$default, $name];
+    }
 
-		return array( $default, $name );
-	}
+    private function validateName(string $name): void
+    {
+        if (str_contains($name, "\0")) {
+            throw new LoaderError('A template name cannot contain NUL bytes.');
+        }
 
-	private function validateName( string $name ): void {
-		if ( str_contains( $name, "\0" ) ) {
-			throw new LoaderError( 'A template name cannot contain NUL bytes.' );
-		}
+        $name = ltrim($name, '/');
+        $parts = explode('/', $name);
+        $level = 0;
+        foreach ($parts as $part) {
+            if ('..' === $part) {
+                --$level;
+            } elseif ('.' !== $part) {
+                ++$level;
+            }
 
-		$name  = ltrim( $name, '/' );
-		$parts = explode( '/', $name );
-		$level = 0;
-		foreach ( $parts as $part ) {
-			if ( '..' === $part ) {
-				--$level;
-			} elseif ( '.' !== $part ) {
-				++$level;
-			}
+            if ($level < 0) {
+                throw new LoaderError(\sprintf('Looks like you try to load a template outside configured directories (%s).', $name));
+            }
+        }
+    }
 
-			if ( $level < 0 ) {
-				throw new LoaderError( \sprintf( 'Looks like you try to load a template outside configured directories (%s).', $name ) );
-			}
-		}
-	}
-
-	private function isAbsolutePath( string $file ): bool {
-		return strspn( $file, '/\\', 0, 1 )
-			|| ( \strlen( $file ) > 3 && ctype_alpha( $file[0] )
-				&& ':' === $file[1]
-				&& strspn( $file, '/\\', 2, 1 )
-			)
-			|| null !== parse_url( $file, \PHP_URL_SCHEME );
-	}
+    private function isAbsolutePath(string $file): bool
+    {
+        return strspn($file, '/\\', 0, 1)
+            || (\strlen($file) > 3 && ctype_alpha($file[0])
+                && ':' === $file[1]
+                && strspn($file, '/\\', 2, 1)
+            )
+            || null !== parse_url($file, \PHP_URL_SCHEME)
+        ;
+    }
 }

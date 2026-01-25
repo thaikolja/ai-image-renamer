@@ -16,9 +16,10 @@ namespace Twig\Cache;
  *
  * @author Quentin Devos <quentin@devos.pm>
  */
-class ReadOnlyFilesystemCache extends FilesystemCache {
-
-	public function write( string $key, string $content ): void {
-		// Do nothing with the content, it's a read-only filesystem.
-	}
+class ReadOnlyFilesystemCache extends FilesystemCache
+{
+    public function write(string $key, string $content): void
+    {
+        // Do nothing with the content, it's a read-only filesystem.
+    }
 }

@@ -202,7 +202,7 @@ class Encryption_Service {
                 </p>
                 <p>
                     <a
-                            href="https://docs.kolja-nolte.com/ai-image-renamer/security/"
+                            href="https://docs.kolja-nolte.com/ai-image-renamer/support/security"
                             target="_blank">
                         <?php \esc_html_e( 'Learn more about securing your encryption key', 'ai-image-renamer' ); ?>
                     </a>

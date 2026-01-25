@@ -16,10 +16,10 @@ namespace Twig\Extension;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-interface GlobalsInterface {
-
-	/**
-	 * @return array<string, mixed>
-	 */
-	public function getGlobals(): array;
+interface GlobalsInterface
+{
+    /**
+     * @return array<string, mixed>
+     */
+    public function getGlobals(): array;
 }
