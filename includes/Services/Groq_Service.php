@@ -35,8 +35,6 @@ namespace AIR\Services;
  * Handles communication with the Groq Vision API.
  */
 class Groq_Service {
-
-
 	/**
 	 * Groq API endpoint.
 	 *
@@ -137,7 +135,7 @@ class Groq_Service {
 	 */
 	final public function is_allowed_type( string $mime_type ): bool {
 		$options    = \get_option( 'air_options', array() );
-		$file_types = $options['file_types'] ?? array( 'image/jpeg', 'image/png', 'image/webp', 'image/gif' );
+		$file_types = $options['file_types'] ?? array( 'image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif' );
 
 		/**
 		 * Filter the allowed file types.

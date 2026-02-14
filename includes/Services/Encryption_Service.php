@@ -30,8 +30,8 @@ declare(strict_types=1);
 namespace AIR\Services;
 
 use Defuse\Crypto\Crypto;
-use Defuse\Crypto\Key;
 use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
+use Defuse\Crypto\Key;
 use Exception;
 
 /**

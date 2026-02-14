@@ -31,10 +31,10 @@ declare(strict_types=1);
 namespace AIR\Services;
 
 use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
+use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
 
 /**
@@ -43,8 +43,6 @@ use Twig\TwigFunction;
  * Wrapper for Twig template rendering.
  */
 class Template_Engine {
-
-
 	/**
 	 * Twig environment instance.
 	 *
@@ -237,9 +235,6 @@ class Template_Engine {
 		} catch ( LoaderError | RuntimeError | SyntaxError $e ) {
 			if ( WP_DEBUG ) {
 				return '<div class="notice notice-error"><p>' . \esc_html__( 'Template Error:', 'ai-image-renamer' ) . ' ' . \esc_html( $e->getMessage() ) . '</p></div>';
-			}
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				\error_log( 'AI Image Renamer Template Error: ' . $e->getMessage() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			}
 
 			return '';

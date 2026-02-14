@@ -17,15 +17,7 @@
 				<label class="air-filetype-card {{ mime in file_types ? 'selected' : '' }}">
 					<input type="checkbox" name="{{ option_name }}[file_types][]" value="{{ mime }}" {{ mime in file_types ? 'checked' : '' }}>
 					<span class="air-filetype-icon">
-						{% if mime == 'image/jpeg' %}
-							<span class="dashicons dashicons-format-image"></span>
-						{% elseif mime == 'image/png' %}
-							<span class="dashicons dashicons-format-image"></span>
-						{% elseif mime == 'image/webp' %}
-							<span class="dashicons dashicons-format-image"></span>
-						{% elseif mime == 'image/gif' %}
-							<span class="dashicons dashicons-images-alt"></span>
-						{% endif %}
+						<span class="dashicons dashicons-format-image"></span>
 					</span>
 					<span class="air-filetype-label">{{ label }}</span>
 				</label>

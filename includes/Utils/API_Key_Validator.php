@@ -35,8 +35,6 @@ namespace AIR\Utils;
  * Validates API key format and structure.
  */
 class API_Key_Validator {
-
-
 	/**
 	 * Groq API key prefix.
 	 *

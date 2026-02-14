@@ -30,18 +30,17 @@ declare(strict_types=1);
 
 namespace AIR\Admin;
 
+use AIR\Services\Encryption_Service;
+use AIR\Services\Groq_Service;
+use AIR\Services\Template_Engine;
+use AIR\Utils\API_Key_Validator;
 use AIR\Utils\Rate_Limiter;
 use AIR\Utils\SVG_Sanitizer;
-use AIR\Services\Groq_Service;
-use AIR\Utils\API_Key_Validator;
-use AIR\Services\Template_Engine;
-use AIR\Services\Encryption_Service;
 
 // Prevent direct access.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
 
 /**
  * Class Settings_Page
@@ -49,11 +48,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Handles the plugin settings page under Settings menu.
  */
 class Settings_Page {
-
-
-
-
-
 	/**
 	 * Settings page slug.
 	 *
@@ -283,7 +277,7 @@ class Settings_Page {
 		$defaults = array(
 			'api_key'      => '',
 			'enabled'      => true,
-			'file_types'   => array( 'image/jpeg', 'image/png', 'image/webp', 'image/gif' ),
+			'file_types'   => array( 'image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif' ),
 			'max_keywords' => 5,
 			'set_alt_text' => false,
 			'model'        => 'meta-llama/llama-4-maverick-17b-128e-instruct',
@@ -348,7 +342,7 @@ class Settings_Page {
 
 		// File types.
 		if ( isset( $input['file_types'] ) && is_array( $input['file_types'] ) ) {
-			$allowed_types = array( 'image/jpeg', 'image/png', 'image/webp', 'image/gif' );
+			$allowed_types = array( 'image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif' );
 
 			/**
 			 * Filter the allowed file types for validation.
@@ -444,7 +438,7 @@ class Settings_Page {
 				'option_name' => esc_attr( self::OPTION_NAME ),
 				'display_key' => esc_attr( $display_key ),
 				'placeholder' => esc_attr( $placeholder ),
-				'saved'       => (bool) $saved,
+				'saved'       => $saved,
 			)
 		);
 	}
@@ -459,7 +453,8 @@ class Settings_Page {
 			'image/jpeg' => 'JPEG',
 			'image/png'  => 'PNG',
 			'image/webp' => 'WebP',
-			'image/gif'  => 'GIF',
+			'image/avif' => 'Avif',
+			'image/gif'  => 'GIF'
 		);
 
 		/**
@@ -689,7 +684,7 @@ class Settings_Page {
 				'page_title'      => esc_html( get_admin_page_title() ),
 				'display_key'     => esc_attr( $display_key ),
 				'placeholder'     => esc_attr( $placeholder ),
-				'saved'           => (bool) $saved,
+				'saved'           => $saved,
 				'enabled'         => (bool) ( $options['enabled'] ?? true ),
 				'set_alt_text'    => (bool) ( $options['set_alt_text'] ?? false ),
 				'file_types'      => array_map( 'esc_attr', $file_types ),
@@ -726,7 +721,7 @@ class Settings_Page {
 					'curl'   => array(
 						'label' => esc_html__( 'cURL Enabled', 'ai-image-renamer' ),
 						'value' => function_exists( 'curl_version' ) ? esc_html__( 'Yes', 'ai-image-renamer' ) : esc_html__( 'No', 'ai-image-renamer' ),
-						'ok'    => (bool) function_exists( 'curl_version' ),
+						'ok'    => function_exists( 'curl_version' ),
 						'desc'  => esc_html__( 'Required for API communication', 'ai-image-renamer' ),
 					),
 				),

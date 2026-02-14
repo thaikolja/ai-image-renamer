@@ -36,10 +36,6 @@ namespace AIR\Utils;
  * Provides rate limiting functionality to prevent abuse of AJAX endpoints.
  */
 class Rate_Limiter {
-
-
-
-
 	/**
 	 * Default rate limit: 30 requests per minute.
 	 *
@@ -115,42 +111,12 @@ class Rate_Limiter {
 
 		// Increment the counter.
 		++$data['count'];
+
 		$remaining_time = $data['expires'] - \time();
 
 		\set_transient( $key, $data, $remaining_time );
 
 		return true;
-	}
-
-	/**
-	 * Get the number of remaining requests for the current user.
-	 *
-	 * @param  string $action        The action being performed.
-	 * @param  int    $max_requests  Maximum number of requests allowed.
-	 * @param  int    $time_window   Time window in seconds.
-	 *
-	 * @return int Number of remaining requests.
-	 */
-	public static function get_remaining_requests( // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
-		string $action,
-		int $max_requests = self::DEFAULT_MAX_REQUESTS,
-		int $time_window = self::DEFAULT_TIME_WINDOW
-	): int {
-		$user_id = self::get_user_identifier();
-		$key     = self::get_transient_key( $action, $user_id );
-
-		$data = \get_transient( $key );
-
-		if ( false === $data ) {
-			return $max_requests;
-		}
-
-		// Check if the window has expired.
-		if ( \time() > $data['expires'] ) {
-			return $max_requests;
-		}
-
-		return max( 0, $max_requests - $data['count'] );
 	}
 
 	/**
@@ -176,20 +142,6 @@ class Rate_Limiter {
 	}
 
 	/**
-	 * Reset the rate limit for a specific action.
-	 *
-	 * @param  string $action  The action to reset.
-	 *
-	 * @return void
-	 */
-	public static function reset_rate_limit( string $action ): void {
-		$user_id = self::get_user_identifier();
-		$key     = self::get_transient_key( $action, $user_id );
-
-		\delete_transient( $key );
-	}
-
-	/**
 	 * Get a unique identifier for the current user.
 	 *
 	 * @return string User identifier.
@@ -210,6 +162,7 @@ class Rate_Limiter {
 	 * Get the client IP address.
 	 *
 	 * @return string|null IP address or null if not available.
+	 * @noinspection GlobalVariableUsageInspection
 	 */
 	private static function get_client_ip(): ?string {
 		$ip_keys = array(
@@ -224,7 +177,7 @@ class Rate_Limiter {
 		);
 
 		foreach ( $ip_keys as $key ) {
-			if ( ! empty( $_SERVER[ $key ] ) ) {
+			if ( ! empty( $_SERVER[ $key ])  ) {
 				$ip = \sanitize_text_field( \wp_unslash( $_SERVER[ $key ] ) );
 
 				// Handle multiple IPs in X-Forwarded-For.

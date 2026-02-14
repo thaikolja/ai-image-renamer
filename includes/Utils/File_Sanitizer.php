@@ -35,8 +35,6 @@ namespace AIR\Utils;
  * Sanitizes filenames according to SEO-friendly rules.
  */
 class File_Sanitizer {
-
-
 	/**
 	 * Sanitize a filename.
 	 *
@@ -98,18 +96,5 @@ class File_Sanitizer {
 		$pathinfo = pathinfo( $filename );
 
 		return strtolower( $pathinfo['extension'] ?? '' );
-	}
-
-	/**
-	 * Extract the base name (without extension) from a filename.
-	 *
-	 * @param  string $filename  The complete filename.
-	 *
-	 * @return string The base name.
-	 */
-	public static function get_basename( string $filename ): string {
-		$pathinfo = pathinfo( $filename );
-
-		return $pathinfo['filename'] ?? '';
 	}
 }

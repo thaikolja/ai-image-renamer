@@ -43,8 +43,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Hooks into WordPress upload process to rename images.
  */
 class Image_Uploader {
-
-
 	/**
 	 * Groq service instance.
 	 *
@@ -268,8 +266,9 @@ class Image_Uploader {
 		$mime_to_ext = array(
 			'image/jpeg' => 'jpg',
 			'image/png'  => 'png',
-			'image/gif'  => 'gif',
 			'image/webp' => 'webp',
+			'image/avif' => 'avif',
+			'image/gif'  => 'gif',
 		);
 
 		$extensions = \apply_filters( 'air_mime_to_ext', $mime_to_ext[ $mime_type ] );

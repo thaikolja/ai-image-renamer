@@ -75,13 +75,7 @@
         // User is typing a new key, clear the field completely
         $(this).val(currentValue);
         hasEnteredNewKey = true;
-      } else if (currentValue.includes("•")) {
-        // Still contains masked characters
-        hasEnteredNewKey = false;
-      } else {
-        // New key being entered
-        hasEnteredNewKey = true;
-      }
+      } else hasEnteredNewKey = !currentValue.includes("•");
     });
 
     // --- Test Connection Handler ---

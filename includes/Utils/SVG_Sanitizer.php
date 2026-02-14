@@ -35,9 +35,6 @@ namespace AIR\Utils;
  * Validates and sanitizes SVG content to prevent XSS attacks.
  */
 class SVG_Sanitizer {
-
-
-
 	/**
 	 * Allowed SVG elements for sprite icons.
 	 *
@@ -288,7 +285,7 @@ class SVG_Sanitizer {
 			return false;
 		}
 
-		if ( 0 !== \strpos( $real_path, $plugin_dir ) ) {
+		if ( ! str_starts_with( $real_path, $plugin_dir ) ) {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 				\error_log( 'AI Image Renamer: Attempted to load SVG from outside plugin directory.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			}
