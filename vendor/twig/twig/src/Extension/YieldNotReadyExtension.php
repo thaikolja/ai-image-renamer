@@ -16,15 +16,14 @@ use Twig\NodeVisitor\YieldNotReadyNodeVisitor;
 /**
  * @internal to be removed in Twig 4
  */
-final class YieldNotReadyExtension extends AbstractExtension
-{
-    public function __construct(
-        private bool $useYield,
-    ) {
-    }
+final class YieldNotReadyExtension extends AbstractExtension {
 
-    public function getNodeVisitors(): array
-    {
-        return [new YieldNotReadyNodeVisitor($this->useYield)];
-    }
+	public function __construct(
+		private bool $useYield,
+	) {
+	}
+
+	public function getNodeVisitors(): array {
+		return array( new YieldNotReadyNodeVisitor( $this->useYield ) );
+	}
 }

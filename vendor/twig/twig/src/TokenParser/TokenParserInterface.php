@@ -21,26 +21,26 @@ use Twig\Token;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-interface TokenParserInterface
-{
-    /**
-     * Sets the parser associated with this token parser.
-     */
-    public function setParser(Parser $parser): void;
+interface TokenParserInterface {
 
-    /**
-     * Parses a token and returns a node.
-     *
-     * @return Node
-     *
-     * @throws SyntaxError
-     */
-    public function parse(Token $token);
+	/**
+	 * Sets the parser associated with this token parser.
+	 */
+	public function setParser( Parser $parser ): void;
 
-    /**
-     * Gets the tag name associated with this token parser.
-     *
-     * @return string
-     */
-    public function getTag();
+	/**
+	 * Parses a token and returns a node.
+	 *
+	 * @return Node
+	 *
+	 * @throws SyntaxError
+	 */
+	public function parse( Token $token );
+
+	/**
+	 * Gets the tag name associated with this token parser.
+	 *
+	 * @return string
+	 */
+	public function getTag();
 }

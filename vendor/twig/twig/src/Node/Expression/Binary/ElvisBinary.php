@@ -16,40 +16,35 @@ use Twig\Node\Expression\AbstractExpression;
 use Twig\Node\Expression\OperatorEscapeInterface;
 use Twig\Node\Node;
 
-final class ElvisBinary extends AbstractBinary implements OperatorEscapeInterface
-{
-    /**
-     * @param AbstractExpression $left
-     * @param AbstractExpression $right
-     */
-    public function __construct(Node $left, Node $right, int $lineno)
-    {
-        parent::__construct($left, $right, $lineno);
+final class ElvisBinary extends AbstractBinary implements OperatorEscapeInterface {
 
-        $this->setNode('test', clone $left);
-        $left->setAttribute('always_defined', true);
-    }
+	/**
+	 * @param AbstractExpression $left
+	 * @param AbstractExpression $right
+	 */
+	public function __construct( Node $left, Node $right, int $lineno ) {
+		parent::__construct( $left, $right, $lineno );
 
-    public function compile(Compiler $compiler): void
-    {
-        $compiler
-            ->raw('((')
-            ->subcompile($this->getNode('test'))
-            ->raw(') ? (')
-            ->subcompile($this->getNode('left'))
-            ->raw(') : (')
-            ->subcompile($this->getNode('right'))
-            ->raw('))')
-        ;
-    }
+		$this->setNode( 'test', clone $left );
+		$left->setAttribute( 'always_defined', true );
+	}
 
-    public function operator(Compiler $compiler): Compiler
-    {
-        return $compiler->raw('?:');
-    }
+	public function compile( Compiler $compiler ): void {
+		$compiler
+			->raw( '((' )
+			->subcompile( $this->getNode( 'test' ) )
+			->raw( ') ? (' )
+			->subcompile( $this->getNode( 'left' ) )
+			->raw( ') : (' )
+			->subcompile( $this->getNode( 'right' ) )
+			->raw( '))' );
+	}
 
-    public function getOperandNamesToEscape(): array
-    {
-        return ['left', 'right'];
-    }
+	public function operator( Compiler $compiler ): Compiler {
+		return $compiler->raw( '?:' );
+	}
+
+	public function getOperandNamesToEscape(): array {
+		return array( 'left', 'right' );
+	}
 }

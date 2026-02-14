@@ -19,6 +19,6 @@ use Twig\Attribute\YieldReady;
  * @author Fabien Potencier <fabien@symfony.com>
  */
 #[YieldReady]
-class BodyNode extends Node
-{
+class BodyNode extends Node {
+
 }

@@ -19,28 +19,31 @@ use Twig\Compiler;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ParentExpression extends AbstractExpression
-{
-    public function __construct(string $name, int $lineno)
-    {
-        parent::__construct([], ['output' => false, 'name' => $name], $lineno);
-    }
+class ParentExpression extends AbstractExpression {
 
-    public function compile(Compiler $compiler): void
-    {
-        if ($this->getAttribute('output')) {
-            $compiler
-                ->addDebugInfo($this)
-                ->write('yield from $this->yieldParentBlock(')
-                ->string($this->getAttribute('name'))
-                ->raw(", \$context, \$blocks);\n")
-            ;
-        } else {
-            $compiler
-                ->raw('$this->renderParentBlock(')
-                ->string($this->getAttribute('name'))
-                ->raw(', $context, $blocks)')
-            ;
-        }
-    }
+	public function __construct( string $name, int $lineno ) {
+		parent::__construct(
+			array(),
+			array(
+				'output' => false,
+				'name'   => $name,
+			),
+			$lineno
+		);
+	}
+
+	public function compile( Compiler $compiler ): void {
+		if ( $this->getAttribute( 'output' ) ) {
+			$compiler
+				->addDebugInfo( $this )
+				->write( 'yield from $this->yieldParentBlock(' )
+				->string( $this->getAttribute( 'name' ) )
+				->raw( ", \$context, \$blocks);\n" );
+		} else {
+			$compiler
+				->raw( '$this->renderParentBlock(' )
+				->string( $this->getAttribute( 'name' ) )
+				->raw( ', $context, $blocks)' );
+		}
+	}
 }

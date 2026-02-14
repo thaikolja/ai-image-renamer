@@ -14,20 +14,19 @@ namespace Twig\ExpressionParser;
 /**
  * @internal
  */
-enum ExpressionParserType: string
-{
-    case Prefix = 'prefix';
-    case Infix = 'infix';
+enum ExpressionParserType: string {
 
-    public static function getType(object $object): ExpressionParserType
-    {
-        if ($object instanceof PrefixExpressionParserInterface) {
-            return self::Prefix;
-        }
-        if ($object instanceof InfixExpressionParserInterface) {
-            return self::Infix;
-        }
+	case Prefix = 'prefix';
+	case Infix  = 'infix';
 
-        throw new \InvalidArgumentException(\sprintf('Unsupported expression parser type: %s', $object::class));
-    }
+	public static function getType( object $object ): ExpressionParserType {
+		if ( $object instanceof PrefixExpressionParserInterface ) {
+			return self::Prefix;
+		}
+		if ( $object instanceof InfixExpressionParserInterface ) {
+			return self::Infix;
+		}
+
+		throw new \InvalidArgumentException( \sprintf( 'Unsupported expression parser type: %s', $object::class ) );
+	}
 }

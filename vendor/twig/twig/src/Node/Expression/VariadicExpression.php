@@ -13,12 +13,11 @@ namespace Twig\Node\Expression;
 
 use Twig\Compiler;
 
-class VariadicExpression extends ArrayExpression
-{
-    public function compile(Compiler $compiler): void
-    {
-        $compiler->raw('...');
+class VariadicExpression extends ArrayExpression {
 
-        parent::compile($compiler);
-    }
+	public function compile( Compiler $compiler ): void {
+		$compiler->raw( '...' );
+
+		parent::compile( $compiler );
+	}
 }

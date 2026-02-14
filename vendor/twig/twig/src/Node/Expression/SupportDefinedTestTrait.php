@@ -11,17 +11,15 @@
 
 namespace Twig\Node\Expression;
 
-trait SupportDefinedTestTrait
-{
-    private bool $definedTest = false;
+trait SupportDefinedTestTrait {
 
-    public function enableDefinedTest(): void
-    {
-        $this->definedTest = true;
-    }
+	private bool $definedTest = false;
 
-    public function isDefinedTestEnabled(): bool
-    {
-        return $this->definedTest;
-    }
+	public function enableDefinedTest(): void {
+		$this->definedTest = true;
+	}
+
+	public function isDefinedTestEnabled(): bool {
+		return $this->definedTest;
+	}
 }

@@ -13,6 +13,6 @@ namespace Twig\Node\Expression\Variable;
 
 use Twig\Node\Expression\TempNameExpression;
 
-final class LocalVariable extends TempNameExpression
-{
+final class LocalVariable extends TempNameExpression {
+
 }

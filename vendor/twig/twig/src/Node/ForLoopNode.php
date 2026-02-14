@@ -20,32 +20,37 @@ use Twig\Compiler;
  * @author Fabien Potencier <fabien@symfony.com>
  */
 #[YieldReady]
-class ForLoopNode extends Node
-{
-    public function __construct(int $lineno)
-    {
-        parent::__construct([], ['with_loop' => false, 'ifexpr' => false, 'else' => false], $lineno);
-    }
+class ForLoopNode extends Node {
 
-    public function compile(Compiler $compiler): void
-    {
-        if ($this->getAttribute('else')) {
-            $compiler->write("\$context['_iterated'] = true;\n");
-        }
+	public function __construct( int $lineno ) {
+		parent::__construct(
+			array(),
+			array(
+				'with_loop' => false,
+				'ifexpr'    => false,
+				'else'      => false,
+			),
+			$lineno
+		);
+	}
 
-        if ($this->getAttribute('with_loop')) {
-            $compiler
-                ->write("++\$context['loop']['index0'];\n")
-                ->write("++\$context['loop']['index'];\n")
-                ->write("\$context['loop']['first'] = false;\n")
-                ->write("if (isset(\$context['loop']['revindex0'], \$context['loop']['revindex'])) {\n")
-                ->indent()
-                ->write("--\$context['loop']['revindex0'];\n")
-                ->write("--\$context['loop']['revindex'];\n")
-                ->write("\$context['loop']['last'] = 0 === \$context['loop']['revindex0'];\n")
-                ->outdent()
-                ->write("}\n")
-            ;
-        }
-    }
+	public function compile( Compiler $compiler ): void {
+		if ( $this->getAttribute( 'else' ) ) {
+			$compiler->write( "\$context['_iterated'] = true;\n" );
+		}
+
+		if ( $this->getAttribute( 'with_loop' ) ) {
+			$compiler
+				->write( "++\$context['loop']['index0'];\n" )
+				->write( "++\$context['loop']['index'];\n" )
+				->write( "\$context['loop']['first'] = false;\n" )
+				->write( "if (isset(\$context['loop']['revindex0'], \$context['loop']['revindex'])) {\n" )
+				->indent()
+				->write( "--\$context['loop']['revindex0'];\n" )
+				->write( "--\$context['loop']['revindex'];\n" )
+				->write( "\$context['loop']['last'] = 0 === \$context['loop']['revindex0'];\n" )
+				->outdent()
+				->write( "}\n" );
+		}
+	}
 }

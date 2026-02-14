@@ -26,64 +26,61 @@ use Twig\TokenStream;
  *
  * @internal
  */
-final class TypesTokenParser extends AbstractTokenParser
-{
-    public function parse(Token $token): Node
-    {
-        $stream = $this->parser->getStream();
-        $types = $this->parseSimpleMappingExpression($stream);
-        $stream->expect(Token::BLOCK_END_TYPE);
+final class TypesTokenParser extends AbstractTokenParser {
 
-        return new TypesNode($types, $token->getLine());
-    }
+	public function parse( Token $token ): Node {
+		$stream = $this->parser->getStream();
+		$types  = $this->parseSimpleMappingExpression( $stream );
+		$stream->expect( Token::BLOCK_END_TYPE );
 
-    /**
-     * @return array<string, array{type: string, optional: bool}>
-     *
-     * @throws SyntaxError
-     */
-    private function parseSimpleMappingExpression(TokenStream $stream): array
-    {
-        $enclosed = null !== $stream->nextIf(Token::PUNCTUATION_TYPE, '{');
-        $types = [];
-        $first = true;
-        while (!($stream->test(Token::PUNCTUATION_TYPE, '}') || $stream->test(Token::BLOCK_END_TYPE))) {
-            if (!$first) {
-                $stream->expect(Token::PUNCTUATION_TYPE, ',', 'A type string must be followed by a comma');
+		return new TypesNode( $types, $token->getLine() );
+	}
 
-                // trailing ,?
-                if ($stream->test(Token::PUNCTUATION_TYPE, '}') || $stream->test(Token::BLOCK_END_TYPE)) {
-                    break;
-                }
-            }
-            $first = false;
+	/**
+	 * @return array<string, array{type: string, optional: bool}>
+	 *
+	 * @throws SyntaxError
+	 */
+	private function parseSimpleMappingExpression( TokenStream $stream ): array {
+		$enclosed = null !== $stream->nextIf( Token::PUNCTUATION_TYPE, '{' );
+		$types    = array();
+		$first    = true;
+		while ( ! ( $stream->test( Token::PUNCTUATION_TYPE, '}' ) || $stream->test( Token::BLOCK_END_TYPE ) ) ) {
+			if ( ! $first ) {
+				$stream->expect( Token::PUNCTUATION_TYPE, ',', 'A type string must be followed by a comma' );
 
-            $nameToken = $stream->expect(Token::NAME_TYPE);
+				// trailing ,?
+				if ( $stream->test( Token::PUNCTUATION_TYPE, '}' ) || $stream->test( Token::BLOCK_END_TYPE ) ) {
+					break;
+				}
+			}
+			$first = false;
 
-            if ($stream->nextIf(Token::OPERATOR_TYPE, '?:')) {
-                $isOptional = true;
-            } else {
-                $isOptional = null !== $stream->nextIf(Token::OPERATOR_TYPE, '?');
-                $stream->expect(Token::PUNCTUATION_TYPE, ':', 'A type name must be followed by a colon (:)');
-            }
+			$nameToken = $stream->expect( Token::NAME_TYPE );
 
-            $valueToken = $stream->expect(Token::STRING_TYPE);
+			if ( $stream->nextIf( Token::OPERATOR_TYPE, '?:' ) ) {
+				$isOptional = true;
+			} else {
+				$isOptional = null !== $stream->nextIf( Token::OPERATOR_TYPE, '?' );
+				$stream->expect( Token::PUNCTUATION_TYPE, ':', 'A type name must be followed by a colon (:)' );
+			}
 
-            $types[$nameToken->getValue()] = [
-                'type' => $valueToken->getValue(),
-                'optional' => $isOptional,
-            ];
-        }
+			$valueToken = $stream->expect( Token::STRING_TYPE );
 
-        if ($enclosed) {
-            $stream->expect(Token::PUNCTUATION_TYPE, '}', 'An opened mapping is not properly closed');
-        }
+			$types[ $nameToken->getValue() ] = array(
+				'type'     => $valueToken->getValue(),
+				'optional' => $isOptional,
+			);
+		}
 
-        return $types;
-    }
+		if ( $enclosed ) {
+			$stream->expect( Token::PUNCTUATION_TYPE, '}', 'An opened mapping is not properly closed' );
+		}
 
-    public function getTag(): string
-    {
-        return 'types';
-    }
+		return $types;
+	}
+
+	public function getTag(): string {
+		return 'types';
+	}
 }

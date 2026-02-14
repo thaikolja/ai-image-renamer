@@ -14,23 +14,20 @@ namespace Twig\Node\Expression\Binary;
 use Twig\Compiler;
 use Twig\Node\Expression\ReturnBoolInterface;
 
-class EndsWithBinary extends AbstractBinary implements ReturnBoolInterface
-{
-    public function compile(Compiler $compiler): void
-    {
-        $left = $compiler->getVarName();
-        $right = $compiler->getVarName();
-        $compiler
-            ->raw(\sprintf('(is_string($%s = ', $left))
-            ->subcompile($this->getNode('left'))
-            ->raw(\sprintf(') && is_string($%s = ', $right))
-            ->subcompile($this->getNode('right'))
-            ->raw(\sprintf(') && str_ends_with($%1$s, $%2$s))', $left, $right))
-        ;
-    }
+class EndsWithBinary extends AbstractBinary implements ReturnBoolInterface {
 
-    public function operator(Compiler $compiler): Compiler
-    {
-        return $compiler->raw('');
-    }
+	public function compile( Compiler $compiler ): void {
+		$left  = $compiler->getVarName();
+		$right = $compiler->getVarName();
+		$compiler
+			->raw( \sprintf( '(is_string($%s = ', $left ) )
+			->subcompile( $this->getNode( 'left' ) )
+			->raw( \sprintf( ') && is_string($%s = ', $right ) )
+			->subcompile( $this->getNode( 'right' ) )
+			->raw( \sprintf( ') && str_ends_with($%1$s, $%2$s))', $left, $right ) );
+	}
+
+	public function operator( Compiler $compiler ): Compiler {
+		return $compiler->raw( '' );
+	}
 }

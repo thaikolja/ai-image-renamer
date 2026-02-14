@@ -14,23 +14,21 @@ namespace Twig\Util;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class TemplateDirIterator extends \IteratorIterator
-{
-    /**
-     * @return string
-     */
-    #[\ReturnTypeWillChange]
-    public function current()
-    {
-        return file_get_contents(parent::current());
-    }
+class TemplateDirIterator extends \IteratorIterator {
 
-    /**
-     * @return string
-     */
-    #[\ReturnTypeWillChange]
-    public function key()
-    {
-        return (string) parent::key();
-    }
+	/**
+	 * @return string
+	 */
+	#[\ReturnTypeWillChange]
+	public function current() {
+		return file_get_contents( parent::current() );
+	}
+
+	/**
+	 * @return string
+	 */
+	#[\ReturnTypeWillChange]
+	public function key() {
+		return (string) parent::key();
+	}
 }

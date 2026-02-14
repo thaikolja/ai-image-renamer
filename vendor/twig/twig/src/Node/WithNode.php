@@ -20,53 +20,49 @@ use Twig\Compiler;
  * @author Fabien Potencier <fabien@symfony.com>
  */
 #[YieldReady]
-class WithNode extends Node
-{
-    public function __construct(Node $body, ?Node $variables, bool $only, int $lineno)
-    {
-        $nodes = ['body' => $body];
-        if (null !== $variables) {
-            $nodes['variables'] = $variables;
-        }
+class WithNode extends Node {
 
-        parent::__construct($nodes, ['only' => $only], $lineno);
-    }
+	public function __construct( Node $body, ?Node $variables, bool $only, int $lineno ) {
+		$nodes = array( 'body' => $body );
+		if ( null !== $variables ) {
+			$nodes['variables'] = $variables;
+		}
 
-    public function compile(Compiler $compiler): void
-    {
-        $compiler->addDebugInfo($this);
+		parent::__construct( $nodes, array( 'only' => $only ), $lineno );
+	}
 
-        $parentContextName = $compiler->getVarName();
+	public function compile( Compiler $compiler ): void {
+		$compiler->addDebugInfo( $this );
 
-        $compiler->write(\sprintf("\$%s = \$context;\n", $parentContextName));
+		$parentContextName = $compiler->getVarName();
 
-        if ($this->hasNode('variables')) {
-            $node = $this->getNode('variables');
-            $varsName = $compiler->getVarName();
-            $compiler
-                ->write(\sprintf('$%s = ', $varsName))
-                ->subcompile($node)
-                ->raw(";\n")
-                ->write(\sprintf("if (!is_iterable(\$%s)) {\n", $varsName))
-                ->indent()
-                ->write("throw new RuntimeError('Variables passed to the \"with\" tag must be a mapping.', ")
-                ->repr($node->getTemplateLine())
-                ->raw(", \$this->getSourceContext());\n")
-                ->outdent()
-                ->write("}\n")
-                ->write(\sprintf("\$%s = CoreExtension::toArray(\$%s);\n", $varsName, $varsName))
-            ;
+		$compiler->write( \sprintf( "\$%s = \$context;\n", $parentContextName ) );
 
-            if ($this->getAttribute('only')) {
-                $compiler->write("\$context = [];\n");
-            }
+		if ( $this->hasNode( 'variables' ) ) {
+			$node     = $this->getNode( 'variables' );
+			$varsName = $compiler->getVarName();
+			$compiler
+				->write( \sprintf( '$%s = ', $varsName ) )
+				->subcompile( $node )
+				->raw( ";\n" )
+				->write( \sprintf( "if (!is_iterable(\$%s)) {\n", $varsName ) )
+				->indent()
+				->write( "throw new RuntimeError('Variables passed to the \"with\" tag must be a mapping.', " )
+				->repr( $node->getTemplateLine() )
+				->raw( ", \$this->getSourceContext());\n" )
+				->outdent()
+				->write( "}\n" )
+				->write( \sprintf( "\$%s = CoreExtension::toArray(\$%s);\n", $varsName, $varsName ) );
 
-            $compiler->write(\sprintf("\$context = \$%s + \$context + \$this->env->getGlobals();\n", $varsName));
-        }
+			if ( $this->getAttribute( 'only' ) ) {
+				$compiler->write( "\$context = [];\n" );
+			}
 
-        $compiler
-            ->subcompile($this->getNode('body'))
-            ->write(\sprintf("\$context = \$%s;\n", $parentContextName))
-        ;
-    }
+			$compiler->write( \sprintf( "\$context = \$%s + \$context + \$this->env->getGlobals();\n", $varsName ) );
+		}
+
+		$compiler
+			->subcompile( $this->getNode( 'body' ) )
+			->write( \sprintf( "\$context = \$%s;\n", $parentContextName ) );
+	}
 }

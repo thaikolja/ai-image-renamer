@@ -22,35 +22,32 @@ use Twig\Token;
  *
  * @internal
  */
-final class WithTokenParser extends AbstractTokenParser
-{
-    public function parse(Token $token): Node
-    {
-        $stream = $this->parser->getStream();
+final class WithTokenParser extends AbstractTokenParser {
 
-        $variables = null;
-        $only = false;
-        if (!$stream->test(Token::BLOCK_END_TYPE)) {
-            $variables = $this->parser->parseExpression();
-            $only = (bool) $stream->nextIf(Token::NAME_TYPE, 'only');
-        }
+	public function parse( Token $token ): Node {
+		$stream = $this->parser->getStream();
 
-        $stream->expect(Token::BLOCK_END_TYPE);
+		$variables = null;
+		$only      = false;
+		if ( ! $stream->test( Token::BLOCK_END_TYPE ) ) {
+			$variables = $this->parser->parseExpression();
+			$only      = (bool) $stream->nextIf( Token::NAME_TYPE, 'only' );
+		}
 
-        $body = $this->parser->subparse([$this, 'decideWithEnd'], true);
+		$stream->expect( Token::BLOCK_END_TYPE );
 
-        $stream->expect(Token::BLOCK_END_TYPE);
+		$body = $this->parser->subparse( array( $this, 'decideWithEnd' ), true );
 
-        return new WithNode($body, $variables, $only, $token->getLine());
-    }
+		$stream->expect( Token::BLOCK_END_TYPE );
 
-    public function decideWithEnd(Token $token): bool
-    {
-        return $token->test('endwith');
-    }
+		return new WithNode( $body, $variables, $only, $token->getLine() );
+	}
 
-    public function getTag(): string
-    {
-        return 'with';
-    }
+	public function decideWithEnd( Token $token ): bool {
+		return $token->test( 'endwith' );
+	}
+
+	public function getTag(): string {
+		return 'with';
+	}
 }

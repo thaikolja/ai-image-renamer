@@ -22,52 +22,51 @@ use Twig\Token;
  *
  * @internal
  */
-final class EmbedTokenParser extends IncludeTokenParser
-{
-    public function parse(Token $token): Node
-    {
-        $stream = $this->parser->getStream();
+final class EmbedTokenParser extends IncludeTokenParser {
 
-        $parent = $this->parser->parseExpression();
+	public function parse( Token $token ): Node {
+		$stream = $this->parser->getStream();
 
-        [$variables, $only, $ignoreMissing] = $this->parseArguments();
+		$parent = $this->parser->parseExpression();
 
-        $parentToken = $fakeParentToken = new Token(Token::STRING_TYPE, '__parent__', $token->getLine());
-        if ($parent instanceof ConstantExpression) {
-            $parentToken = new Token(Token::STRING_TYPE, $parent->getAttribute('value'), $token->getLine());
-        } elseif ($parent instanceof ContextVariable) {
-            $parentToken = new Token(Token::NAME_TYPE, $parent->getAttribute('name'), $token->getLine());
-        }
+		[$variables, $only, $ignoreMissing] = $this->parseArguments();
 
-        // inject a fake parent to make the parent() function work
-        $stream->injectTokens([
-            new Token(Token::BLOCK_START_TYPE, '', $token->getLine()),
-            new Token(Token::NAME_TYPE, 'extends', $token->getLine()),
-            $parentToken,
-            new Token(Token::BLOCK_END_TYPE, '', $token->getLine()),
-        ]);
+		$parentToken = $fakeParentToken = new Token( Token::STRING_TYPE, '__parent__', $token->getLine() );
+		if ( $parent instanceof ConstantExpression ) {
+			$parentToken = new Token( Token::STRING_TYPE, $parent->getAttribute( 'value' ), $token->getLine() );
+		} elseif ( $parent instanceof ContextVariable ) {
+			$parentToken = new Token( Token::NAME_TYPE, $parent->getAttribute( 'name' ), $token->getLine() );
+		}
 
-        $module = $this->parser->parse($stream, [$this, 'decideBlockEnd'], true);
+		// inject a fake parent to make the parent() function work
+		$stream->injectTokens(
+			array(
+				new Token( Token::BLOCK_START_TYPE, '', $token->getLine() ),
+				new Token( Token::NAME_TYPE, 'extends', $token->getLine() ),
+				$parentToken,
+				new Token( Token::BLOCK_END_TYPE, '', $token->getLine() ),
+			)
+		);
 
-        // override the parent with the correct one
-        if ($fakeParentToken === $parentToken) {
-            $module->setNode('parent', $parent);
-        }
+		$module = $this->parser->parse( $stream, array( $this, 'decideBlockEnd' ), true );
 
-        $this->parser->embedTemplate($module);
+		// override the parent with the correct one
+		if ( $fakeParentToken === $parentToken ) {
+			$module->setNode( 'parent', $parent );
+		}
 
-        $stream->expect(Token::BLOCK_END_TYPE);
+		$this->parser->embedTemplate( $module );
 
-        return new EmbedNode($module->getTemplateName(), $module->getAttribute('index'), $variables, $only, $ignoreMissing, $token->getLine());
-    }
+		$stream->expect( Token::BLOCK_END_TYPE );
 
-    public function decideBlockEnd(Token $token): bool
-    {
-        return $token->test('endembed');
-    }
+		return new EmbedNode( $module->getTemplateName(), $module->getAttribute( 'index' ), $variables, $only, $ignoreMissing, $token->getLine() );
+	}
 
-    public function getTag(): string
-    {
-        return 'embed';
-    }
+	public function decideBlockEnd( Token $token ): bool {
+		return $token->test( 'endembed' );
+	}
+
+	public function getTag(): string {
+		return 'embed';
+	}
 }

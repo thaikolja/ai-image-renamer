@@ -19,15 +19,13 @@ use Twig\Attribute\YieldReady;
  * @author Fabien Potencier <fabien@symfony.com>
  */
 #[YieldReady]
-final class EmptyNode extends Node
-{
-    public function __construct(int $lineno = 0)
-    {
-        parent::__construct([], [], $lineno);
-    }
+final class EmptyNode extends Node {
 
-    public function setNode(string $name, Node $node): void
-    {
-        throw new \LogicException('EmptyNode cannot have children.');
-    }
+	public function __construct( int $lineno = 0 ) {
+		parent::__construct( array(), array(), $lineno );
+	}
+
+	public function setNode( string $name, Node $node ): void {
+		throw new \LogicException( 'EmptyNode cannot have children.' );
+	}
 }

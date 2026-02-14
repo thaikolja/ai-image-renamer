@@ -18,32 +18,36 @@ use Twig\Node\Expression\ReturnPrimitiveTypeInterface;
 use Twig\Node\Expression\Test\TrueTest;
 use Twig\TwigTest;
 
-final class ConditionalTernary extends AbstractExpression implements OperatorEscapeInterface
-{
-    public function __construct(AbstractExpression $test, AbstractExpression $left, AbstractExpression $right, int $lineno)
-    {
-        if (!$test instanceof ReturnPrimitiveTypeInterface) {
-            $test = new TrueTest($test, new TwigTest('true'), null, $test->getTemplateLine());
-        }
+final class ConditionalTernary extends AbstractExpression implements OperatorEscapeInterface {
 
-        parent::__construct(['test' => $test, 'left' => $left, 'right' => $right], [], $lineno);
-    }
+	public function __construct( AbstractExpression $test, AbstractExpression $left, AbstractExpression $right, int $lineno ) {
+		if ( ! $test instanceof ReturnPrimitiveTypeInterface ) {
+			$test = new TrueTest( $test, new TwigTest( 'true' ), null, $test->getTemplateLine() );
+		}
 
-    public function compile(Compiler $compiler): void
-    {
-        $compiler
-            ->raw('((')
-            ->subcompile($this->getNode('test'))
-            ->raw(') ? (')
-            ->subcompile($this->getNode('left'))
-            ->raw(') : (')
-            ->subcompile($this->getNode('right'))
-            ->raw('))')
-        ;
-    }
+		parent::__construct(
+			array(
+				'test'  => $test,
+				'left'  => $left,
+				'right' => $right,
+			),
+			array(),
+			$lineno
+		);
+	}
 
-    public function getOperandNamesToEscape(): array
-    {
-        return ['left', 'right'];
-    }
+	public function compile( Compiler $compiler ): void {
+		$compiler
+			->raw( '((' )
+			->subcompile( $this->getNode( 'test' ) )
+			->raw( ') ? (' )
+			->subcompile( $this->getNode( 'left' ) )
+			->raw( ') : (' )
+			->subcompile( $this->getNode( 'right' ) )
+			->raw( '))' );
+	}
+
+	public function getOperandNamesToEscape(): array {
+		return array( 'left', 'right' );
+	}
 }

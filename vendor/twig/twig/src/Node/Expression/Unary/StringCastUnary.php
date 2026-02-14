@@ -13,10 +13,9 @@ namespace Twig\Node\Expression\Unary;
 
 use Twig\Compiler;
 
-final class StringCastUnary extends AbstractUnary
-{
-    public function operator(Compiler $compiler): Compiler
-    {
-        return $compiler->raw('(string)');
-    }
+final class StringCastUnary extends AbstractUnary {
+
+	public function operator( Compiler $compiler ): Compiler {
+		return $compiler->raw( '(string)' );
+	}
 }

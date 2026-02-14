@@ -1,7 +1,8 @@
 <?php
-/*
- * @name:           AI Image Renamer
- * @wordpress       Uses AI to rename images during upload for SEO-friendly filenames.
+/**
+ * AI Image Renamer.
+ *
+ * @description    Uses AI to rename images during upload for SEO-friendly filenames.
  * @author          Kolja Nolte <kolja.nolte@gmail.com>
  * @copyright       2025-2026 (C) Kolja Nolte
  * @see             https://docs.kolja-nolte.com/wp-ai-image-renamer/
@@ -24,7 +25,7 @@
  * @package AIR\Utils
  */
 
-declare( strict_types=1 );
+declare(strict_types=1);
 
 namespace AIR\Utils;
 
@@ -35,23 +36,25 @@ namespace AIR\Utils;
  */
 class SVG_Sanitizer {
 
+
+
 	/**
 	 * Allowed SVG elements for sprite icons.
 	 *
 	 * @var array
 	 */
 	private const ALLOWED_ELEMENTS
-		= [
-			'svg',
-			'symbol',
-			'path',
-			'circle',
-			'rect',
-			'polyline',
-			'polygon',
-			'line',
-			'ellipse',
-		];
+	= array(
+		'svg',
+		'symbol',
+		'path',
+		'circle',
+		'rect',
+		'polyline',
+		'polygon',
+		'line',
+		'ellipse',
+	);
 
 	/**
 	 * Allowed SVG attributes.
@@ -59,35 +62,35 @@ class SVG_Sanitizer {
 	 * @var array
 	 */
 	private const ALLOWED_ATTRIBUTES
-		= [
-			'id',
-			'viewBox',
-			'xmlns',
-			'display',
-			'd',
-			'cx',
-			'cy',
-			'r',
-			'rx',
-			'ry',
-			'x',
-			'y',
-			'width',
-			'height',
-			'fill',
-			'stroke',
-			'stroke-width',
-			'points',
-			'x1',
-			'y1',
-			'x2',
-			'y2',
-		];
+	= array(
+		'id',
+		'viewBox',
+		'xmlns',
+		'display',
+		'd',
+		'cx',
+		'cy',
+		'r',
+		'rx',
+		'ry',
+		'x',
+		'y',
+		'width',
+		'height',
+		'fill',
+		'stroke',
+		'stroke-width',
+		'points',
+		'x1',
+		'y1',
+		'x2',
+		'y2',
+	);
 
 	/**
 	 * Validate and sanitize SVG content.
 	 *
-	 * @param  string  $svg_content  The raw SVG content.
+	 * @param  string $svg_content  The raw SVG content.
 	 *
 	 * @return string|false Sanitized SVG content or false if invalid.
 	 */
@@ -98,7 +101,9 @@ class SVG_Sanitizer {
 
 		// Check for potentially dangerous content before parsing.
 		if ( self::contains_dangerous_content( $svg_content ) ) {
-			\error_log( 'AI Image Renamer: SVG contains dangerous content and was rejected.' );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				\error_log( 'AI Image Renamer: SVG contains dangerous content and was rejected.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			}
 
 			return false;
 		}
@@ -114,7 +119,9 @@ class SVG_Sanitizer {
 		\libxml_clear_errors();
 
 		if ( ! $loaded ) {
-			\error_log( 'AI Image Renamer: Failed to parse SVG content.' );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				\error_log( 'AI Image Renamer: Failed to parse SVG content.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			}
 
 			return false;
 		}
@@ -142,13 +149,13 @@ class SVG_Sanitizer {
 	/**
 	 * Check for potentially dangerous content in SVG.
 	 *
-	 * @param  string  $content  The SVG content.
+	 * @param  string $content  The SVG content.
 	 *
 	 * @return bool True if dangerous content is found.
 	 */
 	private static function contains_dangerous_content( string $content ): bool {
-		$dangerous_patterns = [
-			// Script tags and event handlers
+		$dangerous_patterns = array(
+			// Script tags and event handlers.
 			'<script',
 			'onload',
 			'onerror',
@@ -157,20 +164,20 @@ class SVG_Sanitizer {
 			'javascript:',
 			'data:text/html',
 			'data:application',
-			// External references
+			// External references.
 			'xlink:href',
 			'href=',
-			// Style tags with potential CSS injection
+			// Style tags with potential CSS injection.
 			'<style',
-			// Embedded objects
+			// Embedded objects.
 			'<embed',
 			'<object',
 			'<iframe',
-			// ForeignObject (can contain HTML)
+			// ForeignObject (can contain HTML).
 			'<foreignObject',
-			// Entity references (can be used for XXE)
+			// Entity references (can be used for XXE).
 			'<!ENTITY',
-		];
+		);
 
 		$content_lower = strtolower( $content );
 
@@ -186,7 +193,7 @@ class SVG_Sanitizer {
 	/**
 	 * Validate the SVG structure.
 	 *
-	 * @param  \DOMDocument  $dom  The parsed DOM document.
+	 * @param  \DOMDocument $dom  The parsed DOM document.
 	 *
 	 * @return bool True if valid.
 	 */
@@ -194,7 +201,9 @@ class SVG_Sanitizer {
 		$svg_elements = $dom->getElementsByTagName( 'svg' );
 
 		if ( 0 === $svg_elements->length ) {
-			\error_log( 'AI Image Renamer: SVG has no root svg element.' );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				\error_log( 'AI Image Renamer: SVG has no root svg element.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			}
 
 			return false;
 		}
@@ -207,7 +216,9 @@ class SVG_Sanitizer {
 
 		$namespace = $root->namespaceURI;
 		if ( 'http://www.w3.org/2000/svg' !== $namespace ) {
-			\error_log( 'AI Image Renamer: SVG has invalid namespace: ' . ( $namespace ?: 'none' ) );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				\error_log( 'AI Image Renamer: SVG has invalid namespace: ' . ( $namespace ?: 'none' ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			}
 
 			return false;
 		}
@@ -218,7 +229,7 @@ class SVG_Sanitizer {
 	/**
 	 * Sanitize the DOM by removing disallowed elements and attributes.
 	 *
-	 * @param  \DOMDocument  $dom  The DOM document to sanitize.
+	 * @param  \DOMDocument $dom  The DOM document to sanitize.
 	 *
 	 * @return bool True if sanitization succeeded.
 	 */
@@ -228,7 +239,7 @@ class SVG_Sanitizer {
 
 		// Remove disallowed elements.
 		$all_elements       = $dom->getElementsByTagName( '*' );
-		$elements_to_remove = [];
+		$elements_to_remove = array();
 
 		foreach ( $all_elements as $element ) {
 			$local_name = $element->localName;
@@ -239,7 +250,7 @@ class SVG_Sanitizer {
 			}
 
 			// Remove disallowed attributes.
-			$attributes_to_remove = [];
+			$attributes_to_remove = array();
 			foreach ( $element->attributes as $attr ) {
 				if ( ! in_array( $attr->name, self::ALLOWED_ATTRIBUTES, true ) ) {
 					$attributes_to_remove[] = $attr;
@@ -264,7 +275,7 @@ class SVG_Sanitizer {
 	/**
 	 * Load and sanitize SVG from a file.
 	 *
-	 * @param  string  $file_path  The path to the SVG file.
+	 * @param  string $file_path  The path to the SVG file.
 	 *
 	 * @return string|false Sanitized SVG content or false if invalid.
 	 */
@@ -278,7 +289,9 @@ class SVG_Sanitizer {
 		}
 
 		if ( 0 !== \strpos( $real_path, $plugin_dir ) ) {
-			\error_log( 'AI Image Renamer: Attempted to load SVG from outside plugin directory.' );
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				\error_log( 'AI Image Renamer: Attempted to load SVG from outside plugin directory.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			}
 
 			return false;
 		}
@@ -290,12 +303,12 @@ class SVG_Sanitizer {
 
 		// Check file extension.
 		$path_info = \pathinfo( $real_path );
-		if ( 'svg' !== strtolower( $path_info[ 'extension' ] ?? '' ) ) {
+		if ( 'svg' !== strtolower( $path_info['extension'] ?? '' ) ) {
 			return false;
 		}
 
 		// Read file content.
-		$content = \file_get_contents( $real_path );
+		$content = \file_get_contents( $real_path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file read.
 		if ( false === $content ) {
 			return false;
 		}

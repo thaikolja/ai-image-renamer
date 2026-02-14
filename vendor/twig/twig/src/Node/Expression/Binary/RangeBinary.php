@@ -14,21 +14,18 @@ namespace Twig\Node\Expression\Binary;
 use Twig\Compiler;
 use Twig\Node\Expression\ReturnArrayInterface;
 
-class RangeBinary extends AbstractBinary implements ReturnArrayInterface
-{
-    public function compile(Compiler $compiler): void
-    {
-        $compiler
-            ->raw('range(')
-            ->subcompile($this->getNode('left'))
-            ->raw(', ')
-            ->subcompile($this->getNode('right'))
-            ->raw(')')
-        ;
-    }
+class RangeBinary extends AbstractBinary implements ReturnArrayInterface {
 
-    public function operator(Compiler $compiler): Compiler
-    {
-        return $compiler->raw('..');
-    }
+	public function compile( Compiler $compiler ): void {
+		$compiler
+			->raw( 'range(' )
+			->subcompile( $this->getNode( 'left' ) )
+			->raw( ', ' )
+			->subcompile( $this->getNode( 'right' ) )
+			->raw( ')' );
+	}
+
+	public function operator( Compiler $compiler ): Compiler {
+		return $compiler->raw( '..' );
+	}
 }

@@ -16,7 +16,7 @@ use Twig\Node\Expression\AbstractExpression;
 /**
  * @internal
  */
-interface BinaryInterface
-{
-    public function __construct(AbstractExpression $left, AbstractExpression $right, int $lineno);
+interface BinaryInterface {
+
+	public function __construct( AbstractExpression $left, AbstractExpression $right, int $lineno );
 }

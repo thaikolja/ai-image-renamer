@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<ruleset name="AI Image Renamer">
+	<description>WordPress Coding Standards for AI Image Renamer plugin.</description>
+
+	<!-- What to scan -->
+	<file>.</file>
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+	<arg value="sp"/>
+
+	<!-- Exclude paths -->
+	<exclude-pattern>vendor/*</exclude-pattern>
+	<exclude-pattern>cache/*</exclude-pattern>
+	<exclude-pattern>node_modules/*</exclude-pattern>
+	<exclude-pattern>\.clavix/*</exclude-pattern>
+	<exclude-pattern>\.claude/*</exclude-pattern>
+	<exclude-pattern>\.gemini/*</exclude-pattern>
+	<exclude-pattern>\.qwen/*</exclude-pattern>
+
+	<!-- Use WordPress standard -->
+	<rule ref="WordPress">
+		<!-- Allow short array syntax (PHP 8.2+). -->
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+
+		<!-- We use PSR-4 autoloading, not WP class-file naming. -->
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+
+		<!-- PHP native DOMDocument properties are camelCase. -->
+		<exclude name="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase"/>
+
+		<!-- Allow short ternary (PHP 8.2+ project). -->
+		<exclude name="Universal.Operators.DisallowShortTernary.Found"/>
+
+		<!-- Exclude conflicting rule for file comment spacing. -->
+		<exclude name="Squiz.Commenting.FileComment.SpacingAfterOpen"/>
+	</rule>
+
+	<!-- WordPress-Extra includes all the best practices -->
+	<rule ref="WordPress-Extra"/>
+
+	<!-- WordPress documentation standards -->
+	<rule ref="WordPress-Docs"/>
+
+	<!-- Text domain -->
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="ai-image-renamer"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Minimum supported WordPress version -->
+	<config name="minimum_wp_version" value="6.0"/>
+
+	<!-- PHP compatibility (8.2+) -->
+	<config name="testVersion" value="8.2-"/>
+</ruleset>

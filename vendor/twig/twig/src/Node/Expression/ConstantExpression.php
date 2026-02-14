@@ -17,17 +17,15 @@ use Twig\Compiler;
 /**
  * @final
  */
-class ConstantExpression extends AbstractExpression implements SupportDefinedTestInterface, ReturnPrimitiveTypeInterface
-{
-    use SupportDefinedTestTrait;
+class ConstantExpression extends AbstractExpression implements SupportDefinedTestInterface, ReturnPrimitiveTypeInterface {
 
-    public function __construct($value, int $lineno)
-    {
-        parent::__construct([], ['value' => $value], $lineno);
-    }
+	use SupportDefinedTestTrait;
 
-    public function compile(Compiler $compiler): void
-    {
-        $compiler->repr($this->definedTest ? true : $this->getAttribute('value'));
-    }
+	public function __construct( $value, int $lineno ) {
+		parent::__construct( array(), array( 'value' => $value ), $lineno );
+	}
+
+	public function compile( Compiler $compiler ): void {
+		$compiler->repr( $this->definedTest ? true : $this->getAttribute( 'value' ) );
+	}
 }

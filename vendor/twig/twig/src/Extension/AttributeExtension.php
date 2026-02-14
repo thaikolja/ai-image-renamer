@@ -24,150 +24,154 @@ use Twig\TwigTest;
  *
  * @author Jérôme Tamarelle <jerome@tamarelle.net>
  */
-final class AttributeExtension extends AbstractExtension
-{
-    private array $filters;
-    private array $functions;
-    private array $tests;
+final class AttributeExtension extends AbstractExtension {
 
-    /**
-     * Use a runtime class using PHP attributes to define filters, functions, and tests.
-     *
-     * @param class-string $class
-     */
-    public function __construct(private string $class)
-    {
-    }
+	private array $filters;
+	private array $functions;
+	private array $tests;
 
-    /**
-     * @return class-string
-     */
-    public function getClass(): string
-    {
-        return $this->class;
-    }
+	/**
+	 * Use a runtime class using PHP attributes to define filters, functions, and tests.
+	 *
+	 * @param class-string $class
+	 */
+	public function __construct( private string $class ) {
+	}
 
-    public function getFilters(): array
-    {
-        if (!isset($this->filters)) {
-            $this->initFromAttributes();
-        }
+	/**
+	 * @return class-string
+	 */
+	public function getClass(): string {
+		return $this->class;
+	}
 
-        return $this->filters;
-    }
+	public function getFilters(): array {
+		if ( ! isset( $this->filters ) ) {
+			$this->initFromAttributes();
+		}
 
-    public function getFunctions(): array
-    {
-        if (!isset($this->functions)) {
-            $this->initFromAttributes();
-        }
+		return $this->filters;
+	}
 
-        return $this->functions;
-    }
+	public function getFunctions(): array {
+		if ( ! isset( $this->functions ) ) {
+			$this->initFromAttributes();
+		}
 
-    public function getTests(): array
-    {
-        if (!isset($this->tests)) {
-            $this->initFromAttributes();
-        }
+		return $this->functions;
+	}
 
-        return $this->tests;
-    }
+	public function getTests(): array {
+		if ( ! isset( $this->tests ) ) {
+			$this->initFromAttributes();
+		}
 
-    public function getLastModified(): int
-    {
-        return max(
-            filemtime(__FILE__),
-            is_file($filename = (new \ReflectionClass($this->getClass()))->getFileName()) ? filemtime($filename) : 0,
-        );
-    }
+		return $this->tests;
+	}
 
-    private function initFromAttributes(): void
-    {
-        $filters = $functions = $tests = [];
-        $reflectionClass = new \ReflectionClass($this->getClass());
-        foreach ($reflectionClass->getMethods() as $method) {
-            foreach ($method->getAttributes(AsTwigFilter::class) as $reflectionAttribute) {
-                /** @var AsTwigFilter $attribute */
-                $attribute = $reflectionAttribute->newInstance();
+	public function getLastModified(): int {
+		return max(
+			filemtime( __FILE__ ),
+			is_file( $filename = ( new \ReflectionClass( $this->getClass() ) )->getFileName() ) ? filemtime( $filename ) : 0,
+		);
+	}
 
-                $callable = new TwigFilter($attribute->name, [$reflectionClass->name, $method->getName()], [
-                    'needs_context' => $attribute->needsContext ?? false,
-                    'needs_environment' => $attribute->needsEnvironment ?? $this->needsEnvironment($method),
-                    'needs_charset' => $attribute->needsCharset ?? false,
-                    'is_variadic' => $method->isVariadic(),
-                    'is_safe' => $attribute->isSafe,
-                    'is_safe_callback' => $attribute->isSafeCallback,
-                    'pre_escape' => $attribute->preEscape,
-                    'preserves_safety' => $attribute->preservesSafety,
-                    'deprecation_info' => $attribute->deprecationInfo,
-                ]);
+	private function initFromAttributes(): void {
+		$filters         = $functions = $tests = array();
+		$reflectionClass = new \ReflectionClass( $this->getClass() );
+		foreach ( $reflectionClass->getMethods() as $method ) {
+			foreach ( $method->getAttributes( AsTwigFilter::class ) as $reflectionAttribute ) {
+				/** @var AsTwigFilter $attribute */
+				$attribute = $reflectionAttribute->newInstance();
 
-                if ($callable->getMinimalNumberOfRequiredArguments() > $method->getNumberOfParameters()) {
-                    throw new \LogicException(\sprintf('"%s::%s()" needs at least %d arguments to be used AsTwigFilter, but only %d defined.', $reflectionClass->getName(), $method->getName(), $callable->getMinimalNumberOfRequiredArguments(), $method->getNumberOfParameters()));
-                }
+				$callable = new TwigFilter(
+					$attribute->name,
+					array( $reflectionClass->name, $method->getName() ),
+					array(
+						'needs_context'     => $attribute->needsContext ?? false,
+						'needs_environment' => $attribute->needsEnvironment ?? $this->needsEnvironment( $method ),
+						'needs_charset'     => $attribute->needsCharset ?? false,
+						'is_variadic'       => $method->isVariadic(),
+						'is_safe'           => $attribute->isSafe,
+						'is_safe_callback'  => $attribute->isSafeCallback,
+						'pre_escape'        => $attribute->preEscape,
+						'preserves_safety'  => $attribute->preservesSafety,
+						'deprecation_info'  => $attribute->deprecationInfo,
+					)
+				);
 
-                $filters[$attribute->name] = $callable;
-            }
+				if ( $callable->getMinimalNumberOfRequiredArguments() > $method->getNumberOfParameters() ) {
+					throw new \LogicException( \sprintf( '"%s::%s()" needs at least %d arguments to be used AsTwigFilter, but only %d defined.', $reflectionClass->getName(), $method->getName(), $callable->getMinimalNumberOfRequiredArguments(), $method->getNumberOfParameters() ) );
+				}
 
-            foreach ($method->getAttributes(AsTwigFunction::class) as $reflectionAttribute) {
-                /** @var AsTwigFunction $attribute */
-                $attribute = $reflectionAttribute->newInstance();
+				$filters[ $attribute->name ] = $callable;
+			}
 
-                $callable = new TwigFunction($attribute->name, [$reflectionClass->name, $method->getName()], [
-                    'needs_context' => $attribute->needsContext ?? false,
-                    'needs_environment' => $attribute->needsEnvironment ?? $this->needsEnvironment($method),
-                    'needs_charset' => $attribute->needsCharset ?? false,
-                    'is_variadic' => $method->isVariadic(),
-                    'is_safe' => $attribute->isSafe,
-                    'is_safe_callback' => $attribute->isSafeCallback,
-                    'deprecation_info' => $attribute->deprecationInfo,
-                ]);
+			foreach ( $method->getAttributes( AsTwigFunction::class ) as $reflectionAttribute ) {
+				/** @var AsTwigFunction $attribute */
+				$attribute = $reflectionAttribute->newInstance();
 
-                if ($callable->getMinimalNumberOfRequiredArguments() > $method->getNumberOfParameters()) {
-                    throw new \LogicException(\sprintf('"%s::%s()" needs at least %d arguments to be used AsTwigFunction, but only %d defined.', $reflectionClass->getName(), $method->getName(), $callable->getMinimalNumberOfRequiredArguments(), $method->getNumberOfParameters()));
-                }
+				$callable = new TwigFunction(
+					$attribute->name,
+					array( $reflectionClass->name, $method->getName() ),
+					array(
+						'needs_context'     => $attribute->needsContext ?? false,
+						'needs_environment' => $attribute->needsEnvironment ?? $this->needsEnvironment( $method ),
+						'needs_charset'     => $attribute->needsCharset ?? false,
+						'is_variadic'       => $method->isVariadic(),
+						'is_safe'           => $attribute->isSafe,
+						'is_safe_callback'  => $attribute->isSafeCallback,
+						'deprecation_info'  => $attribute->deprecationInfo,
+					)
+				);
 
-                $functions[$attribute->name] = $callable;
-            }
+				if ( $callable->getMinimalNumberOfRequiredArguments() > $method->getNumberOfParameters() ) {
+					throw new \LogicException( \sprintf( '"%s::%s()" needs at least %d arguments to be used AsTwigFunction, but only %d defined.', $reflectionClass->getName(), $method->getName(), $callable->getMinimalNumberOfRequiredArguments(), $method->getNumberOfParameters() ) );
+				}
 
-            foreach ($method->getAttributes(AsTwigTest::class) as $reflectionAttribute) {
-                /** @var AsTwigTest $attribute */
-                $attribute = $reflectionAttribute->newInstance();
+				$functions[ $attribute->name ] = $callable;
+			}
 
-                $callable = new TwigTest($attribute->name, [$reflectionClass->name, $method->getName()], [
-                    'needs_context' => $attribute->needsContext ?? false,
-                    'needs_environment' => $attribute->needsEnvironment ?? $this->needsEnvironment($method),
-                    'needs_charset' => $attribute->needsCharset ?? false,
-                    'is_variadic' => $method->isVariadic(),
-                    'deprecation_info' => $attribute->deprecationInfo,
-                ]);
+			foreach ( $method->getAttributes( AsTwigTest::class ) as $reflectionAttribute ) {
+				/** @var AsTwigTest $attribute */
+				$attribute = $reflectionAttribute->newInstance();
 
-                if ($callable->getMinimalNumberOfRequiredArguments() > $method->getNumberOfParameters()) {
-                    throw new \LogicException(\sprintf('"%s::%s()" needs at least %d arguments to be used AsTwigTest, but only %d defined.', $reflectionClass->getName(), $method->getName(), $callable->getMinimalNumberOfRequiredArguments(), $method->getNumberOfParameters()));
-                }
+				$callable = new TwigTest(
+					$attribute->name,
+					array( $reflectionClass->name, $method->getName() ),
+					array(
+						'needs_context'     => $attribute->needsContext ?? false,
+						'needs_environment' => $attribute->needsEnvironment ?? $this->needsEnvironment( $method ),
+						'needs_charset'     => $attribute->needsCharset ?? false,
+						'is_variadic'       => $method->isVariadic(),
+						'deprecation_info'  => $attribute->deprecationInfo,
+					)
+				);
 
-                $tests[$attribute->name] = $callable;
-            }
-        }
+				if ( $callable->getMinimalNumberOfRequiredArguments() > $method->getNumberOfParameters() ) {
+					throw new \LogicException( \sprintf( '"%s::%s()" needs at least %d arguments to be used AsTwigTest, but only %d defined.', $reflectionClass->getName(), $method->getName(), $callable->getMinimalNumberOfRequiredArguments(), $method->getNumberOfParameters() ) );
+				}
 
-        // Assign all at the end to avoid inconsistent state in case of exception
-        $this->filters = array_values($filters);
-        $this->functions = array_values($functions);
-        $this->tests = array_values($tests);
-    }
+				$tests[ $attribute->name ] = $callable;
+			}
+		}
 
-    /**
-     * Detect if the first argument of the method is the environment.
-     */
-    private function needsEnvironment(\ReflectionFunctionAbstract $function): bool
-    {
-        if (!$parameters = $function->getParameters()) {
-            return false;
-        }
+		// Assign all at the end to avoid inconsistent state in case of exception
+		$this->filters   = array_values( $filters );
+		$this->functions = array_values( $functions );
+		$this->tests     = array_values( $tests );
+	}
 
-        return $parameters[0]->getType() instanceof \ReflectionNamedType
-            && Environment::class === $parameters[0]->getType()->getName()
-            && !$parameters[0]->isVariadic();
-    }
+	/**
+	 * Detect if the first argument of the method is the environment.
+	 */
+	private function needsEnvironment( \ReflectionFunctionAbstract $function ): bool {
+		if ( ! $parameters = $function->getParameters() ) {
+			return false;
+		}
+
+		return $parameters[0]->getType() instanceof \ReflectionNamedType
+			&& Environment::class === $parameters[0]->getType()->getName()
+			&& ! $parameters[0]->isVariadic();
+	}
 }

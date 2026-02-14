@@ -20,76 +20,69 @@ use Twig\Node\Node;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class BlockReferenceExpression extends AbstractExpression implements SupportDefinedTestInterface
-{
-    use SupportDefinedTestDeprecationTrait;
-    use SupportDefinedTestTrait;
+class BlockReferenceExpression extends AbstractExpression implements SupportDefinedTestInterface {
 
-    /**
-     * @param AbstractExpression $name
-     */
-    public function __construct(Node $name, ?Node $template, int $lineno)
-    {
-        if (!$name instanceof AbstractExpression) {
-            trigger_deprecation('twig/twig', '3.15', 'Not passing a "%s" instance to the "node" argument of "%s" is deprecated ("%s" given).', AbstractExpression::class, static::class, $name::class);
-        }
+	use SupportDefinedTestDeprecationTrait;
+	use SupportDefinedTestTrait;
 
-        $nodes = ['name' => $name];
-        if (null !== $template) {
-            $nodes['template'] = $template;
-        }
+	/**
+	 * @param AbstractExpression $name
+	 */
+	public function __construct( Node $name, ?Node $template, int $lineno ) {
+		if ( ! $name instanceof AbstractExpression ) {
+			trigger_deprecation( 'twig/twig', '3.15', 'Not passing a "%s" instance to the "node" argument of "%s" is deprecated ("%s" given).', AbstractExpression::class, static::class, $name::class );
+		}
 
-        parent::__construct($nodes, ['output' => false], $lineno);
-    }
+		$nodes = array( 'name' => $name );
+		if ( null !== $template ) {
+			$nodes['template'] = $template;
+		}
 
-    public function compile(Compiler $compiler): void
-    {
-        if ($this->definedTest) {
-            $this->compileTemplateCall($compiler, 'hasBlock');
-        } else {
-            if ($this->getAttribute('output')) {
-                $compiler->addDebugInfo($this);
+		parent::__construct( $nodes, array( 'output' => false ), $lineno );
+	}
 
-                $compiler->write('yield from ');
-                $this
-                    ->compileTemplateCall($compiler, 'yieldBlock')
-                    ->raw(";\n");
-            } else {
-                $this->compileTemplateCall($compiler, 'renderBlock');
-            }
-        }
-    }
+	public function compile( Compiler $compiler ): void {
+		if ( $this->definedTest ) {
+			$this->compileTemplateCall( $compiler, 'hasBlock' );
+		} elseif ( $this->getAttribute( 'output' ) ) {
+				$compiler->addDebugInfo( $this );
 
-    private function compileTemplateCall(Compiler $compiler, string $method): Compiler
-    {
-        if (!$this->hasNode('template')) {
-            $compiler->write('$this');
-        } else {
-            $compiler
-                ->write('$this->load(')
-                ->subcompile($this->getNode('template'))
-                ->raw(', ')
-                ->repr($this->getTemplateLine())
-                ->raw(')')
-            ;
-        }
+				$compiler->write( 'yield from ' );
+				$this
+					->compileTemplateCall( $compiler, 'yieldBlock' )
+					->raw( ";\n" );
+		} else {
+			$this->compileTemplateCall( $compiler, 'renderBlock' );
+		}
+	}
 
-        $compiler->raw(\sprintf('->unwrap()->%s', $method));
+	private function compileTemplateCall( Compiler $compiler, string $method ): Compiler {
+		if ( ! $this->hasNode( 'template' ) ) {
+			$compiler->write( '$this' );
+		} else {
+			$compiler
+				->write( '$this->load(' )
+				->subcompile( $this->getNode( 'template' ) )
+				->raw( ', ' )
+				->repr( $this->getTemplateLine() )
+				->raw( ')' );
+		}
 
-        return $this->compileBlockArguments($compiler);
-    }
+		$compiler->raw( \sprintf( '->unwrap()->%s', $method ) );
 
-    private function compileBlockArguments(Compiler $compiler): Compiler
-    {
-        $compiler
-            ->raw('(')
-            ->subcompile($this->getNode('name'))
-            ->raw(', $context');
+		return $this->compileBlockArguments( $compiler );
+	}
 
-        if (!$this->hasNode('template')) {
-            $compiler->raw(', $blocks');
-        }
+	private function compileBlockArguments( Compiler $compiler ): Compiler {
+		$compiler
+			->raw( '(' )
+			->subcompile( $this->getNode( 'name' ) )
+			->raw( ', $context' );
 
-        return $compiler->raw(')');
-    }
+		if ( ! $this->hasNode( 'template' ) ) {
+			$compiler->raw( ', $blocks' );
+		}
+
+		return $compiler->raw( ')' );
+	}
 }

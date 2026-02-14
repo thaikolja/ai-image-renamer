@@ -22,17 +22,15 @@ use Twig\Token;
  *
  * @internal
  */
-final class FlushTokenParser extends AbstractTokenParser
-{
-    public function parse(Token $token): Node
-    {
-        $this->parser->getStream()->expect(Token::BLOCK_END_TYPE);
+final class FlushTokenParser extends AbstractTokenParser {
 
-        return new FlushNode($token->getLine());
-    }
+	public function parse( Token $token ): Node {
+		$this->parser->getStream()->expect( Token::BLOCK_END_TYPE );
 
-    public function getTag(): string
-    {
-        return 'flush';
-    }
+		return new FlushNode( $token->getLine() );
+	}
+
+	public function getTag(): string {
+		return 'flush';
+	}
 }

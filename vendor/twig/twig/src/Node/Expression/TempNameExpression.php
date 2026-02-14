@@ -14,36 +14,34 @@ namespace Twig\Node\Expression;
 use Twig\Compiler;
 use Twig\Error\SyntaxError;
 
-class TempNameExpression extends AbstractExpression
-{
-    public const RESERVED_NAMES = ['varargs', 'context', 'macros', 'blocks', 'this'];
+class TempNameExpression extends AbstractExpression {
 
-    public function __construct(string|int|null $name, int $lineno)
-    {
-        // All names supported by ExpressionParser::parsePrimaryExpression() should be excluded
-        if ($name && \in_array(strtolower($name), ['true', 'false', 'none', 'null'], true)) {
-            throw new SyntaxError(\sprintf('You cannot assign a value to "%s".', $name), $lineno);
-        }
+	public const RESERVED_NAMES = array( 'varargs', 'context', 'macros', 'blocks', 'this' );
 
-        if (self::class === static::class) {
-            trigger_deprecation('twig/twig', '3.15', 'The "%s" class is deprecated.', self::class);
-        }
+	public function __construct( string|int|null $name, int $lineno ) {
+		// All names supported by ExpressionParser::parsePrimaryExpression() should be excluded
+		if ( $name && \in_array( strtolower( $name ), array( 'true', 'false', 'none', 'null' ), true ) ) {
+			throw new SyntaxError( \sprintf( 'You cannot assign a value to "%s".', $name ), $lineno );
+		}
 
-        if (null !== $name && (\is_int($name) || ctype_digit($name))) {
-            $name = (int) $name;
-        } elseif (\in_array($name, self::RESERVED_NAMES, true)) {
-            $name = "\u{035C}".$name;
-        }
+		if ( self::class === static::class ) {
+			trigger_deprecation( 'twig/twig', '3.15', 'The "%s" class is deprecated.', self::class );
+		}
 
-        parent::__construct([], ['name' => $name], $lineno);
-    }
+		if ( null !== $name && ( \is_int( $name ) || ctype_digit( $name ) ) ) {
+			$name = (int) $name;
+		} elseif ( \in_array( $name, self::RESERVED_NAMES, true ) ) {
+			$name = "\u{035C}" . $name;
+		}
 
-    public function compile(Compiler $compiler): void
-    {
-        if (null === $this->getAttribute('name')) {
-            $this->setAttribute('name', $compiler->getVarName());
-        }
+		parent::__construct( array(), array( 'name' => $name ), $lineno );
+	}
 
-        $compiler->raw('$'.$this->getAttribute('name'));
-    }
+	public function compile( Compiler $compiler ): void {
+		if ( null === $this->getAttribute( 'name' ) ) {
+			$this->setAttribute( 'name', $compiler->getVarName() );
+		}
+
+		$compiler->raw( '$' . $this->getAttribute( 'name' ) );
+	}
 }

@@ -23,39 +23,43 @@ use Twig\Node\Expression\Variable\ContextVariable;
  * @author Fabien Potencier <fabien@symfony.com>
  */
 #[YieldReady]
-class ImportNode extends Node
-{
-    public function __construct(AbstractExpression $expr, AbstractExpression|AssignTemplateVariable $var, int $lineno)
-    {
-        if (\func_num_args() > 3) {
-            trigger_deprecation('twig/twig', '3.15', \sprintf('Passing more than 3 arguments to "%s()" is deprecated.', __METHOD__));
-        }
+class ImportNode extends Node {
 
-        if (!$var instanceof AssignTemplateVariable) {
-            trigger_deprecation('twig/twig', '3.15', \sprintf('Passing a "%s" instance as the second argument of "%s" is deprecated, pass a "%s" instead.', $var::class, __CLASS__, AssignTemplateVariable::class));
+	public function __construct( AbstractExpression $expr, AbstractExpression|AssignTemplateVariable $var, int $lineno ) {
+		if ( \func_num_args() > 3 ) {
+			trigger_deprecation( 'twig/twig', '3.15', \sprintf( 'Passing more than 3 arguments to "%s()" is deprecated.', __METHOD__ ) );
+		}
 
-            $var = new AssignTemplateVariable($var->getAttribute('name'), $lineno);
-        }
+		if ( ! $var instanceof AssignTemplateVariable ) {
+			trigger_deprecation( 'twig/twig', '3.15', \sprintf( 'Passing a "%s" instance as the second argument of "%s" is deprecated, pass a "%s" instead.', $var::class, __CLASS__, AssignTemplateVariable::class ) );
 
-        parent::__construct(['expr' => $expr, 'var' => $var], [], $lineno);
-    }
+			$var = new AssignTemplateVariable( $var->getAttribute( 'name' ), $lineno );
+		}
 
-    public function compile(Compiler $compiler): void
-    {
-        $compiler->subcompile($this->getNode('var'));
+		parent::__construct(
+			array(
+				'expr' => $expr,
+				'var'  => $var,
+			),
+			array(),
+			$lineno
+		);
+	}
 
-        if ($this->getNode('expr') instanceof ContextVariable && '_self' === $this->getNode('expr')->getAttribute('name')) {
-            $compiler->raw('$this');
-        } else {
-            $compiler
-                ->raw('$this->load(')
-                ->subcompile($this->getNode('expr'))
-                ->raw(', ')
-                ->repr($this->getTemplateLine())
-                ->raw(')->unwrap()')
-            ;
-        }
+	public function compile( Compiler $compiler ): void {
+		$compiler->subcompile( $this->getNode( 'var' ) );
 
-        $compiler->raw(";\n");
-    }
+		if ( $this->getNode( 'expr' ) instanceof ContextVariable && '_self' === $this->getNode( 'expr' )->getAttribute( 'name' ) ) {
+			$compiler->raw( '$this' );
+		} else {
+			$compiler
+				->raw( '$this->load(' )
+				->subcompile( $this->getNode( 'expr' ) )
+				->raw( ', ' )
+				->repr( $this->getTemplateLine() )
+				->raw( ')->unwrap()' );
+		}
+
+		$compiler->raw( ";\n" );
+	}
 }

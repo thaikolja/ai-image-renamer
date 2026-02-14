@@ -23,23 +23,21 @@ use Twig\TwigFilter;
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class RawFilter extends FilterExpression
-{
-    /**
-     * @param AbstractExpression $node
-     */
-    #[FirstClassTwigCallableReady]
-    public function __construct(Node $node, TwigFilter|ConstantExpression|null $filter = null, ?Node $arguments = null, int $lineno = 0)
-    {
-        if (!$node instanceof AbstractExpression) {
-            trigger_deprecation('twig/twig', '3.15', 'Not passing a "%s" instance to the "node" argument of "%s" is deprecated ("%s" given).', AbstractExpression::class, static::class, $node::class);
-        }
+class RawFilter extends FilterExpression {
 
-        parent::__construct($node, $filter ?: new TwigFilter('raw', null, ['is_safe' => ['all']]), $arguments ?: new EmptyNode(), $lineno ?: $node->getTemplateLine());
-    }
+	/**
+	 * @param AbstractExpression $node
+	 */
+	#[FirstClassTwigCallableReady]
+	public function __construct( Node $node, TwigFilter|ConstantExpression|null $filter = null, ?Node $arguments = null, int $lineno = 0 ) {
+		if ( ! $node instanceof AbstractExpression ) {
+			trigger_deprecation( 'twig/twig', '3.15', 'Not passing a "%s" instance to the "node" argument of "%s" is deprecated ("%s" given).', AbstractExpression::class, static::class, $node::class );
+		}
 
-    public function compile(Compiler $compiler): void
-    {
-        $compiler->subcompile($this->getNode('node'));
-    }
+		parent::__construct( $node, $filter ?: new TwigFilter( 'raw', null, array( 'is_safe' => array( 'all' ) ) ), $arguments ?: new EmptyNode(), $lineno ?: $node->getTemplateLine() );
+	}
+
+	public function compile( Compiler $compiler ): void {
+		$compiler->subcompile( $this->getNode( 'node' ) );
+	}
 }

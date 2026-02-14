@@ -15,10 +15,9 @@ namespace Twig\Node\Expression\Binary;
 use Twig\Compiler;
 use Twig\Node\Expression\ReturnBoolInterface;
 
-class OrBinary extends AbstractBinary implements ReturnBoolInterface
-{
-    public function operator(Compiler $compiler): Compiler
-    {
-        return $compiler->raw('||');
-    }
+class OrBinary extends AbstractBinary implements ReturnBoolInterface {
+
+	public function operator( Compiler $compiler ): Compiler {
+		return $compiler->raw( '||' );
+	}
 }

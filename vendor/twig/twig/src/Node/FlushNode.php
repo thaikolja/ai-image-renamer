@@ -20,21 +20,19 @@ use Twig\Compiler;
  * @author Fabien Potencier <fabien@symfony.com>
  */
 #[YieldReady]
-class FlushNode extends Node
-{
-    public function __construct(int $lineno)
-    {
-        parent::__construct([], [], $lineno);
-    }
+class FlushNode extends Node {
 
-    public function compile(Compiler $compiler): void
-    {
-        $compiler->addDebugInfo($this);
+	public function __construct( int $lineno ) {
+		parent::__construct( array(), array(), $lineno );
+	}
 
-        if ($compiler->getEnvironment()->useYield()) {
-            $compiler->write("yield '';\n");
-        }
+	public function compile( Compiler $compiler ): void {
+		$compiler->addDebugInfo( $this );
 
-        $compiler->write("flush();\n");
-    }
+		if ( $compiler->getEnvironment()->useYield() ) {
+			$compiler->write( "yield '';\n" );
+		}
+
+		$compiler->write( "flush();\n" );
+	}
 }

@@ -15,10 +15,9 @@ namespace Twig\Node\Expression\Binary;
 use Twig\Compiler;
 use Twig\Node\Expression\ReturnNumberInterface;
 
-class DivBinary extends AbstractBinary implements ReturnNumberInterface
-{
-    public function operator(Compiler $compiler): Compiler
-    {
-        return $compiler->raw('/');
-    }
+class DivBinary extends AbstractBinary implements ReturnNumberInterface {
+
+	public function operator( Compiler $compiler ): Compiler {
+		return $compiler->raw( '/' );
+	}
 }

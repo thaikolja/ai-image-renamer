@@ -1,7 +1,9 @@
 <?php
-/*
- * @name:           AI Image Renamer
- * @wordpress       Uses AI to rename images during upload for SEO-friendly filenames.
+
+/**
+ * AI Image Renamer.
+ *
+ * @description    Uses AI to rename images during upload for SEO-friendly filenames.
  * @author          Kolja Nolte <kolja.nolte@gmail.com>
  * @copyright       2025-2026 (C) Kolja Nolte
  * @see             https://docs.kolja-nolte.com/wp-ai-image-renamer/
@@ -18,14 +20,13 @@
  * @license GPL-2.0-or-later
  */
 
-
 /**
  * Main Plugin Bootstrap Class.
  *
  * @package AIR
  */
 
-declare( strict_types=1 );
+declare(strict_types=1);
 
 namespace AIR;
 
@@ -42,6 +43,8 @@ use AIR\Services\Template_Engine;
  * Provides extension points for Pro add-on via hooks and final public getters.
  */
 class Plugin {
+
+
 	/**
 	 * Singleton instance.
 	 *

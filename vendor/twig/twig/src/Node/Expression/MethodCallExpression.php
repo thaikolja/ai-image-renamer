@@ -14,45 +14,52 @@ namespace Twig\Node\Expression;
 use Twig\Compiler;
 use Twig\Node\Expression\Variable\ContextVariable;
 
-class MethodCallExpression extends AbstractExpression implements SupportDefinedTestInterface
-{
-    use SupportDefinedTestDeprecationTrait;
-    use SupportDefinedTestTrait;
+class MethodCallExpression extends AbstractExpression implements SupportDefinedTestInterface {
 
-    public function __construct(AbstractExpression $node, string $method, ArrayExpression $arguments, int $lineno)
-    {
-        trigger_deprecation('twig/twig', '3.15', 'The "%s" class is deprecated, use "%s" instead.', __CLASS__, MacroReferenceExpression::class);
+	use SupportDefinedTestDeprecationTrait;
+	use SupportDefinedTestTrait;
 
-        parent::__construct(['node' => $node, 'arguments' => $arguments], ['method' => $method, 'safe' => false], $lineno);
+	public function __construct( AbstractExpression $node, string $method, ArrayExpression $arguments, int $lineno ) {
+		trigger_deprecation( 'twig/twig', '3.15', 'The "%s" class is deprecated, use "%s" instead.', __CLASS__, MacroReferenceExpression::class );
 
-        if ($node instanceof ContextVariable) {
-            $node->setAttribute('always_defined', true);
-        }
-    }
+		parent::__construct(
+			array(
+				'node'      => $node,
+				'arguments' => $arguments,
+			),
+			array(
+				'method' => $method,
+				'safe'   => false,
+			),
+			$lineno
+		);
 
-    public function compile(Compiler $compiler): void
-    {
-        if ($this->definedTest) {
-            $compiler
-                ->raw('method_exists($macros[')
-                ->repr($this->getNode('node')->getAttribute('name'))
-                ->raw('], ')
-                ->repr($this->getAttribute('method'))
-                ->raw(')')
-            ;
+		if ( $node instanceof ContextVariable ) {
+			$node->setAttribute( 'always_defined', true );
+		}
+	}
 
-            return;
-        }
+	public function compile( Compiler $compiler ): void {
+		if ( $this->definedTest ) {
+			$compiler
+				->raw( 'method_exists($macros[' )
+				->repr( $this->getNode( 'node' )->getAttribute( 'name' ) )
+				->raw( '], ' )
+				->repr( $this->getAttribute( 'method' ) )
+				->raw( ')' );
 
-        $compiler
-            ->raw('CoreExtension::callMacro($macros[')
-            ->repr($this->getNode('node')->getAttribute('name'))
-            ->raw('], ')
-            ->repr($this->getAttribute('method'))
-            ->raw(', ')
-            ->subcompile($this->getNode('arguments'))
-            ->raw(', ')
-            ->repr($this->getTemplateLine())
-            ->raw(', $context, $this->getSourceContext())');
-    }
+			return;
+		}
+
+		$compiler
+			->raw( 'CoreExtension::callMacro($macros[' )
+			->repr( $this->getNode( 'node' )->getAttribute( 'name' ) )
+			->raw( '], ' )
+			->repr( $this->getAttribute( 'method' ) )
+			->raw( ', ' )
+			->subcompile( $this->getNode( 'arguments' ) )
+			->raw( ', ' )
+			->repr( $this->getTemplateLine() )
+			->raw( ', $context, $this->getSourceContext())' );
+	}
 }

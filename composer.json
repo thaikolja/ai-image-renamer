@@ -25,7 +25,7 @@
   "require":     {
     "php":                   ">=8.2",
     "twig/twig":             "~v3.22.2",
-    "defuse/php-encryption": "^v2.4.0"
+    "defuse/php-encryption": "^v2.4"
   },
   "require-dev": {
     "kint-php/kint":             "^6.1.0",
@@ -40,7 +40,7 @@
   },
   "scripts":     {
     "lint":    "php -l ai-image-renamer.php && find includes -name '*.php' -print0 | xargs -0 -n1 php -l",
-    "phpstan": "phpstan analyse --no-progress",
+    "phpstan": "phpstan analyse includes --no-progress",
     "phpcs":   "phpcs . --standard=vendor/wp-coding-standards/wpcs/WordPress",
     "phpcbf":  "phpcbf . --standard=vendor/wp-coding-standards/wpcs/WordPress"
   },

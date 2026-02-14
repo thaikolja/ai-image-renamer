@@ -21,18 +21,15 @@ use Twig\Compiler;
  * @author Fabien Potencier <fabien@symfony.com>
  */
 #[YieldReady]
-class BlockReferenceNode extends Node implements NodeOutputInterface
-{
-    public function __construct(string $name, int $lineno)
-    {
-        parent::__construct([], ['name' => $name], $lineno);
-    }
+class BlockReferenceNode extends Node implements NodeOutputInterface {
 
-    public function compile(Compiler $compiler): void
-    {
-        $compiler
-            ->addDebugInfo($this)
-            ->write(\sprintf("yield from \$this->unwrap()->yieldBlock('%s', \$context, \$blocks);\n", $this->getAttribute('name')))
-        ;
-    }
+	public function __construct( string $name, int $lineno ) {
+		parent::__construct( array(), array( 'name' => $name ), $lineno );
+	}
+
+	public function compile( Compiler $compiler ): void {
+		$compiler
+			->addDebugInfo( $this )
+			->write( \sprintf( "yield from \$this->unwrap()->yieldBlock('%s', \$context, \$blocks);\n", $this->getAttribute( 'name' ) ) );
+	}
 }

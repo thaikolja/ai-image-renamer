@@ -16,7 +16,7 @@ use Twig\Node\Expression\AbstractExpression;
 /**
  * @internal
  */
-interface UnaryInterface
-{
-    public function __construct(AbstractExpression $node, int $lineno);
+interface UnaryInterface {
+
+	public function __construct( AbstractExpression $node, int $lineno );
 }

@@ -14,10 +14,9 @@ namespace Twig\Node\Expression\Binary;
 use Twig\Compiler;
 use Twig\Node\Expression\ReturnNumberInterface;
 
-class SpaceshipBinary extends AbstractBinary implements ReturnNumberInterface
-{
-    public function operator(Compiler $compiler): Compiler
-    {
-        return $compiler->raw('<=>');
-    }
+class SpaceshipBinary extends AbstractBinary implements ReturnNumberInterface {
+
+	public function operator( Compiler $compiler ): Compiler {
+		return $compiler->raw( '<=>' );
+	}
 }

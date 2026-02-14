@@ -24,22 +24,20 @@ use Twig\Token;
  *
  * @internal
  */
-final class ImportTokenParser extends AbstractTokenParser
-{
-    public function parse(Token $token): Node
-    {
-        $macro = $this->parser->parseExpression();
-        $this->parser->getStream()->expect(Token::NAME_TYPE, 'as');
-        $name = $this->parser->getStream()->expect(Token::NAME_TYPE)->getValue();
-        $var = new AssignTemplateVariable(new TemplateVariable($name, $token->getLine()), $this->parser->isMainScope());
-        $this->parser->getStream()->expect(Token::BLOCK_END_TYPE);
-        $this->parser->addImportedSymbol('template', $name);
+final class ImportTokenParser extends AbstractTokenParser {
 
-        return new ImportNode($macro, $var, $token->getLine());
-    }
+	public function parse( Token $token ): Node {
+		$macro = $this->parser->parseExpression();
+		$this->parser->getStream()->expect( Token::NAME_TYPE, 'as' );
+		$name = $this->parser->getStream()->expect( Token::NAME_TYPE )->getValue();
+		$var  = new AssignTemplateVariable( new TemplateVariable( $name, $token->getLine() ), $this->parser->isMainScope() );
+		$this->parser->getStream()->expect( Token::BLOCK_END_TYPE );
+		$this->parser->addImportedSymbol( 'template', $name );
 
-    public function getTag(): string
-    {
-        return 'import';
-    }
+		return new ImportNode( $macro, $var, $token->getLine() );
+	}
+
+	public function getTag(): string {
+		return 'import';
+	}
 }

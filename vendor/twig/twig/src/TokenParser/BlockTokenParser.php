@@ -31,47 +31,46 @@ use Twig\Token;
  *
  * @internal
  */
-final class BlockTokenParser extends AbstractTokenParser
-{
-    public function parse(Token $token): Node
-    {
-        $lineno = $token->getLine();
-        $stream = $this->parser->getStream();
-        $name = $stream->expect(Token::NAME_TYPE)->getValue();
-        $this->parser->setBlock($name, $block = new BlockNode($name, new EmptyNode(), $lineno));
-        $this->parser->pushLocalScope();
-        $this->parser->pushBlockStack($name);
+final class BlockTokenParser extends AbstractTokenParser {
 
-        if ($stream->nextIf(Token::BLOCK_END_TYPE)) {
-            $body = $this->parser->subparse([$this, 'decideBlockEnd'], true);
-            if ($token = $stream->nextIf(Token::NAME_TYPE)) {
-                $value = $token->getValue();
+	public function parse( Token $token ): Node {
+		$lineno = $token->getLine();
+		$stream = $this->parser->getStream();
+		$name   = $stream->expect( Token::NAME_TYPE )->getValue();
+		$this->parser->setBlock( $name, $block = new BlockNode( $name, new EmptyNode(), $lineno ) );
+		$this->parser->pushLocalScope();
+		$this->parser->pushBlockStack( $name );
 
-                if ($value != $name) {
-                    throw new SyntaxError(\sprintf('Expected endblock for block "%s" (but "%s" given).', $name, $value), $stream->getCurrent()->getLine(), $stream->getSourceContext());
-                }
-            }
-        } else {
-            $body = new Nodes([
-                new PrintNode($this->parser->parseExpression(), $lineno),
-            ]);
-        }
-        $stream->expect(Token::BLOCK_END_TYPE);
+		if ( $stream->nextIf( Token::BLOCK_END_TYPE ) ) {
+			$body = $this->parser->subparse( array( $this, 'decideBlockEnd' ), true );
+			if ( $token = $stream->nextIf( Token::NAME_TYPE ) ) {
+				$value = $token->getValue();
 
-        $block->setNode('body', $body);
-        $this->parser->popBlockStack();
-        $this->parser->popLocalScope();
+				if ( $value != $name ) {
+					throw new SyntaxError( \sprintf( 'Expected endblock for block "%s" (but "%s" given).', $name, $value ), $stream->getCurrent()->getLine(), $stream->getSourceContext() );
+				}
+			}
+		} else {
+			$body = new Nodes(
+				array(
+					new PrintNode( $this->parser->parseExpression(), $lineno ),
+				)
+			);
+		}
+		$stream->expect( Token::BLOCK_END_TYPE );
 
-        return new BlockReferenceNode($name, $lineno);
-    }
+		$block->setNode( 'body', $body );
+		$this->parser->popBlockStack();
+		$this->parser->popLocalScope();
 
-    public function decideBlockEnd(Token $token): bool
-    {
-        return $token->test('endblock');
-    }
+		return new BlockReferenceNode( $name, $lineno );
+	}
 
-    public function getTag(): string
-    {
-        return 'block';
-    }
+	public function decideBlockEnd( Token $token ): bool {
+		return $token->test( 'endblock' );
+	}
+
+	public function getTag(): string {
+		return 'block';
+	}
 }

@@ -15,10 +15,9 @@ namespace Twig\Node\Expression\Binary;
 use Twig\Compiler;
 use Twig\Node\Expression\ReturnStringInterface;
 
-class ConcatBinary extends AbstractBinary implements ReturnStringInterface
-{
-    public function operator(Compiler $compiler): Compiler
-    {
-        return $compiler->raw('.');
-    }
+class ConcatBinary extends AbstractBinary implements ReturnStringInterface {
+
+	public function operator( Compiler $compiler ): Compiler {
+		return $compiler->raw( '.' );
+	}
 }

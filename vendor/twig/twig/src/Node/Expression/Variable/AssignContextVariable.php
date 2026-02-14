@@ -13,6 +13,6 @@ namespace Twig\Node\Expression\Variable;
 
 use Twig\Node\Expression\AssignNameExpression;
 
-final class AssignContextVariable extends AssignNameExpression
-{
+final class AssignContextVariable extends AssignNameExpression {
+
 }

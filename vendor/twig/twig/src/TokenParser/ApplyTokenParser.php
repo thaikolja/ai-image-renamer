@@ -28,39 +28,39 @@ use Twig\Token;
  *
  * @internal
  */
-final class ApplyTokenParser extends AbstractTokenParser
-{
-    public function parse(Token $token): Node
-    {
-        $lineno = $token->getLine();
-        $ref = new LocalVariable(null, $lineno);
-        $filter = $ref;
-        $op = $this->parser->getEnvironment()->getExpressionParsers()->getByClass(FilterExpressionParser::class);
-        while (true) {
-            $filter = $op->parse($this->parser, $filter, $this->parser->getCurrentToken());
-            if (!$this->parser->getStream()->test(Token::OPERATOR_TYPE, '|')) {
-                break;
-            }
-            $this->parser->getStream()->next();
-        }
+final class ApplyTokenParser extends AbstractTokenParser {
 
-        $this->parser->getStream()->expect(Token::BLOCK_END_TYPE);
-        $body = $this->parser->subparse([$this, 'decideApplyEnd'], true);
-        $this->parser->getStream()->expect(Token::BLOCK_END_TYPE);
+	public function parse( Token $token ): Node {
+		$lineno = $token->getLine();
+		$ref    = new LocalVariable( null, $lineno );
+		$filter = $ref;
+		$op     = $this->parser->getEnvironment()->getExpressionParsers()->getByClass( FilterExpressionParser::class );
+		while ( true ) {
+			$filter = $op->parse( $this->parser, $filter, $this->parser->getCurrentToken() );
+			if ( ! $this->parser->getStream()->test( Token::OPERATOR_TYPE, '|' ) ) {
+				break;
+			}
+			$this->parser->getStream()->next();
+		}
 
-        return new Nodes([
-            new SetNode(true, $ref, $body, $lineno),
-            new PrintNode($filter, $lineno),
-        ], $lineno);
-    }
+		$this->parser->getStream()->expect( Token::BLOCK_END_TYPE );
+		$body = $this->parser->subparse( array( $this, 'decideApplyEnd' ), true );
+		$this->parser->getStream()->expect( Token::BLOCK_END_TYPE );
 
-    public function decideApplyEnd(Token $token): bool
-    {
-        return $token->test('endapply');
-    }
+		return new Nodes(
+			array(
+				new SetNode( true, $ref, $body, $lineno ),
+				new PrintNode( $filter, $lineno ),
+			),
+			$lineno
+		);
+	}
 
-    public function getTag(): string
-    {
-        return 'apply';
-    }
+	public function decideApplyEnd( Token $token ): bool {
+		return $token->test( 'endapply' );
+	}
+
+	public function getTag(): string {
+		return 'apply';
+	}
 }

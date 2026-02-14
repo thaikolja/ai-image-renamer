@@ -16,31 +16,27 @@ namespace Twig\Node;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class NameDeprecation
-{
-    private $package;
-    private $version;
-    private $newName;
+class NameDeprecation {
 
-    public function __construct(string $package = '', string $version = '', string $newName = '')
-    {
-        $this->package = $package;
-        $this->version = $version;
-        $this->newName = $newName;
-    }
+	private $package;
+	private $version;
+	private $newName;
 
-    public function getPackage(): string
-    {
-        return $this->package;
-    }
+	public function __construct( string $package = '', string $version = '', string $newName = '' ) {
+		$this->package = $package;
+		$this->version = $version;
+		$this->newName = $newName;
+	}
 
-    public function getVersion(): string
-    {
-        return $this->version;
-    }
+	public function getPackage(): string {
+		return $this->package;
+	}
 
-    public function getNewName(): string
-    {
-        return $this->newName;
-    }
+	public function getVersion(): string {
+		return $this->version;
+	}
+
+	public function getNewName(): string {
+		return $this->newName;
+	}
 }

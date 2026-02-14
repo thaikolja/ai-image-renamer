@@ -19,41 +19,44 @@ use Twig\Node\Expression\Variable\TemplateVariable;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class MacroReferenceExpression extends AbstractExpression implements SupportDefinedTestInterface
-{
-    use SupportDefinedTestDeprecationTrait;
-    use SupportDefinedTestTrait;
+class MacroReferenceExpression extends AbstractExpression implements SupportDefinedTestInterface {
 
-    public function __construct(TemplateVariable $template, string $name, AbstractExpression $arguments, int $lineno)
-    {
-        parent::__construct(['template' => $template, 'arguments' => $arguments], ['name' => $name], $lineno);
-    }
+	use SupportDefinedTestDeprecationTrait;
+	use SupportDefinedTestTrait;
 
-    public function compile(Compiler $compiler): void
-    {
-        if ($this->definedTest) {
-            $compiler
-                ->subcompile($this->getNode('template'))
-                ->raw('->hasMacro(')
-                ->repr($this->getAttribute('name'))
-                ->raw(', $context')
-                ->raw(')')
-            ;
+	public function __construct( TemplateVariable $template, string $name, AbstractExpression $arguments, int $lineno ) {
+		parent::__construct(
+			array(
+				'template'  => $template,
+				'arguments' => $arguments,
+			),
+			array( 'name' => $name ),
+			$lineno
+		);
+	}
 
-            return;
-        }
+	public function compile( Compiler $compiler ): void {
+		if ( $this->definedTest ) {
+			$compiler
+				->subcompile( $this->getNode( 'template' ) )
+				->raw( '->hasMacro(' )
+				->repr( $this->getAttribute( 'name' ) )
+				->raw( ', $context' )
+				->raw( ')' );
 
-        $compiler
-            ->subcompile($this->getNode('template'))
-            ->raw('->getTemplateForMacro(')
-            ->repr($this->getAttribute('name'))
-            ->raw(', $context, ')
-            ->repr($this->getTemplateLine())
-            ->raw(', $this->getSourceContext())')
-            ->raw(\sprintf('->%s', $this->getAttribute('name')))
-            ->raw('(...')
-            ->subcompile($this->getNode('arguments'))
-            ->raw(')')
-        ;
-    }
+			return;
+		}
+
+		$compiler
+			->subcompile( $this->getNode( 'template' ) )
+			->raw( '->getTemplateForMacro(' )
+			->repr( $this->getAttribute( 'name' ) )
+			->raw( ', $context, ' )
+			->repr( $this->getTemplateLine() )
+			->raw( ', $this->getSourceContext())' )
+			->raw( \sprintf( '->%s', $this->getAttribute( 'name' ) ) )
+			->raw( '(...' )
+			->subcompile( $this->getNode( 'arguments' ) )
+			->raw( ')' );
+	}
 }

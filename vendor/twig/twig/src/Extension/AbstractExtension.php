@@ -11,57 +11,49 @@
 
 namespace Twig\Extension;
 
-abstract class AbstractExtension implements LastModifiedExtensionInterface
-{
-    public function getTokenParsers()
-    {
-        return [];
-    }
+abstract class AbstractExtension implements LastModifiedExtensionInterface {
 
-    public function getNodeVisitors()
-    {
-        return [];
-    }
+	public function getTokenParsers() {
+		return array();
+	}
 
-    public function getFilters()
-    {
-        return [];
-    }
+	public function getNodeVisitors() {
+		return array();
+	}
 
-    public function getTests()
-    {
-        return [];
-    }
+	public function getFilters() {
+		return array();
+	}
 
-    public function getFunctions()
-    {
-        return [];
-    }
+	public function getTests() {
+		return array();
+	}
 
-    public function getOperators()
-    {
-        return [[], []];
-    }
+	public function getFunctions() {
+		return array();
+	}
 
-    public function getExpressionParsers(): array
-    {
-        return [];
-    }
+	public function getOperators() {
+		return array( array(), array() );
+	}
 
-    public function getLastModified(): int
-    {
-        $filename = (new \ReflectionClass($this))->getFileName();
-        if (!is_file($filename)) {
-            return 0;
-        }
+	public function getExpressionParsers(): array {
+		return array();
+	}
 
-        $lastModified = filemtime($filename);
+	public function getLastModified(): int {
+		$filename = ( new \ReflectionClass( $this ) )->getFileName();
+		if ( ! is_file( $filename ) ) {
+			return 0;
+		}
 
-        // Track modifications of the runtime class if it exists and follows the naming convention
-        if (str_ends_with($filename, 'Extension.php') && is_file($filename = substr($filename, 0, -13).'Runtime.php')) {
-            $lastModified = max($lastModified, filemtime($filename));
-        }
+		$lastModified = filemtime( $filename );
 
-        return $lastModified;
-    }
+		// Track modifications of the runtime class if it exists and follows the naming convention
+		if ( str_ends_with( $filename, 'Extension.php' ) && is_file( $filename = substr( $filename, 0, -13 ) . 'Runtime.php' ) ) {
+			$lastModified = max( $lastModified, filemtime( $filename ) );
+		}
+
+		return $lastModified;
+	}
 }

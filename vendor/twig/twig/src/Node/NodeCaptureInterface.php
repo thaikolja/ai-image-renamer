@@ -16,6 +16,6 @@ namespace Twig\Node;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-interface NodeCaptureInterface
-{
+interface NodeCaptureInterface {
+
 }

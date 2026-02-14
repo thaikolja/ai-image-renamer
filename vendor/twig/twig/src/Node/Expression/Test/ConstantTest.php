@@ -23,27 +23,23 @@ use Twig\Node\Expression\TestExpression;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class ConstantTest extends TestExpression
-{
-    public function compile(Compiler $compiler): void
-    {
-        $compiler
-            ->raw('(')
-            ->subcompile($this->getNode('node'))
-            ->raw(' === constant(')
-        ;
+class ConstantTest extends TestExpression {
 
-        if ($this->getNode('arguments')->hasNode('1')) {
-            $compiler
-                ->raw('get_class(')
-                ->subcompile($this->getNode('arguments')->getNode('1'))
-                ->raw(')."::".')
-            ;
-        }
+	public function compile( Compiler $compiler ): void {
+		$compiler
+			->raw( '(' )
+			->subcompile( $this->getNode( 'node' ) )
+			->raw( ' === constant(' );
 
-        $compiler
-            ->subcompile($this->getNode('arguments')->getNode('0'))
-            ->raw('))')
-        ;
-    }
+		if ( $this->getNode( 'arguments' )->hasNode( '1' ) ) {
+			$compiler
+				->raw( 'get_class(' )
+				->subcompile( $this->getNode( 'arguments' )->getNode( '1' ) )
+				->raw( ')."::".' );
+		}
+
+		$compiler
+			->subcompile( $this->getNode( 'arguments' )->getNode( '0' ) )
+			->raw( '))' );
+	}
 }

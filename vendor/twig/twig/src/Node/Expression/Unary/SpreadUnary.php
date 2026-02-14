@@ -13,10 +13,9 @@ namespace Twig\Node\Expression\Unary;
 
 use Twig\Compiler;
 
-final class SpreadUnary extends AbstractUnary
-{
-    public function operator(Compiler $compiler): Compiler
-    {
-        return $compiler->raw('...');
-    }
+final class SpreadUnary extends AbstractUnary {
+
+	public function operator( Compiler $compiler ): Compiler {
+		return $compiler->raw( '...' );
+	}
 }

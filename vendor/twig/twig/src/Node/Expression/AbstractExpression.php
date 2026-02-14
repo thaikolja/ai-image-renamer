@@ -19,25 +19,22 @@ use Twig\Node\Node;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-abstract class AbstractExpression extends Node
-{
-    public function isGenerator(): bool
-    {
-        return $this->hasAttribute('is_generator') && $this->getAttribute('is_generator');
-    }
+abstract class AbstractExpression extends Node {
 
-    /**
-     * @return static
-     */
-    public function setExplicitParentheses(): self
-    {
-        $this->setAttribute('with_parentheses', true);
+	public function isGenerator(): bool {
+		return $this->hasAttribute( 'is_generator' ) && $this->getAttribute( 'is_generator' );
+	}
 
-        return $this;
-    }
+	/**
+	 * @return static
+	 */
+	public function setExplicitParentheses(): self {
+		$this->setAttribute( 'with_parentheses', true );
 
-    public function hasExplicitParentheses(): bool
-    {
-        return $this->hasAttribute('with_parentheses') && $this->getAttribute('with_parentheses');
-    }
+		return $this;
+	}
+
+	public function hasExplicitParentheses(): bool {
+		return $this->hasAttribute( 'with_parentheses' ) && $this->getAttribute( 'with_parentheses' );
+	}
 }

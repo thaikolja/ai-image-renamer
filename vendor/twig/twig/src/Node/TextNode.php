@@ -21,21 +21,18 @@ use Twig\Compiler;
  * @author Fabien Potencier <fabien@symfony.com>
  */
 #[YieldReady]
-class TextNode extends Node implements NodeOutputInterface
-{
-    public function __construct(string $data, int $lineno)
-    {
-        parent::__construct([], ['data' => $data], $lineno);
-    }
+class TextNode extends Node implements NodeOutputInterface {
 
-    public function compile(Compiler $compiler): void
-    {
-        $compiler->addDebugInfo($this);
+	public function __construct( string $data, int $lineno ) {
+		parent::__construct( array(), array( 'data' => $data ), $lineno );
+	}
 
-        $compiler
-            ->write('yield ')
-            ->string($this->getAttribute('data'))
-            ->raw(";\n")
-        ;
-    }
+	public function compile( Compiler $compiler ): void {
+		$compiler->addDebugInfo( $this );
+
+		$compiler
+			->write( 'yield ' )
+			->string( $this->getAttribute( 'data' ) )
+			->raw( ";\n" );
+	}
 }

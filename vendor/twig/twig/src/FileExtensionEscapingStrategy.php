@@ -22,40 +22,39 @@ namespace Twig;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class FileExtensionEscapingStrategy
-{
-    /**
-     * Guesses the best autoescaping strategy based on the file name.
-     *
-     * @param string $name The template name
-     *
-     * @return string|false The escaping strategy name to use or false to disable
-     */
-    public static function guess(string $name)
-    {
-        if (\in_array(substr($name, -1), ['/', '\\'], true)) {
-            return 'html'; // return html for directories
-        }
+class FileExtensionEscapingStrategy {
 
-        if (str_ends_with($name, '.twig')) {
-            $name = substr($name, 0, -5);
-        }
+	/**
+	 * Guesses the best autoescaping strategy based on the file name.
+	 *
+	 * @param string $name The template name
+	 *
+	 * @return string|false The escaping strategy name to use or false to disable
+	 */
+	public static function guess( string $name ) {
+		if ( \in_array( substr( $name, -1 ), array( '/', '\\' ), true ) ) {
+			return 'html'; // return html for directories
+		}
 
-        $extension = pathinfo($name, \PATHINFO_EXTENSION);
+		if ( str_ends_with( $name, '.twig' ) ) {
+			$name = substr( $name, 0, -5 );
+		}
 
-        switch ($extension) {
-            case 'js':
-            case 'json':
-                return 'js';
+		$extension = pathinfo( $name, \PATHINFO_EXTENSION );
 
-            case 'css':
-                return 'css';
+		switch ( $extension ) {
+			case 'js':
+			case 'json':
+				return 'js';
 
-            case 'txt':
-                return false;
+			case 'css':
+				return 'css';
 
-            default:
-                return 'html';
-        }
-    }
+			case 'txt':
+				return false;
+
+			default:
+				return 'html';
+		}
+	}
 }

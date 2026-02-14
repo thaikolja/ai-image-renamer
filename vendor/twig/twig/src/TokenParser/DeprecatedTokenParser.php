@@ -28,38 +28,36 @@ use Twig\Token;
  *
  * @internal
  */
-final class DeprecatedTokenParser extends AbstractTokenParser
-{
-    public function parse(Token $token): Node
-    {
-        $stream = $this->parser->getStream();
-        $expr = $this->parser->parseExpression();
-        $node = new DeprecatedNode($expr, $token->getLine());
+final class DeprecatedTokenParser extends AbstractTokenParser {
 
-        while ($stream->test(Token::NAME_TYPE)) {
-            $k = $stream->getCurrent()->getValue();
-            $stream->next();
-            $stream->expect(Token::OPERATOR_TYPE, '=');
+	public function parse( Token $token ): Node {
+		$stream = $this->parser->getStream();
+		$expr   = $this->parser->parseExpression();
+		$node   = new DeprecatedNode( $expr, $token->getLine() );
 
-            switch ($k) {
-                case 'package':
-                    $node->setNode('package', $this->parser->parseExpression());
-                    break;
-                case 'version':
-                    $node->setNode('version', $this->parser->parseExpression());
-                    break;
-                default:
-                    throw new SyntaxError(\sprintf('Unknown "%s" option.', $k), $stream->getCurrent()->getLine(), $stream->getSourceContext());
-            }
-        }
+		while ( $stream->test( Token::NAME_TYPE ) ) {
+			$k = $stream->getCurrent()->getValue();
+			$stream->next();
+			$stream->expect( Token::OPERATOR_TYPE, '=' );
 
-        $stream->expect(Token::BLOCK_END_TYPE);
+			switch ( $k ) {
+				case 'package':
+					$node->setNode( 'package', $this->parser->parseExpression() );
+					break;
+				case 'version':
+					$node->setNode( 'version', $this->parser->parseExpression() );
+					break;
+				default:
+					throw new SyntaxError( \sprintf( 'Unknown "%s" option.', $k ), $stream->getCurrent()->getLine(), $stream->getSourceContext() );
+			}
+		}
 
-        return $node;
-    }
+		$stream->expect( Token::BLOCK_END_TYPE );
 
-    public function getTag(): string
-    {
-        return 'deprecated';
-    }
+		return $node;
+	}
+
+	public function getTag(): string {
+		return 'deprecated';
+	}
 }

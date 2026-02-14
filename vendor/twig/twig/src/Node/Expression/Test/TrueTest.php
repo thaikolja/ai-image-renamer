@@ -21,14 +21,12 @@ use Twig\Node\Expression\TestExpression;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class TrueTest extends TestExpression
-{
-    public function compile(Compiler $compiler): void
-    {
-        $compiler
-            ->raw('(($tmp = ')
-            ->subcompile($this->getNode('node'))
-            ->raw(') && $tmp instanceof Markup ? (string) $tmp : $tmp)')
-        ;
-    }
+class TrueTest extends TestExpression {
+
+	public function compile( Compiler $compiler ): void {
+		$compiler
+			->raw( '(($tmp = ' )
+			->subcompile( $this->getNode( 'node' ) )
+			->raw( ') && $tmp instanceof Markup ? (string) $tmp : $tmp)' );
+	}
 }

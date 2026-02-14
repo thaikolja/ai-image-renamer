@@ -14,29 +14,26 @@ namespace Twig\Node\Expression\Variable;
 use Twig\Compiler;
 use Twig\Node\Expression\TempNameExpression;
 
-class TemplateVariable extends TempNameExpression
-{
-    public function getName(Compiler $compiler): string
-    {
-        if (null === $this->getAttribute('name')) {
-            $this->setAttribute('name', $compiler->getVarName());
-        }
+class TemplateVariable extends TempNameExpression {
 
-        return $this->getAttribute('name');
-    }
+	public function getName( Compiler $compiler ): string {
+		if ( null === $this->getAttribute( 'name' ) ) {
+			$this->setAttribute( 'name', $compiler->getVarName() );
+		}
 
-    public function compile(Compiler $compiler): void
-    {
-        $name = $this->getName($compiler);
+		return $this->getAttribute( 'name' );
+	}
 
-        if ('_self' === $name) {
-            $compiler->raw('$this');
-        } else {
-            $compiler
-                ->raw('$macros[')
-                ->string($name)
-                ->raw(']')
-            ;
-        }
-    }
+	public function compile( Compiler $compiler ): void {
+		$name = $this->getName( $compiler );
+
+		if ( '_self' === $name ) {
+			$compiler->raw( '$this' );
+		} else {
+			$compiler
+				->raw( '$macros[' )
+				->string( $name )
+				->raw( ']' );
+		}
+	}
 }

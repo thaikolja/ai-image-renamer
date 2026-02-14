@@ -22,37 +22,34 @@ use Twig\Token;
  *
  * @internal
  */
-final class AutoEscapeTokenParser extends AbstractTokenParser
-{
-    public function parse(Token $token): Node
-    {
-        $lineno = $token->getLine();
-        $stream = $this->parser->getStream();
+final class AutoEscapeTokenParser extends AbstractTokenParser {
 
-        if ($stream->test(Token::BLOCK_END_TYPE)) {
-            $value = 'html';
-        } else {
-            $expr = $this->parser->parseExpression();
-            if (!$expr instanceof ConstantExpression) {
-                throw new SyntaxError('An escaping strategy must be a string or false.', $stream->getCurrent()->getLine(), $stream->getSourceContext());
-            }
-            $value = $expr->getAttribute('value');
-        }
+	public function parse( Token $token ): Node {
+		$lineno = $token->getLine();
+		$stream = $this->parser->getStream();
 
-        $stream->expect(Token::BLOCK_END_TYPE);
-        $body = $this->parser->subparse([$this, 'decideBlockEnd'], true);
-        $stream->expect(Token::BLOCK_END_TYPE);
+		if ( $stream->test( Token::BLOCK_END_TYPE ) ) {
+			$value = 'html';
+		} else {
+			$expr = $this->parser->parseExpression();
+			if ( ! $expr instanceof ConstantExpression ) {
+				throw new SyntaxError( 'An escaping strategy must be a string or false.', $stream->getCurrent()->getLine(), $stream->getSourceContext() );
+			}
+			$value = $expr->getAttribute( 'value' );
+		}
 
-        return new AutoEscapeNode($value, $body, $lineno);
-    }
+		$stream->expect( Token::BLOCK_END_TYPE );
+		$body = $this->parser->subparse( array( $this, 'decideBlockEnd' ), true );
+		$stream->expect( Token::BLOCK_END_TYPE );
 
-    public function decideBlockEnd(Token $token): bool
-    {
-        return $token->test('endautoescape');
-    }
+		return new AutoEscapeNode( $value, $body, $lineno );
+	}
 
-    public function getTag(): string
-    {
-        return 'autoescape';
-    }
+	public function decideBlockEnd( Token $token ): bool {
+		return $token->test( 'endautoescape' );
+	}
+
+	public function getTag(): string {
+		return 'autoescape';
+	}
 }

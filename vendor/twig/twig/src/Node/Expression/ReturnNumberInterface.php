@@ -11,6 +11,6 @@
 
 namespace Twig\Node\Expression;
 
-interface ReturnNumberInterface extends ReturnPrimitiveTypeInterface
-{
+interface ReturnNumberInterface extends ReturnPrimitiveTypeInterface {
+
 }

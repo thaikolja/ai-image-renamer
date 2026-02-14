@@ -1,7 +1,9 @@
 <?php
-/*
- * @name:           AI Image Renamer
- * @wordpress       Uses AI to rename images during upload for SEO-friendly filenames.
+
+/**
+ * AI Image Renamer.
+ *
+ * @description    Uses AI to rename images during upload for SEO-friendly filenames.
  * @author          Kolja Nolte <kolja.nolte@gmail.com>
  * @copyright       2025-2026 (C) Kolja Nolte
  * @see             https://docs.kolja-nolte.com/wp-ai-image-renamer/
@@ -36,42 +38,38 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
  * Clean up all plugin options from the database.
  */
 function air_uninstall_cleanup(): void {
+	// Initialize WP_Filesystem.
+	global $wp_filesystem;
+	if ( ! function_exists( 'WP_Filesystem' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+	}
+
+	WP_Filesystem();
+
 	// Delete plugin options.
 	delete_option( 'air_options' );
 	delete_option( 'air_encryption_key' );
 
 	// Delete user meta for dismissed notices (for all users).
-	global $wpdb;
+	delete_metadata( 'user', 0, 'air_encryption_notice_dismissed', '', true );
 
-	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-	$wpdb->delete( $wpdb->usermeta, [ 'meta_key' => 'air_encryption_notice_dismissed' ], [ '%s' ] );
-
-	// Clear any transients the plugin may have set.
-	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-	$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", '_transient_air_pending_alt_text_%' ) );
-
-	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-	$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", '_transient_timeout_air_pending_alt_text_%' ) );
-
-	// Delete rate limiter transients.
-	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-	$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", '_transient_air_%' ) );
-
-	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-	$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", '_transient_timeout_air_%' ) );
+	// Transients (air_pending_alt_text_*, air_rate_limit_*) are short-lived
+	// (≤5 min TTL) and auto-expire. No explicit cleanup needed.
 
 	// Remove Twig cache directory.
 	$cache_dir = plugin_dir_path( __FILE__ ) . 'cache/twig';
+
 	if ( is_dir( $cache_dir ) ) {
 		air_remove_directory_recursive( $cache_dir );
 	}
 
 	// Remove parent cache directory if empty.
 	$parent_cache_dir = plugin_dir_path( __FILE__ ) . 'cache';
-	if ( is_dir( $parent_cache_dir ) ) {
-		$files = @scandir( $parent_cache_dir );
-		if ( is_array( $files ) && count( $files ) <= 2 ) { // Only . and ..
-			@rmdir( $parent_cache_dir );
+
+	if ( is_dir( $parent_cache_dir ) && $wp_filesystem ) {
+		$dirlist = $wp_filesystem->dirlist( $parent_cache_dir );
+		if ( is_array( $dirlist ) && 0 === count( $dirlist ) ) {
+			$wp_filesystem->rmdir( $parent_cache_dir );
 		}
 	}
 }
@@ -79,35 +77,33 @@ function air_uninstall_cleanup(): void {
 /**
  * Recursively remove a directory and its contents.
  *
- * @param  string  $dir  The directory path to remove.
+ * @param  string $dir  The directory path to remove.
  *
  * @return bool True on success, false on failure.
  */
 function air_remove_directory_recursive( string $dir ): bool {
-	if ( ! is_dir( $dir ) ) {
+	global $wp_filesystem;
+
+	if ( ! $wp_filesystem || ! is_dir( $dir ) ) {
 		return false;
 	}
 
-	$files = @scandir( $dir );
-	if ( false === $files ) {
+	$dirlist = $wp_filesystem->dirlist( $dir );
+	if ( false === $dirlist ) {
 		return false;
 	}
 
-	foreach ( $files as $file ) {
-		if ( '.' === $file || '..' === $file ) {
-			continue;
-		}
+	foreach ( $dirlist as $filename => $fileinfo ) {
+		$path = trailingslashit( $dir ) . $filename;
 
-		$path = $dir . DIRECTORY_SEPARATOR . $file;
-
-		if ( is_dir( $path ) ) {
+		if ( 'd' === $fileinfo['type'] ) {
 			air_remove_directory_recursive( $path );
 		} else {
-			@unlink( $path );
+			wp_delete_file( $path );
 		}
 	}
 
-	return @rmdir( $dir );
+	return $wp_filesystem->rmdir( $dir );
 }
 
 // Run the cleanup.

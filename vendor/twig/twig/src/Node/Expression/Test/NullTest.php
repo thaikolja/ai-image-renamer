@@ -21,14 +21,12 @@ use Twig\Node\Expression\TestExpression;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class NullTest extends TestExpression
-{
-    public function compile(Compiler $compiler): void
-    {
-        $compiler
-            ->raw('(null === ')
-            ->subcompile($this->getNode('node'))
-            ->raw(')')
-        ;
-    }
+class NullTest extends TestExpression {
+
+	public function compile( Compiler $compiler ): void {
+		$compiler
+			->raw( '(null === ' )
+			->subcompile( $this->getNode( 'node' ) )
+			->raw( ')' );
+	}
 }

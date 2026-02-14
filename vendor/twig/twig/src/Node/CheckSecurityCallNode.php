@@ -18,16 +18,14 @@ use Twig\Compiler;
  * @author Fabien Potencier <fabien@symfony.com>
  */
 #[YieldReady]
-class CheckSecurityCallNode extends Node
-{
-    /**
-     * @return void
-     */
-    public function compile(Compiler $compiler)
-    {
-        $compiler
-            ->write("\$this->sandbox = \$this->extensions[SandboxExtension::class];\n")
-            ->write("\$this->checkSecurity();\n")
-        ;
-    }
+class CheckSecurityCallNode extends Node {
+
+	/**
+	 * @return void
+	 */
+	public function compile( Compiler $compiler ) {
+		$compiler
+			->write( "\$this->sandbox = \$this->extensions[SandboxExtension::class];\n" )
+			->write( "\$this->checkSecurity();\n" );
+	}
 }

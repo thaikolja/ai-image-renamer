@@ -17,65 +17,69 @@ use Twig\Node\NameDeprecation;
 use Twig\Node\Node;
 use Twig\TwigFunction;
 
-class FunctionExpression extends CallExpression implements SupportDefinedTestInterface
-{
-    use SupportDefinedTestDeprecationTrait;
-    use SupportDefinedTestTrait;
+class FunctionExpression extends CallExpression implements SupportDefinedTestInterface {
 
-    #[FirstClassTwigCallableReady]
-    public function __construct(TwigFunction|string $function, Node $arguments, int $lineno)
-    {
-        if ($function instanceof TwigFunction) {
-            $name = $function->getName();
-        } else {
-            $name = $function;
-            trigger_deprecation('twig/twig', '3.12', 'Not passing an instance of "TwigFunction" when creating a "%s" function of type "%s" is deprecated.', $name, static::class);
-        }
+	use SupportDefinedTestDeprecationTrait;
+	use SupportDefinedTestTrait;
 
-        parent::__construct(['arguments' => $arguments], ['name' => $name, 'type' => 'function'], $lineno);
+	#[FirstClassTwigCallableReady]
+	public function __construct( TwigFunction|string $function, Node $arguments, int $lineno ) {
+		if ( $function instanceof TwigFunction ) {
+			$name = $function->getName();
+		} else {
+			$name = $function;
+			trigger_deprecation( 'twig/twig', '3.12', 'Not passing an instance of "TwigFunction" when creating a "%s" function of type "%s" is deprecated.', $name, static::class );
+		}
 
-        if ($function instanceof TwigFunction) {
-            $this->setAttribute('twig_callable', $function);
-        }
+		parent::__construct(
+			array( 'arguments' => $arguments ),
+			array(
+				'name' => $name,
+				'type' => 'function',
+			),
+			$lineno
+		);
 
-        $this->deprecateAttribute('needs_charset', new NameDeprecation('twig/twig', '3.12'));
-        $this->deprecateAttribute('needs_environment', new NameDeprecation('twig/twig', '3.12'));
-        $this->deprecateAttribute('needs_context', new NameDeprecation('twig/twig', '3.12'));
-        $this->deprecateAttribute('arguments', new NameDeprecation('twig/twig', '3.12'));
-        $this->deprecateAttribute('callable', new NameDeprecation('twig/twig', '3.12'));
-        $this->deprecateAttribute('is_variadic', new NameDeprecation('twig/twig', '3.12'));
-        $this->deprecateAttribute('dynamic_name', new NameDeprecation('twig/twig', '3.12'));
-    }
+		if ( $function instanceof TwigFunction ) {
+			$this->setAttribute( 'twig_callable', $function );
+		}
 
-    public function enableDefinedTest(): void
-    {
-        if ('constant' === $this->getAttribute('name')) {
-            $this->definedTest = true;
-        }
-    }
+		$this->deprecateAttribute( 'needs_charset', new NameDeprecation( 'twig/twig', '3.12' ) );
+		$this->deprecateAttribute( 'needs_environment', new NameDeprecation( 'twig/twig', '3.12' ) );
+		$this->deprecateAttribute( 'needs_context', new NameDeprecation( 'twig/twig', '3.12' ) );
+		$this->deprecateAttribute( 'arguments', new NameDeprecation( 'twig/twig', '3.12' ) );
+		$this->deprecateAttribute( 'callable', new NameDeprecation( 'twig/twig', '3.12' ) );
+		$this->deprecateAttribute( 'is_variadic', new NameDeprecation( 'twig/twig', '3.12' ) );
+		$this->deprecateAttribute( 'dynamic_name', new NameDeprecation( 'twig/twig', '3.12' ) );
+	}
 
-    /**
-     * @return void
-     */
-    public function compile(Compiler $compiler)
-    {
-        $name = $this->getAttribute('name');
-        if ($this->hasAttribute('twig_callable')) {
-            $name = $this->getAttribute('twig_callable')->getName();
-            if ($name !== $this->getAttribute('name')) {
-                trigger_deprecation('twig/twig', '3.12', 'Changing the value of a "function" node in a NodeVisitor class is not supported anymore.');
-                $this->removeAttribute('twig_callable');
-            }
-        }
+	public function enableDefinedTest(): void {
+		if ( 'constant' === $this->getAttribute( 'name' ) ) {
+			$this->definedTest = true;
+		}
+	}
 
-        if (!$this->hasAttribute('twig_callable')) {
-            $this->setAttribute('twig_callable', $compiler->getEnvironment()->getFunction($name));
-        }
+	/**
+	 * @return void
+	 */
+	public function compile( Compiler $compiler ) {
+		$name = $this->getAttribute( 'name' );
+		if ( $this->hasAttribute( 'twig_callable' ) ) {
+			$name = $this->getAttribute( 'twig_callable' )->getName();
+			if ( $name !== $this->getAttribute( 'name' ) ) {
+				trigger_deprecation( 'twig/twig', '3.12', 'Changing the value of a "function" node in a NodeVisitor class is not supported anymore.' );
+				$this->removeAttribute( 'twig_callable' );
+			}
+		}
 
-        if ('constant' === $name && $this->isDefinedTestEnabled()) {
-            $this->getNode('arguments')->setNode('checkDefined', new ConstantExpression(true, $this->getTemplateLine()));
-        }
+		if ( ! $this->hasAttribute( 'twig_callable' ) ) {
+			$this->setAttribute( 'twig_callable', $compiler->getEnvironment()->getFunction( $name ) );
+		}
 
-        $this->compileCallable($compiler);
-    }
+		if ( 'constant' === $name && $this->isDefinedTestEnabled() ) {
+			$this->getNode( 'arguments' )->setNode( 'checkDefined', new ConstantExpression( true, $this->getTemplateLine() ) );
+		}
+
+		$this->compileCallable( $compiler );
+	}
 }

@@ -16,10 +16,10 @@ namespace Twig\Node\Expression;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-interface OperatorEscapeInterface
-{
-    /**
-     * @return string[]
-     */
-    public function getOperandNamesToEscape(): array;
+interface OperatorEscapeInterface {
+
+	/**
+	 * @return string[]
+	 */
+	public function getOperandNamesToEscape(): array;
 }

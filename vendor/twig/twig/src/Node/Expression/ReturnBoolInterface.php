@@ -11,6 +11,6 @@
 
 namespace Twig\Node\Expression;
 
-interface ReturnBoolInterface extends ReturnPrimitiveTypeInterface
-{
+interface ReturnBoolInterface extends ReturnPrimitiveTypeInterface {
+
 }

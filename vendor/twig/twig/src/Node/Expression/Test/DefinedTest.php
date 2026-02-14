@@ -30,33 +30,31 @@ use Twig\TwigTest;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class DefinedTest extends TestExpression
-{
-    /**
-     * @param AbstractExpression $node
-     */
-    #[FirstClassTwigCallableReady]
-    public function __construct(Node $node, TwigTest|string $name, ?Node $arguments, int $lineno)
-    {
-        if (!$node instanceof AbstractExpression) {
-            trigger_deprecation('twig/twig', '3.15', 'Not passing a "%s" instance to the "node" argument of "%s" is deprecated ("%s" given).', AbstractExpression::class, static::class, $node::class);
-        }
+class DefinedTest extends TestExpression {
 
-        if (!$node instanceof SupportDefinedTestInterface) {
-            throw new SyntaxError('The "defined" test only works with simple variables.', $lineno);
-        }
+	/**
+	 * @param AbstractExpression $node
+	 */
+	#[FirstClassTwigCallableReady]
+	public function __construct( Node $node, TwigTest|string $name, ?Node $arguments, int $lineno ) {
+		if ( ! $node instanceof AbstractExpression ) {
+			trigger_deprecation( 'twig/twig', '3.15', 'Not passing a "%s" instance to the "node" argument of "%s" is deprecated ("%s" given).', AbstractExpression::class, static::class, $node::class );
+		}
 
-        $node->enableDefinedTest();
+		if ( ! $node instanceof SupportDefinedTestInterface ) {
+			throw new SyntaxError( 'The "defined" test only works with simple variables.', $lineno );
+		}
 
-        if (\is_string($name) && 'defined' !== $name) {
-            trigger_deprecation('twig/twig', '3.12', 'Creating a "DefinedTest" instance with a test name that is not "defined" is deprecated.');
-        }
+		$node->enableDefinedTest();
 
-        parent::__construct($node, $name, $arguments, $lineno);
-    }
+		if ( \is_string( $name ) && 'defined' !== $name ) {
+			trigger_deprecation( 'twig/twig', '3.12', 'Creating a "DefinedTest" instance with a test name that is not "defined" is deprecated.' );
+		}
 
-    public function compile(Compiler $compiler): void
-    {
-        $compiler->subcompile($this->getNode('node'));
-    }
+		parent::__construct( $node, $name, $arguments, $lineno );
+	}
+
+	public function compile( Compiler $compiler ): void {
+		$compiler->subcompile( $this->getNode( 'node' ) );
+	}
 }

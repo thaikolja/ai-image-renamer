@@ -20,38 +20,35 @@ use Twig\Compiler;
  * @author Fabien Potencier <fabien@symfony.com>
  */
 #[YieldReady]
-class CaptureNode extends Node
-{
-    public function __construct(Node $body, int $lineno)
-    {
-        parent::__construct(['body' => $body], ['raw' => false], $lineno);
-    }
+class CaptureNode extends Node {
 
-    public function compile(Compiler $compiler): void
-    {
-        $useYield = $compiler->getEnvironment()->useYield();
+	public function __construct( Node $body, int $lineno ) {
+		parent::__construct( array( 'body' => $body ), array( 'raw' => false ), $lineno );
+	}
 
-        if (!$this->getAttribute('raw')) {
-            $compiler->raw("('' === \$tmp = ");
-        }
-        $compiler
-            ->raw($useYield ? "implode('', iterator_to_array(" : '\\Twig\\Extension\\CoreExtension::captureOutput(')
-            ->raw("(function () use (&\$context, \$macros, \$blocks) {\n")
-            ->indent()
-            ->subcompile($this->getNode('body'))
-            ->write("yield from [];\n")
-            ->outdent()
-            ->write('})()')
-        ;
-        if ($useYield) {
-            $compiler->raw(', false))');
-        } else {
-            $compiler->raw(')');
-        }
-        if (!$this->getAttribute('raw')) {
-            $compiler->raw(") ? '' : new Markup(\$tmp, \$this->env->getCharset());");
-        } else {
-            $compiler->raw(';');
-        }
-    }
+	public function compile( Compiler $compiler ): void {
+		$useYield = $compiler->getEnvironment()->useYield();
+
+		if ( ! $this->getAttribute( 'raw' ) ) {
+			$compiler->raw( "('' === \$tmp = " );
+		}
+		$compiler
+			->raw( $useYield ? "implode('', iterator_to_array(" : '\\Twig\\Extension\\CoreExtension::captureOutput(' )
+			->raw( "(function () use (&\$context, \$macros, \$blocks) {\n" )
+			->indent()
+			->subcompile( $this->getNode( 'body' ) )
+			->write( "yield from [];\n" )
+			->outdent()
+			->write( '})()' );
+		if ( $useYield ) {
+			$compiler->raw( ', false))' );
+		} else {
+			$compiler->raw( ')' );
+		}
+		if ( ! $this->getAttribute( 'raw' ) ) {
+			$compiler->raw( ") ? '' : new Markup(\$tmp, \$this->env->getCharset());" );
+		} else {
+			$compiler->raw( ';' );
+		}
+	}
 }

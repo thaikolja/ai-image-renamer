@@ -22,50 +22,45 @@ use Twig\Node\Expression\Unary\NotUnary;
 use Twig\Node\Node;
 use Twig\TwigTest;
 
-final class NullCoalesceBinary extends AbstractBinary implements OperatorEscapeInterface
-{
-    /**
-     * @param AbstractExpression $left
-     * @param AbstractExpression $right
-     */
-    public function __construct(Node $left, Node $right, int $lineno)
-    {
-        parent::__construct($left, $right, $lineno);
+final class NullCoalesceBinary extends AbstractBinary implements OperatorEscapeInterface {
 
-        $test = new DefinedTest(clone $left, new TwigTest('defined'), new EmptyNode(), $left->getTemplateLine());
-        // for "block()", we don't need the null test as the return value is always a string
-        if (!$left instanceof BlockReferenceExpression) {
-            $test = new AndBinary(
-                $test,
-                new NotUnary(new NullTest($left, new TwigTest('null'), new EmptyNode(), $left->getTemplateLine()), $left->getTemplateLine()),
-                $left->getTemplateLine(),
-            );
-        }
+	/**
+	 * @param AbstractExpression $left
+	 * @param AbstractExpression $right
+	 */
+	public function __construct( Node $left, Node $right, int $lineno ) {
+		parent::__construct( $left, $right, $lineno );
 
-        $left->setAttribute('always_defined', true);
-        $this->setNode('test', $test);
-    }
+		$test = new DefinedTest( clone $left, new TwigTest( 'defined' ), new EmptyNode(), $left->getTemplateLine() );
+		// for "block()", we don't need the null test as the return value is always a string
+		if ( ! $left instanceof BlockReferenceExpression ) {
+			$test = new AndBinary(
+				$test,
+				new NotUnary( new NullTest( $left, new TwigTest( 'null' ), new EmptyNode(), $left->getTemplateLine() ), $left->getTemplateLine() ),
+				$left->getTemplateLine(),
+			);
+		}
 
-    public function compile(Compiler $compiler): void
-    {
-        $compiler
-            ->raw('((')
-            ->subcompile($this->getNode('test'))
-            ->raw(') ? (')
-            ->subcompile($this->getNode('left'))
-            ->raw(') : (')
-            ->subcompile($this->getNode('right'))
-            ->raw('))')
-        ;
-    }
+		$left->setAttribute( 'always_defined', true );
+		$this->setNode( 'test', $test );
+	}
 
-    public function operator(Compiler $compiler): Compiler
-    {
-        return $compiler->raw('??');
-    }
+	public function compile( Compiler $compiler ): void {
+		$compiler
+			->raw( '((' )
+			->subcompile( $this->getNode( 'test' ) )
+			->raw( ') ? (' )
+			->subcompile( $this->getNode( 'left' ) )
+			->raw( ') : (' )
+			->subcompile( $this->getNode( 'right' ) )
+			->raw( '))' );
+	}
 
-    public function getOperandNamesToEscape(): array
-    {
-        return ['left', 'right'];
-    }
+	public function operator( Compiler $compiler ): Compiler {
+		return $compiler->raw( '??' );
+	}
+
+	public function getOperandNamesToEscape(): array {
+		return array( 'left', 'right' );
+	}
 }

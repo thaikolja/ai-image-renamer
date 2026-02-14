@@ -24,57 +24,50 @@ use Twig\Token;
 /**
  * @internal
  */
-class BinaryOperatorExpressionParser extends AbstractExpressionParser implements InfixExpressionParserInterface, ExpressionParserDescriptionInterface
-{
-    public function __construct(
-        /** @var class-string<AbstractBinary> */
-        private string $nodeClass,
-        private string $name,
-        private int $precedence,
-        private InfixAssociativity $associativity = InfixAssociativity::Left,
-        private ?PrecedenceChange $precedenceChange = null,
-        private ?string $description = null,
-        private array $aliases = [],
-    ) {
-    }
+class BinaryOperatorExpressionParser extends AbstractExpressionParser implements InfixExpressionParserInterface, ExpressionParserDescriptionInterface {
 
-    /**
-     * @return AbstractBinary
-     */
-    public function parse(Parser $parser, AbstractExpression $left, Token $token): AbstractExpression
-    {
-        $right = $parser->parseExpression(InfixAssociativity::Left === $this->getAssociativity() ? $this->getPrecedence() + 1 : $this->getPrecedence());
+	public function __construct(
+		/** @var class-string<AbstractBinary> */
+		private string $nodeClass,
+		private string $name,
+		private int $precedence,
+		private InfixAssociativity $associativity = InfixAssociativity::Left,
+		private ?PrecedenceChange $precedenceChange = null,
+		private ?string $description = null,
+		private array $aliases = array(),
+	) {
+	}
 
-        return new ($this->nodeClass)($left, $right, $token->getLine());
-    }
+	/**
+	 * @return AbstractBinary
+	 */
+	public function parse( Parser $parser, AbstractExpression $left, Token $token ): AbstractExpression {
+		$right = $parser->parseExpression( InfixAssociativity::Left === $this->getAssociativity() ? $this->getPrecedence() + 1 : $this->getPrecedence() );
 
-    public function getAssociativity(): InfixAssociativity
-    {
-        return $this->associativity;
-    }
+		return new ( $this->nodeClass )( $left, $right, $token->getLine() );
+	}
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
+	public function getAssociativity(): InfixAssociativity {
+		return $this->associativity;
+	}
 
-    public function getDescription(): string
-    {
-        return $this->description ?? '';
-    }
+	public function getName(): string {
+		return $this->name;
+	}
 
-    public function getPrecedence(): int
-    {
-        return $this->precedence;
-    }
+	public function getDescription(): string {
+		return $this->description ?? '';
+	}
 
-    public function getPrecedenceChange(): ?PrecedenceChange
-    {
-        return $this->precedenceChange;
-    }
+	public function getPrecedence(): int {
+		return $this->precedence;
+	}
 
-    public function getAliases(): array
-    {
-        return $this->aliases;
-    }
+	public function getPrecedenceChange(): ?PrecedenceChange {
+		return $this->precedenceChange;
+	}
+
+	public function getAliases(): array {
+		return $this->aliases;
+	}
 }

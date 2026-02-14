@@ -14,21 +14,18 @@ namespace Twig\Node\Expression\Binary;
 use Twig\Compiler;
 use Twig\Node\Expression\ReturnBoolInterface;
 
-class InBinary extends AbstractBinary implements ReturnBoolInterface
-{
-    public function compile(Compiler $compiler): void
-    {
-        $compiler
-            ->raw('CoreExtension::inFilter(')
-            ->subcompile($this->getNode('left'))
-            ->raw(', ')
-            ->subcompile($this->getNode('right'))
-            ->raw(')')
-        ;
-    }
+class InBinary extends AbstractBinary implements ReturnBoolInterface {
 
-    public function operator(Compiler $compiler): Compiler
-    {
-        return $compiler->raw('in');
-    }
+	public function compile( Compiler $compiler ): void {
+		$compiler
+			->raw( 'CoreExtension::inFilter(' )
+			->subcompile( $this->getNode( 'left' ) )
+			->raw( ', ' )
+			->subcompile( $this->getNode( 'right' ) )
+			->raw( ')' );
+	}
+
+	public function operator( Compiler $compiler ): Compiler {
+		return $compiler->raw( 'in' );
+	}
 }
