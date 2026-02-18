@@ -14,12 +14,12 @@
 /* Comment */
 
 .my-style {
-    float: left;
+	float: left;
 
 }
 
 .AssetLineageWidgetType-item {
-    color: #CCC;
+	color: #ccc;
 }
 
 /*.AssetLineageWidgetType-item2 .selected,
@@ -31,51 +31,55 @@
 
 @media screen and (max-device-width: 769px) {
 
-    header #logo img {
-        max-width: 100%;
-    }
+	header #logo img {
+		max-width: 100%;
+	}
 
 }
 
 @media screen and (max-device-width: 769px) {
 
-    header #logo img {
-        max-width: 100%;
-    }
+	header #logo img {
+		max-width: 100%;
+	}
 }
 
-.GUITextBox.container:after {}
-
-@media screen and (max-device-width: 769px) {
-    .no-blank-line-after {
-    }
-    .no-blank-line-after-second-def {
-    } .my-style {
-    }
-
-    .no-blank-line-and-trailing-comment {
-    } /* end long class */
-    .too-many-blank-lines-and-trailing-comment-extra-whitespace-after-brace {
-    } /* end long class */
-
-
-
-    .has-blank-line-and-trailing-comment {
-    } /* end long class */
-
-    .no-blank-line-and-annotation {
-    } /* phpcs:ignore Standard.Cat.SniffName -- for reasons */
-    .too-many-blank-lines-annotation {
-    } /* phpcs:ignore Standard.Cat.SniffName -- for reasons */
-
-
-
-    .has-blank-line-and-annotation {
-    } /* phpcs:ignore Standard.Cat.SniffName -- for reasons */
-
-}
+.GUITextBox.container::after {}
 
 @media screen and (max-device-width: 769px) {
 
-    header #logo img {
-        max-width: 100%;}}
+	.no-blank-line-after {
+	}
+
+	.no-blank-line-after-second-def {
+	}
+
+	.my-style {
+	}
+
+	.no-blank-line-and-trailing-comment {
+	} /* end long class */
+	.too-many-blank-lines-and-trailing-comment-extra-whitespace-after-brace {
+	} /* end long class */
+
+
+	.has-blank-line-and-trailing-comment {
+	} /* end long class */
+
+	.no-blank-line-and-annotation {
+	} /* phpcs:ignore Standard.Cat.SniffName -- for reasons */
+	.too-many-blank-lines-annotation {
+	} /* phpcs:ignore Standard.Cat.SniffName -- for reasons */
+
+
+	.has-blank-line-and-annotation {
+	} /* phpcs:ignore Standard.Cat.SniffName -- for reasons */
+
+}
+
+@media screen and (max-device-width: 769px) {
+
+	header #logo img {
+		max-width: 100%;
+	}
+}

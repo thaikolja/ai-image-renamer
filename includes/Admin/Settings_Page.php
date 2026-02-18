@@ -281,8 +281,8 @@ class Settings_Page
 	{
 		$defaults = array(
 			'api_key'      => '',
-			'enabled'      => true,
-			'file_types'   => array('image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'),
+			'enabled'      => false,
+			'file_types'   => array('image/jpeg', 'image/png', 'image/webp', 'image/avif'),
 			'max_keywords' => 5,
 			'set_alt_text' => false,
 			'model'        => 'meta-llama/llama-4-maverick-17b-128e-instruct',
@@ -649,7 +649,7 @@ class Settings_Page
 				'option_name' => esc_attr(self::OPTION_NAME),
 				'current'     => esc_attr($current),
 				'models'      => $prepared_models, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Already escaped in prepare_models_for_template().
-				'asset_url'   => esc_url(\plugins_url('build', \dirname(__DIR__, 2) . '/ai-image-renamer.php')),
+				'asset_url'   => esc_url(\plugins_url('assets', \dirname(__DIR__, 2) . '/ai-image-renamer.php')),
 			)
 		);
 	}
@@ -708,7 +708,7 @@ class Settings_Page
 				'current'         => esc_attr($current),
 				'models'          => $prepared_models, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Already escaped in prepare_models_for_template().
 				'max_keywords'    => absint($options['max_keywords'] ?? 5),
-				'asset_url'       => esc_url(\plugins_url('build', \dirname(__DIR__, 2) . '/ai-image-renamer.php')),
+				'asset_url'       => esc_url(\plugins_url('assets', \dirname(__DIR__, 2) . '/ai-image-renamer.php')),
 				'diagnostics'     => array(
 					'php'    => array(
 						'label' => esc_html__('PHP Version', 'ai-image-renamer'),
