@@ -65,11 +65,11 @@ final class DeprecatedParameterValuesSniff extends AbstractFunctionParameterSnif
 	 *     );
 	 */
 	protected $target_functions = array(
-		'add_option'                        => array(
+		'add_option' => array(
 			1 => array(
 				'name'   => 'option',
 				'values' => array(
-					'blacklist_keys'    => array(
+					'blacklist_keys' => array(
 						'alt'     => 'disallowed_keys',
 						'version' => '5.5.0',
 					),
@@ -80,11 +80,11 @@ final class DeprecatedParameterValuesSniff extends AbstractFunctionParameterSnif
 				),
 			),
 		),
-		'add_settings_field'                => array(
+		'add_settings_field' => array(
 			4 => array(
 				'name'   => 'page',
 				'values' => array(
-					'misc'    => array(
+					'misc' => array(
 						'alt'     => 'another settings group',
 						'version' => '3.0.0',
 					),
@@ -95,11 +95,11 @@ final class DeprecatedParameterValuesSniff extends AbstractFunctionParameterSnif
 				),
 			),
 		),
-		'add_settings_section'              => array(
+		'add_settings_section' => array(
 			4 => array(
 				'name'   => 'page',
 				'values' => array(
-					'misc'    => array(
+					'misc' => array(
 						'alt'     => 'another settings group',
 						'version' => '3.0.0',
 					),
@@ -110,15 +110,15 @@ final class DeprecatedParameterValuesSniff extends AbstractFunctionParameterSnif
 				),
 			),
 		),
-		'bloginfo'                          => array(
+		'bloginfo' => array(
 			1 => array(
 				'name'   => 'show',
 				'values' => array(
-					'home'           => array(
+					'home' => array(
 						'alt'     => 'the "url" argument',
 						'version' => '2.2.0',
 					),
-					'siteurl'        => array(
+					'siteurl' => array(
 						'alt'     => 'the "url" argument',
 						'version' => '2.2.0',
 					),
@@ -129,15 +129,15 @@ final class DeprecatedParameterValuesSniff extends AbstractFunctionParameterSnif
 				),
 			),
 		),
-		'get_bloginfo'                      => array(
+		'get_bloginfo' => array(
 			1 => array(
 				'name'   => 'show',
 				'values' => array(
-					'home'           => array(
+					'home' => array(
 						'alt'     => 'the "url" argument',
 						'version' => '2.2.0',
 					),
-					'siteurl'        => array(
+					'siteurl' => array(
 						'alt'     => 'the "url" argument',
 						'version' => '2.2.0',
 					),
@@ -148,11 +148,11 @@ final class DeprecatedParameterValuesSniff extends AbstractFunctionParameterSnif
 				),
 			),
 		),
-		'get_option'                        => array(
+		'get_option' => array(
 			1 => array(
 				'name'   => 'option',
 				'values' => array(
-					'blacklist_keys'    => array(
+					'blacklist_keys' => array(
 						'alt'     => 'disallowed_keys',
 						'version' => '5.5.0',
 					),
@@ -163,11 +163,11 @@ final class DeprecatedParameterValuesSniff extends AbstractFunctionParameterSnif
 				),
 			),
 		),
-		'register_setting'                  => array(
+		'register_setting' => array(
 			1 => array(
 				'name'   => 'option_group',
 				'values' => array(
-					'misc'    => array(
+					'misc' => array(
 						'alt'     => 'another settings group',
 						'version' => '3.0.0',
 					),
@@ -178,11 +178,11 @@ final class DeprecatedParameterValuesSniff extends AbstractFunctionParameterSnif
 				),
 			),
 		),
-		'unregister_setting'                => array(
+		'unregister_setting' => array(
 			1 => array(
 				'name'   => 'option_group',
 				'values' => array(
-					'misc'    => array(
+					'misc' => array(
 						'alt'     => 'another settings group',
 						'version' => '3.0.0',
 					),
@@ -193,11 +193,11 @@ final class DeprecatedParameterValuesSniff extends AbstractFunctionParameterSnif
 				),
 			),
 		),
-		'update_option'                     => array(
+		'update_option' => array(
 			1 => array(
 				'name'   => 'option',
 				'values' => array(
-					'blacklist_keys'    => array(
+					'blacklist_keys' => array(
 						'alt'     => 'disallowed_keys',
 						'version' => '5.5.0',
 					),
@@ -212,7 +212,7 @@ final class DeprecatedParameterValuesSniff extends AbstractFunctionParameterSnif
 			2 => array(
 				'name'   => 'settings',
 				'values' => array(
-					'true'  => array(
+					'true' => array(
 						'alt'     => 'an array',
 						'version' => '6.6.0',
 					),

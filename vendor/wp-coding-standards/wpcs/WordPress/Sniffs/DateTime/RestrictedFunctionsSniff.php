@@ -47,7 +47,7 @@ final class RestrictedFunctionsSniff extends AbstractFunctionRestrictionsSniff {
 			 * @link https://core.trac.wordpress.org/ticket/46438
 			 * @link https://github.com/WordPress/WordPress-Coding-Standards/issues/1713
 			 */
-			'date'            => array(
+			'date' => array(
 				'type'      => 'error',
 				'message'   => '%s() is affected by runtime timezone changes which can cause date/time to be incorrectly displayed. Use gmdate() instead.',
 				'functions' => array(

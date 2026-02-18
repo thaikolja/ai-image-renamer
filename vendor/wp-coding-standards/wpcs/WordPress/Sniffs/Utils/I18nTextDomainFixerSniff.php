@@ -82,140 +82,140 @@ final class I18nTextDomainFixerSniff extends AbstractFunctionParameterSniff {
 	 *                                               parameter and name as value.
 	 */
 	protected $target_functions = array(
-		'load_textdomain'                        => array(
+		'load_textdomain' => array(
 			'position' => 1,
 			'name'     => 'domain',
 		),
-		'load_plugin_textdomain'                 => array(
+		'load_plugin_textdomain' => array(
 			'position' => 1,
 			'name'     => 'domain',
 		),
-		'load_muplugin_textdomain'               => array(
+		'load_muplugin_textdomain' => array(
 			'position' => 1,
 			'name'     => 'domain',
 		),
-		'load_theme_textdomain'                  => array(
+		'load_theme_textdomain' => array(
 			'position' => 1,
 			'name'     => 'domain',
 		),
-		'load_child_theme_textdomain'            => array(
+		'load_child_theme_textdomain' => array(
 			'position' => 1,
 			'name'     => 'domain',
 		),
-		'load_script_textdomain'                 => array(
+		'load_script_textdomain' => array(
 			'position' => 2,
 			'name'     => 'domain',
 		),
-		'unload_textdomain'                      => array(
+		'unload_textdomain' => array(
 			'position' => 1,
 			'name'     => 'domain',
 		),
 
-		'__'                                     => array(
+		'__' => array(
 			'position' => 2,
 			'name'     => 'domain',
 		),
-		'_e'                                     => array(
+		'_e' => array(
 			'position' => 2,
 			'name'     => 'domain',
 		),
-		'_x'                                     => array(
+		'_x' => array(
 			'position' => 3,
 			'name'     => 'domain',
 		),
-		'_ex'                                    => array(
+		'_ex' => array(
 			'position' => 3,
 			'name'     => 'domain',
 		),
-		'_n'                                     => array(
+		'_n' => array(
 			'position' => 4,
 			'name'     => 'domain',
 		),
-		'_nx'                                    => array(
+		'_nx' => array(
 			'position' => 5,
 			'name'     => 'domain',
 		),
-		'_n_noop'                                => array(
+		'_n_noop' => array(
 			'position' => 3,
 			'name'     => 'domain',
 		),
-		'_nx_noop'                               => array(
+		'_nx_noop' => array(
 			'position' => 4,
 			'name'     => 'domain',
 		),
-		'translate_nooped_plural'                => array(
+		'translate_nooped_plural' => array(
 			'position' => 3,
 			'name'     => 'domain',
 		),
 
-		'esc_html__'                             => array(
+		'esc_html__' => array(
 			'position' => 2,
 			'name'     => 'domain',
 		),
-		'esc_html_e'                             => array(
+		'esc_html_e' => array(
 			'position' => 2,
 			'name'     => 'domain',
 		),
-		'esc_html_x'                             => array(
+		'esc_html_x' => array(
 			'position' => 3,
 			'name'     => 'domain',
 		),
-		'esc_attr__'                             => array(
+		'esc_attr__' => array(
 			'position' => 2,
 			'name'     => 'domain',
 		),
-		'esc_attr_e'                             => array(
+		'esc_attr_e' => array(
 			'position' => 2,
 			'name'     => 'domain',
 		),
-		'esc_attr_x'                             => array(
+		'esc_attr_x' => array(
 			'position' => 3,
 			'name'     => 'domain',
 		),
 
-		'is_textdomain_loaded'                   => array(
+		'is_textdomain_loaded' => array(
 			'position' => 1,
 			'name'     => 'domain',
 		),
-		'get_translations_for_domain'            => array(
+		'get_translations_for_domain' => array(
 			'position' => 1,
 			'name'     => 'domain',
 		),
 
 		// Deprecated functions.
-		'_c'                                     => array(
+		'_c' => array(
 			'position' => 2,
 			'name'     => 'domain',
 		),
-		'_nc'                                    => array(
+		'_nc' => array(
 			'position' => 4,
 			'name'     => 'domain',
 		),
-		'__ngettext'                             => array(
+		'__ngettext' => array(
 			'position' => 4,
 			'name'     => 'domain',
 		),
-		'__ngettext_noop'                        => array(
+		'__ngettext_noop' => array(
 			'position' => 3,
 			'name'     => 'domain',
 		),
-		'translate_with_context'                 => array(
+		'translate_with_context' => array(
 			'position' => 2,
 			'name'     => 'domain',
 		),
 
 		// Shouldn't be used by plugins/themes.
-		'translate'                              => array(
+		'translate' => array(
 			'position' => 2,
 			'name'     => 'domain',
 		),
-		'translate_with_gettext_context'         => array(
+		'translate_with_gettext_context' => array(
 			'position' => 3,
 			'name'     => 'domain',
 		),
 
 		// WP private functions. Shouldn't be used by plugins/themes.
-		'_load_textdomain_just_in_time'          => array(
+		'_load_textdomain_just_in_time' => array(
 			'position' => 1,
 			'name'     => 'domain',
 		),
@@ -223,7 +223,7 @@ final class I18nTextDomainFixerSniff extends AbstractFunctionParameterSniff {
 			'position' => 1,
 			'name'     => 'domain',
 		),
-		'_get_path_to_translation'               => array(
+		'_get_path_to_translation' => array(
 			'position' => 1,
 			'name'     => 'domain',
 		),

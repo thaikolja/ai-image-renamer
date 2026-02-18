@@ -25,127 +25,129 @@ use PHPCSUtils\Utils\Lists;
  *
  * @since 1.0.0
  */
-final class ForeachUniqueAssignmentSniff implements Sniff {
+final class ForeachUniqueAssignmentSniff implements Sniff
+{
 
+    /**
+     * Returns an array of tokens this test wants to listen for.
+     *
+     * @since 1.0.0
+     *
+     * @return array<int|string>
+     */
+    public function register()
+    {
+        return [\T_FOREACH];
+    }
 
-	/**
-	 * Returns an array of tokens this test wants to listen for.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return array<int|string>
-	 */
-	public function register() {
-		return array( \T_FOREACH );
-	}
+    /**
+     * Processes this test, when one of its tokens is encountered.
+     *
+     * @since 1.0.0
+     *
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token
+     *                                               in the stack passed in $tokens.
+     *
+     * @return void
+     */
+    public function process(File $phpcsFile, $stackPtr)
+    {
+        $tokens = $phpcsFile->getTokens();
 
-	/**
-	 * Processes this test, when one of its tokens is encountered.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-	 * @param int                         $stackPtr  The position of the current token
-	 *                                               in the stack passed in $tokens.
-	 *
-	 * @return void
-	 */
-	public function process( File $phpcsFile, $stackPtr ) {
-		$tokens = $phpcsFile->getTokens();
+        if (isset($tokens[$stackPtr]['parenthesis_opener'], $tokens[$stackPtr]['parenthesis_closer']) === false) {
+            // Parse error or live coding, not our concern.
+            return;
+        }
 
-		if ( isset( $tokens[ $stackPtr ]['parenthesis_opener'], $tokens[ $stackPtr ]['parenthesis_closer'] ) === false ) {
-			// Parse error or live coding, not our concern.
-			return;
-		}
+        $opener = $tokens[$stackPtr]['parenthesis_opener'];
+        $closer = $tokens[$stackPtr]['parenthesis_closer'];
 
-		$opener = $tokens[ $stackPtr ]['parenthesis_opener'];
-		$closer = $tokens[ $stackPtr ]['parenthesis_closer'];
+        $asPtr = $phpcsFile->findNext(\T_AS, ($opener + 1), $closer);
+        if ($asPtr === false) {
+            // Parse error or live coding, not our concern.
+            return;
+        }
 
-		$asPtr = $phpcsFile->findNext( \T_AS, ( $opener + 1 ), $closer );
-		if ( $asPtr === false ) {
-			// Parse error or live coding, not our concern.
-			return;
-		}
+        // Real target.
+        $find = [\T_DOUBLE_ARROW];
+        // Prevent matching on double arrows within a list assignment.
+        $find += Collections::listTokens();
 
-		// Real target.
-		$find = array( \T_DOUBLE_ARROW );
-		// Prevent matching on double arrows within a list assignment.
-		$find += Collections::listTokens();
+        $doubleArrowPtr = $phpcsFile->findNext($find, ($asPtr + 1), $closer);
+        if ($doubleArrowPtr === false
+            || $tokens[$doubleArrowPtr]['code'] !== \T_DOUBLE_ARROW
+        ) {
+            // No key assignment.
+            return;
+        }
 
-		$doubleArrowPtr = $phpcsFile->findNext( $find, ( $asPtr + 1 ), $closer );
-		if ( $doubleArrowPtr === false
-			|| $tokens[ $doubleArrowPtr ]['code'] !== \T_DOUBLE_ARROW
-		) {
-			// No key assignment.
-			return;
-		}
+        $isListAssignment = $phpcsFile->findNext(Tokens::$emptyTokens, ($doubleArrowPtr + 1), $closer, true);
+        if ($isListAssignment === false) {
+            // Parse error or live coding, not our concern.
+        }
 
-		$isListAssignment = $phpcsFile->findNext( Tokens::$emptyTokens, ( $doubleArrowPtr + 1 ), $closer, true );
-		if ( $isListAssignment === false ) {
-			// Parse error or live coding, not our concern.
-		}
+        $keyAsString      = \ltrim(GetTokensAsString::noEmpties($phpcsFile, ($asPtr + 1), ($doubleArrowPtr - 1)), '&');
+        $valueAssignments = [];
+        if (isset(Collections::listTokens()[$tokens[$isListAssignment]['code']]) === false) {
+            // Single value assignment.
+            $valueAssignments[] = GetTokensAsString::noEmpties($phpcsFile, ($doubleArrowPtr + 1), ($closer - 1));
+        } else {
+            // List assignment.
+            $assignments = Lists::getAssignments($phpcsFile, $isListAssignment);
+            foreach ($assignments as $listItem) {
+                if ($listItem['assignment'] === '') {
+                    // Ignore empty list assignments.
+                    continue;
+                }
 
-		$keyAsString      = \ltrim( GetTokensAsString::noEmpties( $phpcsFile, ( $asPtr + 1 ), ( $doubleArrowPtr - 1 ) ), '&' );
-		$valueAssignments = array();
-		if ( isset( Collections::listTokens()[ $tokens[ $isListAssignment ]['code'] ] ) === false ) {
-			// Single value assignment.
-			$valueAssignments[] = GetTokensAsString::noEmpties( $phpcsFile, ( $doubleArrowPtr + 1 ), ( $closer - 1 ) );
-		} else {
-			// List assignment.
-			$assignments = Lists::getAssignments( $phpcsFile, $isListAssignment );
-			foreach ( $assignments as $listItem ) {
-				if ( $listItem['assignment'] === '' ) {
-					// Ignore empty list assignments.
-					continue;
-				}
+                // Note: this doesn't take nested lists into account (yet).
+                $valueAssignments[] = $listItem['assignment'];
+            }
+        }
 
-				// Note: this doesn't take nested lists into account (yet).
-				$valueAssignments[] = $listItem['assignment'];
-			}
-		}
+        if (empty($valueAssignments)) {
+            // No assignments found.
+            return;
+        }
 
-		if ( empty( $valueAssignments ) ) {
-			// No assignments found.
-			return;
-		}
+        foreach ($valueAssignments as $valueAsString) {
+            $valueAsString = \ltrim($valueAsString, '&');
 
-		foreach ( $valueAssignments as $valueAsString ) {
-			$valueAsString = \ltrim( $valueAsString, '&' );
+            if ($keyAsString !== $valueAsString) {
+                // Key and value not the same.
+                continue;
+            }
 
-			if ( $keyAsString !== $valueAsString ) {
-				// Key and value not the same.
-				continue;
-			}
+            $error  = 'The variables used for the key and the value in a foreach assignment should be unique.';
+            $error .= 'Both the key and the value will currently be assigned to: "%s"';
 
-			$error  = 'The variables used for the key and the value in a foreach assignment should be unique.';
-			$error .= 'Both the key and the value will currently be assigned to: "%s"';
+            $fix = $phpcsFile->addFixableError($error, $doubleArrowPtr, 'NotUnique', [$valueAsString]);
+            if ($fix === true) {
+                $phpcsFile->fixer->beginChangeset();
 
-			$fix = $phpcsFile->addFixableError( $error, $doubleArrowPtr, 'NotUnique', array( $valueAsString ) );
-			if ( $fix === true ) {
-				$phpcsFile->fixer->beginChangeset();
+                // Remove the key.
+                for ($i = ($asPtr + 1); $i < ($doubleArrowPtr + 1); $i++) {
+                    if ($tokens[$i]['code'] === \T_WHITESPACE
+                        && isset(Tokens::$commentTokens[$tokens[($i + 1)]['code']])
+                    ) {
+                        // Don't remove whitespace when followed directly by a comment.
+                        continue;
+                    }
 
-				// Remove the key.
-				for ( $i = ( $asPtr + 1 ); $i < ( $doubleArrowPtr + 1 ); $i++ ) {
-					if ( $tokens[ $i ]['code'] === \T_WHITESPACE
-						&& isset( Tokens::$commentTokens[ $tokens[ ( $i + 1 ) ]['code'] ] )
-					) {
-						// Don't remove whitespace when followed directly by a comment.
-						continue;
-					}
+                    if (isset(Tokens::$commentTokens[$tokens[$i]['code']])) {
+                        // Don't remove comments.
+                        continue;
+                    }
 
-					if ( isset( Tokens::$commentTokens[ $tokens[ $i ]['code'] ] ) ) {
-						// Don't remove comments.
-						continue;
-					}
+                    // Remove everything else.
+                    $phpcsFile->fixer->replaceToken($i, '');
+                }
 
-					// Remove everything else.
-					$phpcsFile->fixer->replaceToken( $i, '' );
-				}
+                $phpcsFile->fixer->endChangeset();
+            }
 
-				$phpcsFile->fixer->endChangeset();
-			}
-
-			break;
-		}
-	}
+            break;
+        }
+    }
 }

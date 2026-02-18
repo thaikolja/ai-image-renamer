@@ -24,119 +24,121 @@ use PHP_CodeSniffer\Util\Tokens;
  *
  * @since 1.1.0
  */
-final class NoEchoSprintfSniff implements Sniff {
+final class NoEchoSprintfSniff implements Sniff
+{
 
+    /**
+     * Functions to look for with their replacements.
+     *
+     * @since 1.1.0
+     *
+     * @var array<string, string>
+     */
+    private $targetFunctions = [
+        'sprintf'  => 'printf',
+        'vsprintf' => 'vprintf',
+    ];
 
-	/**
-	 * Functions to look for with their replacements.
-	 *
-	 * @since 1.1.0
-	 *
-	 * @var array<string, string>
-	 */
-	private $targetFunctions = array(
-		'sprintf'  => 'printf',
-		'vsprintf' => 'vprintf',
-	);
+    /**
+     * Returns an array of tokens this test wants to listen for.
+     *
+     * @since 1.1.0
+     *
+     * @return array<int|string>
+     */
+    public function register()
+    {
+        return [\T_ECHO];
+    }
 
-	/**
-	 * Returns an array of tokens this test wants to listen for.
-	 *
-	 * @since 1.1.0
-	 *
-	 * @return array<int|string>
-	 */
-	public function register() {
-		return array( \T_ECHO );
-	}
+    /**
+     * Processes this test, when one of its tokens is encountered.
+     *
+     * @since 1.1.0
+     *
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token
+     *                                               in the stack passed in $tokens.
+     *
+     * @return void
+     */
+    public function process(File $phpcsFile, $stackPtr)
+    {
+        $tokens = $phpcsFile->getTokens();
 
-	/**
-	 * Processes this test, when one of its tokens is encountered.
-	 *
-	 * @since 1.1.0
-	 *
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-	 * @param int                         $stackPtr  The position of the current token
-	 *                                               in the stack passed in $tokens.
-	 *
-	 * @return void
-	 */
-	public function process( File $phpcsFile, $stackPtr ) {
-		$tokens = $phpcsFile->getTokens();
+        $skip   = Tokens::$emptyTokens;
+        $skip[] = \T_NS_SEPARATOR;
 
-		$skip   = Tokens::$emptyTokens;
-		$skip[] = \T_NS_SEPARATOR;
+        $next = $phpcsFile->findNext($skip, ($stackPtr + 1), null, true);
+        if ($next === false
+            || ($tokens[$next]['code'] !== \T_STRING
+            && $tokens[$next]['code'] !== \T_NAME_FULLY_QUALIFIED)
+        ) {
+            // Definitely not our target.
+            return;
+        }
 
-		$next = $phpcsFile->findNext( $skip, ( $stackPtr + 1 ), null, true );
-		if ( $next === false
-			|| ( $tokens[ $next ]['code'] !== \T_STRING
-			&& $tokens[ $next ]['code'] !== \T_NAME_FULLY_QUALIFIED )
-		) {
-			// Definitely not our target.
-			return;
-		}
+        $detectedFunction = \strtolower($tokens[$next]['content']);
+        if ($tokens[$next]['code'] === \T_NAME_FULLY_QUALIFIED) {
+            $detectedFunction = \ltrim($detectedFunction, '\\');
+        }
 
-		$detectedFunction = \strtolower( $tokens[ $next ]['content'] );
-		if ( $tokens[ $next ]['code'] === \T_NAME_FULLY_QUALIFIED ) {
-			$detectedFunction = \ltrim( $detectedFunction, '\\' );
-		}
+        if (isset($this->targetFunctions[$detectedFunction]) === false) {
+            // Not one of our target functions.
+            return;
+        }
 
-		if ( isset( $this->targetFunctions[ $detectedFunction ] ) === false ) {
-			// Not one of our target functions.
-			return;
-		}
+        $openParens = $phpcsFile->findNext(Tokens::$emptyTokens, ($next + 1), null, true);
+        if ($openParens === false
+            || $tokens[$openParens]['code'] !== \T_OPEN_PARENTHESIS
+            || isset($tokens[$openParens]['parenthesis_closer']) === false
+        ) {
+            // Live coding/parse error.
+            return;
+        }
 
-		$openParens = $phpcsFile->findNext( Tokens::$emptyTokens, ( $next + 1 ), null, true );
-		if ( $openParens === false
-			|| $tokens[ $openParens ]['code'] !== \T_OPEN_PARENTHESIS
-			|| isset( $tokens[ $openParens ]['parenthesis_closer'] ) === false
-		) {
-			// Live coding/parse error.
-			return;
-		}
+        $closeParens       = $tokens[$openParens]['parenthesis_closer'];
+        $afterFunctionCall = $phpcsFile->findNext(Tokens::$emptyTokens, ($closeParens + 1), null, true);
+        if ($afterFunctionCall === false
+            || ($tokens[$afterFunctionCall]['code'] !== \T_SEMICOLON
+            && $tokens[$afterFunctionCall]['code'] !== \T_CLOSE_TAG)
+        ) {
+            // Live coding/parse error or compound echo statement.
+            return;
+        }
 
-		$closeParens       = $tokens[ $openParens ]['parenthesis_closer'];
-		$afterFunctionCall = $phpcsFile->findNext( Tokens::$emptyTokens, ( $closeParens + 1 ), null, true );
-		if ( $afterFunctionCall === false
-			|| ( $tokens[ $afterFunctionCall ]['code'] !== \T_SEMICOLON
-			&& $tokens[ $afterFunctionCall ]['code'] !== \T_CLOSE_TAG )
-		) {
-			// Live coding/parse error or compound echo statement.
-			return;
-		}
+        $fix = $phpcsFile->addFixableError(
+            'Unnecessary "echo %s(...)" found. Use "%s(...)" instead.',
+            $next,
+            'Found',
+            [
+                $tokens[$next]['content'],
+                $this->targetFunctions[$detectedFunction],
+            ]
+        );
 
-		$fix = $phpcsFile->addFixableError(
-			'Unnecessary "echo %s(...)" found. Use "%s(...)" instead.',
-			$next,
-			'Found',
-			array(
-				$tokens[ $next ]['content'],
-				$this->targetFunctions[ $detectedFunction ],
-			)
-		);
+        if ($fix === true) {
+            $phpcsFile->fixer->beginChangeset();
 
-		if ( $fix === true ) {
-			$phpcsFile->fixer->beginChangeset();
+            // Remove echo and whitespace.
+            $phpcsFile->fixer->replaceToken($stackPtr, '');
 
-			// Remove echo and whitespace.
-			$phpcsFile->fixer->replaceToken( $stackPtr, '' );
+            for ($i = ($stackPtr + 1); $i < $next; $i++) {
+                if ($tokens[$i]['code'] !== \T_WHITESPACE) {
+                    break;
+                }
 
-			for ( $i = ( $stackPtr + 1 ); $i < $next; $i++ ) {
-				if ( $tokens[ $i ]['code'] !== \T_WHITESPACE ) {
-					break;
-				}
+                $phpcsFile->fixer->replaceToken($i, '');
+            }
 
-				$phpcsFile->fixer->replaceToken( $i, '' );
-			}
+            $replacement = $this->targetFunctions[$detectedFunction];
+            if ($tokens[$next]['code'] === \T_NAME_FULLY_QUALIFIED) {
+                $replacement = '\\' . $replacement;
+            }
 
-			$replacement = $this->targetFunctions[ $detectedFunction ];
-			if ( $tokens[ $next ]['code'] === \T_NAME_FULLY_QUALIFIED ) {
-				$replacement = '\\' . $replacement;
-			}
+            $phpcsFile->fixer->replaceToken($next, $replacement);
 
-			$phpcsFile->fixer->replaceToken( $next, $replacement );
-
-			$phpcsFile->fixer->endChangeset();
-		}
-	}
+            $phpcsFile->fixer->endChangeset();
+        }
+    }
 }

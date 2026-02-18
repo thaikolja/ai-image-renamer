@@ -21,122 +21,124 @@ use PHPCSUtils\Utils\AttributeBlock;
  *
  * @since 1.5.0
  */
-final class TrailingCommaSniff implements Sniff {
+final class TrailingCommaSniff implements Sniff
+{
 
+    /**
+     * Name of the metric for single-line attribute blocks.
+     *
+     * @since 1.5.0
+     *
+     * @var string
+     */
+    const METRIC_NAME_SINGLE_LINE = 'Trailing comma in single-line attribute block';
 
-	/**
-	 * Name of the metric for single-line attribute blocks.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @var string
-	 */
-	const METRIC_NAME_SINGLE_LINE = 'Trailing comma in single-line attribute block';
+    /**
+     * Name of the metric for multi-line attribute blocks.
+     *
+     * @since 1.5.0
+     *
+     * @var string
+     */
+    const METRIC_NAME_MULTI_LINE = 'Trailing comma in multi-line attribute block';
 
-	/**
-	 * Name of the metric for multi-line attribute blocks.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @var string
-	 */
-	const METRIC_NAME_MULTI_LINE = 'Trailing comma in multi-line attribute block';
+    /**
+     * Returns an array of tokens this test wants to listen for.
+     *
+     * @since 1.5.0
+     *
+     * @return array<int|string>
+     */
+    public function register()
+    {
+        return [\T_ATTRIBUTE];
+    }
 
-	/**
-	 * Returns an array of tokens this test wants to listen for.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @return array<int|string>
-	 */
-	public function register() {
-		return array( \T_ATTRIBUTE );
-	}
+    /**
+     * Processes this test, when one of its tokens is encountered.
+     *
+     * @since 1.5.0
+     *
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token
+     *                                               in the stack passed in $tokens.
+     *
+     * @return void
+     */
+    public function process(File $phpcsFile, $stackPtr)
+    {
+        $tokens = $phpcsFile->getTokens();
 
-	/**
-	 * Processes this test, when one of its tokens is encountered.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-	 * @param int                         $stackPtr  The position of the current token
-	 *                                               in the stack passed in $tokens.
-	 *
-	 * @return void
-	 */
-	public function process( File $phpcsFile, $stackPtr ) {
-		$tokens = $phpcsFile->getTokens();
+        if (isset($tokens[$stackPtr]['attribute_closer']) === false) {
+            // Live coding/parse error. Ignore.
+            return;
+        }
 
-		if ( isset( $tokens[ $stackPtr ]['attribute_closer'] ) === false ) {
-			// Live coding/parse error. Ignore.
-			return;
-		}
+        $opener = $stackPtr;
+        $closer = $tokens[$stackPtr]['attribute_closer'];
 
-		$opener = $stackPtr;
-		$closer = $tokens[ $stackPtr ]['attribute_closer'];
+        $beforeCloser = $phpcsFile->findPrevious(Tokens::$emptyTokens, ($closer - 1), null, true);
+        if ($opener === $beforeCloser) {
+            // Empty attribute block. Ignore.
+            return;
+        }
 
-		$beforeCloser = $phpcsFile->findPrevious( Tokens::$emptyTokens, ( $closer - 1 ), null, true );
-		if ( $opener === $beforeCloser ) {
-			// Empty attribute block. Ignore.
-			return;
-		}
+        if ($tokens[$opener]['line'] === $tokens[$closer]['line']) {
+            // Single-line attribute block.
+            if ($tokens[$beforeCloser]['code'] === \T_COMMA) {
+                $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME_SINGLE_LINE, 'yes');
 
-		if ( $tokens[ $opener ]['line'] === $tokens[ $closer ]['line'] ) {
-			// Single-line attribute block.
-			if ( $tokens[ $beforeCloser ]['code'] === \T_COMMA ) {
-				$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME_SINGLE_LINE, 'yes' );
+                $fix = $phpcsFile->addFixableError(
+                    'Trailing comma is not allowed in a single-line attribute block',
+                    $beforeCloser,
+                    'ForbiddenSingleLine'
+                );
+                if ($fix === true) {
+                    $phpcsFile->fixer->replaceToken($beforeCloser, '');
+                }
+            } else {
+                $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME_SINGLE_LINE, 'no');
+            }
 
-				$fix = $phpcsFile->addFixableError(
-					'Trailing comma is not allowed in a single-line attribute block',
-					$beforeCloser,
-					'ForbiddenSingleLine'
-				);
-				if ( $fix === true ) {
-					$phpcsFile->fixer->replaceToken( $beforeCloser, '' );
-				}
-			} else {
-				$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME_SINGLE_LINE, 'no' );
-			}
+            return;
+        }
 
-			return;
-		}
+        // Multi-line attribute block, check whether it contains a single attribute or multiple.
+        $attributeCount = AttributeBlock::countAttributes($phpcsFile, $stackPtr);
+        if ($attributeCount > 1) {
+            // Multiple attributes in a multi-line attribute block, require trailing comma.
+            if ($tokens[$beforeCloser]['code'] !== \T_COMMA) {
+                $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME_MULTI_LINE, 'No, multi-attribute');
 
-		// Multi-line attribute block, check whether it contains a single attribute or multiple.
-		$attributeCount = AttributeBlock::countAttributes( $phpcsFile, $stackPtr );
-		if ( $attributeCount > 1 ) {
-			// Multiple attributes in a multi-line attribute block, require trailing comma.
-			if ( $tokens[ $beforeCloser ]['code'] !== \T_COMMA ) {
-				$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME_MULTI_LINE, 'No, multi-attribute' );
+                $fix = $phpcsFile->addFixableError(
+                    'Trailing comma required after last attribute in a multi-line, multi-attribute attribute block',
+                    $beforeCloser,
+                    'RequiredMultiAttributeMultiLine'
+                );
+                if ($fix === true) {
+                    $phpcsFile->fixer->addContent($beforeCloser, ',');
+                }
+            } else {
+                $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME_MULTI_LINE, 'Yes, multi-attribute');
+            }
 
-				$fix = $phpcsFile->addFixableError(
-					'Trailing comma required after last attribute in a multi-line, multi-attribute attribute block',
-					$beforeCloser,
-					'RequiredMultiAttributeMultiLine'
-				);
-				if ( $fix === true ) {
-					$phpcsFile->fixer->addContent( $beforeCloser, ',' );
-				}
-			} else {
-				$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME_MULTI_LINE, 'Yes, multi-attribute' );
-			}
+            return;
+        }
 
-			return;
-		}
+        // Single attribute in a multi-line attribute block, forbid trailing comma.
+        if ($tokens[$beforeCloser]['code'] === \T_COMMA) {
+            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME_MULTI_LINE, 'Yes, single attribute');
 
-		// Single attribute in a multi-line attribute block, forbid trailing comma.
-		if ( $tokens[ $beforeCloser ]['code'] === \T_COMMA ) {
-			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME_MULTI_LINE, 'Yes, single attribute' );
-
-			$fix = $phpcsFile->addFixableError(
-				'Trailing comma is not allowed when a multi-line attribute block only contains a single attribute',
-				$beforeCloser,
-				'ForbiddenSingleAttributeMultiLine'
-			);
-			if ( $fix === true ) {
-				$phpcsFile->fixer->replaceToken( $beforeCloser, '' );
-			}
-		} else {
-			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME_MULTI_LINE, 'No, single attribute' );
-		}
-	}
+            $fix = $phpcsFile->addFixableError(
+                'Trailing comma is not allowed when a multi-line attribute block only contains a single attribute',
+                $beforeCloser,
+                'ForbiddenSingleAttributeMultiLine'
+            );
+            if ($fix === true) {
+                $phpcsFile->fixer->replaceToken($beforeCloser, '');
+            }
+        } else {
+            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME_MULTI_LINE, 'No, single attribute');
+        }
+    }
 }

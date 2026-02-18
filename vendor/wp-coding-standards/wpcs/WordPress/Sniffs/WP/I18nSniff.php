@@ -149,29 +149,29 @@ final class I18nSniff extends AbstractFunctionParameterSniff {
 	 * @var array<string, array> Array of the parameter positions and names.
 	 */
 	private $parameter_specs = array(
-		'simple'             => array(
+		'simple' => array(
 			1 => 'text',
 			2 => 'domain',
 		),
-		'context'            => array(
+		'context' => array(
 			1 => 'text',
 			2 => 'context',
 			3 => 'domain',
 		),
-		'number'             => array(
+		'number' => array(
 			1 => 'single',
 			2 => 'plural',
 			3 => 'number',
 			4 => 'domain',
 		),
-		'number_context'     => array(
+		'number_context' => array(
 			1 => 'single',
 			2 => 'plural',
 			3 => 'number',
 			4 => 'context',
 			5 => 'domain',
 		),
-		'noopnumber'         => array(
+		'noopnumber' => array(
 			1 => 'singular',
 			2 => 'plural',
 			3 => 'domain',
@@ -199,7 +199,7 @@ final class I18nSniff extends AbstractFunctionParameterSniff {
 	 */
 	public function getGroups() {
 		return array(
-			'i18n'  => array(
+			'i18n' => array(
 				'functions' => array_keys( $this->i18n_functions ),
 			),
 			'typos' => array(

@@ -20,69 +20,71 @@ use PHPCSUtils\Utils\AttributeBlock;
  *
  * @since 1.5.0
  */
-final class RequireAttributeParenthesesSniff implements Sniff {
+final class RequireAttributeParenthesesSniff implements Sniff
+{
 
+    /**
+     * Name of the metric.
+     *
+     * @since 1.5.0
+     *
+     * @var string
+     */
+    const METRIC_NAME = 'Attribute instantiation with parentheses';
 
-	/**
-	 * Name of the metric.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @var string
-	 */
-	const METRIC_NAME = 'Attribute instantiation with parentheses';
+    /**
+     * Returns an array of tokens this test wants to listen for.
+     *
+     * @since 1.5.0
+     *
+     * @return array<int|string>
+     */
+    public function register()
+    {
+        return [\T_ATTRIBUTE];
+    }
 
-	/**
-	 * Returns an array of tokens this test wants to listen for.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @return array<int|string>
-	 */
-	public function register() {
-		return array( \T_ATTRIBUTE );
-	}
+    /**
+     * Processes this test, when one of its tokens is encountered.
+     *
+     * @since 1.5.0
+     *
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token
+     *                                               in the stack passed in $tokens.
+     *
+     * @return void
+     */
+    public function process(File $phpcsFile, $stackPtr)
+    {
+        $instantiations = AttributeBlock::getAttributes($phpcsFile, $stackPtr);
+        if (empty($instantiations)) {
+            return;
+        }
 
-	/**
-	 * Processes this test, when one of its tokens is encountered.
-	 *
-	 * @since 1.5.0
-	 *
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-	 * @param int                         $stackPtr  The position of the current token
-	 *                                               in the stack passed in $tokens.
-	 *
-	 * @return void
-	 */
-	public function process( File $phpcsFile, $stackPtr ) {
-		$instantiations = AttributeBlock::getAttributes( $phpcsFile, $stackPtr );
-		if ( empty( $instantiations ) ) {
-			return;
-		}
+        $tokens = $phpcsFile->getTokens();
 
-		$tokens = $phpcsFile->getTokens();
+        foreach ($instantiations as $attribute) {
+            $nextNonEmpty = $phpcsFile->findNext(Tokens::$emptyTokens, ($attribute['name_token'] + 1), null, true);
 
-		foreach ( $instantiations as $attribute ) {
-			$nextNonEmpty = $phpcsFile->findNext( Tokens::$emptyTokens, ( $attribute['name_token'] + 1 ), null, true );
+            // Note: no need to check for `false` as there will always be something after, if only the attribute closer.
+            if ($tokens[$nextNonEmpty]['code'] === \T_OPEN_PARENTHESIS) {
+                // Parentheses found.
+                $phpcsFile->recordMetric($attribute['name_token'], self::METRIC_NAME, 'yes');
+                continue;
+            }
 
-			// Note: no need to check for `false` as there will always be something after, if only the attribute closer.
-			if ( $tokens[ $nextNonEmpty ]['code'] === \T_OPEN_PARENTHESIS ) {
-				// Parentheses found.
-				$phpcsFile->recordMetric( $attribute['name_token'], self::METRIC_NAME, 'yes' );
-				continue;
-			}
+            $phpcsFile->recordMetric($attribute['name_token'], self::METRIC_NAME, 'no');
 
-			$phpcsFile->recordMetric( $attribute['name_token'], self::METRIC_NAME, 'no' );
+            $fix = $phpcsFile->addFixableError(
+                'Parentheses required when instantiating an attribute class.',
+                $attribute['name_token'],
+                'Missing'
+            );
 
-			$fix = $phpcsFile->addFixableError(
-				'Parentheses required when instantiating an attribute class.',
-				$attribute['name_token'],
-				'Missing'
-			);
-
-			if ( $fix === true ) {
-				$phpcsFile->fixer->addContent( $attribute['name_token'], '()' );
-			}
-		}
-	}
+            if ($fix === true) {
+                $phpcsFile->fixer->addContent($attribute['name_token'], '()');
+            }
+        }
+    }
 }

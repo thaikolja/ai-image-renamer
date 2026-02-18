@@ -30,158 +30,160 @@ use PHPCSUtils\Tokens\Collections;
  *
  * @since 1.0.0
  */
-final class SeparateFunctionsFromOOSniff implements Sniff {
+final class SeparateFunctionsFromOOSniff implements Sniff
+{
 
+    /**
+     * Name of the metric.
+     *
+     * @since 1.0.0
+     *
+     * @var string
+     */
+    const METRIC_NAME = 'Functions or OO declarations ?';
 
-	/**
-	 * Name of the metric.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var string
-	 */
-	const METRIC_NAME = 'Functions or OO declarations ?';
+    /**
+     * Tokens this sniff searches for.
+     *
+     * Enhanced from within the register() methods.
+     *
+     * @since 1.0.0
+     *
+     * @var array<int|string>
+     */
+    private $search = [
+        // Some tokens to help skip over structures we're not interested in.
+        \T_START_HEREDOC => \T_START_HEREDOC,
+        \T_START_NOWDOC  => \T_START_NOWDOC,
+    ];
 
-	/**
-	 * Tokens this sniff searches for.
-	 *
-	 * Enhanced from within the register() methods.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var array<int|string>
-	 */
-	private $search = array(
-		// Some tokens to help skip over structures we're not interested in.
-		\T_START_HEREDOC => \T_START_HEREDOC,
-		\T_START_NOWDOC  => \T_START_NOWDOC,
-	);
+    /**
+     * Returns an array of tokens this test wants to listen for.
+     *
+     * @since 1.0.0
+     *
+     * @return array<int|string>
+     */
+    public function register()
+    {
+        $this->search += Tokens::$ooScopeTokens;
+        $this->search += Collections::functionDeclarationTokens();
 
-	/**
-	 * Returns an array of tokens this test wants to listen for.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return array<int|string>
-	 */
-	public function register() {
-		$this->search += Tokens::$ooScopeTokens;
-		$this->search += Collections::functionDeclarationTokens();
+        return Collections::phpOpenTags();
+    }
 
-		return Collections::phpOpenTags();
-	}
+    /**
+     * Processes this test, when one of its tokens is encountered.
+     *
+     * @since 1.0.0
+     *
+     * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
+     * @param int                         $stackPtr  The position of the current token
+     *                                               in the stack passed in $tokens.
+     *
+     * @return int Integer stack pointer to skip forward.
+     */
+    public function process(File $phpcsFile, $stackPtr)
+    {
+        $tokens = $phpcsFile->getTokens();
 
-	/**
-	 * Processes this test, when one of its tokens is encountered.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param \PHP_CodeSniffer\Files\File $phpcsFile The file being scanned.
-	 * @param int                         $stackPtr  The position of the current token
-	 *                                               in the stack passed in $tokens.
-	 *
-	 * @return int Integer stack pointer to skip forward.
-	 */
-	public function process( File $phpcsFile, $stackPtr ) {
-		$tokens = $phpcsFile->getTokens();
+        $firstOO       = null;
+        $firstFunction = null;
+        $functionCount = 0;
+        $OOCount       = 0;
 
-		$firstOO       = null;
-		$firstFunction = null;
-		$functionCount = 0;
-		$OOCount       = 0;
+        for ($i = 0; $i < $phpcsFile->numTokens; $i++) {
+            // Ignore anything within square brackets.
+            if ($tokens[$i]['code'] !== \T_OPEN_CURLY_BRACKET
+                && isset($tokens[$i]['bracket_opener'], $tokens[$i]['bracket_closer'])
+                && $i === $tokens[$i]['bracket_opener']
+            ) {
+                $i = $tokens[$i]['bracket_closer'];
+                continue;
+            }
 
-		for ( $i = 0; $i < $phpcsFile->numTokens; $i++ ) {
-			// Ignore anything within square brackets.
-			if ( $tokens[ $i ]['code'] !== \T_OPEN_CURLY_BRACKET
-				&& isset( $tokens[ $i ]['bracket_opener'], $tokens[ $i ]['bracket_closer'] )
-				&& $i === $tokens[ $i ]['bracket_opener']
-			) {
-				$i = $tokens[ $i ]['bracket_closer'];
-				continue;
-			}
+            // Skip past nested arrays, function calls and arbitrary groupings.
+            if ($tokens[$i]['code'] === \T_OPEN_PARENTHESIS
+                && isset($tokens[$i]['parenthesis_closer'])
+            ) {
+                $i = $tokens[$i]['parenthesis_closer'];
+                continue;
+            }
 
-			// Skip past nested arrays, function calls and arbitrary groupings.
-			if ( $tokens[ $i ]['code'] === \T_OPEN_PARENTHESIS
-				&& isset( $tokens[ $i ]['parenthesis_closer'] )
-			) {
-				$i = $tokens[ $i ]['parenthesis_closer'];
-				continue;
-			}
+            // Skip over potentially large docblocks.
+            if ($tokens[$i]['code'] === \T_DOC_COMMENT_OPEN_TAG
+                && isset($tokens[$i]['comment_closer'])
+            ) {
+                $i = $tokens[$i]['comment_closer'];
+                continue;
+            }
 
-			// Skip over potentially large docblocks.
-			if ( $tokens[ $i ]['code'] === \T_DOC_COMMENT_OPEN_TAG
-				&& isset( $tokens[ $i ]['comment_closer'] )
-			) {
-				$i = $tokens[ $i ]['comment_closer'];
-				continue;
-			}
+            // Ignore everything else we're not interested in.
+            if (isset($this->search[$tokens[$i]['code']]) === false) {
+                continue;
+            }
 
-			// Ignore everything else we're not interested in.
-			if ( isset( $this->search[ $tokens[ $i ]['code'] ] ) === false ) {
-				continue;
-			}
+            // Skip over structures which won't contain anything we're interested in.
+            if (($tokens[$i]['code'] === \T_START_HEREDOC
+                || $tokens[$i]['code'] === \T_START_NOWDOC
+                || $tokens[$i]['code'] === \T_ANON_CLASS
+                || $tokens[$i]['code'] === \T_CLOSURE
+                || $tokens[$i]['code'] === \T_FN)
+                && isset($tokens[$i]['scope_condition'], $tokens[$i]['scope_closer'])
+                && $tokens[$i]['scope_condition'] === $i
+            ) {
+                $i = $tokens[$i]['scope_closer'];
+                continue;
+            }
 
-			// Skip over structures which won't contain anything we're interested in.
-			if ( ( $tokens[ $i ]['code'] === \T_START_HEREDOC
-				|| $tokens[ $i ]['code'] === \T_START_NOWDOC
-				|| $tokens[ $i ]['code'] === \T_ANON_CLASS
-				|| $tokens[ $i ]['code'] === \T_CLOSURE
-				|| $tokens[ $i ]['code'] === \T_FN )
-				&& isset( $tokens[ $i ]['scope_condition'], $tokens[ $i ]['scope_closer'] )
-				&& $tokens[ $i ]['scope_condition'] === $i
-			) {
-				$i = $tokens[ $i ]['scope_closer'];
-				continue;
-			}
+            // This will be either a function declaration or an OO declaration token.
+            if ($tokens[$i]['code'] === \T_FUNCTION) {
+                if (isset($firstFunction) === false) {
+                    $firstFunction = $i;
+                }
 
-			// This will be either a function declaration or an OO declaration token.
-			if ( $tokens[ $i ]['code'] === \T_FUNCTION ) {
-				if ( isset( $firstFunction ) === false ) {
-					$firstFunction = $i;
-				}
+                ++$functionCount;
+            } else {
+                if (isset($firstOO) === false) {
+                    $firstOO = $i;
+                }
 
-				++$functionCount;
-			} else {
-				if ( isset( $firstOO ) === false ) {
-					$firstOO = $i;
-				}
+                ++$OOCount;
+            }
 
-				++$OOCount;
-			}
+            if (isset($tokens[$i]['scope_closer']) === true) {
+                $i = $tokens[$i]['scope_closer'];
+            }
+        }
 
-			if ( isset( $tokens[ $i ]['scope_closer'] ) === true ) {
-				$i = $tokens[ $i ]['scope_closer'];
-			}
-		}
+        if ($functionCount > 0 && $OOCount > 0) {
+            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'Both function and OO declarations');
 
-		if ( $functionCount > 0 && $OOCount > 0 ) {
-			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'Both function and OO declarations' );
+            $reportToken = \max($firstFunction, $firstOO);
 
-			$reportToken = \max( $firstFunction, $firstOO );
+            $phpcsFile->addError(
+                'A file should either contain function declarations or OO structure declarations, but not both.'
+                    . ' Found %d function declaration(s) and %d OO structure declaration(s).'
+                    . ' The first function declaration was found on line %d;'
+                    . ' the first OO declaration was found on line %d',
+                $reportToken,
+                'Mixed',
+                [
+                    $functionCount,
+                    $OOCount,
+                    $tokens[$firstFunction]['line'],
+                    $tokens[$firstOO]['line'],
+                ]
+            );
+        } elseif ($functionCount > 0) {
+            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'Only function(s)');
+        } elseif ($OOCount > 0) {
+            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'Only OO structure(s)');
+        } else {
+            $phpcsFile->recordMetric($stackPtr, self::METRIC_NAME, 'Neither');
+        }
 
-			$phpcsFile->addError(
-				'A file should either contain function declarations or OO structure declarations, but not both.'
-					. ' Found %d function declaration(s) and %d OO structure declaration(s).'
-					. ' The first function declaration was found on line %d;'
-					. ' the first OO declaration was found on line %d',
-				$reportToken,
-				'Mixed',
-				array(
-					$functionCount,
-					$OOCount,
-					$tokens[ $firstFunction ]['line'],
-					$tokens[ $firstOO ]['line'],
-				)
-			);
-		} elseif ( $functionCount > 0 ) {
-			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'Only function(s)' );
-		} elseif ( $OOCount > 0 ) {
-			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'Only OO structure(s)' );
-		} else {
-			$phpcsFile->recordMetric( $stackPtr, self::METRIC_NAME, 'Neither' );
-		}
-
-		// Ignore the rest of the file.
-		return $phpcsFile->numTokens;
-	}
+        // Ignore the rest of the file.
+        return $phpcsFile->numTokens;
+    }
 }

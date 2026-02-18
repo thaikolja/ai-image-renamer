@@ -80,43 +80,43 @@ final class IniSetSniff extends AbstractFunctionParameterSniff {
 	 *     );
 	 */
 	protected $disallowed_options = array(
-		'bcmath.scale'            => array(
+		'bcmath.scale' => array(
 			'message' => 'Use `bcscale()` instead.',
 		),
-		'display_errors'          => array(
+		'display_errors' => array(
 			'message' => 'Use `WP_DEBUG_DISPLAY` instead.',
 		),
-		'error_reporting'         => array(
+		'error_reporting' => array(
 			'message' => 'Use `WP_DEBUG` instead.',
 		),
-		'filter.default'          => array(
+		'filter.default' => array(
 			'message' => 'Changing the option value can break other plugins. Use the filter flag constants when calling the Filter functions instead.',
 		),
-		'filter.default_flags'    => array(
+		'filter.default_flags' => array(
 			'message' => 'Changing the option value can break other plugins. Use the filter flag constants when calling the Filter functions instead.',
 		),
-		'iconv.input_encoding'    => array(
+		'iconv.input_encoding' => array(
 			'message' => 'This option is not supported since PHP 5.6 - use `iconv_set_encoding()` instead.',
 		),
 		'iconv.internal_encoding' => array(
 			'message' => 'This option is not supported since PHP 5.6 - use `iconv_set_encoding()` instead.',
 		),
-		'iconv.output_encoding'   => array(
+		'iconv.output_encoding' => array(
 			'message' => 'This option is not supported since PHP 5.6 - use `iconv_set_encoding()` instead.',
 		),
-		'ignore_user_abort'       => array(
+		'ignore_user_abort' => array(
 			'message' => 'Use `ignore_user_abort()` instead.',
 		),
-		'log_errors'              => array(
+		'log_errors' => array(
 			'message' => 'Use `WP_DEBUG_LOG` instead.',
 		),
-		'max_execution_time'      => array(
+		'max_execution_time' => array(
 			'message' => 'Use `set_time_limit()` instead.',
 		),
-		'memory_limit'            => array(
+		'memory_limit' => array(
 			'message' => 'Use `wp_raise_memory_limit()` or hook into the filters in that function.',
 		),
-		'short_open_tag'          => array(
+		'short_open_tag' => array(
 			'invalid_values' => array( 'false', '0', 'off' ),
 			'message'        => 'Turning off short_open_tag is prohibited as it can break other plugins.',
 		),

@@ -167,7 +167,7 @@ class EscapeOutputSniff extends AbstractFunctionRestrictionsSniff {
 			'unsafe_printing_functions' => array(
 				'functions' => array_keys( $this->unsafePrintingFunctions ),
 			),
-			'printing_functions'        => array(
+			'printing_functions' => array(
 				'functions' => array_keys( $printing_functions ),
 			),
 		);

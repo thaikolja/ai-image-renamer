@@ -34,23 +34,23 @@ final class WPHookHelper {
 	 *                                                        parameter position and name(s) as value.
 	 */
 	private static $hookInvokeFunctions = array(
-		'do_action'                => array(
+		'do_action' => array(
 			'position' => 1,
 			'name'     => 'hook_name',
 		),
-		'do_action_ref_array'      => array(
+		'do_action_ref_array' => array(
 			'position' => 1,
 			'name'     => 'hook_name',
 		),
-		'do_action_deprecated'     => array(
+		'do_action_deprecated' => array(
 			'position' => 1,
 			'name'     => 'hook_name',
 		),
-		'apply_filters'            => array(
+		'apply_filters' => array(
 			'position' => 1,
 			'name'     => 'hook_name',
 		),
-		'apply_filters_ref_array'  => array(
+		'apply_filters_ref_array' => array(
 			'position' => 1,
 			'name'     => 'hook_name',
 		),
