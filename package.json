@@ -1,0 +1,33 @@
+{
+  "name":            "ai-image-renamer",
+  "version":         "1.0.0",
+  "description":     "Uses AI to rename images during upload for SEO-friendly filenames.",
+  "main":            "index.js",
+  "scripts":         {
+
+    "start":      "vite",
+    "build":      "vite build && node scripts/generate-asset-file.mjs",
+    "preview":    "vite preview",
+    "zip":        "node scripts/plugin-zip.mjs",
+    "bundle":     "npm run build && composer install --no-dev -o --prefer-dist && npm run zip && composer install",
+    "production": "npm run bundle",
+    "lint:js":    "wp-scripts lint-js --fix",
+    "lint:css":   "wp-scripts lint-style --fix"
+  },
+  "keywords":        [
+    "wordpress",
+    "plugin",
+    "ai",
+    "seo",
+    "image-renaming"
+  ],
+  "author":          "Kolja Nolte <kolja.nolte@gmail.com>",
+  "license":         "GPL-2.0-or-later",
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.28.6",
+    "@babel/preset-env":    "^7.29.0",
+    "@wordpress/scripts":   "^31.1.0",
+    "adm-zip":              "^0.5.10",
+    "vite":                 "^6.0.0"
+  }
+}

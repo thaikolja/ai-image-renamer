@@ -1,0 +1,22 @@
+# Exclude development files
+src/
+node_modules/
+scripts/
+# Exclude configuration files
+package.json
+bun.lock
+composer.json
+composer.lock
+phpcs.xml.dist
+vite.config.mjs
+.gitignore
+# Exclude all markdown files (WordPress uses readme.txt)
+*.md
+# Exclude AI assistant files
+.claude/
+.clavix/
+.gemini/
+.qwen/
+# Exclude cache and system files
+cache/
+.DS_Store

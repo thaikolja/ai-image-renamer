@@ -1,0 +1,12 @@
+{
+	"root": true,
+	"parser": "@babel/eslint-parser",
+	"parserOptions": {
+		"requireConfigFile": false,
+		"babelOptions": {
+			"presets": ["@babel/preset-env"]
+		},
+		"ecmaVersion": "latest",
+		"sourceType": "module"
+	}
+}
