@@ -1,13 +1,13 @@
 .AssetLineageWidgetType-item {
-	color: #fff;
+    color: #FFF;
 }
 
 .AssetLineageWidgetType-title {
-	color: #ccc;
+    color: #CCC;
 }
 
 .AssetLineageWidgetType-item {
-	color: #ccc;
+    color: #CCC;
 }
 
 .AssetLineageWidgetType-item .selected {
@@ -23,17 +23,13 @@
 .AssetLineageWidgetType-item {
 }
 
-.MyClass,
- .YourClass {
+.MyClass, .YourClass {
 }
 
-.YourClass,
- .MyClass {
+.YourClass, .MyClass {
 }
 
-.YourClass,
- .MyClass,
- .OurClass {
+.YourClass, .MyClass, .OurClass {
 }
 
 
@@ -41,72 +37,67 @@
 }
 
 @media print {
+    .ClassAtTopOfMediaBlock {
+    }
 
-	.ClassAtTopOfMediaBlock {
-	}
-
-	.ClassInMultipleMediaBlocks {
-	}
+    .ClassInMultipleMediaBlocks {
+    }
 }
 
 .ClassNotAtTopOfMediaBlock {
 }
 
 @media handheld {
+    .SameClassInMediaBlock {
+    }
 
-	.SameClassInMediaBlock {
-	}
+    .ClassNotAtTopOfMediaBlock {
+    }
 
-	.ClassNotAtTopOfMediaBlock {
-	}
-
-	.SameClassInMediaBlock {
-	}
+    .SameClassInMediaBlock {
+    }
 }
 
 @media braille {
+    .PlaceholderClass {
+    }
 
-	.PlaceholderClass {
-	}
+    .ClassNotAtTopOfMediaBlock {
+    }
 
-	.ClassNotAtTopOfMediaBlock {
-	}
-
-	.ClassInMultipleMediaBlocks {
-	}
+    .ClassInMultipleMediaBlocks {
+    }
 }
 
-.foo {
-	color: red;
-}
+.foo /* any comment */
+{ color: red; }
 
 /* print comment */
 @media print {
+    /* comment1 */
+    td {
+    }
 
-	/* comment1 */
-	td {
-	}
+    /* comment2 */
+    img {
+    }
 
-	/* comment2 */
-	img {
-	}
-
-	/* comment3 */
-	td {
-	}
+    /* comment3 */
+    td {
+    }
 }
 
-@media handheld {
-
-	td /* comment1 */
+@media handheld /* handheld comment */
+{
+    td /* comment1 */
     {
-	}
+    }
 
-	img /* comment2 */
+    img /* comment2 */
     {
-	}
+    }
 
-	td /* comment3 */
+    td /* comment3 */
     {
-	}
+    }
 }
