@@ -152,7 +152,8 @@ class Settings_Page {
 
 		// Main settings section.
 		\add_settings_section( 'air_main_section',
-		                       '<span class="dashicons dashicons-admin-settings"></span> ' . \__( 'API Configuration', 'ai-image-renamer' ),
+		                       '<span class="dashicons dashicons-admin-settings"></span> ' . \__( 'API Configuration',
+		                                                                                          'ai-image-renamer' ),
 			function () {
 				echo $this->template_engine->render( 'admin/sections/hero.twig' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			},
@@ -160,7 +161,8 @@ class Settings_Page {
 
 		// Enable/Disable toggle.
 		\add_settings_field( 'enabled',
-		                     '<label for="air_enabled"><span class="dashicons dashicons-lightbulb"></span> ' . \__( 'Enable Auto-Rename', 'ai-image-renamer' ) . '</label>',
+		                     '<label for="air_enabled"><span class="dashicons dashicons-lightbulb"></span> ' . \__( 'Enable Auto-Rename',
+		                                                                                                            'ai-image-renamer' ) . '</label>',
 		                     [
 			                     $this,
 			                     'render_enabled_field',
@@ -170,7 +172,8 @@ class Settings_Page {
 
 		// API Key field.
 		\add_settings_field( 'api_key',
-		                     '<label for="air_api_key"><span class="dashicons dashicons-admin-network"></span> ' . \__( 'Groq API Key', 'ai-image-renamer' ) . '</label>',
+		                     '<label for="air_api_key"><span class="dashicons dashicons-admin-network"></span> ' . \__( 'Groq API Key',
+		                                                                                                                'ai-image-renamer' ) . '</label>',
 		                     [
 			                     $this,
 			                     'render_api_key_field',
@@ -180,7 +183,8 @@ class Settings_Page {
 
 		// Model Selection.
 		\add_settings_field( 'model',
-		                     '<label for="air_model"><span class="dashicons dashicons-products"></span> ' . \__( 'AI Model', 'ai-image-renamer' ) . '</label>',
+		                     '<label for="air_model"><span class="dashicons dashicons-products"></span> ' . \__( 'AI Model',
+		                                                                                                         'ai-image-renamer' ) . '</label>',
 		                     [
 			                     $this,
 			                     'render_model_field',
@@ -190,7 +194,8 @@ class Settings_Page {
 
 		// Alt text toggle.
 		\add_settings_field( 'set_alt_text',
-		                     '<label for="air_set_alt_text"><span class="dashicons dashicons-text"></span> ' . \__( 'Use as <code>alt=""</code>', 'ai-image-renamer' ) . '</label>',
+		                     '<label for="air_set_alt_text"><span class="dashicons dashicons-text"></span> ' . \__( 'Use as <code>alt=""</code>',
+		                                                                                                            'ai-image-renamer' ) . '</label>',
 		                     [
 			                     $this,
 			                     'render_alt_text_field',
@@ -200,14 +205,16 @@ class Settings_Page {
 
 		// File types section.
 		\add_settings_section( 'air_file_types_section',
-		                       '<span class="dashicons dashicons-format-image"></span> ' . \__( 'File Types', 'ai-image-renamer' ),
+		                       '<span class="dashicons dashicons-format-image"></span> ' . \__( 'File Types',
+		                                                                                        'ai-image-renamer' ),
 			function () {
 				echo '<p>' . \esc_html__( 'Select which image types to process.', 'ai-image-renamer' ) . '</p>';
 			},
 			                   self::PAGE_SLUG );
 
 		\add_settings_field( 'file_types',
-		                     '<span class="dashicons dashicons-images-alt2"></span> ' . \__( 'Allowed Types', 'ai-image-renamer' ),
+		                     '<span class="dashicons dashicons-images-alt2"></span> ' . \__( 'Allowed Types',
+		                                                                                     'ai-image-renamer' ),
 		                     [
 			                     $this,
 			                     'render_file_types_field',
@@ -217,14 +224,17 @@ class Settings_Page {
 
 		// Advanced section.
 		\add_settings_section( 'air_advanced_section',
-		                       '<span class="dashicons dashicons-admin-tools"></span> ' . \__( 'Advanced Settings', 'ai-image-renamer' ),
+		                       '<span class="dashicons dashicons-admin-tools"></span> ' . \__( 'Advanced Settings',
+		                                                                                       'ai-image-renamer' ),
 			function () {
-				echo '<p>' . \esc_html__( 'Customize the AI prompt and keyword settings.', 'ai-image-renamer' ) . '</p>';
+				echo '<p>' . \esc_html__( 'Customize the AI prompt and keyword settings.',
+				                          'ai-image-renamer' ) . '</p>';
 			},
 			                   self::PAGE_SLUG );
 
 		\add_settings_field( 'max_keywords',
-		                     '<label for="air_max_keywords"><span class="dashicons dashicons-editor-ol"></span> ' . \__( 'Max Keywords', 'ai-image-renamer' ) . '</label>',
+		                     '<label for="air_max_keywords"><span class="dashicons dashicons-editor-ol"></span> ' . \__( 'Max Keywords',
+		                                                                                                                 'ai-image-renamer' ) . '</label>',
 		                     [
 			                     $this,
 			                     'render_max_keywords_field',
@@ -301,7 +311,10 @@ class Settings_Page {
 					if ( false !== $encrypted ) {
 						$sanitized['api_key'] = $encrypted;
 					} else {
-						\add_settings_error( self::OPTION_NAME, 'encryption_failed', \__( 'Failed to encrypt API key. Please try again.', 'ai-image-renamer' ) );
+						\add_settings_error( self::OPTION_NAME,
+						                     'encryption_failed',
+						                     \__( 'Failed to encrypt API key. Please try again.',
+						                          'ai-image-renamer' ) );
 						// Keep old key if encryption failed.
 						$sanitized['api_key'] = $old['api_key'] ?? '';
 					}
@@ -360,7 +373,9 @@ class Settings_Page {
 				$sanitized['model'] = $input['model'];
 			} else {
 				// Invalid model submitted, add error and use default.
-				\add_settings_error( self::OPTION_NAME, 'invalid_model', \__( 'Invalid AI model selected. Using default model.', 'ai-image-renamer' ) );
+				\add_settings_error( self::OPTION_NAME,
+				                     'invalid_model',
+				                     \__( 'Invalid AI model selected. Using default model.', 'ai-image-renamer' ) );
 				$sanitized['model'] = $this->get_defaults()['model'];
 			}
 		}
@@ -410,7 +425,7 @@ class Settings_Page {
 				'option_name' => esc_attr( self::OPTION_NAME ),
 				'display_key' => esc_attr( $display_key ),
 				'placeholder' => esc_attr( $placeholder ),
-				'saved'       => $saved,
+				'saved'       => esc_attr( $saved ),
 			] );
 	}
 
@@ -603,7 +618,8 @@ class Settings_Page {
 			[
 				'option_name' => esc_attr( self::OPTION_NAME ),
 				'current'     => esc_attr( $current ),
-				'models'      => $prepared_models, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Already escaped in prepare_models_for_template().
+				'models'      => $prepared_models,
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Already escaped in prepare_models_for_template().
 				'asset_url'   => esc_url( \plugins_url( 'assets', \dirname( __DIR__, 2 ) . '/ai-image-renamer.php' ) ),
 			] );
 	}
@@ -642,6 +658,9 @@ class Settings_Page {
 		$models          = $this->get_available_models( $current );
 		$prepared_models = $this->prepare_models_for_template( $models );
 
+		// Check if cURL exists and is enabled
+		$curl_enabled = function_exists( 'curl_version' );
+
 		// All values escaped before passing to template.
 		echo $this->template_engine->render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			'admin/settings.twig',
@@ -653,15 +672,17 @@ class Settings_Page {
 				'page_title'      => esc_html( get_admin_page_title() ),
 				'display_key'     => esc_attr( $display_key ),
 				'placeholder'     => esc_attr( $placeholder ),
-				'saved'           => $saved,
+				'saved'           => esc_attr( $saved ),
 				'enabled'         => (bool) ( $options['enabled'] ?? true ),
 				'set_alt_text'    => (bool) ( $options['set_alt_text'] ?? false ),
 				'file_types'      => array_map( 'esc_attr', $file_types ),
 				'available_types' => array_map( 'esc_html', $available_types ),
 				'current'         => esc_attr( $current ),
-				'models'          => $prepared_models, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Already escaped in prepare_models_for_template().
+				'models'          => $prepared_models,
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Already escaped in prepare_models_for_template().
 				'max_keywords'    => absint( $options['max_keywords'] ?? 5 ),
-				'asset_url'       => esc_url( \plugins_url( 'assets', \dirname( __DIR__, 2 ) . '/ai-image-renamer.php' ) ),
+				'asset_url'       => esc_url( \plugins_url( 'assets',
+				                                            \dirname( __DIR__, 2 ) . '/ai-image-renamer.php' ) ),
 				'diagnostics'     => [
 					'php'    => [
 						'label' => esc_html__( 'PHP Version', 'ai-image-renamer' ),
@@ -689,8 +710,9 @@ class Settings_Page {
 					],
 					'curl'   => [
 						'label' => esc_html__( 'cURL Enabled', 'ai-image-renamer' ),
-						'value' => function_exists( 'curl_version' ) ? esc_html__( 'Yes', 'ai-image-renamer' ) : esc_html__( 'No', 'ai-image-renamer' ),
-						'ok'    => function_exists( 'curl_version' ),
+						'value' => $curl_enabled ? esc_html__( 'Yes', 'ai-image-renamer' ) : esc_html__( 'No',
+						                                                                                 'ai-image-renamer' ),
+						'ok'    => esc_attr( function_exists( 'curl_version' ) ),
 						'desc'  => esc_html__( 'Required for API communication', 'ai-image-renamer' ),
 					],
 				],
@@ -736,7 +758,8 @@ class Settings_Page {
 				                     'success'           => \__( 'Connection successful!', 'ai-image-renamer' ),
 				                     'error'             => \__( 'Connection failed:', 'ai-image-renamer' ),
 				                     'no_key'            => \__( 'No API key configured.', 'ai-image-renamer' ),
-				                     'delete_confirm'    => \__( 'Are you sure you want to delete the API Key? This action cannot be undone.', 'ai-image-renamer' ),
+				                     'delete_confirm'    => \__( 'Are you sure you want to delete the API Key? This action cannot be undone.',
+				                                                 'ai-image-renamer' ),
 				                     'deleting'          => \__( 'Deleting...', 'ai-image-renamer' ),
 				                     'enter_key'         => \__( 'Enter your Groq API key.', 'ai-image-renamer' ),
 				                     'request_failed'    => \__( 'Request failed:', 'ai-image-renamer' ),

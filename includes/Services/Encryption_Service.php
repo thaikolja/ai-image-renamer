@@ -207,9 +207,12 @@ class Encryption_Service {
 			?>
 			<div class="notice notice-warning is-dismissible air-encryption-notice">
 				<p>
-					<strong><?php \esc_html_e( 'Security Warning: AI Image Renamer', 'ai-image-renamer' ); ?></strong><br>
+					<strong><?php \esc_html_e( 'Security Warning: AI Image Renamer',
+					                           'ai-image-renamer' ); ?></strong><br>
 					<?php
-					\printf( /* translators: %s: AIR_ENCRYPTION_KEY */ \esc_html__( 'Your encryption key is stored in the WordPress database. For better security, define %s in your wp-config.php file.', 'ai-image-renamer' ), '<code>AIR_ENCRYPTION_KEY</code>' );
+					\printf( /* translators: %s: AIR_ENCRYPTION_KEY */ \esc_html__( 'Your encryption key is stored in the WordPress database. For better security, define %s in your wp-config.php file.',
+					                                                                'ai-image-renamer' ),
+					                                                   '<code>AIR_ENCRYPTION_KEY</code>' );
 					?>
 				</p>
 				<p>
@@ -218,7 +221,7 @@ class Encryption_Service {
 						<?php \esc_html_e( 'Learn more about securing your encryption key', 'ai-image-renamer' ); ?>
 					</a>
 				</p>
-			</div>			<script>
+			</div>            <script>
             jQuery(document).ready(function ($) {
               $('.air-encryption-notice').on('click', '.notice-dismiss', function () {
                 jQuery.ajax({

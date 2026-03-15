@@ -5,7 +5,7 @@
   "main":            "index.js",
   "scripts":         {
     "start":      "vite",
-    "build":      "vite build && node scripts/generate-asset-file.mjs",
+    "build":      "NODE_ENV=production vite build && node scripts/generate-asset-file.mjs",
     "preview":    "vite preview",
     "zip":        "node scripts/plugin-zip.mjs",
     "bundle":     "npm run build && composer install --no-dev -o --prefer-dist && npm run zip && composer install",

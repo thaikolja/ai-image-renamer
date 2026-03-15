@@ -4,6 +4,7 @@ import {fileURLToPath} from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const isProduction = process.env.NODE_ENV === 'production';
 
 export default defineConfig({
   plugins: [],
@@ -17,11 +18,12 @@ export default defineConfig({
       output: {
         entryFileNames: 'js/index.js',
         chunkFileNames: 'js/[name].js',
-        assetFileNames: (assetInfo) => {
+        assetFileNames: (assetInfo) => { // BACKUP: assetFileNames
           // Rename style.css to index.css to match entry point
           if (assetInfo.name === 'style.css') {
             return 'css/index.css';
           }
+
           if (assetInfo.name.endsWith('.css')) {
             return 'css/[name][extname]';
           }
@@ -29,9 +31,11 @@ export default defineConfig({
         },
       },
     },
-    sourcemap:     false,
-    minify:        'terser',
-    cssCodeSplit:  false,
+    sourcemap:     true,
+    minify:        isProduction,
+    cssMinify:     isProduction,
+    jsSourceMap:   true,
+    cssCodeSplit:  true,
   },
   server:  {
     port:  3000,

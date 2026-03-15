@@ -78,7 +78,9 @@ class API_Key_Validator {
 		if ( ! str_starts_with( $api_key, self::GROQ_KEY_PREFIX ) ) {
 			return [
 				'valid'   => false,
-				'message' => \sprintf( /* translators: %s: API key prefix */ \__( 'Invalid API key format. Groq API keys start with %s', 'ai-image-renamer' ), self::GROQ_KEY_PREFIX ),
+				'message' => \sprintf( /* translators: %s: API key prefix */ \__( 'Invalid API key format. Groq API keys start with %s',
+				                                                                  'ai-image-renamer' ),
+				                                                             self::GROQ_KEY_PREFIX ),
 			];
 		}
 
@@ -87,14 +89,18 @@ class API_Key_Validator {
 		if ( $key_length < self::MIN_LENGTH ) {
 			return [
 				'valid'   => false,
-				'message' => \sprintf( /* translators: %d: Minimum length */ \__( 'The API key is too short. It must be at least %d characters long.', 'ai-image-renamer' ), self::MIN_LENGTH ),
+				'message' => \sprintf( /* translators: %d: Minimum length */ \__( 'The API key is too short. It must be at least %d characters long.',
+				                                                                  'ai-image-renamer' ),
+				                                                             self::MIN_LENGTH ),
 			];
 		}
 
 		if ( $key_length > self::MAX_LENGTH ) {
 			return [
 				'valid'   => false,
-				'message' => \sprintf( /* translators: %d: Maximum length */ \__( 'The API key is too long. It must be at most %d characters long.', 'ai-image-renamer' ), self::MAX_LENGTH ),
+				'message' => \sprintf( /* translators: %d: Maximum length */ \__( 'The API key is too long. It must be at most %d characters long.',
+				                                                                  'ai-image-renamer' ),
+				                                                             self::MAX_LENGTH ),
 			];
 		}
 
@@ -104,7 +110,8 @@ class API_Key_Validator {
 		if ( ! preg_match( $pattern, $api_key ) ) {
 			return [
 				'valid'   => false,
-				'message' => \__( 'The API key contains invalid characters. <strong>Only alphanumeric characters, hyphens, and underscores</strong> are allowed.', 'ai-image-renamer' ),
+				'message' => \__( 'The API key contains invalid characters. <strong>Only alphanumeric characters, hyphens, and underscores</strong> are allowed.',
+				                  'ai-image-renamer' ),
 			];
 		}
 

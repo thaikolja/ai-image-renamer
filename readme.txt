@@ -262,4 +262,4 @@ For support, please use the [WordPress.org support forums](https://wordpress.org
 
 == Contribute ==
 
-This plugin is open source! Contributions are welcome on GitHub.
+This plugin is open source! Contributions are welcome on GitLab or GitHub.

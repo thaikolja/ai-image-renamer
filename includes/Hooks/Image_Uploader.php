@@ -175,7 +175,12 @@ class Image_Uploader {
 		 *
 		 * @since 1.0.0
 		 */
-		$new_filename = \apply_filters( 'air_new_filename', $new_filename, $sanitized_name, $extension, $file, $description );
+		$new_filename = \apply_filters( 'air_new_filename',
+		                                $new_filename,
+		                                $sanitized_name,
+		                                $extension,
+		                                $file,
+		                                $description );
 
 		// Ensure the final filename is lowercase (defensive check).
 		$new_filename = strtolower( $new_filename );

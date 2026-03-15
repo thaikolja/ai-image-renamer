@@ -92,7 +92,11 @@ class Groq_Service {
 		// If alt text is enabled, force 10 keywords regardless of max_keywords setting.
 		$max_keywords = $set_alt ? 10 : ( $options['max_keywords'] ?? 5 );
 
-		$prompt = \sprintf( /* translators: %d: Maximum number of keywords */ \_n( 'View this image and describe it in no more than %d keyword into English. Only return the output.', 'View this image and describe it in no more than %d keywords in English. Only return the output.', $max_keywords, 'ai-image-renamer' ), $max_keywords );
+		$prompt = \sprintf( /* translators: %d: Maximum number of keywords */ \_n( 'View this image and describe it in no more than %d keyword into English. Only return the output.',
+		                                                                           'View this image and describe it in no more than %d keywords in English. Only return the output.',
+		                                                                           $max_keywords,
+		                                                                           'ai-image-renamer' ),
+		                                                                      $max_keywords );
 
 		/**
 		 * Filter the AI prompt used for image description.
@@ -193,7 +197,8 @@ class Groq_Service {
 				return \esc_html( $decoded['error']['message'] );
 			}
 
-			return \sprintf( /* translators: %d: HTTP status code */ \__( 'API returned HTTP %d', 'ai-image-renamer' ), $code );
+			return \sprintf( /* translators: %d: HTTP status code */ \__( 'API returned HTTP %d', 'ai-image-renamer' ),
+			                                                         $code );
 		}
 
 		return true;
@@ -256,7 +261,9 @@ class Groq_Service {
 
 		if ( $file_size > $max_file_size ) {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				\error_log( \sprintf( 'AI Image Renamer: Image file too large (%d bytes). Maximum allowed: %d bytes.', $file_size, $max_file_size ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+				\error_log( \sprintf( 'AI Image Renamer: Image file too large (%d bytes). Maximum allowed: %d bytes.',
+				                      $file_size,
+				                      $max_file_size ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			}
 
 			return false;
