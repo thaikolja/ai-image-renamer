@@ -1,16 +1,19 @@
 {# Model Selection Field Template #}
 {% for model_id, model in models %}
-	<label class="air-model-card {{ current == model_id ? 'selected' : '' }}">
-		<input type="radio" name="{{ option_name }}[model]" value="{{ model_id }}" {{ current == model_id ? 'checked' : '' }}/>
+	<label class="air-model-card {{ current == model_id ? 'selected' : '' }} {{ model.deprecated ? 'air-model-card--deprecated' : '' }}">
+		<input type="radio" name="{{ option_name }}[model]" value="{{ model_id }}" {{ current == model_id ? 'checked' : '' }} {{ model.deprecated ? 'disabled' : '' }}/>
 		<div class="air-model-content">
 			<div class="air-model-header">
 				<div class="air-model-title-group">
 					<strong>{{ model.label|raw }}</strong>
+					{% if model.deprecated %}
+						<span class="air-model-badge air-model-badge--deprecated">{{ __('Unavailable', 'ai-image-renamer') }}</span>
+					{% endif %}
 					{% if model.provider == 'meta' %}
 						<img src="{{ asset_url }}/icons/{{ model.provider }}-icon.svg" width="20" height="20" alt="{{ model.provider }} Logo">
 					{% endif %}
 				</div>
-				{% if current == model_id %}
+				{% if current == model_id and not model.deprecated %}
 					<span class="dashicons dashicons-yes"></span>
 				{% endif %}
 			</div>

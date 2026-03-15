@@ -4,7 +4,6 @@
   "description":     "Uses AI to rename images during upload for SEO-friendly filenames.",
   "main":            "index.js",
   "scripts":         {
-
     "start":      "vite",
     "build":      "vite build && node scripts/generate-asset-file.mjs",
     "preview":    "vite preview",

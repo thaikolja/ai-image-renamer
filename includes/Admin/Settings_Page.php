@@ -285,7 +285,7 @@ class Settings_Page
 			'file_types'   => array('image/jpeg', 'image/png', 'image/webp', 'image/avif'),
 			'max_keywords' => 5,
 			'set_alt_text' => false,
-			'model'        => 'meta-llama/llama-4-maverick-17b-128e-instruct',
+			'model'        => 'meta-llama/llama-4-scout-17b-16e-instruct',
 		);
 
 		/**
@@ -497,6 +497,7 @@ class Settings_Page
 					'speed'   => '600 tokens/s',
 					'size'    => '20 MB',
 				),
+				'deprecated' => true,
 			),
 			'meta-llama/llama-4-scout-17b-16e-instruct' => array(
 				'label'      => 'Llama 4 Scout',
@@ -509,6 +510,7 @@ class Settings_Page
 					'speed'   => '750 tokens/s',
 					'size'    => '20 MB',
 				),
+				'deprecated' => false,
 			),
 		);
 
@@ -541,6 +543,7 @@ class Settings_Page
 				'desc'       => esc_html($data['desc'] ?? ''),
 				'highlights' => array_map('esc_html', (array) ($data['highlights'] ?? array())),
 				'specs'      => array_map('esc_html', (array) ($data['specs'] ?? array())),
+				'deprecated' => (bool) ($data['deprecated'] ?? false),
 			);
 		}
 
@@ -638,7 +641,7 @@ class Settings_Page
 	final public function render_model_field(): void
 	{
 		$options         = \get_option(self::OPTION_NAME, $this->get_defaults());
-		$current         = esc_attr($options['model']) ?? 'meta-llama/llama-4-maverick-17b-128e-instruct';
+		$current         = esc_attr($options['model']) ?? 'meta-llama/llama-4-scout-17b-16e-instruct';
 		$models          = $this->get_available_models(esc_attr($current));
 		$prepared_models = $this->prepare_models_for_template($models);
 
@@ -685,7 +688,7 @@ class Settings_Page
 		$available_types = $this->get_available_file_types();
 
 		// Models.
-		$current         = $options['model'] ?? 'meta-llama/llama-4-maverick-17b-128e-instruct';
+		$current         = $options['model'] ?? 'meta-llama/llama-4-scout-17b-16e-instruct';
 		$models          = $this->get_available_models($current);
 		$prepared_models = $this->prepare_models_for_template($models);
 

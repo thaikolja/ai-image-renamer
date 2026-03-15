@@ -47,7 +47,7 @@ class Groq_Service {
 	 *
 	 * @var string
 	 */
-	private const DEFAULT_MODEL = 'meta-llama/llama-4-maverick-17b-128e-instruct';
+	private const DEFAULT_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct';
 
 	/**
 	 * Encryption service instance.
