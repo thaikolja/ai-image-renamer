@@ -5,28 +5,7 @@
 	{% include 'admin/components/header.twig' %}
 
 	{# Donation Banner #}
-	<div class="air-donation-banner" id="air-donation-banner">
-		<a href="https://www.paypal.com/donate/?hosted_button_id=K3J7Y6W5X9H5Y" target="_blank" class="air-donation-banner-link" rel="noopener noreferrer">
-			<div class="air-donation-banner-content">
-				<div class="air-donation-banner-icon">
-					<span class="dashicons dashicons-heart"></span>
-				</div>
-				<div class="air-donation-banner-text">
-					<h3>{{ __('Love this plugin? Support its development!', 'ai-image-renamer') }}</h3>
-					<p>{{ __('Your donation helps keep this plugin free, maintained, and constantly improved. Every contribution, no matter how small, makes a difference.', 'ai-image-renamer') }}</p>
-				</div>
-				<div class="air-donation-banner-cta">
-					<button type="button" class="air-donation-button">
-						<span class="dashicons dashicons-star-filled"></span>
-						{{ __('Donate via PayPal', 'ai-image-renamer') }}
-					</button>
-				</div>
-			</div>
-		</a>
-		<button type="button" class="air-donation-banner-close" id="air-donation-banner-close" aria-label="{{ __('Close', 'ai-image-renamer') }}">
-			<span class="dashicons dashicons-no-alt"></span>
-		</button>
-	</div>
+	{% include 'admin/components/donation-banner.twig' %}
 
 	<div
 		class="air-settings-container">
