@@ -6,9 +6,12 @@
                 <span class="dashicons dashicons-format-image"></span>
             </div>
             <div class="air-intro-text">
-                <h2 class="air-intro-title">{{ __('Welcome to AI Image Renamer', 'ai-image-renamer') }}</h2>
+                <h2 class="air-intro-title">
+                    {{ __('Welcome to AI Image Renamer', 'ai-image-renamer') }}
+                </h2>
                 <p class="air-intro-description">
                     {{ __('Maximize your site\'s SEO and accessibility with AI-powered image renaming. This plugin uses advanced computer vision to analyze your uploads and automatically generate descriptive, keyword-rich filenames and alt text.', 'ai-image-renamer') }}
+                    <strong>{{ __('At this time, AI Image Renamer only supports Groq.') }}</strong>
                 </p>
                 <h3 class="air-intro-subtitle">{{ __('Quick Start Guide', 'ai-image-renamer') }}</h3>
                 <div class="air-intro-steps">
@@ -16,7 +19,7 @@
                         <div class="air-step-indicator">1</div>
                         <div class="air-step-content">
                             <span class="air-step-title">{{ __('Connect API', 'ai-image-renamer') }}</span>
-                            <span class="air-step-desc">{{ __('Enter your Groq API key in the API Key tab.', 'ai-image-renamer') }}</span>
+                            <span class="air-step-desc">{{ __('Enter your Groq API key in the API Key tab', 'ai-image-renamer') }}</span>
                         </div>
                     </div>
                     <div class="air-step-separator"></div>
@@ -24,7 +27,7 @@
                         <div class="air-step-indicator">2</div>
                         <div class="air-step-content">
                             <span class="air-step-title">{{ __('Configure', 'ai-image-renamer') }}</span>
-                            <span class="air-step-desc">{{ __('Choose your AI model and file types.', 'ai-image-renamer') }}</span>
+                            <span class="air-step-desc">{{ __('Choose your AI model and file types', 'ai-image-renamer') }}</span>
                         </div>
                     </div>
                     <div class="air-step-separator"></div>
@@ -32,7 +35,17 @@
                         <div class="air-step-indicator">3</div>
                         <div class="air-step-content">
                             <span class="air-step-title">{{ __('Upload', 'ai-image-renamer') }}</span>
-                            <span class="air-step-desc">{{ __('Upload images to the Media Library.', 'ai-image-renamer') }}</span>
+                            <span class="air-step-desc">{{ __('Upload images to the Media Library', 'ai-image-renamer') }}</span>
+                        </div>
+                    </div>
+                    <div class="air-step-separator"></div>
+                    <div class="air-step">
+                        <div class="air-step-indicator">4</div>
+                        <div class="air-step-content">
+                            <span class="air-step-title">{{ __('Fallback', 'ai-image-renamer') }}</span>
+                            <span class="air-step-desc">
+                                {{ __('If any error occurs, the original filename wll be used', 'ai-image-renamer') }}
+                            </span>
                         </div>
                     </div>
                 </div>

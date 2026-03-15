@@ -1,11 +1,10 @@
 <?php
-/**
- * AI Image Renamer.
- *
- * @description    Uses AI to rename images during upload for SEO-friendly filenames.
+/*
+ * @name:           AI Image Renamer
+ * @wordpress       Uses AI to rename images during upload for SEO-friendly filenames.
  * @author          Kolja Nolte <kolja.nolte@gmail.com>
  * @copyright       2025-2026 (C) Kolja Nolte
- * @see             https://docs.kolja-nolte.com/wp-ai-image-renamer/
+ * @see             https://docs.kolja-nolte.com/ai-image-renamer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +24,7 @@
  * @package AIR\Hooks
  */
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace AIR\Hooks;
 
@@ -67,7 +66,7 @@ class Image_Uploader {
 	/**
 	 * Constructor.
 	 *
-	 * @param  Groq_Service $groq_service  Groq service instance.
+	 * @param Groq_Service $groq_service Groq service instance.
 	 */
 	public function __construct( Groq_Service $groq_service ) {
 		$this->groq_service = $groq_service;
@@ -79,13 +78,13 @@ class Image_Uploader {
 	 * @return void
 	 */
 	final public function init(): void {
-		\add_filter( 'wp_handle_upload_prefilter', array( $this, 'process_upload' ) );
+		\add_filter( 'wp_handle_upload_prefilter', [ $this, 'process_upload' ] );
 	}
 
 	/**
 	 * Process an uploaded file and rename it using AI.
 	 *
-	 * @param  array $file  The uploaded file data from $_FILES.
+	 * @param array $file The uploaded file data from $_FILES.
 	 *
 	 * @return array The modified file data.
 	 */
@@ -119,9 +118,9 @@ class Image_Uploader {
 		 * Filter whether to process this upload.
 		 * Pro can use this to skip certain uploads or add conditions.
 		 *
-		 * @param  bool    $should_process  Whether to process this upload.
-		 * @param  array   $file            The file data.
-		 * @param  string  $mime_type       The MIME type.
+		 * @param bool   $should_process Whether to process this upload.
+		 * @param array  $file           The file data.
+		 * @param string $mime_type      The MIME type.
 		 *
 		 * @since 1.0.0
 		 */
@@ -136,9 +135,9 @@ class Image_Uploader {
 		 * Filter the AI-generated description before processing.
 		 * Pro can modify or enhance the description here.
 		 *
-		 * @param  string|false  $description  The generated description or false.
-		 * @param  string        $tmp_path     Path to the temporary file.
-		 * @param  array         $file         The file data.
+		 * @param string|false $description The generated description or false.
+		 * @param string       $tmp_path    Path to the temporary file.
+		 * @param array        $file        The file data.
 		 *
 		 * @since 1.0.0
 		 */
@@ -168,11 +167,11 @@ class Image_Uploader {
 		 * Filter the new filename before it is applied.
 		 * Pro can modify the filename here (e.g., add prefixes, SKUs).
 		 *
-		 * @param  string  $new_filename    The new filename.
-		 * @param  string  $sanitized_name  The sanitized base name.
-		 * @param  string  $extension       The file extension.
-		 * @param  array   $file            The original file data.
-		 * @param  string  $description     The AI-generated description.
+		 * @param string $new_filename   The new filename.
+		 * @param string $sanitized_name The sanitized base name.
+		 * @param string $extension      The file extension.
+		 * @param array  $file           The original file data.
+		 * @param string $description    The AI-generated description.
 		 *
 		 * @since 1.0.0
 		 */
@@ -191,29 +190,29 @@ class Image_Uploader {
 		 * Fires after an image has been renamed.
 		 * Pro can use this to log renames, update history, etc.
 		 *
-		 * @param  string  $new_filename   The new filename.
-		 * @param  string  $original_name  The original filename.
-		 * @param  string  $description    The AI-generated description.
-		 * @param  array   $file           The file data.
+		 * @param string $new_filename  The new filename.
+		 * @param string $original_name The original filename.
+		 * @param string $description   The AI-generated description.
+		 * @param array  $file          The file data.
 		 *
 		 * @since 1.0.0
 		 */
 		\do_action( 'air_image_renamed', $new_filename, $original_name, $description, $file );
 
 		// Check if Alt Text feature is enabled.
-		$options = \get_option( 'air_options', array() );
+		$options = \get_option( 'air_options', [] );
 		$set_alt = isset( $options['set_alt_text'] ) && '1' === (string) $options['set_alt_text'];
 
 		if ( $set_alt && ! empty( $description ) ) {
-			$clean_text = ucfirst( str_replace( array( '-', '_' ), ' ', $sanitized_name ) );
+			$clean_text = ucfirst( str_replace( [ '-', '_' ], ' ', $sanitized_name ) );
 
 			/**
 			 * Filter the alt text before it is saved.
 			 * Pro can enhance alt text (e.g., full sentences, translations).
 			 *
-			 * @param  string  $clean_text   The alt text to save.
-			 * @param  string  $description  The AI-generated description.
-			 * @param  array   $file         The file data.
+			 * @param string $clean_text  The alt text to save.
+			 * @param string $description The AI-generated description.
+			 * @param array  $file        The file data.
 			 *
 			 * @since 1.0.0
 			 */
@@ -225,12 +224,10 @@ class Image_Uploader {
 			\set_transient( $transient_key, $alt_text, self::TRANSIENT_EXPIRATION );
 
 			// Hook into attachment creation to save this.
-			\add_action(
-				'add_attachment',
+			\add_action( 'add_attachment',
 				function ( $post_id ) use ( $transient_key ) {
 					$this->set_image_alt_text( $post_id, $transient_key );
-				}
-			);
+				} );
 		}
 
 		return $file;
@@ -239,8 +236,8 @@ class Image_Uploader {
 	/**
 	 * Set the image Alt Text meta.
 	 *
-	 * @param  int    $post_id        Attachment ID.
-	 * @param  string $transient_key  The transient key containing the alt text.
+	 * @param int    $post_id       Attachment ID.
+	 * @param string $transient_key The transient key containing the alt text.
 	 *
 	 * @return void
 	 */
@@ -258,18 +255,18 @@ class Image_Uploader {
 	/**
 	 * Get file extension from mime type.
 	 *
-	 * @param  string $mime_type  The mime type.
+	 * @param string $mime_type The mime type.
 	 *
 	 * @return string The file extension.
 	 */
 	private function get_extension_from_mime( string $mime_type ): string {
-		$mime_to_ext = array(
+		$mime_to_ext = [
 			'image/jpeg' => 'jpg',
 			'image/png'  => 'png',
 			'image/webp' => 'webp',
 			'image/avif' => 'avif',
 			'image/gif'  => 'gif',
-		);
+		];
 
 		$extensions = \apply_filters( 'air_mime_to_ext', $mime_to_ext[ $mime_type ] );
 

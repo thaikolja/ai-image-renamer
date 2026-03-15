@@ -1,28 +1,31 @@
 {# Models Panel Template #}
 <div class="air-card">
-	<div class="air-card-header">
-		<h2>
-			<span class="dashicons dashicons-grid-view"></span>
-			{{ __('AI Models', 'ai-image-renamer') }}
-			<a href="https://docs.kolja-nolte.com/ai-image-renamer/getting-started/configuration#ai-model-selection" target="_blank" class="air-doc-badge">
-				<span class="dashicons dashicons-book"></span>
-				<span>{{ __('Documentation', 'ai-image-renamer') }}</span>
-			</a>
-		</h2>
-		<p class="air-card-description">{{ __('Choose the vision model used for analyzing images.', 'ai-image-renamer') }}</p>
-	</div>
-	<div class="air-card-body">
-		<div class="air-setting-row air-setting-row--stacked">
-			<div class="air-setting-control">
-				<div class="air-model-cards">
-					{% include 'admin/fields/model.twig' with {
-						models: models,
-						current: current,
-						option_name: option_name,
-						asset_url: asset_url
-					} %}
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="air-card-header">
+        <h2>
+            <span class="dashicons dashicons-grid-view"></span>
+            {{ __('AI Models', 'ai-image-renamer') }}
+            <a href="https://docs.kolja-nolte.com/ai-image-renamer/getting-started/configuration#ai-model-selection" target="_blank" class="air-doc-badge">
+                <span class="dashicons dashicons-book"></span>
+                <span>{{ __('Documentation', 'ai-image-renamer') }}</span> </a>
+        </h2>
+        <p class="air-card-description">{{ __('Choose the vision model used for analyzing images.', 'ai-image-renamer') }}</p>
+    </div>
+    <div class="air-card-body">
+        <div class="air-setting-row air-setting-row--stacked">
+            <div class="air-setting-control">
+                <div class="air-model-cards">
+                    {% include 'admin/fields/model.twig' with {
+                        models: models,
+                        current: current,
+                        option_name: option_name,
+                        asset_url: asset_url
+                    } %}
+                </div>
+                <p class="deprecation-notice">
+                    {{ __('Llama 4 Maverick has been deprecated by Groq on March 9, 2026. <a href="%s"
+                    target="_blank">Read more...</a>', 'ai-image-renamer')|replace({'%s': 'https://console.groq.com/docs/deprecations#march-9-2026-metallamallama4maverick17b128einstruct'})|raw }}
+                </p>
+            </div>
+        </div>
+    </div>
 </div>

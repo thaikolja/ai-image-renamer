@@ -1,11 +1,10 @@
 <?php
-/**
- * AI Image Renamer.
- *
- * @description    Uses AI to rename images during upload for SEO-friendly filenames.
+/*
+ * @name:           AI Image Renamer
+ * @wordpress       Uses AI to rename images during upload for SEO-friendly filenames.
  * @author          Kolja Nolte <kolja.nolte@gmail.com>
  * @copyright       2025-2026 (C) Kolja Nolte
- * @see             https://docs.kolja-nolte.com/wp-ai-image-renamer/
+ * @see             https://docs.kolja-nolte.com/ai-image-renamer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +24,7 @@
  * @package AIR\Services
  */
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace AIR\Services;
 
@@ -59,7 +58,7 @@ class Groq_Service {
 	/**
 	 * Constructor.
 	 *
-	 * @param  Encryption_Service $encryption_service  Encryption service instance.
+	 * @param Encryption_Service $encryption_service Encryption service instance.
 	 */
 	public function __construct( Encryption_Service $encryption_service ) {
 		$this->encryption_service = $encryption_service;
@@ -71,7 +70,7 @@ class Groq_Service {
 	 * @return string|false The API key or false if not available.
 	 */
 	private function get_api_key(): string|false {
-		$options = \get_option( 'air_options', array() );
+		$options = \get_option( 'air_options', [] );
 
 		if ( empty( $options['api_key'] ) ) {
 			return false;
@@ -86,23 +85,22 @@ class Groq_Service {
 	 * @return string The prompt text.
 	 */
 	private function get_prompt(): string {
-		$options = \get_option( 'air_options', array() );
+		$options = \get_option( 'air_options', [] );
 
 		$set_alt = isset( $options['set_alt_text'] ) && '1' === (string) $options['set_alt_text'];
 
 		// If alt text is enabled, force 10 keywords regardless of max_keywords setting.
 		$max_keywords = $set_alt ? 10 : ( $options['max_keywords'] ?? 5 );
 
-		$prompt
-			= \sprintf( /* translators: %d: Maximum number of keywords */\_n( 'View this image and describe it in no more than %d keyword into English. Only return the output.', 'View this image and describe it in no more than %d keywords in English. Only return the output.', $max_keywords, 'ai-image-renamer' ), $max_keywords );
+		$prompt = \sprintf( /* translators: %d: Maximum number of keywords */ \_n( 'View this image and describe it in no more than %d keyword into English. Only return the output.', 'View this image and describe it in no more than %d keywords in English. Only return the output.', $max_keywords, 'ai-image-renamer' ), $max_keywords );
 
 		/**
 		 * Filter the AI prompt used for image description.
 		 * Pro can customize or completely replace the prompt.
 		 *
-		 * @param  string  $prompt        The prompt text.
-		 * @param  int     $max_keywords  The maximum number of keywords.
-		 * @param  bool    $set_alt       Whether alt text feature is enabled.
+		 * @param string $prompt       The prompt text.
+		 * @param int    $max_keywords The maximum number of keywords.
+		 * @param bool   $set_alt      Whether alt text feature is enabled.
 		 *
 		 * @since 1.0.0
 		 */
@@ -115,7 +113,7 @@ class Groq_Service {
 	 * @return bool True if enabled.
 	 */
 	final public function is_enabled(): bool {
-		$options = \get_option( 'air_options', array() );
+		$options = \get_option( 'air_options', [] );
 
 		// Check enabled flag - handle both boolean and string "1" from database.
 		$enabled = isset( $options['enabled'] ) && ( true === $options['enabled'] || '1' === $options['enabled'] || 1 === $options['enabled'] );
@@ -129,20 +127,20 @@ class Groq_Service {
 	/**
 	 * Check if a mime type is allowed for processing.
 	 *
-	 * @param  string $mime_type  The mime type to check.
+	 * @param string $mime_type The mime type to check.
 	 *
 	 * @return bool True if allowed.
 	 */
 	final public function is_allowed_type( string $mime_type ): bool {
-		$options    = \get_option( 'air_options', array() );
-		$file_types = $options['file_types'] ?? array( 'image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif' );
+		$options    = \get_option( 'air_options', [] );
+		$file_types = $options['file_types'] ?? [ 'image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif' ];
 
 		/**
 		 * Filter the allowed file types.
 		 * Pro can expand this list to include more formats.
 		 *
-		 * @param  array   $file_types  The allowed MIME types.
-		 * @param  string  $mime_type   The MIME type being checked.
+		 * @param array  $file_types The allowed MIME types.
+		 * @param string $mime_type  The MIME type being checked.
 		 *
 		 * @since 1.0.0
 		 */
@@ -154,7 +152,7 @@ class Groq_Service {
 	/**
 	 * Test the API connection.
 	 *
-	 * @param  string|null $api_key  Optional API key to test. If null, uses the saved key.
+	 * @param string|null $api_key Optional API key to test. If null, uses the saved key.
 	 *
 	 * @return true|string True on success, error message on failure.
 	 */
@@ -168,18 +166,16 @@ class Groq_Service {
 		}
 
 		// Make a simple models request to verify the key.
-		$response = \wp_safe_remote_get(
-			'https://api.groq.com/openai/v1/models',
-			array(
-				'timeout' => 15,
-				'headers' => array(
-					'Authorization' => 'Bearer ' . $api_key,
-					'Content-Type'  => 'application/json',
-					'Origin'        => \site_url(),
-					'Referer'       => \admin_url(),
-				),
-			)
-		);
+		$response = \wp_safe_remote_get( 'https://api.groq.com/openai/v1/models',
+		                                 [
+			                                 'timeout' => 15,
+			                                 'headers' => [
+				                                 'Authorization' => 'Bearer ' . $api_key,
+				                                 'Content-Type'  => 'application/json',
+				                                 'Origin'        => \site_url(),
+				                                 'Referer'       => \admin_url(),
+			                                 ],
+		                                 ] );
 
 		if ( \is_wp_error( $response ) ) {
 			// Sanitize the error message.
@@ -197,7 +193,7 @@ class Groq_Service {
 				return \esc_html( $decoded['error']['message'] );
 			}
 
-			return \sprintf( /* translators: %d: HTTP status code */\__( 'API returned HTTP %d', 'ai-image-renamer' ), $code );
+			return \sprintf( /* translators: %d: HTTP status code */ \__( 'API returned HTTP %d', 'ai-image-renamer' ), $code );
 		}
 
 		return true;
@@ -209,7 +205,7 @@ class Groq_Service {
 	 * @return string
 	 */
 	private function get_model(): string {
-		$options = \get_option( 'air_options', array() );
+		$options = \get_option( 'air_options', [] );
 
 		return $options['model'] ?? self::DEFAULT_MODEL;
 	}
@@ -217,7 +213,7 @@ class Groq_Service {
 	/**
 	 * Generate a description for an image.
 	 *
-	 * @param  string $image_path  Absolute path to the image file.
+	 * @param string $image_path Absolute path to the image file.
 	 *
 	 * @return string|false The generated keywords or false on failure.
 	 */
@@ -245,8 +241,8 @@ class Groq_Service {
 		 * Filter the maximum allowed file size for image processing.
 		 * Pro can increase this limit for larger images.
 		 *
-		 * @param  int     $max_file_size  Maximum file size in bytes.
-		 * @param  string  $image_path     Path to the image file.
+		 * @param int    $max_file_size Maximum file size in bytes.
+		 * @param string $image_path    Path to the image file.
 		 *
 		 * @since 1.0.0
 		 */
@@ -284,57 +280,57 @@ class Groq_Service {
 		$data_url     = \sprintf( 'data:%s;base64,%s', $mime_type, $base64_image );
 
 		// Build the request payload.
-		$payload = array(
+		$payload = [
 			'model'       => $this->get_model(),
 			'temperature' => 1,
 			'max_tokens'  => 100,
 			'stream'      => false,
-			'messages'    => array(
-				array(
+			'messages'    => [
+				[
 					'role'    => 'user',
-					'content' => array(
-						array(
+					'content' => [
+						[
 							'type' => 'text',
 							'text' => $this->get_prompt(),
-						),
-						array(
+						],
+						[
 							'type'      => 'image_url',
-							'image_url' => array(
+							'image_url' => [
 								'url' => $data_url,
-							),
-						),
-					),
-				),
-			),
-		);
+							],
+						],
+					],
+				],
+			],
+		];
 
 		/**
 		 * Filter the API request payload before sending.
 		 * Pro can modify model, temperature, max_tokens, or add parameters.
 		 *
-		 * @param  array   $payload     The complete API payload.
-		 * @param  string  $image_path  Path to the image file.
+		 * @param array  $payload    The complete API payload.
+		 * @param string $image_path Path to the image file.
 		 *
 		 * @since 1.0.0
 		 */
 		$payload = \apply_filters( 'air_api_payload', $payload, $image_path );
 
-		$request_args = array(
+		$request_args = [
 			'timeout' => 30,
-			'headers' => array(
+			'headers' => [
 				'Authorization' => 'Bearer ' . $api_key,
 				'Content-Type'  => 'application/json',
-			),
+			],
 			'body'    => \wp_json_encode( $payload ),
-		);
+		];
 
 		/**
 		 * Filter the HTTP request arguments.
 		 * Pro can modify timeout, headers, or other WP_Http args.
 		 *
-		 * @param  array   $request_args  The HTTP request arguments.
-		 * @param  array   $payload       The API payload.
-		 * @param  string  $image_path    Path to the image file.
+		 * @param array  $request_args The HTTP request arguments.
+		 * @param array  $payload      The API payload.
+		 * @param string $image_path   Path to the image file.
 		 *
 		 * @since 1.0.0
 		 */
@@ -360,9 +356,9 @@ class Groq_Service {
 		 * Fires after the API response is received.
 		 * Pro can use this for logging, analytics, or debugging.
 		 *
-		 * @param  array|null  $decoded     The decoded API response.
-		 * @param  int         $code        The HTTP response code.
-		 * @param  string      $image_path  Path to the image file.
+		 * @param array|null $decoded    The decoded API response.
+		 * @param int        $code       The HTTP response code.
+		 * @param string     $image_path Path to the image file.
 		 *
 		 * @since 1.0.0
 		 */

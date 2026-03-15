@@ -1,19 +1,18 @@
 <?php
 
-/**
- * AI Image Renamer.
- *
- * @description    Uses AI to rename images during upload for SEO-friendly filenames.
+/*
+ * @name:           AI Image Renamer
+ * @wordpress       Uses AI to rename images during upload for SEO-friendly filenames.
  * @author          Kolja Nolte <kolja.nolte@gmail.com>
  * @copyright       2025-2026 (C) Kolja Nolte
- * @see             https://docs.kolja-nolte.com/wp-ai-image-renamer/
+ * @see             https://docs.kolja-nolte.com/ai-image-renamer
  *
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General final public License as published by
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
- * Released under the GNU General final public License v2 or later.
+ * Released under the GNU General Public License v2 or later.
  * See: https://www.gnu.org/licenses/gpl-2.0.html
  *
  * @package AIR
@@ -26,15 +25,15 @@
  * @package AIR
  */
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace AIR;
 
 use AIR\Admin\Settings_Page;
 use AIR\Hooks\Image_Uploader;
-use AIR\Services\Encryption_Service;
 use AIR\Services\Groq_Service;
 use AIR\Services\Template_Engine;
+use AIR\Services\Encryption_Service;
 
 /**
  * Class Plugin
@@ -43,8 +42,6 @@ use AIR\Services\Template_Engine;
  * Provides extension points for Pro add-on via hooks and final public getters.
  */
 class Plugin {
-
-
 	/**
 	 * Singleton instance.
 	 *
@@ -118,7 +115,7 @@ class Plugin {
 		 * Fires after core services are initialized but before components.
 		 * Pro plugin can hook here to modify services or add its own.
 		 *
-		 * @param  Plugin  $plugin  The plugin instance.
+		 * @param Plugin $plugin The plugin instance.
 		 *
 		 * @since 1.0.0
 		 */
@@ -138,7 +135,7 @@ class Plugin {
 		 * Fires after the plugin is fully initialized.
 		 * Pro plugin should hook here to add its features.
 		 *
-		 * @param  Plugin  $plugin  The plugin instance.
+		 * @param Plugin $plugin The plugin instance.
 		 *
 		 * @since 1.0.0
 		 */

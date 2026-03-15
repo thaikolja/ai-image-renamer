@@ -1,11 +1,10 @@
 <?php
-/**
- * AI Image Renamer.
- *
- * @description    Uses AI to rename images during upload for SEO-friendly filenames.
+/*
+ * @name:           AI Image Renamer
+ * @wordpress       Uses AI to rename images during upload for SEO-friendly filenames.
  * @author          Kolja Nolte <kolja.nolte@gmail.com>
  * @copyright       2025-2026 (C) Kolja Nolte
- * @see             https://docs.kolja-nolte.com/wp-ai-image-renamer/
+ * @see             https://docs.kolja-nolte.com/ai-image-renamer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +44,7 @@ class File_Sanitizer {
 	 * - Remove consecutive dashes
 	 * - Trim dashes from start and end
 	 *
-	 * @param  string $filename  The raw filename (without extension).
+	 * @param string $filename The raw filename (without extension).
 	 *
 	 * @return string The sanitized filename.
 	 */
@@ -54,7 +53,7 @@ class File_Sanitizer {
 		$sanitized = strtolower( $filename );
 
 		// Replace spaces and underscores with dashes.
-		$sanitized = str_replace( array( ' ', '_' ), '-', $sanitized );
+		$sanitized = str_replace( [ ' ', '_' ], '-', $sanitized );
 
 		// Remove any character that is not alphanumeric or a dash.
 		$sanitized = preg_replace( '/[^a-z0-9\-]/', '', $sanitized );
@@ -76,8 +75,8 @@ class File_Sanitizer {
 	/**
 	 * Build a complete filename with extension.
 	 *
-	 * @param  string $basename   The sanitized base name.
-	 * @param  string $extension  The file extension (without dot).
+	 * @param string $basename  The sanitized base name.
+	 * @param string $extension The file extension (without dot).
 	 *
 	 * @return string The complete filename.
 	 */
@@ -88,7 +87,7 @@ class File_Sanitizer {
 	/**
 	 * Extract the extension from a filename.
 	 *
-	 * @param  string $filename  The complete filename.
+	 * @param string $filename The complete filename.
 	 *
 	 * @return string The extension (without dot), lowercase.
 	 */

@@ -1,12 +1,11 @@
 <?php
 
-/**
- * AI Image Renamer.
- *
- * @description    Uses AI to rename images during upload for SEO-friendly filenames.
+/*
+ * @name:           AI Image Renamer
+ * @wordpress       Uses AI to rename images during upload for SEO-friendly filenames.
  * @author          Kolja Nolte <kolja.nolte@gmail.com>
  * @copyright       2025-2026 (C) Kolja Nolte
- * @see             https://docs.kolja-nolte.com/wp-ai-image-renamer/
+ * @see             https://docs.kolja-nolte.com/ai-image-renamer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +25,7 @@
  * @package AIR\Utils
  */
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace AIR\Utils;
 
@@ -60,16 +59,14 @@ class Rate_Limiter {
 	/**
 	 * Check if a request should be rate limited.
 	 *
-	 * @param  string $action        The action being performed.
-	 * @param  int    $max_requests  Maximum number of requests allowed.
-	 * @param  int    $time_window   Time window in seconds.
+	 * @param string $action       The action being performed.
+	 * @param int    $max_requests Maximum number of requests allowed.
+	 * @param int    $time_window  Time window in seconds.
 	 *
 	 * @return bool True if the request is allowed, false if rate limited.
 	 */
 	public static function check_rate_limit(
-		string $action,
-		int $max_requests = self::DEFAULT_MAX_REQUESTS,
-		int $time_window = self::DEFAULT_TIME_WINDOW
+		string $action, int $max_requests = self::DEFAULT_MAX_REQUESTS, int $time_window = self::DEFAULT_TIME_WINDOW
 	): bool {
 		$user_id = self::get_user_identifier();
 		$key     = self::get_transient_key( $action, $user_id );
@@ -79,11 +76,11 @@ class Rate_Limiter {
 
 		if ( false === $data ) {
 			// First request in this window.
-			$data = array(
+			$data = [
 				'count'   => 1,
 				'expires' => \time() + $time_window,
 				'window'  => $time_window,
-			);
+			];
 
 			\set_transient( $key, $data, $time_window );
 
@@ -93,11 +90,11 @@ class Rate_Limiter {
 		// Check if the window has expired.
 		if ( \time() > $data['expires'] ) {
 			// Reset the counter.
-			$data = array(
+			$data = [
 				'count'   => 1,
 				'expires' => \time() + $time_window,
 				'window'  => $time_window,
-			);
+			];
 
 			\set_transient( $key, $data, $time_window );
 
@@ -110,7 +107,7 @@ class Rate_Limiter {
 		}
 
 		// Increment the counter.
-		++$data['count'];
+		++ $data['count'];
 
 		$remaining_time = $data['expires'] - \time();
 
@@ -122,7 +119,7 @@ class Rate_Limiter {
 	/**
 	 * Get the time until the rate limit resets.
 	 *
-	 * @param  string $action  The action being performed.
+	 * @param string $action The action being performed.
 	 *
 	 * @return int Seconds until reset, or 0 if not limited.
 	 */
@@ -165,7 +162,7 @@ class Rate_Limiter {
 	 * @noinspection GlobalVariableUsageInspection
 	 */
 	private static function get_client_ip(): ?string {
-		$ip_keys = array(
+		$ip_keys = [
 			'HTTP_CF_CONNECTING_IP', // Cloudflare.
 			'HTTP_CLIENT_IP',
 			'HTTP_X_FORWARDED_FOR',
@@ -174,10 +171,10 @@ class Rate_Limiter {
 			'HTTP_FORWARDED_FOR',
 			'HTTP_FORWARDED',
 			'REMOTE_ADDR',
-		);
+		];
 
 		foreach ( $ip_keys as $key ) {
-			if ( ! empty( $_SERVER[ $key ])  ) {
+			if ( ! empty( $_SERVER[ $key ] ) ) {
 				$ip = \sanitize_text_field( \wp_unslash( $_SERVER[ $key ] ) );
 
 				// Handle multiple IPs in X-Forwarded-For.
@@ -199,8 +196,8 @@ class Rate_Limiter {
 	/**
 	 * Generate the transient key for rate limiting.
 	 *
-	 * @param  string $action   The action.
-	 * @param  string $user_id  The user identifier.
+	 * @param string $action  The action.
+	 * @param string $user_id The user identifier.
 	 *
 	 * @return string The transient key.
 	 */
@@ -211,18 +208,16 @@ class Rate_Limiter {
 	/**
 	 * Send a rate limit error response.
 	 *
-	 * @param  string $action  The action being performed.
+	 * @param string $action The action being performed.
 	 *
 	 * @return void
 	 */
 	public static function send_rate_limit_error( string $action ): void {
 		$remaining_time = self::get_reset_time( $action );
 
-		\wp_send_json_error(
-			array(
-				'message'     => \__( 'Rate limit exceeded. Please try again later.', 'ai-image-renamer' ),
-				'retry_after' => $remaining_time,
-			)
-		);
+		\wp_send_json_error( [
+			                     'message'     => \__( 'Rate limit exceeded. Please try again later.', 'ai-image-renamer' ),
+			                     'retry_after' => $remaining_time,
+		                     ] );
 	}
 }

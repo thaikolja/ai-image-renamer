@@ -1,11 +1,10 @@
 <?php
-/**
- * AI Image Renamer.
- *
- * @description    Uses AI to rename images during upload for SEO-friendly filenames.
+/*
+ * @name:           AI Image Renamer
+ * @wordpress       Uses AI to rename images during upload for SEO-friendly filenames.
  * @author          Kolja Nolte <kolja.nolte@gmail.com>
  * @copyright       2025-2026 (C) Kolja Nolte
- * @see             https://docs.kolja-nolte.com/wp-ai-image-renamer/
+ * @see             https://docs.kolja-nolte.com/ai-image-renamer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +24,7 @@
  * @package AIR\Services
  */
 
-declare(strict_types=1);
+declare( strict_types=1 );
 
 namespace AIR\Services;
 
@@ -40,7 +39,6 @@ use Exception;
  * Handles encryption and decryption of sensitive data using defuse/php-encryption.
  */
 class Encryption_Service {
-
 
 	/**
 	 * Option name for storing the encryption key.
@@ -123,7 +121,7 @@ class Encryption_Service {
 	/**
 	 * Encrypt a string.
 	 *
-	 * @param  string $plaintext  The data to encrypt.
+	 * @param string $plaintext The data to encrypt.
 	 *
 	 * @return string|false The encrypted ciphertext or false on failure.
 	 */
@@ -146,7 +144,7 @@ class Encryption_Service {
 	/**
 	 * Decrypt a ciphertext string.
 	 *
-	 * @param  string $ciphertext  The encrypted data.
+	 * @param string $ciphertext The encrypted data.
 	 *
 	 * @return string|false The decrypted plaintext or false on failure.
 	 */
@@ -211,30 +209,28 @@ class Encryption_Service {
 				<p>
 					<strong><?php \esc_html_e( 'Security Warning: AI Image Renamer', 'ai-image-renamer' ); ?></strong><br>
 					<?php
-					\printf( /* translators: %s: AIR_ENCRYPTION_KEY */\esc_html__( 'Your encryption key is stored in the WordPress database. For better security, define %s in your wp-config.php file.', 'ai-image-renamer' ), '<code>AIR_ENCRYPTION_KEY</code>' );
+					\printf( /* translators: %s: AIR_ENCRYPTION_KEY */ \esc_html__( 'Your encryption key is stored in the WordPress database. For better security, define %s in your wp-config.php file.', 'ai-image-renamer' ), '<code>AIR_ENCRYPTION_KEY</code>' );
 					?>
 				</p>
 				<p>
 					<a
-						href="https://docs.kolja-nolte.com/ai-image-renamer/support/security"
-						target="_blank">
+							href="https://docs.kolja-nolte.com/ai-image-renamer/support/security" target="_blank">
 						<?php \esc_html_e( 'Learn more about securing your encryption key', 'ai-image-renamer' ); ?>
 					</a>
 				</p>
-			</div>
-			<script>
-				jQuery(document).ready(function($) {
-					$('.air-encryption-notice').on('click', '.notice-dismiss', function() {
-						jQuery.ajax({
-							url: ajaxurl,
-							method: 'POST',
-							data: {
-								action: 'air_dismiss_encryption_notice',
-								nonce: '<?php echo \esc_attr( \wp_create_nonce( 'air_dismiss_encryption_notice' ) ); ?>'
-							}
-						});
-					});
-				});
+			</div>			<script>
+            jQuery(document).ready(function ($) {
+              $('.air-encryption-notice').on('click', '.notice-dismiss', function () {
+                jQuery.ajax({
+                  url:    ajaxurl,
+                  method: 'POST',
+                  data:   {
+                    action: 'air_dismiss_encryption_notice',
+                    nonce:  '<?php echo \esc_attr( \wp_create_nonce( 'air_dismiss_encryption_notice' ) ); ?>'
+                  }
+                });
+              });
+            });
 			</script>
 			<?php
 		}
