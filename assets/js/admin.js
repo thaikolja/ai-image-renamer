@@ -181,5 +181,12 @@
     updateModelCards();
 
     $doc.on("change", ".air-model-card input", updateModelCards);
+
+    // --- Donation Banner Close Handler ---
+    $doc.on("click", "#air-donation-banner-close", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      $(this).closest("#air-donation-banner").addClass("hidden");
+    });
   });
 })(jQuery);
