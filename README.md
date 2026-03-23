@@ -76,11 +76,12 @@ composer install --no-dev --optimize-autoloader
 4. Choose model, keyword limit, file types, and (optional) alt-text behavior.
 5. Save.
 
-### Optional: define a dedicated encryption key
+### Secure Database Bypass (Recommended)
 
-For maximum control, define an encryption key in `wp-config.php` (the plugin also works without this, but explicitly setting a key makes environments more predictable):
+For maximum control and security, you can define your Groq API key and encryption key directly in your `wp-config.php`. Defining `AIR_API_KEY` skips database storage entirely:
 
 ```php
+define('AIR_API_KEY', 'gsk_your_api_key_here');
 define('AIR_ENCRYPTION_KEY', 'put-a-long-random-secret-here');
 ```
 

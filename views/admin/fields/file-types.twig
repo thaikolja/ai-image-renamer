@@ -2,24 +2,37 @@
 <div class="air-card">
 	<div class="air-card-header">
 		<h2>
-			<span class="dashicons dashicons-format-image"></span>
+			<span class="dashicons dashicons-format-image" aria-hidden="true"></span>
 			{{ __('File Types', 'ai-image-renamer') }}
-			<a href="https://docs.kolja-nolte.com/ai-image-renamer/getting-started/configuration#file-types" target="_blank" class="air-doc-badge">
-				<span class="dashicons dashicons-book"></span>
-				<span>{{ __('Documentation', 'ai-image-renamer') }}</span>
+			<a href="{{ doc_url('usage/settings#file-types') }}" target="_blank" class="air-doc-badge" aria-label="{{ __('Documentation for File Types', 'ai-image-renamer') }}">
+				<span class="dashicons dashicons-book" aria-hidden="true"></span>
+				<span aria-hidden="true">{{ __('Documentation', 'ai-image-renamer') }}</span>
 			</a>
 		</h2>
 		<p class="air-card-description">{{ __('Select which image formats to process.', 'ai-image-renamer') }}</p>
 	</div>
 	<div class="air-card-body">
-		<div class="air-filetypes-grid">
+		<div class="air-filetypes-grid" role="group" aria-label="{{ __('Available file formats', 'ai-image-renamer') }}">
 			{% for mime, label in available_types %}
+				{% set type_desc = '' %}
+				{% if mime == 'image/jpeg' %}{% set type_desc = __('Standard image format, best for photographs.', 'ai-image-renamer') %}
+				{% elseif mime == 'image/png' %}{% set type_desc = __('Lossless format, supports transparency.', 'ai-image-renamer') %}
+				{% elseif mime == 'image/webp' %}{% set type_desc = __('Modern format, high quality at small file sizes.', 'ai-image-renamer') %}
+				{% elseif mime == 'image/avif' %}{% set type_desc = __('Next-gen format, superior compression to WebP.', 'ai-image-renamer') %}
+				{% elseif mime == 'image/gif' %}{% set type_desc = __('Static or animated images, limited colors.', 'ai-image-renamer') %}
+				{% endif %}
+
 				<label class="air-filetype-card {{ mime in file_types ? 'selected' : '' }}">
-					<input type="checkbox" name="{{ option_name }}[file_types][]" value="{{ mime }}" {{ mime in file_types ? 'checked' : '' }}>
-					<span class="air-filetype-icon">
-						<span class="dashicons dashicons-format-image"></span>
+					<input type="checkbox" name="{{ option_name }}[file_types][]" value="{{ mime }}" {{ mime in file_types ? 'checked' : '' }} aria-label="{{ label }}{{ type_desc ? ' - ' ~ type_desc : '' }}">
+					<span class="air-filetype-icon" aria-hidden="true">
+						<span class="dashicons dashicons-media-document"></span>
 					</span>
-					<span class="air-filetype-label">{{ label }}</span>
+					<span class="air-filetype-content">
+						<span class="air-filetype-label">{{ label }}</span>
+						{% if type_desc %}
+							<span class="air-filetype-desc">{{ type_desc }}</span>
+						{% endif %}
+					</span>
 				</label>
 			{% endfor %}
 		</div>

@@ -1,50 +1,113 @@
 {# API Key Field Template #}
-<div class="air-api-key-container">
-    <label
-            for="air_api_key"
-            class="screen-reader-text">
-        {{ __('Groq API Key', 'ai-image-renamer') }}
-    </label>
-    <div class="air-api-key-wrapper">
-        <input
-                type="text"
-                id="air_api_key"
-                name="{{ option_name }}[api_key]"
-                value="{{ display_key }}"
-                class="regular-text"
-                placeholder="{{ placeholder }}"
-                autocomplete="off" />
 
-        {% if saved %}
+{# ── Notification Banner ── #}
+{% if using_api_key_constant %}
+    <div class="air-api-key-notice air-api-key-notice--active" role="status" aria-live="polite">
+        <div class="air-api-key-notice-icon" aria-hidden="true">
+            <span class="dashicons dashicons-shield-alt"></span>
+        </div>
+        <div class="air-api-key-notice-body">
+            <strong>{{ __('API key loaded from wp-config.php', 'ai-image-renamer') }}</strong>
+            <p>{{ __('Your Groq API key is securely defined via the', 'ai-image-renamer') }} <code>AIR_API_KEY</code> {{ __('constant and takes priority over any key entered below.', 'ai-image-renamer') }}</p>
+        </div>
+    </div>
+{% else %}
+    <div class="air-api-key-notice air-api-key-notice--tip" role="note">
+        <div class="air-api-key-notice-icon" aria-hidden="true">
+            <span class="dashicons dashicons-info-outline"></span>
+        </div>
+        <div class="air-api-key-notice-body">
+            <strong>{{ __('Recommended: Define your API key in wp-config.php', 'ai-image-renamer') }}</strong>
+            <p id="air_api_key_tip_desc">{{ __('For enhanced security, add this constant to your', 'ai-image-renamer') }} <code>wp-config.php</code>{{ __('. It will automatically override the key entered below.', 'ai-image-renamer') }}</p>
+            <div class="air-api-key-notice-snippet" aria-label="{{ __('Code block showing how to define API key in wp-config.php', 'ai-image-renamer') }}" tabindex="0">
+                <code>define( 'AIR_API_KEY', 'gsk_your_api_key_here' );</code>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{# ── API Key Input Row ── #}
+<div class="air-setting-row air-setting-row--stacked">
+    <div class="air-setting-label">
+        <label for="air_api_key">{{ __('Groq API Key', 'ai-image-renamer') }} <span class="air-label-required" aria-label="{{ __('Required field', 'ai-image-renamer') }}">{{ __('Required', 'ai-image-renamer') }}</span></label>
+        <p class="air-setting-description" id="air_api_key_desc">
+            {% if using_api_key_constant %}
+                {{ __('The API key is managed via your wp-config.php constant.', 'ai-image-renamer') }}
+            {% elseif saved %}
+                {{ __('Your key is encrypted and saved. Enter a new key to overwrite it.', 'ai-image-renamer') }}
+            {% else %}
+                {{ __('Enter your Groq API key. Keys start with gsk_ and are 56 characters long.', 'ai-image-renamer') }}
+            {% endif %}
+        </p>
+    </div>
+    <div class="air-setting-control air-setting-control--full">
+        <div class="air-api-key-input-row{{ using_api_key_constant ? ' air-api-key-input-row--disabled' : '' }}">
+            {% if using_api_key_constant %}
+                <input
+                        type="text"
+                        id="air_api_key"
+                        value="{{ __('Defined in wp-config.php', 'ai-image-renamer') }}"
+                        class="air-api-key-field"
+                        disabled
+                        readonly
+                        aria-describedby="air_api_key_desc" />
+            {% else %}
+                <input
+                        type="text"
+                        id="air_api_key"
+                        name="{{ option_name }}[api_key]"
+                        value="{{ display_key }}"
+                        class="air-api-key-field"
+                        placeholder="{{ placeholder }}"
+                        autocomplete="off"
+                        aria-describedby="air_api_key_desc"
+                        aria-required="true"
+                        aria-invalid="false" />
+            {% endif %}
             <button
                     type="button"
                     id="air_delete_api_key"
-                    class="button button-hero button-link-delete text-danger">
-                {{ __('Delete Key', 'ai-image-renamer') }}
+                    class="air-api-key-delete"
+                    title="{{ __('Delete saved key from database', 'ai-image-renamer') }}"
+                    aria-label="{{ __('Delete saved key', 'ai-image-renamer') }}"
+                    {{ not saved or using_api_key_constant ? 'disabled aria-disabled="true"' : '' }}>
+                <span class="dashicons dashicons-trash" aria-hidden="true"></span>
+                <span aria-hidden="true">{{ __('Delete', 'ai-image-renamer') }}</span>
             </button>
-        {% endif %}
+        </div>
+        {# Inline validation error (injected by JS) #}
+        <div id="air-api-key-error-msg" class="air-api-key-error" style="display:none;" role="alert" aria-live="assertive"></div>
     </div>
 </div>
-<p class="description">
-    {% if saved %}
-        {{ __('Your Groq API key has been encrypted and saved. Type a new key to overwrite it.', 'ai-image-renamer') }}
-    {% else %}
-        {{ __('Enter your Groq API key.', 'ai-image-renamer') }}
-    {% endif %}
-</p>
-<p class="air-action-buttons">
-    <a
-            href="https://console.groq.com/keys"
-            target="_blank"
-            class="button button-primary air-button-with-icon"> <span class="dashicons dashicons-admin-network"></span>
-        {{ __('Get Free Groq API Key', 'ai-image-renamer') }}
-    </a>
-    <button
-            type="button"
-            id="air_test_connection"
-            class="button button-secondary air-button-with-icon">
-        <span class="dashicons dashicons-update"></span>
-        {{ __('Test Connection', 'ai-image-renamer') }}
-    </button>
-    <span id="air_test_result"></span>
-</p>
+
+{# ── Get Key + Test Connection ── #}
+<div class="air-setting-row air-setting-row--stacked" style="border-bottom: none; padding-bottom: 0;">
+    <div class="air-setting-label">
+        <label id="air_connection_label">{{ __('Connection', 'ai-image-renamer') }}</label>
+        <p class="air-setting-description" id="air_connection_desc">{{ __('Verify your API key works correctly.', 'ai-image-renamer') }}</p>
+    </div>
+    <div class="air-setting-control air-setting-control--full">
+        <div class="air-connection-row" role="group" aria-labelledby="air_connection_label" aria-describedby="air_connection_desc">
+            <a
+                    href="https://console.groq.com/keys"
+                    target="_blank"
+                    class="air-btn air-btn--secondary"
+                    aria-label="{{ __('Get a Free API Key from Groq', 'ai-image-renamer') }}">
+                <span class="dashicons dashicons-external" aria-hidden="true"></span>
+                <span aria-hidden="true">{{ __('Get Free API Key', 'ai-image-renamer') }}</span>
+            </a>
+            <button
+                    type="button"
+                    id="air_test_connection"
+                    class="air-btn air-btn--primary"
+                    aria-label="{{ __('Test the configured API connection', 'ai-image-renamer') }}">
+                <span class="dashicons dashicons-update" aria-hidden="true"></span>
+                <span aria-hidden="true">{{ __('Test Connection', 'ai-image-renamer') }}</span>
+            </button>
+            <div id="air_test_result" class="air-status-badge air-status-badge--idle" role="status" aria-live="polite">
+                <span class="dashicons dashicons-lightbulb" aria-hidden="true"></span>
+                <span class="air-status-badge-text">{{ __('Not tested', 'ai-image-renamer') }}</span>
+            </div>
+        </div>
+    </div>
+</div>

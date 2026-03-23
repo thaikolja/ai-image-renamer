@@ -65,11 +65,27 @@ class Groq_Service {
 	}
 
 	/**
+	 * Check if the API key is defined as a constant in wp-config.php.
+	 *
+	 * @return bool True if AIR_API_KEY constant is defined and non-empty.
+	 */
+	public static function has_api_key_constant(): bool {
+		return \defined( 'AIR_API_KEY' ) && ! empty( AIR_API_KEY );
+	}
+
+	/**
 	 * Get the decrypted API key.
+	 *
+	 * Prioritizes the AIR_API_KEY constant over the database-stored key.
 	 *
 	 * @return string|false The API key or false if not available.
 	 */
 	private function get_api_key(): string|false {
+		// Check for constant-defined API key first (recommended method).
+		if ( self::has_api_key_constant() ) {
+			return AIR_API_KEY;
+		}
+
 		$options = \get_option( 'air_options', [] );
 
 		if ( empty( $options['api_key'] ) ) {
@@ -122,8 +138,8 @@ class Groq_Service {
 		// Check enabled flag - handle both boolean and string "1" from database.
 		$enabled = isset( $options['enabled'] ) && ( true === $options['enabled'] || '1' === $options['enabled'] || 1 === $options['enabled'] );
 
-		// Check if API key exists.
-		$has_key = ! empty( $options['api_key'] );
+		// Check if API key exists (constant takes priority).
+		$has_key = self::has_api_key_constant() || ! empty( $options['api_key'] );
 
 		return $enabled && $has_key;
 	}

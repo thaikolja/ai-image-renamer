@@ -47,6 +47,7 @@ Automatically rename uploaded images using AI for SEO-friendly, descriptive file
 * PNG
 * WebP
 * GIF
+* SVG
 
 = Requirements =
 
@@ -128,7 +129,7 @@ Yes, simply toggle "Enable Auto-Rename" off in the settings before uploading, th
 
 = Is my API key secure? =
 
-Absolutely! API keys are encrypted using `defuse/php-encryption` before being stored in your database. For maximum security, you can define the encryption key in `wp-config.php`.
+Absolutely! API keys are encrypted using `defuse/php-encryption` before being stored in your database. For maximum security, you can alternatively set the `AIR_API_KEY` constant directly in your `wp-config.php` to skip database storage entirely!
 
 = Does this affect site performance? =
 
@@ -158,7 +159,7 @@ Yes! Each site needs its own API key configuration, but you can use the same Gro
 * AI-powered image renaming with Groq Vision API
 * Support for Llama Maverick and Scout models
 * Encrypted API key storage
-* Configurable file types (JPEG, PNG, WebP, GIF)
+* Configurable file types (JPEG, PNG, WebP, GIF, SVG)
 * Custom prompt support
 * Keyword limit configuration (1-10)
 * Optional alt text auto-population

@@ -303,7 +303,7 @@ class Settings_Page {
 				$validation = API_Key_Validator::validate_groq_key( $plaintext );
 
 				if ( ! $validation['valid'] ) {
-					\add_settings_error( self::OPTION_NAME, 'invalid_key', $validation['message'] );
+					\add_settings_error( self::OPTION_GROUP, 'invalid_key', $validation['message'] );
 					// Keep old key if validation failed.
 					$sanitized['api_key'] = $old['api_key'] ?? '';
 				} else {
@@ -311,7 +311,7 @@ class Settings_Page {
 					if ( false !== $encrypted ) {
 						$sanitized['api_key'] = $encrypted;
 					} else {
-						\add_settings_error( self::OPTION_NAME,
+						\add_settings_error( self::OPTION_GROUP,
 						                     'encryption_failed',
 						                     \__( 'Failed to encrypt API key. Please try again.',
 						                          'ai-image-renamer' ) );
@@ -439,8 +439,8 @@ class Settings_Page {
 			'image/jpeg' => 'JPEG',
 			'image/png'  => 'PNG',
 			'image/webp' => 'WebP',
-			'image/avif' => 'Avif',
-			'image/gif'  => 'GIF'
+			'image/avif' => 'AVIF',
+			'image/gif'  => 'GIF',
 		];
 
 		/**
@@ -661,28 +661,34 @@ class Settings_Page {
 		// Check if cURL exists and is enabled
 		$curl_enabled = function_exists( 'curl_version' );
 
+		$using_api_key_constant = Groq_Service::has_api_key_constant();
+
+		// Display any validation/save errors above the form.
+		\settings_errors( self::OPTION_GROUP );
+
 		// All values escaped before passing to template.
 		echo $this->template_engine->render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			'admin/settings.twig',
 			[
-				'page_slug'       => esc_attr( self::PAGE_SLUG ),
-				'option_group'    => esc_attr( self::OPTION_GROUP ),
-				'option_name'     => esc_attr( self::OPTION_NAME ),
-				'version'         => esc_html( AIR_VERSION ),
-				'page_title'      => esc_html( get_admin_page_title() ),
-				'display_key'     => esc_attr( $display_key ),
-				'placeholder'     => esc_attr( $placeholder ),
-				'saved'           => esc_attr( $saved ),
-				'enabled'         => (bool) ( $options['enabled'] ?? true ),
-				'set_alt_text'    => (bool) ( $options['set_alt_text'] ?? false ),
-				'file_types'      => array_map( 'esc_attr', $file_types ),
-				'available_types' => array_map( 'esc_html', $available_types ),
-				'current'         => esc_attr( $current ),
-				'models'          => $prepared_models,
+				'page_slug'               => esc_attr( self::PAGE_SLUG ),
+				'option_group'            => esc_attr( self::OPTION_GROUP ),
+				'option_name'             => esc_attr( self::OPTION_NAME ),
+				'version'                 => esc_html( AIR_VERSION ),
+				'page_title'              => esc_html( get_admin_page_title() ),
+				'display_key'             => esc_attr( $display_key ),
+				'placeholder'             => esc_attr( $placeholder ),
+				'saved'                   => esc_attr( $saved ),
+				'enabled'                 => (bool) ( $options['enabled'] ?? true ),
+				'set_alt_text'            => (bool) ( $options['set_alt_text'] ?? false ),
+				'file_types'              => array_map( 'esc_attr', $file_types ),
+				'available_types'         => array_map( 'esc_html', $available_types ),
+				'current'                 => esc_attr( $current ),
+				'models'                  => $prepared_models,
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Already escaped in prepare_models_for_template().
-				'max_keywords'    => absint( $options['max_keywords'] ?? 5 ),
-				'asset_url'       => esc_url( \plugins_url( 'assets',
-				                                            \dirname( __DIR__, 2 ) . '/ai-image-renamer.php' ) ),
+				'max_keywords'            => absint( $options['max_keywords'] ?? 5 ),
+				'asset_url'               => esc_url( \plugins_url( 'assets',
+				                                                    \dirname( __DIR__, 2 ) . '/ai-image-renamer.php' ) ),
+				'using_api_key_constant'  => $using_api_key_constant,
 				'diagnostics'     => [
 					'php'    => [
 						'label' => esc_html__( 'PHP Version', 'ai-image-renamer' ),
@@ -747,7 +753,8 @@ class Settings_Page {
 		\wp_localize_script( 'air-admin',
 		                     'airAdmin',
 		                     [
-			                     'ajaxUrl' => \admin_url( 'admin-ajax.php' ),
+			                     'ajaxUrl'              => \admin_url( 'admin-ajax.php' ),
+			                     'usingApiKeyConstant'  => Groq_Service::has_api_key_constant(),
 			                     'nonces'  => [
 				                     'test_connection'           => \wp_create_nonce( 'air_test_connection' ),
 				                     'delete_api_key'            => \wp_create_nonce( 'air_delete_api_key' ),
@@ -757,6 +764,9 @@ class Settings_Page {
 				                     'testing'           => \__( 'Testing...', 'ai-image-renamer' ),
 				                     'success'           => \__( 'Connection successful!', 'ai-image-renamer' ),
 				                     'error'             => \__( 'Connection failed:', 'ai-image-renamer' ),
+				                     'error_empty'       => \__( 'API key cannot be empty.', 'ai-image-renamer' ),
+				                     'error_prefix'      => \sprintf( \__( 'Invalid API key format. Groq API keys start with %s', 'ai-image-renamer' ), 'gsk_' ),
+				                     'error_length'      => \sprintf( \__( 'The API key has an invalid length. It must be exactly %d characters long.', 'ai-image-renamer' ), 56 ),
 				                     'no_key'            => \__( 'No API key configured.', 'ai-image-renamer' ),
 				                     'delete_confirm'    => \__( 'Are you sure you want to delete the API Key? This action cannot be undone.',
 				                                                 'ai-image-renamer' ),
@@ -802,15 +812,28 @@ class Settings_Page {
 			\wp_send_json_error( [ 'message' => \__( 'Permission denied.', 'ai-image-renamer' ) ] );
 		}
 
-		// Check if a specific key was provided in POST.
-		// Use filter_input instead of direct $_POST access for better security.
-		$api_key_raw = filter_input( INPUT_POST, 'api_key', FILTER_UNSAFE_RAW );
-		$is_new_key  = filter_input( INPUT_POST, 'is_new_key', FILTER_VALIDATE_BOOLEAN );
+		// If the API key constant is defined, always use it directly for testing.
+		// This short-circuits all POST data handling regardless of what the JS sends.
+		if ( Groq_Service::has_api_key_constant() ) {
+			$result = $this->groq_service->test_connection( \AIR_API_KEY );
+
+			if ( true === $result ) {
+				\wp_send_json_success( [ 'message' => \__( 'Connection successful!', 'ai-image-renamer' ) ] );
+			} else {
+				\wp_send_json_error( [ 'message' => $result ] );
+			}
+
+			return;
+		}
+
+		// No constant defined — use the key from POST data or the saved key.
+		$api_key_raw = isset( $_POST['api_key'] ) ? \wp_unslash( $_POST['api_key'] ) : null;
+		$is_new_key  = ! empty( $_POST['is_new_key'] );
 
 		$api_key = null;
 
 		if ( null !== $api_key_raw ) {
-			$api_key = \sanitize_text_field( \wp_unslash( $api_key_raw ) );
+			$api_key = \sanitize_text_field( $api_key_raw );
 
 			// If the key is masked and it's not explicitly marked as a new key, use saved key.
 			if ( API_Key_Validator::is_masked( $api_key ) && ! $is_new_key ) {
@@ -822,7 +845,6 @@ class Settings_Page {
 				return;
 			} else if ( ! API_Key_Validator::is_masked( $api_key ) ) {
 				// Only validate if it's not masked (i.e., it's a new key).
-				// Validate the API key format before testing.
 				$validation = API_Key_Validator::validate_groq_key( $api_key );
 				if ( ! $validation['valid'] ) {
 					\wp_send_json_error( [ 'message' => $validation['message'] ] );

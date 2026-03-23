@@ -42,18 +42,11 @@ class API_Key_Validator {
 	private const GROQ_KEY_PREFIX = 'gsk_';
 
 	/**
-	 * Minimum API key length.
+	 * Exact API key length.
 	 *
 	 * @var int
 	 */
-	private const MIN_LENGTH = 32;
-
-	/**
-	 * Maximum API key length.
-	 *
-	 * @var int
-	 */
-	private const MAX_LENGTH = 128;
+	private const EXACT_LENGTH = 56;
 
 	/**
 	 * Validate a Groq API key format.
@@ -86,21 +79,12 @@ class API_Key_Validator {
 
 		// Check length.
 		$key_length = strlen( $api_key );
-		if ( $key_length < self::MIN_LENGTH ) {
+		if ( $key_length !== self::EXACT_LENGTH ) {
 			return [
 				'valid'   => false,
-				'message' => \sprintf( /* translators: %d: Minimum length */ \__( 'The API key is too short. It must be at least %d characters long.',
-				                                                                  'ai-image-renamer' ),
-				                                                             self::MIN_LENGTH ),
-			];
-		}
-
-		if ( $key_length > self::MAX_LENGTH ) {
-			return [
-				'valid'   => false,
-				'message' => \sprintf( /* translators: %d: Maximum length */ \__( 'The API key is too long. It must be at most %d characters long.',
-				                                                                  'ai-image-renamer' ),
-				                                                             self::MAX_LENGTH ),
+				'message' => \sprintf( /* translators: %d: Exact length */ \__( 'The API key has an invalid length. It must be exactly %d characters long.',
+				                                                                'ai-image-renamer' ),
+				                                                           self::EXACT_LENGTH ),
 			];
 		}
 

@@ -190,6 +190,11 @@ class Template_Engine {
 		$this->twig->addFunction( new TwigFunction( 'slug', function ( string $text ) {
 			return sanitize_title_with_dashes( $text );
 		} ) );
+
+		$this->twig->addFunction( new TwigFunction( 'doc_url', function ( string $path = '' ): string {
+			$base = ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ? 'http://localhost:5173/' : 'https://docs.kolja-nolte.com/ai-image-renamer/';
+			return $base . ltrim( $path, '/' );
+		} ) );
 	}
 
 	/**

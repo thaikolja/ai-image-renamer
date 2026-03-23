@@ -217,7 +217,7 @@ class Encryption_Service {
 				</p>
 				<p>
 					<a
-							href="https://docs.kolja-nolte.com/ai-image-renamer/support/security" target="_blank">
+							href="<?php echo esc_url( defined('WP_DEBUG') && WP_DEBUG ? 'http://localhost:5173/api/functions#encryption-service' : 'https://docs.kolja-nolte.com/ai-image-renamer/api/functions#encryption-service' ); ?>" target="_blank">
 						<?php \esc_html_e( 'Learn more about securing your encryption key', 'ai-image-renamer' ); ?>
 					</a>
 				</p>

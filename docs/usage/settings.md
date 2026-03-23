@@ -16,6 +16,16 @@ Your API key connects the plugin to the [Groq](https://groq.com/) AI service. Wi
 
 You can get a free API key from [console.groq.com](https://console.groq.com/keys).
 
+::: tip Skip Database Storage Entirely
+For maximum security, you can skip storing your API key in the database by defining the `AIR_API_KEY` constant directly in your `wp-config.php` file:
+
+```php
+define('AIR_API_KEY', 'gsk_your_api_key_here');
+```
+
+When this constant is set, the plugin securely uses it and ignores any key saved in the database.
+:::
+
 ::: warning Keep your encryption key safe
 By default, the encryption key is stored in your database. For better security, you can add it to your site's [`wp-config.php`](https://developer.wordpress.org/advanced-administration/wordpress/wp-config/) file:
 
@@ -56,6 +66,7 @@ Choose which image formats the plugin should process. Uncheck any formats you'd 
 | WebP   | ✅ Yes             |
 | AVIF   | ✅ Yes             |
 | GIF    | ❌ No              |
+| SVG    | ❌ No              |
 
 ## Advanced Settings
 
