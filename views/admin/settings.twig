@@ -27,6 +27,9 @@
                         enabled: enabled,
                         set_alt_text: set_alt_text
                     } %}
+                    {% include 'admin/fields/model-limits-info.twig' with {
+                        model_limit_info: model_limit_info
+                    } %}
                 </div>
 
                 {# API Configuration Panel #}

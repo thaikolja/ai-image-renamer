@@ -527,6 +527,80 @@ class Settings_Page {
 	}
 
 	/**
+	 * Get human-readable limit information for the current Scout model.
+	 *
+	 * @return array
+	 */
+	private function get_current_model_limit_info(): array {
+		return [
+			'title'          => esc_html__( 'Model Limits', 'ai-image-renamer' ),
+			'description'    => esc_html__( 'A quick overview of the limits that matter most when this model renames uploaded images.',
+			                                'ai-image-renamer' ),
+			'model_label'    => 'Llama 4 Scout 17B 16E',
+			'model_id'       => 'meta-llama/llama-4-scout-17b-16e-instruct',
+			'model_card_url' => esc_url( 'https://console.groq.com/docs/model/meta-llama/llama-4-scout-17b-16e-instruct' ),
+			'items'          => [
+				[
+					'label'   => esc_html__( 'Speed', 'ai-image-renamer' ),
+					'value'   => '~750 tokens/second',
+					'meaning' => esc_html__( 'Usually responds quickly, so uploaded images should not wait long for a new filename.',
+					                         'ai-image-renamer' ),
+				],
+				[
+					'label'   => esc_html__( 'Context window', 'ai-image-renamer' ),
+					'value'   => '131,072 tokens',
+					'meaning' => esc_html__( 'Plenty of room for the prompt and image analysis. This plugin only uses a small part of it.',
+					                         'ai-image-renamer' ),
+				],
+				[
+					'label'   => esc_html__( 'Max output', 'ai-image-renamer' ),
+					'value'   => '8,192 tokens',
+					'meaning' => esc_html__( 'The plugin only needs a short answer, so normal filename suggestions stay far below this limit.',
+					                         'ai-image-renamer' ),
+				],
+				[
+					'label'   => esc_html__( 'Max file size', 'ai-image-renamer' ),
+					'value'   => '20 MB per image',
+					'meaning' => esc_html__( 'Images above this size can fail before renaming starts. Oversized originals may need resizing first.',
+					                         'ai-image-renamer' ),
+				],
+				[
+					'label'   => esc_html__( 'Max input images', 'ai-image-renamer' ),
+					'value'   => '5 images per request',
+					'meaning' => esc_html__( 'This plugin sends one uploaded image at a time, so it stays comfortably within the limit.',
+					                         'ai-image-renamer' ),
+				],
+				[
+					'label'   => esc_html__( 'Supported input', 'ai-image-renamer' ),
+					'value'   => esc_html__( 'Text and images', 'ai-image-renamer' ),
+					'meaning' => esc_html__( 'The plugin can send the uploaded image together with a short instruction for filename generation.',
+					                         'ai-image-renamer' ),
+				],
+				[
+					'label'   => esc_html__( 'Supported output', 'ai-image-renamer' ),
+					'value'   => esc_html__( 'Text only', 'ai-image-renamer' ),
+					'meaning' => esc_html__( 'The model returns text, which this plugin turns into a filename and optional alt text.',
+					                         'ai-image-renamer' ),
+				],
+			],
+			'notes'          => [
+				[
+					'variant' => 'tip',
+					'title'   => esc_html__( 'Rate limits still apply', 'ai-image-renamer' ),
+					'text'    => esc_html__( 'Your Groq account can still limit how many requests or tokens you may use over time, especially during larger upload bursts.',
+					                         'ai-image-renamer' ),
+				],
+				[
+					'variant' => 'tip',
+					'title'   => esc_html__( 'EU licensing note', 'ai-image-renamer' ),
+					'text'    => esc_html__( 'Groq repeats Meta’s note that certain multimodal rights may be limited in the EU. Check the linked model card if this could apply to you.',
+					                         'ai-image-renamer' ),
+				],
+			],
+		];
+	}
+
+	/**
 	 * Render the enabled toggle field.
 	 *
 	 * @return void
@@ -618,7 +692,7 @@ class Settings_Page {
 			[
 				'option_name' => esc_attr( self::OPTION_NAME ),
 				'current'     => esc_attr( $current ),
-				'models'      => $prepared_models,
+				'models'      => array_map( 'esc_attr', $prepared_models ),
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Already escaped in prepare_models_for_template().
 				'asset_url'   => esc_url( \plugins_url( 'assets', \dirname( __DIR__, 2 ) . '/ai-image-renamer.php' ) ),
 			] );
@@ -684,6 +758,7 @@ class Settings_Page {
 				'available_types'        => array_map( 'esc_html', $available_types ),
 				'current'                => esc_attr( $current ),
 				'models'                 => $prepared_models,
+				'model_limit_info'       => $this->get_current_model_limit_info(),
 				'max_keywords'           => absint( $options['max_keywords'] ?? 5 ),
 				'asset_url'              => esc_url( \plugins_url( 'assets',
 				                                                   \dirname( __DIR__, 2 ) . '/ai-image-renamer.php' ) ),
