@@ -43,8 +43,17 @@
     let originalMaskedValue = $apiKeyInput.val();
 
     const setButtonState = ($btn, disabled, label) => {
-      $btn.prop("disabled", disabled);
-      if (typeof label === "string") $btn.text(label);
+      $btn.prop("disabled", disabled).attr("aria-disabled", disabled ? "true" : "false");
+
+      if (typeof label === "string") {
+        const $labelTarget = $btn.find(".air-button-label, span[aria-hidden='true']").last();
+
+        if ($labelTarget.length) {
+          $labelTarget.text(label);
+        } else {
+          $btn.text(label);
+        }
+      }
     };
 
     const setResultState = (state, text) => {
@@ -83,6 +92,10 @@
 
     const showErrorInTab = (message) => {
       $("#air-api-key-error-msg").text(message).show();
+    };
+
+    const updateApiKeyDescription = (message) => {
+      $("#air_api_key_desc").text(message);
     };
 
     // When user starts typing in the input field, clear the masked value
@@ -216,11 +229,9 @@
       })
           .done((response) => {
             if (response && response.success) {
-              // Update description to reflect deletion
-              $apiKeyInput
-                  .closest("div")
-                  .next(".description")
-                  .text(admin.strings.enter_key);
+              clearErrorInTab();
+              updateApiKeyDescription(admin.strings.enter_key);
+              setResultState("idle", admin.strings.no_key || "Not tested");
             } else {
               window.alert(getResponseMessage(response));
             }
@@ -231,6 +242,25 @@
           .always(() => {
             setButtonState($delBtn, false, admin.strings.delete_key_button);
           });
+    });
+
+    // --- Encryption Notice Dismiss Handler ---
+    $doc.on("click", ".air-encryption-notice .notice-dismiss", function () {
+      const $notice = $(this).closest(".air-encryption-notice");
+      const nonce = String($notice.data("air-dismiss-nonce") ?? "");
+
+      if (!nonce) {
+        return;
+      }
+
+      $.ajax({
+        url: admin.ajaxUrl,
+        method: "POST",
+        data: {
+          action: "air_dismiss_encryption_notice",
+          nonce,
+        },
+      });
     });
 
     // --- Model Selector Handler ---
@@ -244,11 +274,5 @@
 
     $doc.on("change", ".air-model-card input", updateModelCards);
 
-    // --- Donation Banner Close Handler ---
-    $doc.on("click", "#air-donation-banner-close", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      $(this).closest("#air-donation-banner").addClass("hidden");
-    });
   });
 })(jQuery);

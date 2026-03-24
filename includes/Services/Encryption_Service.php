@@ -73,9 +73,9 @@ class Encryption_Service {
 	 */
 	private function get_or_create_key(): ?Key {
 		// Check if key is defined in wp-config.php (recommended).
-		if ( \defined( 'AIR_ENCRYPTION_KEY' ) && ! empty( AIR_ENCRYPTION_KEY ) ) {
+		if ( \defined( 'AIR_ENCRYPTION_KEY' ) && ! empty( (string) \constant( 'AIR_ENCRYPTION_KEY' ) ) ) {
 			try {
-				return Key::loadFromAsciiSafeString( AIR_ENCRYPTION_KEY );
+				return Key::loadFromAsciiSafeString( (string) \constant( 'AIR_ENCRYPTION_KEY' ) );
 			} catch ( Exception $e ) {
 				// Invalid key format, fall through to option-based key.
 				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
@@ -185,7 +185,7 @@ class Encryption_Service {
 	 * @return bool True if key is defined in wp-config.php, false if stored in options.
 	 */
 	final public function is_using_config_constant(): bool {
-		return \defined( 'AIR_ENCRYPTION_KEY' ) && ! empty( AIR_ENCRYPTION_KEY );
+		return \defined( 'AIR_ENCRYPTION_KEY' ) && ! empty( (string) \constant( 'AIR_ENCRYPTION_KEY' ) );
 	}
 
 	/**
@@ -205,7 +205,7 @@ class Encryption_Service {
 			}
 
 			?>
-			<div class="notice notice-warning is-dismissible air-encryption-notice">
+			<div class="notice notice-warning is-dismissible air-encryption-notice" data-air-dismiss-nonce="<?php echo esc_attr( \wp_create_nonce( 'air_dismiss_encryption_notice' ) ); ?>">
 				<p>
 					<strong><?php \esc_html_e( 'Security Warning: AI Image Renamer',
 					                           'ai-image-renamer' ); ?></strong><br>
@@ -217,24 +217,11 @@ class Encryption_Service {
 				</p>
 				<p>
 					<a
-							href="<?php echo esc_url( defined('WP_DEBUG') && WP_DEBUG ? 'http://localhost:5173/api/functions#encryption-service' : 'https://docs.kolja-nolte.com/ai-image-renamer/api/functions#encryption-service' ); ?>" target="_blank">
+							href="<?php echo esc_url( 'https://docs.kolja-nolte.com/ai-image-renamer/usage/settings#security' ); ?>" target="_blank" rel="noopener noreferrer">
 						<?php \esc_html_e( 'Learn more about securing your encryption key', 'ai-image-renamer' ); ?>
 					</a>
 				</p>
-			</div>            <script>
-            jQuery(document).ready(function ($) {
-              $('.air-encryption-notice').on('click', '.notice-dismiss', function () {
-                jQuery.ajax({
-                  url:    ajaxurl,
-                  method: 'POST',
-                  data:   {
-                    action: 'air_dismiss_encryption_notice',
-                    nonce:  '<?php echo \esc_attr( \wp_create_nonce( 'air_dismiss_encryption_notice' ) ); ?>'
-                  }
-                });
-              });
-            });
-			</script>
+			</div>
 			<?php
 		}
 	}

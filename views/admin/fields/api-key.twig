@@ -20,11 +20,11 @@
         </div>
         <div class="air-api-key-notice-body">
             <strong>{{ __('Recommended: Define your API key in wp-config.php', 'ai-image-renamer') }}</strong>
-            <p id="air_api_key_tip_desc">{{ __('For enhanced security, add this constant to your', 'ai-image-renamer') }}
+            <p id="air_api_key_tip_desc">{{ __('For stronger security, add this constant to your', 'ai-image-renamer') }}
                 <code>wp-config.php</code>{{ __('. It will automatically override the key entered below.', 'ai-image-renamer') }}
             </p>
             <div class="air-api-key-notice-snippet" aria-label="{{ __('Code block showing how to define API key in wp-config.php', 'ai-image-renamer') }}" tabindex="0">
-                <code>define( 'AIR_API_KEY', 'gsk_YOUR_GROK_API_KEY_HERE' );</code>
+                <code>define( 'AIR_API_KEY', 'gsk_YOUR_GROQ_API_KEY_HERE' );</code>
             </div>
         </div>
     </div>
@@ -38,7 +38,7 @@
         </label>
         <p class="air-setting-description" id="air_api_key_desc">
             {% if using_api_key_constant %}
-                {{ __('The API key is managed via your wp-config.php constant.', 'ai-image-renamer') }}
+                {{ __('The API key is managed through your wp-config.php constant.', 'ai-image-renamer') }}
             {% elseif saved %}
                 {{ __('Your key is encrypted and saved. Enter a new key to overwrite it.', 'ai-image-renamer') }}
             {% else %}
@@ -72,12 +72,12 @@
 <div class="air-setting-row air-setting-row--stacked" style="border-bottom: none; padding-bottom: 0;">
     <div class="air-setting-label">
         <label id="air_connection_label">{{ __('Connection', 'ai-image-renamer') }}</label>
-        <p class="air-setting-description" id="air_connection_desc">{{ __('Verify your API key works correctly.', 'ai-image-renamer') }}</p>
+        <p class="air-setting-description" id="air_connection_desc">{{ __('Verify that WordPress can reach Groq with the configured API key.', 'ai-image-renamer') }}</p>
     </div>
     <div class="air-setting-control air-setting-control--full">
         <div class="air-connection-row" role="group" aria-labelledby="air_connection_label" aria-describedby="air_connection_desc">
             <a
-                    href="https://console.groq.com/keys" target="_blank" class="air-btn air-btn--secondary" aria-label="{{ __('Get a Free API Key from Groq', 'ai-image-renamer') }}">
+                    href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" class="air-btn air-btn--secondary" aria-label="{{ __('Get a free API key from Groq', 'ai-image-renamer') }}">
                 <span class="dashicons dashicons-external" aria-hidden="true"></span>
                 <span aria-hidden="true">{{ __('Get Free API Key', 'ai-image-renamer') }}</span> </a>
             <button

@@ -4,11 +4,11 @@
         <h2>
             <span class="dashicons dashicons-grid-view"></span>
             {{ __('AI Models', 'ai-image-renamer') }}
-            <a href="{{ doc_url('usage/settings#ai-model') }}" target="_blank" class="air-doc-badge">
+            <a href="{{ doc_url('usage/settings#ai-model') }}" target="_blank" rel="noopener noreferrer" class="air-doc-badge">
                 <span class="dashicons dashicons-book"></span>
                 <span>{{ __('Documentation', 'ai-image-renamer') }}</span> </a>
         </h2>
-        <p class="air-card-description">{{ __('Choose the vision model used for analyzing images.', 'ai-image-renamer') }}</p>
+        <p class="air-card-description">{{ __('Choose which Groq vision model should analyze new uploads.', 'ai-image-renamer') }}</p>
     </div>
     <div class="air-card-body">
         <div class="air-setting-row air-setting-row--stacked">
@@ -22,8 +22,8 @@
                     } %}
                 </div>
                 <p class="deprecation-notice">
-                    {{ __('Llama 4 Maverick has been deprecated by Groq on March 9, 2026. <a href="%s"
-                    target="_blank">Read more...</a>', 'ai-image-renamer')|replace({'%s': 'https://console.groq.com/docs/deprecations#march-9-2026-metallamallama4maverick17b128einstruct'})|raw }}
+                    {{ __('Llama 4 Maverick was deprecated by Groq on March 9, 2026.', 'ai-image-renamer') }}
+                    <a href="https://console.groq.com/docs/deprecations#march-9-2026-metallamallama4maverick17b128einstruct" target="_blank" rel="noopener noreferrer">{{ __('Read the deprecation notice', 'ai-image-renamer') }}</a>
                 </p>
             </div>
         </div>

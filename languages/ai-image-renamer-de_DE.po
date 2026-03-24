@@ -1,245 +1,754 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: AI Image Renamer\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-10 05:47+0700\n"
-"PO-Revision-Date: 2026-01-10 06:00+0700\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
 "Last-Translator: Kolja Nolte <kolja.nolte@gmail.com >\n"
-"Language-Team: kolja.nolte@gmail.com\n"
-"Language: de\n"
+"Language-Team: \n"
+"Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.8\n"
+"X-Generator: Poedit 3.9\n"
+"X-Domain: ai-image-renamer\n"
 
-#: ai-image-renamer.php:61
-msgid ""
-"AI Image Renamer: Composer dependencies not installed. Please run \"composer "
-"install\" in the plugin directory."
-msgstr ""
-"AI Image Renamer: Composer-Abhängigkeiten sind nicht installiert. Bitte "
-"führen Sie \"composer install\" im Plugin-Verzeichnis aus."
+#: includes/Admin/Settings_Page.php:595
+msgid "A quick overview of the limits that matter most when this model renames uploaded images."
+msgstr "Ein kurzer Überblick über die Grenzen, die bei der Umbenennung hochgeladener Bilder durch dieses Modell am wichtigsten sind."
 
-#: includes/Admin/Settings_Page.php:118
-msgid "AI Image Renamer"
-msgstr "AI Image Renamer"
-
-#: includes/Admin/Settings_Page.php:134
-msgid "API Configuration"
-msgstr "API-Konfiguration"
-
-#: includes/Admin/Settings_Page.php:149
-msgid "How does it work?"
-msgstr "Wie funktioniert es?"
-
-#: includes/Admin/Settings_Page.php:152
-msgid ""
-"The plugin uses the powerful Groq Vision API to analyze your uploaded "
-"images. It extracts descriptive keywords and automatically renames your "
-"files for better SEO and accessibility."
-msgstr ""
-"Das Plugin verwendet die leistungsstarke Groq Vision API, um Ihre "
-"hochgeladenen Bilder zu analysieren. Es extrahiert beschreibende "
-"Schlüsselwörter und benennt Ihre Dateien automatisch um, um eine bessere SEO "
-"und Barrierefreiheit zu gewährleisten."
-
-#: includes/Admin/Settings_Page.php:167
-msgid "Is it free?"
-msgstr "Ist es kostenlos?"
-
-#: includes/Admin/Settings_Page.php:170
-msgid ""
-"Yes! This plugin leverages Groq's generous free tier. Simply get your free "
-"API key from the Groq console and start renaming your images without any "
-"costs."
-msgstr ""
-"Ja! Dieses Plugin nutzt das großzügige kostenlose Angebot von Groq. Holen "
-"Sie sich einfach Ihren kostenlosen API-Schlüssel aus der Groq-Konsole und "
-"fangen Sie an, Ihre Bilder ohne Kosten umzubenennen."
-
-#: includes/Admin/Settings_Page.php:171
-msgid ""
-"Unlock advanced features like bulk renaming, custom naming patterns, and "
-"support for 20+ languages. Coming soon to take your media management to the "
-"next level."
-msgstr ""
-"Schalten Sie erweiterte Funktionen wie Massenumbenennung, benutzerdefinierte "
-"Benennungsmuster und Unterstützung für mehr als 20 Sprachen frei. Demnächst "
-"verfügbar, um Ihre Medienverwaltung auf die nächste Stufe zu heben."
-
-#: includes/Admin/Settings_Page.php:179
-msgid "Enable Auto-Rename"
-msgstr "Automatisches Umbenennen aktivieren"
-
-#: includes/Admin/Settings_Page.php:185 includes/Admin/Settings_Page.php:342
-msgid "Groq API Key"
-msgstr "Groq API-Schlüssel"
-
-#: includes/Admin/Settings_Page.php:191
-msgid "AI Model"
-msgstr "KI-Modell"
-
-#: includes/Admin/Settings_Page.php:197
-msgid "Use as <code>alt=\"\"</code>"
-msgstr "Als <code>alt=\"\"</code> verwenden"
-
-#: includes/Admin/Settings_Page.php:203
-msgid "File Types"
-msgstr "Dateitypen"
-
-#: includes/Admin/Settings_Page.php:204
-msgid "Select which image types to process."
-msgstr "Wählen Sie aus, welche Bildtypen verarbeitet werden sollen."
-
-#: includes/Admin/Settings_Page.php:207
-msgid "Allowed Types"
-msgstr "Erlaubte Typen"
-
-#: includes/Admin/Settings_Page.php:213
+#: includes/Admin/Settings_Page.php:227
 msgid "Advanced Settings"
 msgstr "Erweiterte Einstellungen"
 
-#: includes/Admin/Settings_Page.php:214
-msgid "Customize the AI prompt and keyword settings."
-msgstr "Passen Sie den KI-Prompt und die Schlüsselwort-Einstellungen an."
+#. Plugin Name of the plugin
+#: ai-image-renamer.php
+msgid "AI Image Renamer"
+msgstr "AI Image Renamer"
 
-#: includes/Admin/Settings_Page.php:217 includes/Admin/Settings_Page.php:468
-msgid "Custom Prompt"
-msgstr "Benutzerdefinierter Prompt"
+#: ai-image-renamer.php:61
+msgid "AI Image Renamer: Composer dependencies not installed. Please run \"composer install\" in the plugin directory."
+msgstr "AI Image Renamer: Composer-Abhängigkeiten nicht installiert. Bitte führen Sie \"composer install\" im Plugin-Verzeichnis aus."
 
-#: includes/Admin/Settings_Page.php:222
-msgid "Max Keywords"
-msgstr "Maximale Schlüsselwörter"
+#: includes/Admin/Settings_Page.php:186
+msgid "AI Model"
+msgstr "AI-Modell"
 
-#: includes/Admin/Settings_Page.php:269
-msgid "Failed to encrypt API key. Please try again."
-msgstr ""
-"Verschlüsselung des API-Schlüssels fehlgeschlagen. Bitte versuchen Sie es "
-"erneut."
+#: includes/Admin/Settings_Page.php:831
+msgid "Allocated memory for script execution"
+msgstr "Zugewiesener Speicher für die Skriptausführung"
 
-#: includes/Admin/Settings_Page.php:276
-msgid "Invalid API Key format. Must start with <code>gsk_</code>."
-msgstr "Ungültiges API-Schlüsselformat. Muss mit <code>gsk_</code> beginnen."
+#: includes/Admin/Settings_Page.php:216
+msgid "Allowed Types"
+msgstr "Erlaubte Typen"
 
-#: includes/Admin/Settings_Page.php:356 includes/Admin/Settings_Page.php:599
-msgid "Delete Key"
-msgstr "Schlüssel löschen"
+#: includes/Admin/Settings_Page.php:155
+msgid "API Configuration"
+msgstr "API-Konfiguration"
 
-#: includes/Admin/Settings_Page.php:362
-msgid "Your Groq API key has been encrypted and saved"
-msgstr "Ihr Groq API-Schlüssel wurde verschlüsselt und gespeichert"
+#: includes/Admin/Settings_Page.php:889 includes/Utils/API_Key_Validator.php:66
+msgid "API key cannot be empty."
+msgstr "Der API-Schlüssel darf nicht leer sein."
 
-#: includes/Admin/Settings_Page.php:364 includes/Admin/Settings_Page.php:597
-msgid "Enter your Groq API key."
-msgstr "Geben Sie Ihren Groq API-Schlüssel ein."
-
-#: includes/Admin/Settings_Page.php:371
-msgid "Get Free Groq API Key"
-msgstr "Kostenlosen Groq API-Schlüssel anfordern"
-
-#: includes/Admin/Settings_Page.php:378
-msgid "Test Connection"
-msgstr "Verbindung testen"
-
-#: includes/Admin/Settings_Page.php:400
-msgid "Automatically rename images on upload"
-msgstr "Bilder beim Hochladen automatisch umbenennen"
-
-#: includes/Admin/Settings_Page.php:420
-msgid "Automatically set images' \"alt\" attribute from the filename."
-msgstr ""
-"Das \"alt\"-Attribut von Bildern automatisch aus dem Dateinamen setzen."
-
-#: includes/Admin/Settings_Page.php:476
-msgid "Leave empty to use the default prompt."
-msgstr "Leer lassen, um den Standard-Prompt zu verwenden."
-
-#: includes/Admin/Settings_Page.php:493
-msgid "Maximum Keywords"
-msgstr "Maximale Anzahl an Schlüsselwörtern"
-
-#: includes/Admin/Settings_Page.php:504
-msgid "Maximum number of keywords to generate for filenames."
-msgstr "Maximale Anzahl der für Dateinamen zu generierenden Schlüsselwörter."
-
-#: includes/Admin/Settings_Page.php:591
-msgid "Testing..."
-msgstr "Teste..."
-
-#: includes/Admin/Settings_Page.php:592 includes/Admin/Settings_Page.php:652
-msgid "Connection successful!"
-msgstr "Verbindung erfolgreich!"
-
-#: includes/Admin/Settings_Page.php:593
-msgid "Connection failed:"
-msgstr "Verbindung fehlgeschlagen:"
-
-#: includes/Admin/Settings_Page.php:594 includes/Services/Groq_Service.php:147
-msgid "No API key configured."
-msgstr "Kein API-Schlüssel konfiguriert."
-
-#: includes/Admin/Settings_Page.php:595
-msgid ""
-"Are you sure you want to delete the API Key? This action cannot be undone."
-msgstr ""
-"Sind Sie sicher, dass Sie den API-Schlüssel löschen möchten? Diese Aktion "
-"kann nicht rückgängig gemacht werden."
-
-#: includes/Admin/Settings_Page.php:596
-msgid "Deleting..."
-msgstr "Lösche..."
-
-#: includes/Admin/Settings_Page.php:598
-msgid "Request failed:"
-msgstr "Anfrage fehlgeschlagen:"
-
-#: includes/Admin/Settings_Page.php:626 includes/Admin/Settings_Page.php:667
-msgid "Permission denied."
-msgstr "Berechtigung verweigert."
-
-#: includes/Admin/Settings_Page.php:643
-msgid "No API key provided."
-msgstr "Kein API-Schlüssel angegeben."
-
-#: includes/Admin/Settings_Page.php:675
+#: includes/Admin/Settings_Page.php:1022
 msgid "API key deleted."
 msgstr "API-Schlüssel gelöscht."
 
-#: includes/Services/Groq_Service.php:100
-#, php-format
-msgid ""
-"View this image and describe it in no more than %d keyword. Only return the "
-"output."
-msgid_plural ""
-"View this image and describe it in no more than %d keywords. Only return the "
-"output."
-msgstr[0] ""
-"Betrachte dieses Bild und beschreibe es mit nicht mehr als %d Schlüsselwort. "
-"Gib nur das Ergebnis zurück."
-msgstr[1] ""
-"Betrachte dieses Bild und beschreibe es mit nicht mehr als %d "
-"Schlüsselwörtern. Gib nur das Ergebnis zurück."
-
-#: includes/Services/Groq_Service.php:173
-#, php-format
+#. translators: %d: HTTP status code
+#: includes/Services/Groq_Service.php:216
 msgid "API returned HTTP %d"
-msgstr "API antwortete mit HTTP %d"
+msgstr "API hat HTTP %d zurückgegeben"
 
-#: includes/Services/Template_Engine.php:139
+#: includes/Admin/Settings_Page.php:899
+msgid "Are you sure you want to delete the API Key? This action cannot be undone."
+msgstr "Sind Sie sicher, dass Sie den API-Schlüssel löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+
+#. Description of the plugin
+#: ai-image-renamer.php
+msgid "Automatically renames uploaded images using Groq's Vision API for SEO-friendly filenames."
+msgstr "Automatische Umbenennung hochgeladener Bilder mithilfe der Groq Vision API für SEO-freundliche Dateinamen."
+
+#: includes/Admin/Settings_Page.php:888
+msgid "Connection failed:"
+msgstr "Verbindung fehlgeschlagen:"
+
+#: includes/Admin/Settings_Page.php:887 includes/Admin/Settings_Page.php:949
+#: includes/Admin/Settings_Page.php:988
+msgid "Connection successful!"
+msgstr "Verbindung erfolgreich!"
+
+#: includes/Admin/Settings_Page.php:606
+msgid "Context window"
+msgstr "Kontext-Fenster"
+
+#: includes/Admin/Settings_Page.php:840
+msgid "cURL Enabled"
+msgstr "cURL Aktiviert"
+
+#: includes/Admin/Settings_Page.php:230
+msgid "Customize the AI prompt and keyword settings."
+msgstr "Passen Sie die Einstellungen für die AI-Eingabeaufforderung und die Schlüsselwörter an."
+
+#: includes/Admin/Settings_Page.php:904
+msgid "Delete Key"
+msgstr "Taste löschen"
+
+#: includes/Admin/Settings_Page.php:901
+msgid "Deleting..."
+msgstr "Löschen..."
+
+#: includes/Admin/Settings_Page.php:164
+msgid "Enable Auto-Rename"
+msgstr "Automatisches Umbenennen einschalten"
+
+#: includes/Admin/Settings_Page.php:419 includes/Admin/Settings_Page.php:771
+msgid "Enter a new key to replace the saved one…"
+msgstr "Geben Sie einen neuen Schlüssel ein, um den gespeicherten Schlüssel zu ersetzen…"
+
+#: includes/Admin/Settings_Page.php:902
+msgid "Enter your Groq API key."
+msgstr "Geben Sie Ihren Groq-API-Schlüssel ein."
+
+#: includes/Admin/Settings_Page.php:644
+msgid "EU licensing note"
+msgstr "EU-Lizenzierungshinweis"
+
+#: includes/Admin/Settings_Page.php:316
+msgid "Failed to encrypt API key. Please try again."
+msgstr "Verschlüsselung des API-Schlüssels fehlgeschlagen. Bitte versuchen Sie es erneut."
+
+#: includes/Admin/Settings_Page.php:208
+msgid "File Types"
+msgstr "Datei-Typen"
+
+#: includes/Admin/Settings_Page.php:175
+msgid "Groq API Key"
+msgstr "Groq API-Schlüssel"
+
+#: includes/Admin/Settings_Page.php:645
+msgid "Groq repeats Meta’s note that certain multimodal rights may be limited in the EU. Check the linked model card if this could apply to you."
+msgstr "Groq wiederholt den Hinweis von Meta, dass bestimmte multimodale Rechte in der EU eingeschränkt sein können. Prüfen Sie auf der verlinkten Musterkarte, ob dies auf Sie zutreffen könnte."
+
+#. Plugin URI of the plugin
+#: ai-image-renamer.php
+msgid "https://docs.kolja-nolte.com/ai-image-renamer"
+msgstr "https://docs.kolja-nolte.com/ai-image-renamer"
+
+#. Author URI of the plugin
+#: ai-image-renamer.php
+msgid "https://www.kolja-nolte.com"
+msgstr "https://www.kolja-nolte.com"
+
+#: includes/Admin/Settings_Page.php:618
+msgid "Images above this size can fail before renaming starts. Oversized originals may need resizing first."
+msgstr "Bilder, die diese Größe überschreiten, können vor der Umbenennung fehlschlagen. Bei übergroßen Originalen muss möglicherweise zuerst die Größe geändert werden."
+
+#: includes/Admin/Settings_Page.php:378
+msgid "Invalid AI model selected. Using default model."
+msgstr "Ungültiges AI-Modell ausgewählt. Standardmodell verwenden."
+
+#. translators: %s: API key prefix
+#: includes/Utils/API_Key_Validator.php:74
+msgid "Invalid API key format. Groq API keys start with %s"
+msgstr "Ungültiges API-Schlüsselformat. Groq-API-Schlüssel beginnen mit %s"
+
+#. Author of the plugin
+#: ai-image-renamer.php
+msgid "Kolja Nolte"
+msgstr "Kolja Nolte"
+
+#: includes/Services/Encryption_Service.php:221
+msgid "Learn more about securing your encryption key"
+msgstr "Erfahren Sie mehr über die Sicherung Ihres Verschlüsselungscodes"
+
+#: includes/Admin/Settings_Page.php:616
+msgid "Max file size"
+msgstr "Maximale Dateigröße"
+
+#: includes/Admin/Settings_Page.php:621
+msgid "Max input images"
+msgstr "Maximal eingegebene Bilder"
+
+#: includes/Admin/Settings_Page.php:236
+msgid "Max Keywords"
+msgstr "Max Schlüsselwörter"
+
+#: includes/Admin/Settings_Page.php:611
+msgid "Max output"
+msgstr "Maximale Leistung"
+
+#: includes/Admin/Settings_Page.php:834
+msgid "Max Upload Size"
+msgstr "Maximale Upload-Größe"
+
+#: includes/Admin/Settings_Page.php:837
+msgid "Maximum file size set by server"
+msgstr "Vom Server festgelegte maximale Dateigröße"
+
+#: includes/Admin/Settings_Page.php:828
+msgid "Memory Limit"
+msgstr "Speichergrenze"
+
+#: includes/Admin/Settings_Page.php:594
+msgid "Model Limits"
+msgstr "Modell-Grenzwerte"
+
+#: includes/Admin/Settings_Page.php:841
+msgid "No"
+msgstr "Nein"
+
+#: includes/Admin/Settings_Page.php:898 includes/Services/Groq_Service.php:185
+msgid "No API key configured."
+msgstr "Kein API-Schlüssel konfiguriert."
+
+#: includes/Admin/Settings_Page.php:971
+msgid "No API key provided."
+msgstr "Kein API-Schlüssel vorhanden."
+
+#: includes/Admin/Settings_Page.php:940 includes/Admin/Settings_Page.php:1008
+#: includes/Admin/Settings_Page.php:1053
+msgid "Permission denied."
+msgstr "Erlaubnis verweigert."
+
+#: includes/Admin/Settings_Page.php:816
+msgid "PHP Version"
+msgstr "PHP-Version"
+
+#: includes/Admin/Settings_Page.php:608
+msgid "Plenty of room for the prompt and image analysis. This plugin only uses a small part of it."
+msgstr "Es gibt viel Platz für die Eingabeaufforderung und die Bildanalyse. Dieses Plugin nutzt nur einen kleinen Teil davon."
+
+#: includes/Utils/Rate_Limiter.php:219
+msgid "Rate limit exceeded. Please try again later."
+msgstr "Ratenlimit überschritten. Bitte versuchen Sie es später noch einmal."
+
+#: includes/Admin/Settings_Page.php:639
+msgid "Rate limits still apply"
+msgstr "Tarifgrenzen gelten weiterhin"
+
+#: includes/Admin/Settings_Page.php:903
+msgid "Request failed:"
+msgstr "Anfrage fehlgeschlagen:"
+
+#: includes/Admin/Settings_Page.php:844
+msgid "Required for API communication"
+msgstr "Für die API-Kommunikation erforderlich"
+
+#: includes/Admin/Settings_Page.php:825
+msgid "Required: 6.0 or higher"
+msgstr "Erforderlich: 6.0 oder höher"
+
+#: includes/Admin/Settings_Page.php:819
+msgid "Required: 8.2 or higher"
+msgstr "Erforderlich: 8.2 oder höher"
+
+#: includes/Services/Encryption_Service.php:210
+msgid "Security Warning: AI Image Renamer"
+msgstr "Sicherheitswarnung: AI Image Renamer"
+
+#: includes/Admin/Settings_Page.php:211
+msgid "Select which image types to process."
+msgstr "Wählen Sie die zu verarbeitenden Bildtypen aus."
+
+#: includes/Admin/Settings_Page.php:601
+msgid "Speed"
+msgstr "Geschwindigkeit"
+
+#: includes/Admin/Settings_Page.php:626
+msgid "Supported input"
+msgstr "Unterstützte Eingabe"
+
+#: includes/Admin/Settings_Page.php:631
+msgid "Supported output"
+msgstr "Unterstützte Ausgabe"
+
+#: includes/Services/Template_Engine.php:213
 msgid "Template Error:"
-msgstr "Template-Fehler:"
+msgstr "Vorlage Fehler:"
 
-#: languages/twig-strings.php:22
-msgid "AI Image Renamer Settings"
-msgstr "AI Image Renamer Einstellungen"
+#: includes/Admin/Settings_Page.php:886
+msgid "Testing..."
+msgstr "Prüfung..."
 
-#: languages/twig-strings.php:23
-msgid "Save Settings"
-msgstr "Einstellungen speichern"
+#: includes/Admin/Settings_Page.php:627
+msgid "Text and images"
+msgstr "Text und Bilder"
+
+#: includes/Admin/Settings_Page.php:632
+msgid "Text only"
+msgstr "Nur Text"
+
+#: includes/Utils/API_Key_Validator.php:97
+msgid "The API key contains invalid characters. <strong>Only alphanumeric characters, hyphens, and underscores</strong> are allowed."
+msgstr "Der API-Schlüssel enthält ungültige Zeichen. <strong>Nur alphanumerische Zeichen, Bindestriche und Unterstriche</strong> sind erlaubt."
+
+#: includes/Utils/API_Key_Validator.php:106
+msgid "The API key contains invalid patterns."
+msgstr "Der API-Schlüssel enthält ungültige Muster."
+
+#. translators: %d: Exact length
+#: includes/Utils/API_Key_Validator.php:85
+msgid "The API key does not match the required length. It must be exactly %d characters long."
+msgstr "Der API-Schlüssel entspricht nicht der erforderlichen Länge. Er muss genau %d Zeichen lang sein."
+
+#. translators: %d: Expected Groq API key length.
+#: includes/Admin/Settings_Page.php:895
+msgid "The API key has an invalid length. It must be exactly %d characters long."
+msgstr "Der API-Schlüssel hat eine ungültige Länge. Er muss genau %d Zeichen lang sein."
+
+#: includes/Admin/Settings_Page.php:1013
+msgid "The API key is defined in wp-config.php and cannot be deleted here."
+msgstr "Der API-Schlüssel wird in wp-config.php definiert und kann hier nicht gelöscht werden."
+
+#. translators: %s: Groq API key prefix.
+#: includes/Admin/Settings_Page.php:891
+msgid "The format of the API key is invalid. Groq API keys start with %s"
+msgstr "Das Format des API-Schlüssels ist ungültig. Groq-API-Schlüssel beginnen mit %s"
+
+#: includes/Admin/Settings_Page.php:633
+msgid "The model returns text, which this plugin turns into a filename and optional alt text."
+msgstr "Das Modell gibt einen Text zurück, den dieses Plugin in einen Dateinamen und einen optionalen Alt-Text umwandelt."
+
+#: includes/Admin/Settings_Page.php:628
+msgid "The plugin can send the uploaded image together with a short instruction for filename generation."
+msgstr "Das Plugin kann das hochgeladene Bild zusammen mit einer kurzen Anweisung zur Dateinamenerstellung senden."
+
+#: includes/Admin/Settings_Page.php:613
+msgid "The plugin only needs a short answer, so normal filename suggestions stay far below this limit."
+msgstr "Das Plugin benötigt nur eine kurze Antwort, so dass normale Dateinamensvorschläge weit unter dieser Grenze bleiben."
+
+#: includes/Admin/Settings_Page.php:623
+msgid "This plugin sends one uploaded image at a time, so it stays comfortably within the limit."
+msgstr "Dieses Plugin sendet jeweils nur ein hochgeladenes Bild, so dass es bequem innerhalb des Limits bleibt."
+
+#: includes/Admin/Settings_Page.php:197
+msgid "Use as <code>alt=\"\"</code>"
+msgstr "Verwendung als <code>alt=\"\"</code>"
+
+#: includes/Admin/Settings_Page.php:587
+msgid "Usually responds a bit slower than Scout, but can provide more detailed image analysis."
+msgstr "Reagiert in der Regel etwas langsamer als Scout, kann aber eine detailliertere Bildanalyse liefern."
+
+#: includes/Admin/Settings_Page.php:580
+msgid "Usually responds quickly, so uploaded images should not wait long for a new filename."
+msgstr "Normalerweise reagiert es schnell, so dass hochgeladene Bilder nicht lange auf einen neuen Dateinamen warten sollten."
+
+#. translators: %d: Maximum number of keywords
+#: includes/Services/Groq_Service.php:111
+msgid "View this image and describe it in no more than %d keyword into English. Only return the output."
+msgid_plural "View this image and describe it in no more than %d keywords in English. Only return the output."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Admin/Settings_Page.php:822
+msgid "WordPress"
+msgstr "WordPress"
+
+#: includes/Admin/Settings_Page.php:841
+msgid "Yes"
+msgstr "Ja"
+
+#. translators: %s: AIR_ENCRYPTION_KEY
+#: includes/Services/Encryption_Service.php:213
+msgid "Your encryption key is stored in the WordPress database. For better security, define %s in your wp-config.php file."
+msgstr "Ihr Verschlüsselungscode wird in der WordPress-Datenbank gespeichert. Für mehr Sicherheit sollten Sie %s in Ihrer wp-config.php-Datei definieren."
+
+#: includes/Admin/Settings_Page.php:640
+msgid "Your Groq account can still limit how many requests or tokens you may use over time, especially during larger upload bursts."
+msgstr "Ihr Groq-Konto kann dennoch die Anzahl der Anfragen oder Token begrenzen, die Sie im Laufe der Zeit verbrauchen können, insbesondere bei größeren Upload-Serien."
+
+#: views/admin/components/footer.twig:1
+msgid "Need help? Start with the documentation or the WordPress.org support forum."
+msgstr "Brauchen Sie Hilfe? Starten Sie mit der Dokumentation oder dem WordPress.org-Supportforum."
+
+#: views/admin/components/header.twig:17 views/admin/components/tabs.twig:60
+#: views/admin/fields/advanced.twig:7 views/admin/fields/file-types.twig:9
+#: views/admin/fields/general.twig:10 views/admin/fields/models.twig:9
+#: views/admin/sidebar.twig:16
+msgid "Documentation"
+msgstr "Dokumentation"
+
+#: views/admin/components/header.twig:19
+msgid "WordPress.org Plugin Page"
+msgstr "WordPress.org-Pluginseite"
+
+#: views/admin/components/header.twig:19
+msgid "Plugin Page"
+msgstr "Pluginseite"
+
+#: views/admin/components/header.twig:21
+msgid "Support Forum"
+msgstr "Support-Forum"
+
+#: views/admin/components/header.twig:23
+msgid "Source Repository"
+msgstr "Quell-Repository"
+
+#: views/admin/components/intro.twig:10
+msgid "Welcome to AI Image Renamer"
+msgstr "Willkommen bei AI Image Renamer"
+
+#: views/admin/components/intro.twig:13
+msgid "Automatically rename newly uploaded images with short, descriptive filenames based on their actual content. You can also reuse the generated description as alt text for better accessibility."
+msgstr "Bennen Sie neu hochgeladene Bilder automatisch mit kurzen, beschreibenden Dateinamen um, die auf ihrem tatsächlichen Inhalt basieren. Für eine bessere Barrierefreiheit können Sie die erzeugte Beschreibung außerdem als Alt-Text wiederverwenden."
+
+#: views/admin/components/intro.twig:14
+msgid "This version connects to Groq only."
+msgstr "Diese Version verbindet sich ausschließlich mit Groq."
+
+#: views/admin/components/intro.twig:16
+msgid "Quick Start Guide"
+msgstr "Schnellstart"
+
+#: views/admin/components/intro.twig:21
+msgid "Connect API"
+msgstr "API verbinden"
+
+#: views/admin/components/intro.twig:22
+msgid "Enter your Groq API key and test the connection first"
+msgstr "Geben Sie Ihren Groq-API-Schlüssel ein und testen Sie zuerst die Verbindung"
+
+#: views/admin/components/intro.twig:29
+msgid "Configure"
+msgstr "Konfigurieren"
+
+#: views/admin/components/intro.twig:30
+msgid "Choose your AI model, file types, and optional alt text behavior"
+msgstr "Wählen Sie Ihr KI-Modell, die Dateitypen und das optionale Verhalten für Alt-Text"
+
+#: views/admin/components/intro.twig:37
+msgid "Upload"
+msgstr "Hochladen"
+
+#: views/admin/components/intro.twig:38
+msgid "Upload images in Media → Library or through the block editor"
+msgstr "Laden Sie Bilder unter Medien → Mediathek oder über den Block-Editor hoch"
+
+#: views/admin/components/intro.twig:45
+msgid "Fallback"
+msgstr "Rückfalloption"
+
+#: views/admin/components/intro.twig:47
+msgid "If the API request fails, WordPress keeps the original filename so uploads can still complete."
+msgstr "Wenn die API-Anfrage fehlschlägt, behält WordPress den ursprünglichen Dateinamen bei, damit Uploads trotzdem abgeschlossen werden können."
+
+#: views/admin/components/tabs.twig:13
+msgid "General"
+msgstr "Allgemein"
+
+#: views/admin/components/tabs.twig:23
+msgid "API Key"
+msgstr "API-Schlüssel"
+
+#: views/admin/components/tabs.twig:33
+msgid "Models"
+msgstr "Modelle"
+
+#: views/admin/components/tabs.twig:53
+msgid "Advanced"
+msgstr "Erweitert"
+
+#: views/admin/sidebar.twig:7
+msgid "Helpful Resources"
+msgstr "Hilfreiche Ressourcen"
+
+#: views/admin/sidebar.twig:12
+msgid "Everything you need to configure the plugin safely and troubleshoot uploads quickly."
+msgstr "Alles, was Sie brauchen, um das Plugin sicher zu konfigurieren und Upload-Probleme schnell zu beheben."
+
+#: views/admin/sidebar.twig:17
+msgid "Step-by-step setup guides, technical notes, and hook references."
+msgstr "Schritt-für-Schritt-Anleitungen, technische Hinweise und Hook-Referenzen."
+
+#: views/admin/sidebar.twig:21
+msgid "Security"
+msgstr "Sicherheit"
+
+#: views/admin/sidebar.twig:22
+msgid "Use wp-config.php constants when you want the strongest API key handling."
+msgstr "Verwenden Sie Konstanten in wp-config.php, wenn Sie die sicherste Behandlung des API-Schlüssels möchten."
+
+#: views/admin/sidebar.twig:26
+msgid "Support"
+msgstr "Support"
+
+#: views/admin/sidebar.twig:27
+msgid "Use the WordPress.org support forum if something does not behave as expected."
+msgstr "Nutzen Sie das WordPress.org-Supportforum, wenn sich etwas nicht wie erwartet verhält."
+
+#: views/admin/sidebar.twig:31
+msgid "Developer Friendly"
+msgstr "Entwicklerfreundlich"
+
+#: views/admin/sidebar.twig:32
+msgid "Filters and actions are available when you need to adapt the upload workflow."
+msgstr "Filter und Actions stehen zur Verfügung, wenn Sie den Upload-Ablauf anpassen möchten."
+
+#: views/admin/fields/file-types.twig:7
+msgid "Documentation for File Types"
+msgstr "Dokumentation zu Dateitypen"
+
+#: views/admin/fields/file-types.twig:12
+msgid "Select which image formats to process."
+msgstr "Wählen Sie aus, welche Bildformate verarbeitet werden sollen."
+
+#: views/admin/fields/file-types.twig:15
+msgid "Available file formats"
+msgstr "Verfügbare Dateiformate"
+
+#: views/admin/fields/file-types.twig:18
+msgid "Standard image format, best for photographs."
+msgstr "Standard-Bildformat, am besten für Fotos geeignet."
+
+#: views/admin/fields/file-types.twig:19
+msgid "Lossless format, supports transparency."
+msgstr "Verlustfreies Format, unterstützt Transparenz."
+
+#: views/admin/fields/file-types.twig:20
+msgid "Modern format, high quality at small file sizes."
+msgstr "Modernes Format, hohe Qualität bei kleinen Dateigrößen."
+
+#: views/admin/fields/file-types.twig:21
+msgid "Next-gen format, superior compression to WebP."
+msgstr "Next-Gen-Format mit besserer Kompression als WebP."
+
+#: views/admin/fields/file-types.twig:22
+msgid "Static or animated images, limited colors."
+msgstr "Statische oder animierte Bilder mit begrenzter Farbanzahl."
+
+#: views/admin/fields/api-key.twig:10
+msgid "API key loaded from wp-config.php"
+msgstr "API-Schlüssel aus wp-config.php geladen"
+
+#: views/admin/fields/api-key.twig:11
+msgid "Your Groq API key is securely defined via the"
+msgstr "Ihr Groq-API-Schlüssel ist sicher definiert über die"
+
+#: views/admin/fields/api-key.twig:12
+msgid "constant and takes priority over any key entered below."
+msgstr "Konstante und hat Vorrang vor jedem unten eingetragenen Schlüssel."
+
+#: views/admin/fields/api-key.twig:22
+msgid "Recommended: Define your API key in wp-config.php"
+msgstr "Empfohlen: Definieren Sie Ihren API-Schlüssel in wp-config.php"
+
+#: views/admin/fields/api-key.twig:23
+msgid "For stronger security, add this constant to your"
+msgstr "Für mehr Sicherheit fügen Sie diese Konstante Ihrer"
+
+#: views/admin/fields/api-key.twig:24
+msgid ". It will automatically override the key entered below."
+msgstr " hinzu. Sie überschreibt automatisch den unten eingegebenen Schlüssel."
+
+#: views/admin/fields/api-key.twig:26
+msgid "Code block showing how to define API key in wp-config.php"
+msgstr "Codeblock, der zeigt, wie der API-Schlüssel in wp-config.php definiert wird"
+
+#: views/admin/fields/api-key.twig:37
+msgid "Required field"
+msgstr "Pflichtfeld"
+
+#: views/admin/fields/api-key.twig:37
+msgid "Required"
+msgstr "Erforderlich"
+
+#: views/admin/fields/api-key.twig:41
+msgid "The API key is managed through your wp-config.php constant."
+msgstr "Der API-Schlüssel wird über Ihre Konstante in wp-config.php verwaltet."
+
+#: views/admin/fields/api-key.twig:43
+msgid "Your key is encrypted and saved. Enter a new key to overwrite it."
+msgstr "Ihr Schlüssel ist verschlüsselt gespeichert. Geben Sie einen neuen Schlüssel ein, um ihn zu überschreiben."
+
+#: views/admin/fields/api-key.twig:45
+msgid "Enter your Groq API key. Keys start with gsk_ and are 56 characters long."
+msgstr "Geben Sie Ihren Groq-API-Schlüssel ein. Schlüssel beginnen mit gsk_ und sind 56 Zeichen lang."
+
+#: views/admin/fields/api-key.twig:53
+msgid "Defined in wp-config.php..."
+msgstr "In wp-config.php definiert..."
+
+#: views/admin/fields/api-key.twig:60
+msgid "Delete saved key from database"
+msgstr "Gespeicherten Schlüssel aus der Datenbank löschen"
+
+#: views/admin/fields/api-key.twig:60
+msgid "Delete saved key"
+msgstr "Gespeicherten Schlüssel löschen"
+
+#: views/admin/fields/api-key.twig:63
+msgid "Delete"
+msgstr "Löschen"
+
+#: views/admin/fields/api-key.twig:74
+msgid "Connection"
+msgstr "Verbindung"
+
+#: views/admin/fields/api-key.twig:75
+msgid "Verify that WordPress can reach Groq with the configured API key."
+msgstr "Prüfen Sie, ob WordPress Groq mit dem konfigurierten API-Schlüssel erreichen kann."
+
+#: views/admin/fields/api-key.twig:80
+msgid "Get a free API key from Groq"
+msgstr "Kostenlosen API-Schlüssel von Groq erhalten"
+
+#: views/admin/fields/api-key.twig:82
+msgid "Get Free API Key"
+msgstr "Kostenlosen API-Schlüssel holen"
+
+#: views/admin/fields/api-key.twig:84
+msgid "Test the configured API connection"
+msgstr "Die konfigurierte API-Verbindung testen"
+
+#: views/admin/fields/api-key.twig:86
+msgid "Test Connection"
+msgstr "Verbindung testen"
+
+#: views/admin/fields/api-key.twig:90
+msgid "Not tested"
+msgstr "Nicht getestet"
+
+#: views/admin/fields/models.twig:6
+msgid "AI Models"
+msgstr "KI-Modelle"
+
+#: views/admin/fields/models.twig:11
+msgid "Choose which Groq vision model should analyze new uploads."
+msgstr "Wählen Sie aus, welches Groq-Vision-Modell neue Uploads analysieren soll."
+
+#: views/admin/fields/models.twig:25
+msgid "Llama 4 Maverick was deprecated by Groq on March 9, 2026."
+msgstr "Llama 4 Maverick wurde von Groq am 9. März 2026 als veraltet eingestuft."
+
+#: views/admin/fields/models.twig:26
+msgid "Read the deprecation notice"
+msgstr "Hinweis zur Abkündigung lesen"
+
+#: views/admin/fields/model.twig:11
+msgid "Unavailable"
+msgstr "Nicht verfügbar"
+
+#: views/admin/fields/model.twig:15
+msgid "logo"
+msgstr "Logo"
+
+#: views/admin/fields/model.twig:26
+msgid "Parameters"
+msgstr "Parameter"
+
+#: views/admin/fields/model.twig:28
+msgid "Params:"
+msgstr "Parameter:"
+
+#: views/admin/fields/model.twig:31
+msgid "Context Window"
+msgstr "Kontextfenster"
+
+#: views/admin/fields/model.twig:33
+msgid "Context:"
+msgstr "Kontext:"
+
+#: views/admin/fields/model.twig:38
+msgid "Speed:"
+msgstr "Geschwindigkeit:"
+
+#: views/admin/fields/model.twig:41
+msgid "Max File Size"
+msgstr "Maximale Dateigröße"
+
+#: views/admin/fields/model.twig:43
+msgid "Size:"
+msgstr "Größe:"
+
+#: views/admin/fields/general.twig:7
+msgid "General Settings"
+msgstr "Allgemeine Einstellungen"
+
+#: views/admin/fields/general.twig:12
+msgid "Choose what should happen when new images are uploaded."
+msgstr "Wählen Sie aus, was beim Hochladen neuer Bilder passieren soll."
+
+#: views/admin/fields/general.twig:18
+msgid "Automatically rename supported image uploads while WordPress processes them."
+msgstr "Unterstützte Bild-Uploads automatisch umbenennen, während WordPress sie verarbeitet."
+
+#: views/admin/fields/general.twig:29
+msgid "Populate Alt Text"
+msgstr "Alt-Text befüllen"
+
+#: views/admin/fields/general.twig:30
+msgid "Save a cleaned version of the generated description as the attachment alt text."
+msgstr "Eine bereinigte Version der erzeugten Beschreibung als Alt-Text des Anhangs speichern."
+
+#: views/admin/fields/advanced.twig:10
+msgid "Fine-tune AI behavior and output."
+msgstr "Verhalten und Ausgabe der KI fein abstimmen."
+
+#: views/admin/fields/advanced.twig:19
+msgid "Maximum number of keywords to include in the filename (1-10). Recommended: 5"
+msgstr "Maximale Anzahl an Schlüsselwörtern im Dateinamen (1–10). Empfohlen: 5"
+
+#: views/admin/fields/advanced.twig:34
+msgid "System Diagnostics"
+msgstr "Systemdiagnose"
+
+#: views/admin/fields/advanced.twig:36
+msgid "Server information and system requirements."
+msgstr "Serverinformationen und Systemanforderungen."
+
+#: views/admin/fields/max-keywords.twig:3
+msgid "Maximum Keywords"
+msgstr "Maximale Schlüsselwörter"
+
+#: views/admin/fields/max-keywords.twig:13
+msgid "Maximum number of keywords to generate for filenames."
+msgstr "Maximale Anzahl von Schlüsselwörtern, die für Dateinamen erzeugt werden sollen."
+
+#: views/admin/fields/model-limits-info.twig:9
+msgid "Model Card"
+msgstr "Modellkarte"
+
+#: views/admin/fields/alt-text.twig:7
+msgid "Automatically set images' \"alt\" attribute from the filename."
+msgstr "Das \"alt\"-Attribut von Bildern automatisch aus dem Dateinamen setzen."
+
+#: views/admin/fields/enabled.twig:7
+msgid "Automatically rename images on upload"
+msgstr "Bilder beim Hochladen automatisch umbenennen"
+
+#: views/admin/sections/hero.twig:14
+msgid "Get Started"
+msgstr "Erste Schritte"
+
+#: views/admin/sections/hero.twig:15
+msgid "Free Version"
+msgstr "Kostenlose Version"
+
+#: views/admin/sections/hero.twig:20
+msgid "Follow these steps to start renaming your images automatically using AI:"
+msgstr "Folgen Sie diesen Schritten, um Ihre Bilder mithilfe von KI automatisch umzubenennen:"
+
+#: views/admin/sections/hero.twig:23
+msgid "Get API Key"
+msgstr "API-Schlüssel holen"
+
+#: views/admin/sections/hero.twig:24
+msgid "Sign up for a free account at the"
+msgstr "Registrieren Sie sich für ein kostenloses Konto in der"
+
+#: views/admin/sections/hero.twig:25
+msgid "Groq Console"
+msgstr "Groq-Konsole"
+
+#: views/admin/sections/hero.twig:28
+msgid "Configure Plugin"
+msgstr "Plugin konfigurieren"
+
+#: views/admin/sections/hero.twig:29
+msgid "Enter your API key below and save the settings."
+msgstr "Geben Sie unten Ihren API-Schlüssel ein und speichern Sie die Einstellungen."
+
+#: views/admin/sections/hero.twig:33
+msgid "Toggle \"Enable Auto-Rename\" to start processing new uploads."
+msgstr "Aktivieren Sie \"Automatisches Umbenennen\", um neue Uploads zu verarbeiten."
+

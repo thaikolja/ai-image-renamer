@@ -124,15 +124,11 @@ try {
     );
   }
 
-  // Add composer.json and composer.lock to the plugin root
+  // Add composer.json so shipped Composer dependencies can be traced by review tools.
   if (fs.existsSync(path.join(pluginDir, 'composer.json'))) {
-    console.log('Adding composer.json & .lock...');
+    console.log('Adding composer.json...');
     zip.addLocalFile(
         path.join(pluginDir, 'composer.json'),
-        `${packageName}/`
-    );
-    zip.addLocalFile(
-        path.join(pluginDir, 'composer.lock'),
         `${packageName}/`,
     );
   }
@@ -146,12 +142,33 @@ try {
     );
   }
 
-  // Remove .md files and .DS_Store files from the zip
-  console.log('Removing .md and .DS_Store files...');
+  // Add languages directory if present.
+  if (fs.existsSync(path.join(pluginDir, 'languages'))) {
+    console.log('Adding languages/ directory...');
+    zip.addLocalFolder(
+        path.join(pluginDir, 'languages'),
+        `${packageName}/languages`,
+    );
+  }
+
+  // Remove development and system files from the zip.
+  console.log('Removing development and system files...');
   const entries = zip.getEntries();
   const entriesToDelete = [];
   for (const entry of entries) {
-    if (entry.entryName.match(/\.md$/i) || entry.entryName.match(/\.DS_Store$/i)) {
+    if (
+        entry.entryName.match(/\.md$/i) ||
+        entry.entryName.match(/\.DS_Store$/i) ||
+        entry.entryName.match(/\/ai-image-renamer\.zip$/i) ||
+        entry.entryName.match(/\/phpcs\.xml\.dist$/i) ||
+        entry.entryName.match(/\/(\.distignore|\.babelrc|\.eslintignore|\.eslintrc\.json)$/i) ||
+        //entry.entryName.match(/\/vendor\/bin(\/|$)/i) ||
+        entry.entryName.match(/\/vendor\/.*\/(docs|dist|tests|other)(\/|$)/i) ||
+        entry.entryName.match(/\/vendor\/(dealerdirect|kint-php|phpcsstandards|phpstan|squizlabs)(\/|$)/i) ||
+        //entry.entryName.match(/\/vendor\/.*\/(psalm\.xml|splitsh\.json|build-phar\.sh)$/i) ||
+        entry.entryName.match(/\/vendor\/.*\/CHANGELOG$/i) ||
+        entry.entryName.match(/\/vendor\/.*\/README\.(md|rst|txt)$/i)
+    ) {
       entriesToDelete.push(entry);
     }
   }

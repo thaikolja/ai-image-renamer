@@ -2,6 +2,7 @@
 src/
 node_modules/
 scripts/
+docs/
 # Exclude configuration files
 package.json
 bun.lock
@@ -10,6 +11,10 @@ composer.lock
 phpcs.xml.dist
 vite.config.mjs
 .gitignore
+.distignore
+.babelrc
+.eslintignore
+.eslintrc.json
 # Exclude all markdown files (WordPress uses readme.txt)
 *.md
 # Exclude AI assistant files
@@ -20,3 +25,4 @@ vite.config.mjs
 # Exclude cache and system files
 cache/
 .DS_Store
+ai-image-renamer.zip

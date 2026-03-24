@@ -182,6 +182,12 @@ class Image_Uploader {
 		                                $file,
 		                                $description );
 
+		$new_filename = \sanitize_file_name( (string) $new_filename );
+
+		if ( empty( $new_filename ) || '.' === $new_filename ) {
+			$new_filename = File_Sanitizer::build_filename( $sanitized_name, $extension );
+		}
+
 		// Ensure the final filename is lowercase (defensive check).
 		$new_filename = strtolower( $new_filename );
 
@@ -222,10 +228,15 @@ class Image_Uploader {
 			 * @since 1.0.0
 			 */
 			$alt_text = \apply_filters( 'air_alt_text', $clean_text, $description, $file );
+			$alt_text = \sanitize_text_field( \wp_strip_all_tags( (string) $alt_text ) );
+
+			if ( '' === $alt_text ) {
+				return $file;
+			}
 
 			// Store alt text in transient using the new filename as key.
 			// This prevents race conditions when multiple images are uploaded simultaneously.
-			$transient_key = self::ALT_TEXT_TRANSIENT_PREFIX . \md5( $new_filename . \microtime( true ) );
+			$transient_key = self::ALT_TEXT_TRANSIENT_PREFIX . str_replace( '-', '', \wp_generate_uuid4() );
 			\set_transient( $transient_key, $alt_text, self::TRANSIENT_EXPIRATION );
 
 			// Hook into attachment creation to save this.
@@ -273,8 +284,10 @@ class Image_Uploader {
 			'image/gif'  => 'gif',
 		];
 
-		$extensions = \apply_filters( 'air_mime_to_ext', $mime_to_ext[ $mime_type ] );
+		$extension = $mime_to_ext[ $mime_type ] ?? 'jpg';
 
-		return $extensions ?? 'jpg';
+		$extension = \apply_filters( 'air_mime_to_ext', $extension, $mime_type );
+
+		return is_string( $extension ) && '' !== $extension ? strtolower( $extension ) : 'jpg';
 	}
 }

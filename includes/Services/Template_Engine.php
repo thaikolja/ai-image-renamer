@@ -192,7 +192,7 @@ class Template_Engine {
 		} ) );
 
 		$this->twig->addFunction( new TwigFunction( 'doc_url', function ( string $path = '' ): string {
-			$base = ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ? 'http://localhost:5173/' : 'https://docs.kolja-nolte.com/ai-image-renamer/';
+			$base = (string) \apply_filters( 'air_docs_base_url', 'https://docs.kolja-nolte.com/ai-image-renamer/' );
 			return $base . ltrim( $path, '/' );
 		} ) );
 	}

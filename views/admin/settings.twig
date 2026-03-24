@@ -4,8 +4,6 @@
     {# Header #}
     {% include 'admin/components/header.twig' %}
 
-    {# Donation Banner #}
-    {% include 'admin/components/donation-banner.twig' %}
 
     <div
             class="air-settings-container">
@@ -39,7 +37,7 @@
                             <h2>
                                 <span class="dashicons dashicons-admin-network"></span>
                                 {{ __('API Configuration', 'ai-image-renamer') }}
-                                <a href="{{ doc_url('usage/settings#api-configuration') }}" target="_blank" class="air-doc-badge">
+                                <a href="{{ doc_url('usage/settings#api-configuration') }}" target="_blank" rel="noopener noreferrer" class="air-doc-badge">
                                     <span class="dashicons dashicons-book"></span>
                                     <span>{{ __('Documentation', 'ai-image-renamer') }}</span> </a>
                             </h2>

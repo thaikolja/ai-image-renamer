@@ -5,7 +5,7 @@
  * @description     Uses AI to rename images during upload for SEO-friendly filenames.
  * @author          Kolja Nolte <kolja.nolte@gmail.com>
  * @copyright       2025-2026 (C) Kolja Nolte
- * @see             https://docs.kolja-nolte.com/wp-ai-image-renamer/
+ * @see             https://docs.kolja-nolte.com/ai-image-renamer/
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,14 +36,6 @@
  * @package AIR
  */
 
-/*
- * TODO:
- *
- * - API Key: wenn in wp-config.php, dann input weglassen und message (wenn er funktionoert)
- * - button um encryption key zu erstellen
- * - checken: encryption key had prioritaet
- */
-
 declare( strict_types=1 );
 
 // Prevent direct access.
@@ -64,20 +56,25 @@ define( 'AIR_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 if ( file_exists( AIR_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
 	require_once AIR_PLUGIN_DIR . 'vendor/autoload.php';
 } else {
-	add_action( 'admin_notices',
-		function () {
-			echo '<div class="notice notice-error"><p>';
-			esc_html_e( 'AI Image Renamer: Composer dependencies not installed. Please run "composer install" in the plugin directory.',
-			            'ai-image-renamer' );
-			echo '</p></div>';
-		} );
+	add_action( 'admin_notices', function () {
+		echo '<div class="notice notice-error"><p>';
+		esc_html_e( 'AI Image Renamer: Composer dependencies not installed. Please run "composer install" in the plugin directory.', 'ai-image-renamer' );
+		echo '</p></div>';
+	} );
 
 	return;
 }
 
+
+
 // Bootstrap the plugin.
-add_action( 'plugins_loaded',
-	function () {
-		$plugin = new Plugin();
-		$plugin->init();
-	} );
+add_action( 'plugins_loaded', function () {
+	load_plugin_textdomain(
+		'ai-image-renamer',
+		false,
+		dirname( AIR_PLUGIN_BASENAME ) . '/languages/'
+	);
+
+	$plugin = new Plugin();
+	$plugin->init();
+} );

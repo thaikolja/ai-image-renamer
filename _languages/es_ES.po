@@ -1,0 +1,359 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: AI Image Renamer\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Kolja Nolte <kolja.nolte@gmail.com >\n"
+"Language-Team: \n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=((n == 1) ? 0 : ((n != 0 && n % 1000000 == 0) ? 1 : 2));\n"
+"X-Generator: Poedit 3.9\n"
+"X-Domain: ai-image-renamer\n"
+
+#: includes/Admin/Settings_Page.php:595
+msgid "A quick overview of the limits that matter most when this model renames uploaded images."
+msgstr "Una visión rápida de los límites que más importan cuando este modelo renombra las imágenes subidas."
+
+#: includes/Admin/Settings_Page.php:227
+msgid "Advanced Settings"
+msgstr "Configuración avanzada"
+
+#. Plugin Name of the plugin
+#: ai-image-renamer.php
+msgid "AI Image Renamer"
+msgstr "Renombrador de imágenes AI"
+
+#: ai-image-renamer.php:61
+msgid "AI Image Renamer: Composer dependencies not installed. Please run \"composer install\" in the plugin directory."
+msgstr "Renombrador de imágenes AI: Las dependencias de Composer no están instaladas. Por favor, ejecute \"composer install\" en el directorio del plugin."
+
+#: includes/Admin/Settings_Page.php:186
+msgid "AI Model"
+msgstr "Modelo de IA"
+
+#: includes/Admin/Settings_Page.php:831
+msgid "Allocated memory for script execution"
+msgstr "Memoria asignada para la ejecución del script"
+
+#: includes/Admin/Settings_Page.php:216
+msgid "Allowed Types"
+msgstr "Tipos permitidos"
+
+#: includes/Admin/Settings_Page.php:155
+msgid "API Configuration"
+msgstr "Configuración API"
+
+#: includes/Admin/Settings_Page.php:889 includes/Utils/API_Key_Validator.php:66
+msgid "API key cannot be empty."
+msgstr "La clave API no puede estar vacía."
+
+#: includes/Admin/Settings_Page.php:1022
+msgid "API key deleted."
+msgstr "Clave API eliminada."
+
+#. translators: %d: HTTP status code
+#: includes/Services/Groq_Service.php:216
+msgid "API returned HTTP %d"
+msgstr "API devuelto HTTP %d"
+
+#: includes/Admin/Settings_Page.php:899
+msgid "Are you sure you want to delete the API Key? This action cannot be undone."
+msgstr "¿Está seguro de que desea eliminar la Clave API? Esta acción no se puede deshacer."
+
+#. Description of the plugin
+#: ai-image-renamer.php
+msgid "Automatically renames uploaded images using Groq's Vision API for SEO-friendly filenames."
+msgstr "Cambia automáticamente el nombre de las imágenes cargadas utilizando la API Vision de Groq para obtener nombres de archivo SEO-friendly."
+
+#: includes/Admin/Settings_Page.php:888
+msgid "Connection failed:"
+msgstr "Conexión fallida:"
+
+#: includes/Admin/Settings_Page.php:887 includes/Admin/Settings_Page.php:949
+#: includes/Admin/Settings_Page.php:988
+msgid "Connection successful!"
+msgstr "Conexión correcta"
+
+#: includes/Admin/Settings_Page.php:606
+msgid "Context window"
+msgstr "Ventana de contexto"
+
+#: includes/Admin/Settings_Page.php:840
+msgid "cURL Enabled"
+msgstr "cURL Activado"
+
+#: includes/Admin/Settings_Page.php:230
+msgid "Customize the AI prompt and keyword settings."
+msgstr "Personaliza los ajustes de las palabras clave y las instrucciones de IA."
+
+#: includes/Admin/Settings_Page.php:904
+msgid "Delete Key"
+msgstr "Tecla Supr"
+
+#: includes/Admin/Settings_Page.php:901
+msgid "Deleting..."
+msgstr "Borrar..."
+
+#: includes/Admin/Settings_Page.php:164
+msgid "Enable Auto-Rename"
+msgstr "Activar el renombrado automático"
+
+#: includes/Admin/Settings_Page.php:419 includes/Admin/Settings_Page.php:771
+msgid "Enter a new key to replace the saved one…"
+msgstr "Introduce una nueva clave para sustituir a la guardada.."
+
+#: includes/Admin/Settings_Page.php:902
+msgid "Enter your Groq API key."
+msgstr "Introduzca su clave API de Groq."
+
+#: includes/Admin/Settings_Page.php:644
+msgid "EU licensing note"
+msgstr "Nota sobre las licencias de la UE"
+
+#: includes/Admin/Settings_Page.php:316
+msgid "Failed to encrypt API key. Please try again."
+msgstr "Error al cifrar la clave API. Inténtalo de nuevo."
+
+#: includes/Admin/Settings_Page.php:208
+msgid "File Types"
+msgstr "Tipos de archivos"
+
+#: includes/Admin/Settings_Page.php:175
+msgid "Groq API Key"
+msgstr "Clave API de Groq"
+
+#: includes/Admin/Settings_Page.php:645
+msgid "Groq repeats Meta’s note that certain multimodal rights may be limited in the EU. Check the linked model card if this could apply to you."
+msgstr "Groq repite la nota de Meta de que ciertos derechos multimodales pueden estar limitados en la UE. Compruebe en la ficha modelo vinculada si esto podría aplicarse en su caso."
+
+#. Plugin URI of the plugin
+#: ai-image-renamer.php
+msgid "https://docs.kolja-nolte.com/ai-image-renamer"
+msgstr "https://docs.kolja-nolte.com/ai-image-renamer"
+
+#. Author URI of the plugin
+#: ai-image-renamer.php
+msgid "https://www.kolja-nolte.com"
+msgstr "https://www.kolja-nolte.com"
+
+#: includes/Admin/Settings_Page.php:618
+msgid "Images above this size can fail before renaming starts. Oversized originals may need resizing first."
+msgstr "Las imágenes por encima de este tamaño pueden fallar antes de que se inicie el renombrado. Los originales de gran tamaño pueden necesitar un cambio de tamaño primero."
+
+#: includes/Admin/Settings_Page.php:378
+msgid "Invalid AI model selected. Using default model."
+msgstr "Se ha seleccionado un modelo de IA no válido. Usando modelo por defecto."
+
+#. translators: %s: API key prefix
+#: includes/Utils/API_Key_Validator.php:74
+msgid "Invalid API key format. Groq API keys start with %s"
+msgstr "Formato de clave de API no válido. Las claves API de Groq empiezan por %s"
+
+#. Author of the plugin
+#: ai-image-renamer.php
+msgid "Kolja Nolte"
+msgstr "Kolja Nolte"
+
+#: includes/Services/Encryption_Service.php:221
+msgid "Learn more about securing your encryption key"
+msgstr "Más información sobre la seguridad de la clave de cifrado"
+
+#: includes/Admin/Settings_Page.php:616
+msgid "Max file size"
+msgstr "Tamaño máximo del archivo"
+
+#: includes/Admin/Settings_Page.php:621
+msgid "Max input images"
+msgstr "Máximo de imágenes de entrada"
+
+#: includes/Admin/Settings_Page.php:236
+msgid "Max Keywords"
+msgstr "Palabras clave Max"
+
+#: includes/Admin/Settings_Page.php:611
+msgid "Max output"
+msgstr "Rendimiento máximo"
+
+#: includes/Admin/Settings_Page.php:834
+msgid "Max Upload Size"
+msgstr "Tamaño máximo de carga"
+
+#: includes/Admin/Settings_Page.php:837
+msgid "Maximum file size set by server"
+msgstr "Tamaño máximo de archivo fijado por el servidor"
+
+#: includes/Admin/Settings_Page.php:828
+msgid "Memory Limit"
+msgstr "Límite de memoria"
+
+#: includes/Admin/Settings_Page.php:594
+msgid "Model Limits"
+msgstr "Límites del modelo"
+
+#: includes/Admin/Settings_Page.php:841
+msgid "No"
+msgstr "No"
+
+#: includes/Admin/Settings_Page.php:898 includes/Services/Groq_Service.php:185
+msgid "No API key configured."
+msgstr "No hay clave API configurada."
+
+#: includes/Admin/Settings_Page.php:971
+msgid "No API key provided."
+msgstr "No se proporciona clave API."
+
+#: includes/Admin/Settings_Page.php:940 includes/Admin/Settings_Page.php:1008
+#: includes/Admin/Settings_Page.php:1053
+msgid "Permission denied."
+msgstr "Permiso denegado."
+
+#: includes/Admin/Settings_Page.php:816
+msgid "PHP Version"
+msgstr "Versión PHP"
+
+#: includes/Admin/Settings_Page.php:608
+msgid "Plenty of room for the prompt and image analysis. This plugin only uses a small part of it."
+msgstr "Espacio de sobra para el análisis de imágenes y avisos. Este plugin sólo utiliza una pequeña parte de ella."
+
+#: includes/Utils/Rate_Limiter.php:219
+msgid "Rate limit exceeded. Please try again later."
+msgstr "Límite de tarifa superado. Vuelva a intentarlo más tarde."
+
+#: includes/Admin/Settings_Page.php:639
+msgid "Rate limits still apply"
+msgstr "Siguen vigentes los límites tarifarios"
+
+#: includes/Admin/Settings_Page.php:903
+msgid "Request failed:"
+msgstr "Solicitud fallida:"
+
+#: includes/Admin/Settings_Page.php:844
+msgid "Required for API communication"
+msgstr "Necesario para la comunicación API"
+
+#: includes/Admin/Settings_Page.php:825
+msgid "Required: 6.0 or higher"
+msgstr "Requerido: 6.0 o superior"
+
+#: includes/Admin/Settings_Page.php:819
+msgid "Required: 8.2 or higher"
+msgstr "Requerido: 8.2 o superior"
+
+#: includes/Services/Encryption_Service.php:210
+msgid "Security Warning: AI Image Renamer"
+msgstr "Advertencia de seguridad: AI Image Renamer"
+
+#: includes/Admin/Settings_Page.php:211
+msgid "Select which image types to process."
+msgstr "Seleccione los tipos de imagen que desea procesar."
+
+#: includes/Admin/Settings_Page.php:601
+msgid "Speed"
+msgstr "Velocidad"
+
+#: includes/Admin/Settings_Page.php:626
+msgid "Supported input"
+msgstr "Entrada admitida"
+
+#: includes/Admin/Settings_Page.php:631
+msgid "Supported output"
+msgstr "Salida admitida"
+
+#: includes/Services/Template_Engine.php:213
+msgid "Template Error:"
+msgstr "Error de plantilla:"
+
+#: includes/Admin/Settings_Page.php:886
+msgid "Testing..."
+msgstr "Probando..."
+
+#: includes/Admin/Settings_Page.php:627
+msgid "Text and images"
+msgstr "Texto e imágenes"
+
+#: includes/Admin/Settings_Page.php:632
+msgid "Text only"
+msgstr "Sólo texto"
+
+#: includes/Utils/API_Key_Validator.php:97
+msgid "The API key contains invalid characters. <strong>Only alphanumeric characters, hyphens, and underscores</strong> are allowed."
+msgstr "La clave API contiene caracteres no válidos. <strong>Solo se permiten caracteres alfanuméricos, guiones y guiones bajos</strong>."
+
+#: includes/Utils/API_Key_Validator.php:106
+msgid "The API key contains invalid patterns."
+msgstr "La clave API contiene patrones no válidos."
+
+#. translators: %d: Exact length
+#: includes/Utils/API_Key_Validator.php:85
+msgid "The API key does not match the required length. It must be exactly %d characters long."
+msgstr "La clave API no coincide con la longitud requerida. Debe tener exactamente %d caracteres."
+
+#. translators: %d: Expected Groq API key length.
+#: includes/Admin/Settings_Page.php:895
+msgid "The API key has an invalid length. It must be exactly %d characters long."
+msgstr "La clave API tiene una longitud no válida. Debe tener exactamente %d caracteres."
+
+#: includes/Admin/Settings_Page.php:1013
+msgid "The API key is defined in wp-config.php and cannot be deleted here."
+msgstr "La clave API se define en wp-config.php y no se puede eliminar aquí."
+
+#. translators: %s: Groq API key prefix.
+#: includes/Admin/Settings_Page.php:891
+msgid "The format of the API key is invalid. Groq API keys start with %s"
+msgstr "El formato de la clave API no es válido. Las claves API de Groq empiezan por %s"
+
+#: includes/Admin/Settings_Page.php:633
+msgid "The model returns text, which this plugin turns into a filename and optional alt text."
+msgstr "El modelo devuelve texto, que este plugin convierte en un nombre de archivo y un texto alternativo opcional."
+
+#: includes/Admin/Settings_Page.php:628
+msgid "The plugin can send the uploaded image together with a short instruction for filename generation."
+msgstr "El plugin puede enviar la imagen cargada junto con una breve instrucción para la generación del nombre del archivo."
+
+#: includes/Admin/Settings_Page.php:613
+msgid "The plugin only needs a short answer, so normal filename suggestions stay far below this limit."
+msgstr "El plugin sólo necesita una respuesta corta, por lo que las sugerencias de nombres de archivo normales se quedan muy por debajo de este límite."
+
+#: includes/Admin/Settings_Page.php:623
+msgid "This plugin sends one uploaded image at a time, so it stays comfortably within the limit."
+msgstr "Este plugin envía una imagen cargada a la vez, por lo que se mantiene cómodamente dentro del límite."
+
+#: includes/Admin/Settings_Page.php:197
+msgid "Use as <code>alt=\"\"</code>"
+msgstr "Utilizar como <code>alt=\"\"</code>"
+
+#: includes/Admin/Settings_Page.php:587
+msgid "Usually responds a bit slower than Scout, but can provide more detailed image analysis."
+msgstr "Suele responder un poco más lento que Scout, pero puede proporcionar un análisis de imagen más detallado."
+
+#: includes/Admin/Settings_Page.php:580
+msgid "Usually responds quickly, so uploaded images should not wait long for a new filename."
+msgstr "Suele responder con rapidez, por lo que las imágenes cargadas no deberían esperar mucho tiempo a que se les asigne un nuevo nombre de archivo."
+
+#. translators: %d: Maximum number of keywords
+#: includes/Services/Groq_Service.php:111
+msgid "View this image and describe it in no more than %d keyword into English. Only return the output."
+msgid_plural "View this image and describe it in no more than %d keywords in English. Only return the output."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: includes/Admin/Settings_Page.php:822
+msgid "WordPress"
+msgstr "WordPress"
+
+#: includes/Admin/Settings_Page.php:841
+msgid "Yes"
+msgstr "Sí"
+
+#. translators: %s: AIR_ENCRYPTION_KEY
+#: includes/Services/Encryption_Service.php:213
+msgid "Your encryption key is stored in the WordPress database. For better security, define %s in your wp-config.php file."
+msgstr "Su clave de cifrado se almacena en la base de datos de WordPress. Para mayor seguridad, define %s en tu archivo wp-config.php."
+
+#: includes/Admin/Settings_Page.php:640
+msgid "Your Groq account can still limit how many requests or tokens you may use over time, especially during larger upload bursts."
+msgstr "Tu cuenta de Groq puede limitar el número de solicitudes o tokens que puedes utilizar a lo largo del tiempo, especialmente durante grandes cargas."

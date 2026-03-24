@@ -5,17 +5,17 @@
         <h2>
             <span class="dashicons dashicons-admin-settings"></span>
             {{ __('General Settings', 'ai-image-renamer') }}
-            <a href="{{ doc_url('usage/settings') }}" target="_blank" class="air-doc-badge">
+            <a href="{{ doc_url('usage/settings') }}" target="_blank" rel="noopener noreferrer" class="air-doc-badge">
                 <span class="dashicons dashicons-book"></span>
                 <span>{{ __('Documentation', 'ai-image-renamer') }}</span> </a>
         </h2>
-        <p class="air-card-description">{{ __('Configure basic plugin behavior.', 'ai-image-renamer') }}</p>
+        <p class="air-card-description">{{ __('Choose what should happen when new images are uploaded.', 'ai-image-renamer') }}</p>
     </div>
     <div class="air-card-body">
         <div class="air-setting-row">
             <div class="air-setting-label">
                 <label for="air_enabled">{{ __('Enable Auto-Rename', 'ai-image-renamer') }}</label>
-                <p class="air-setting-description">{{ __('Automatically rename images when uploaded to the Media Library.', 'ai-image-renamer') }}</p>
+                <p class="air-setting-description">{{ __('Automatically rename supported image uploads while WordPress processes them.', 'ai-image-renamer') }}</p>
             </div>
             <div class="air-setting-control">
                 <label class="air-toggle">
@@ -27,7 +27,7 @@
         <div class="air-setting-row">
             <div class="air-setting-label">
                 <label for="air_set_alt_text">{{ __('Populate Alt Text', 'ai-image-renamer') }}</label>
-                <p class="air-setting-description">{{ __('Use the generated description as the image alt attribute for accessibility.', 'ai-image-renamer') }}</p>
+                <p class="air-setting-description">{{ __('Save a cleaned version of the generated description as the attachment alt text.', 'ai-image-renamer') }}</p>
             </div>
             <div class="air-setting-control">
                 <label class="air-toggle">

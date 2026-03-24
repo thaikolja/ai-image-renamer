@@ -82,7 +82,7 @@ class API_Key_Validator {
 		if ( $key_length !== self::EXACT_LENGTH ) {
 			return [
 				'valid'   => false,
-				'message' => \sprintf( /* translators: %d: Exact length */ \__( 'The API key has an invalid length. It must be exactly %d characters long.',
+				'message' => \sprintf( /* translators: %d: Exact length */ \__( 'The API key does not match the required length. It must be exactly %d characters long.',
 				                                                                'ai-image-renamer' ),
 				                                                           self::EXACT_LENGTH ),
 			];

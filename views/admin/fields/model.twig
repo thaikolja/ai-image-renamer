@@ -2,46 +2,46 @@
 {% for model_id, model in models %}
     <label class="air-model-card {{ current == model_id ? 'selected' : '' }} {{ model.deprecated ? 'air-model-card--deprecated' : '' }}">
         <input type="radio" name="{{ option_name }}[model]" value="{{ model_id }}" {{ current == model_id ? 'checked' : '' }} {{ model.deprecated ? 'disabled' : '' }}/>
-        <span id="air-model-{{ model_id.slug }}" class="air-model-content">
+        <span id="air-model-{{ slug(model_id) }}" class="air-model-content">
             <div class="air-model-header">
                 <article class="air-model-title-group">
-                    <strong>{{ model.label|raw }}</strong>
+                    <strong>{{ model.label }}</strong>
                     {% if model.deprecated %}
                         <span class="air-model-badge air-model-badge--deprecated">
                             {{ __('Unavailable', 'ai-image-renamer') }}
                         </span>
                     {% endif %}
                     {% if model.provider == 'meta' %}
-                        <img src="{{ asset_url }}/icons/{{ model.provider }}-icon.svg" width="20" height="20" alt="{{ model.provider }} Logo">
+                        <img src="{{ asset_url }}/icons/{{ model.provider }}-icon.svg" width="20" height="20" alt="{{ model.provider|capitalize }} {{ __('logo', 'ai-image-renamer') }}">
                     {% endif %}
                 </article>
                 {% if current == model_id and not model.deprecated %}
                     <span class="dashicons dashicons-yes"></span>
                 {% endif %}
             </div>
-            <p class="air-model-description">{{ model.desc|raw }}</p>
+            <p class="air-model-description">{{ model.desc }}</p>
 
             {% if model.specs %}
                 <article class="air-model-specs">
                     <div class="air-spec-item {{ 'params' in model.highlights|default([]) ? 'air-spec-highlight' : '' }}" title="{{ __('Parameters', 'ai-image-renamer')|e }}">
                         <span class="dashicons dashicons-networking"></span>
                         <span class="air-spec-label">{{ __('Params:', 'ai-image-renamer') }}</span>
-                        <span>{{ model.specs.params|raw }}</span>
+                        <span>{{ model.specs.params }}</span>
                     </div>
                     <div class="air-spec-item {{ 'context' in model.highlights|default([]) ? 'air-spec-highlight' : '' }}" title="{{ __('Context Window', 'ai-image-renamer')|e }}">
                         <span class="dashicons dashicons-editor-expand"></span>
                         <span class="air-spec-label">{{ __('Context:', 'ai-image-renamer') }}</span>
-                        <span>{{ model.specs.context|raw }}</span>
+                        <span>{{ model.specs.context }}</span>
                     </div>
                     <div class="air-spec-item {{ 'speed' in model.highlights|default([]) ? 'air-spec-highlight' : '' }}" title="{{ __('Speed', 'ai-image-renamer')|e }}">
                         <span class="dashicons dashicons-performance"></span>
                         <span class="air-spec-label">{{ __('Speed:', 'ai-image-renamer') }}</span>
-                        <span>{{ model.specs.speed|raw }}</span>
+                        <span>{{ model.specs.speed }}</span>
                     </div>
                     <div class="air-spec-item {{ 'size' in model.highlights|default([]) ? 'air-spec-highlight' : '' }}" title="{{ __('Max File Size', 'ai-image-renamer')|e }}">
                         <span class="dashicons dashicons-media-default"></span>
                         <span class="air-spec-label">{{ __('Size:', 'ai-image-renamer') }}</span>
-                        <span>{{ model.specs.size|raw }}</span>
+                        <span>{{ model.specs.size }}</span>
                     </div>
                 </article>
             {% endif %}

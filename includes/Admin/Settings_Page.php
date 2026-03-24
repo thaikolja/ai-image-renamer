@@ -416,16 +416,18 @@ class Settings_Page {
 		$display_key = $saved && ! empty( $decrypted_key ) ? API_Key_Validator::mask_for_display( $decrypted_key ) : '';
 
 		// Set placeholder based on whether a key is saved.
-		$placeholder = $saved ? __( 'Type to overwrite existing key...', 'ai-image-renamer' ) : 'gsk_...';
+		$placeholder = $saved ? __( 'Enter a new key to replace the saved one…', 'ai-image-renamer' ) : 'gsk_...';
+		$using_api_key_constant = (bool) Groq_Service::has_api_key_constant();
 
 		// All values escaped before passing to template.
 		echo $this->template_engine->render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			'admin/fields/api-key.twig',
 			[
-				'option_name' => esc_attr( self::OPTION_NAME ),
-				'display_key' => esc_attr( $display_key ),
-				'placeholder' => esc_attr( $placeholder ),
-				'saved'       => esc_attr( $saved ),
+				'option_name'          => esc_attr( self::OPTION_NAME ),
+				'display_key'          => esc_attr( $display_key ),
+				'placeholder'          => esc_attr( $placeholder ),
+				'saved'                => (bool) $saved,
+				'using_api_key_constant' => $using_api_key_constant, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Boolean flag for Twig conditional, not direct HTML output.
 			] );
 	}
 
@@ -527,74 +529,120 @@ class Settings_Page {
 	}
 
 	/**
+	 * Prepare model limit information for template output.
+	 *
+	 * @param array $model_limit_info Model limit information.
+	 *
+	 * @return array
+	 */
+	private function prepare_model_limit_info_for_template( array $model_limit_info ): array {
+		$escaped = [
+			'title'          => esc_html( $model_limit_info['title'] ?? '' ),
+			'description'    => esc_html( $model_limit_info['description'] ?? '' ),
+			'model_label'    => esc_html( $model_limit_info['model_label'] ?? '' ),
+			'model_id'       => esc_html( $model_limit_info['model_id'] ?? '' ),
+			'model_card_url' => esc_url( $model_limit_info['model_card_url'] ?? '' ),
+			'items'          => [],
+			'notes'          => [],
+		];
+
+		foreach ( (array) ( $model_limit_info['items'] ?? [] ) as $item ) {
+			$escaped['items'][] = [
+				'label'   => esc_html( $item['label'] ?? '' ),
+				'value'   => esc_html( $item['value'] ?? '' ),
+				'meaning' => esc_html( $item['meaning'] ?? '' ),
+			];
+		}
+
+		foreach ( (array) ( $model_limit_info['notes'] ?? [] ) as $note ) {
+			$escaped['notes'][] = [
+				'variant' => esc_attr( $note['variant'] ?? 'tip' ),
+				'title'   => esc_html( $note['title'] ?? '' ),
+				'text'    => esc_html( $note['text'] ?? '' ),
+			];
+		}
+
+		return $escaped;
+	}
+
+	/**
 	 * Get human-readable limit information for the current Scout model.
 	 *
 	 * @return array
 	 */
-	private function get_current_model_limit_info(): array {
+	private function get_current_model_limit_info( string $current_model ): array {
+		$model_limits = [
+			'meta-llama/llama-4-scout-17b-16e-instruct'     => [
+				'model_label'    => 'Llama 4 Scout 17B 16E',
+				'model_id'       => 'meta-llama/llama-4-scout-17b-16e-instruct',
+				'model_card_url' => 'https://console.groq.com/docs/model/meta-llama/llama-4-scout-17b-16e-instruct',
+				'speed'          => '~750 tokens/second',
+				'speed_meaning'  => __( 'Usually responds quickly, so uploaded images should not wait long for a new filename.', 'ai-image-renamer' ),
+			],
+			'meta-llama/llama-4-maverick-17b-128e-instruct' => [
+				'model_label'    => 'Llama 4 Maverick 17B 128E',
+				'model_id'       => 'meta-llama/llama-4-maverick-17b-128e-instruct',
+				'model_card_url' => 'https://console.groq.com/docs/model/meta-llama/llama-4-maverick-17b-128e-instruct',
+				'speed'          => '~600 tokens/second',
+				'speed_meaning'  => __( 'Usually responds a bit slower than Scout, but can provide more detailed image analysis.', 'ai-image-renamer' ),
+			],
+		];
+
+		$current_limits = $model_limits[ $current_model ] ?? $model_limits['meta-llama/llama-4-scout-17b-16e-instruct'];
+
 		return [
 			'title'          => esc_html__( 'Model Limits', 'ai-image-renamer' ),
-			'description'    => esc_html__( 'A quick overview of the limits that matter most when this model renames uploaded images.',
-			                                'ai-image-renamer' ),
-			'model_label'    => 'Llama 4 Scout 17B 16E',
-			'model_id'       => 'meta-llama/llama-4-scout-17b-16e-instruct',
-			'model_card_url' => esc_url( 'https://console.groq.com/docs/model/meta-llama/llama-4-scout-17b-16e-instruct' ),
+			'description'    => esc_html__( 'A quick overview of the limits that matter most when this model renames uploaded images.', 'ai-image-renamer' ),
+			'model_label'    => $current_limits['model_label'],
+			'model_id'       => $current_limits['model_id'],
+			'model_card_url' => $current_limits['model_card_url'],
 			'items'          => [
 				[
-					'label'   => esc_html__( 'Speed', 'ai-image-renamer' ),
-					'value'   => '~750 tokens/second',
-					'meaning' => esc_html__( 'Usually responds quickly, so uploaded images should not wait long for a new filename.',
-					                         'ai-image-renamer' ),
+					'label'   => __( 'Speed', 'ai-image-renamer' ),
+					'value'   => $current_limits['speed'],
+					'meaning' => $current_limits['speed_meaning'],
 				],
 				[
-					'label'   => esc_html__( 'Context window', 'ai-image-renamer' ),
+					'label'   => __( 'Context window', 'ai-image-renamer' ),
 					'value'   => '131,072 tokens',
-					'meaning' => esc_html__( 'Plenty of room for the prompt and image analysis. This plugin only uses a small part of it.',
-					                         'ai-image-renamer' ),
+					'meaning' => __( 'Plenty of room for the prompt and image analysis. This plugin only uses a small part of it.', 'ai-image-renamer' ),
 				],
 				[
-					'label'   => esc_html__( 'Max output', 'ai-image-renamer' ),
+					'label'   => __( 'Max output', 'ai-image-renamer' ),
 					'value'   => '8,192 tokens',
-					'meaning' => esc_html__( 'The plugin only needs a short answer, so normal filename suggestions stay far below this limit.',
-					                         'ai-image-renamer' ),
+					'meaning' => __( 'The plugin only needs a short answer, so normal filename suggestions stay far below this limit.', 'ai-image-renamer' ),
 				],
 				[
-					'label'   => esc_html__( 'Max file size', 'ai-image-renamer' ),
+					'label'   => __( 'Max file size', 'ai-image-renamer' ),
 					'value'   => '20 MB per image',
-					'meaning' => esc_html__( 'Images above this size can fail before renaming starts. Oversized originals may need resizing first.',
-					                         'ai-image-renamer' ),
+					'meaning' => __( 'Images above this size can fail before renaming starts. Oversized originals may need resizing first.', 'ai-image-renamer' ),
 				],
 				[
-					'label'   => esc_html__( 'Max input images', 'ai-image-renamer' ),
+					'label'   => __( 'Max input images', 'ai-image-renamer' ),
 					'value'   => '5 images per request',
-					'meaning' => esc_html__( 'This plugin sends one uploaded image at a time, so it stays comfortably within the limit.',
-					                         'ai-image-renamer' ),
+					'meaning' => __( 'This plugin sends one uploaded image at a time, so it stays comfortably within the limit.', 'ai-image-renamer' ),
 				],
 				[
-					'label'   => esc_html__( 'Supported input', 'ai-image-renamer' ),
-					'value'   => esc_html__( 'Text and images', 'ai-image-renamer' ),
-					'meaning' => esc_html__( 'The plugin can send the uploaded image together with a short instruction for filename generation.',
-					                         'ai-image-renamer' ),
+					'label'   => __( 'Supported input', 'ai-image-renamer' ),
+					'value'   => __( 'Text and images', 'ai-image-renamer' ),
+					'meaning' => __( 'The plugin can send the uploaded image together with a short instruction for filename generation.', 'ai-image-renamer' ),
 				],
 				[
-					'label'   => esc_html__( 'Supported output', 'ai-image-renamer' ),
-					'value'   => esc_html__( 'Text only', 'ai-image-renamer' ),
-					'meaning' => esc_html__( 'The model returns text, which this plugin turns into a filename and optional alt text.',
-					                         'ai-image-renamer' ),
+					'label'   => __( 'Supported output', 'ai-image-renamer' ),
+					'value'   => __( 'Text only', 'ai-image-renamer' ),
+					'meaning' => __( 'The model returns text, which this plugin turns into a filename and optional alt text.', 'ai-image-renamer' ),
 				],
 			],
 			'notes'          => [
 				[
 					'variant' => 'tip',
 					'title'   => esc_html__( 'Rate limits still apply', 'ai-image-renamer' ),
-					'text'    => esc_html__( 'Your Groq account can still limit how many requests or tokens you may use over time, especially during larger upload bursts.',
-					                         'ai-image-renamer' ),
+					'text'    => esc_html__( 'Your Groq account can still limit how many requests or tokens you may use over time, especially during larger upload bursts.', 'ai-image-renamer' ),
 				],
 				[
 					'variant' => 'tip',
 					'title'   => esc_html__( 'EU licensing note', 'ai-image-renamer' ),
-					'text'    => esc_html__( 'Groq repeats Meta’s note that certain multimodal rights may be limited in the EU. Check the linked model card if this could apply to you.',
-					                         'ai-image-renamer' ),
+					'text'    => esc_html__( 'Groq repeats Meta’s note that certain multimodal rights may be limited in the EU. Check the linked model card if this could apply to you.', 'ai-image-renamer' ),
 				],
 			],
 		];
@@ -682,8 +730,8 @@ class Settings_Page {
 	 */
 	final public function render_model_field(): void {
 		$options         = \get_option( self::OPTION_NAME, $this->get_defaults() );
-		$current         = esc_attr( $options['model'] ) ?? 'meta-llama/llama-4-scout-17b-16e-instruct';
-		$models          = $this->get_available_models( esc_attr( $current ) );
+		$current         = esc_attr( $options['model'] ?? 'meta-llama/llama-4-scout-17b-16e-instruct' );
+		$models          = $this->get_available_models( $current );
 		$prepared_models = $this->prepare_models_for_template( $models );
 
 		// All values escaped before passing to template.
@@ -692,8 +740,7 @@ class Settings_Page {
 			[
 				'option_name' => esc_attr( self::OPTION_NAME ),
 				'current'     => esc_attr( $current ),
-				'models'      => array_map( 'esc_attr', $prepared_models ),
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Already escaped in prepare_models_for_template().
+				'models'      => $prepared_models, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in prepare_models_for_template().
 				'asset_url'   => esc_url( \plugins_url( 'assets', \dirname( __DIR__, 2 ) . '/ai-image-renamer.php' ) ),
 			] );
 	}
@@ -721,16 +768,17 @@ class Settings_Page {
 
 		$saved       = ! empty( $encrypted_key );
 		$display_key = $saved && ! empty( $decrypted_key ) ? API_Key_Validator::mask_for_display( $decrypted_key ) : '';
-		$placeholder = $saved ? __( 'Type to overwrite existing key...', 'ai-image-renamer' ) : 'gsk_...';
+		$placeholder = $saved ? __( 'Enter a new key to replace the saved one…', 'ai-image-renamer' ) : 'gsk_...';
 
 		// File types.
 		$file_types      = $options['file_types'] ?? [];
 		$available_types = $this->get_available_file_types();
 
 		// Models.
-		$current         = $options['model'] ?? 'meta-llama/llama-4-scout-17b-16e-instruct';
-		$models          = $this->get_available_models( $current );
-		$prepared_models = $this->prepare_models_for_template( $models );
+		$current          = $options['model'] ?? 'meta-llama/llama-4-scout-17b-16e-instruct';
+		$models           = $this->get_available_models( $current );
+		$prepared_models  = $this->prepare_models_for_template( $models );
+		$model_limit_info = $this->prepare_model_limit_info_for_template( $this->get_current_model_limit_info( $current ) );
 
 		// Check if cURL exists and is enabled
 		$curl_enabled = function_exists( 'curl_version' );
@@ -751,18 +799,18 @@ class Settings_Page {
 				'page_title'             => esc_html( get_admin_page_title() ),
 				'display_key'            => esc_attr( $display_key ),
 				'placeholder'            => esc_attr( $placeholder ),
-				'saved'                  => esc_attr( $saved ),
+				'saved'                  => (bool) $saved,
 				'enabled'                => (bool) ( $options['enabled'] ?? true ),
 				'set_alt_text'           => (bool) ( $options['set_alt_text'] ?? false ),
 				'file_types'             => array_map( 'esc_attr', $file_types ),
 				'available_types'        => array_map( 'esc_html', $available_types ),
 				'current'                => esc_attr( $current ),
-				'models'                 => $prepared_models,
-				'model_limit_info'       => $this->get_current_model_limit_info(),
+				'models'                 => $prepared_models, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in prepare_models_for_template().
+				'model_limit_info'       => $model_limit_info, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in prepare_model_limit_info_for_template().
 				'max_keywords'           => absint( $options['max_keywords'] ?? 5 ),
 				'asset_url'              => esc_url( \plugins_url( 'assets',
 				                                                   \dirname( __DIR__, 2 ) . '/ai-image-renamer.php' ) ),
-				'using_api_key_constant' => esc_attr( $using_api_key_constant ),
+				'using_api_key_constant' => (bool) $using_api_key_constant,
 				'diagnostics'            => [
 					'php'    => [
 						'label' => esc_html__( 'PHP Version', 'ai-image-renamer' ),
@@ -792,7 +840,7 @@ class Settings_Page {
 						'label' => esc_html__( 'cURL Enabled', 'ai-image-renamer' ),
 						'value' => $curl_enabled ? esc_html__( 'Yes', 'ai-image-renamer' ) : esc_html__( 'No',
 						                                                                                 'ai-image-renamer' ),
-						'ok'    => esc_attr( function_exists( 'curl_version' ) ),
+						'ok'    => (bool) function_exists( 'curl_version' ),
 						'desc'  => esc_html__( 'Required for API communication', 'ai-image-renamer' ),
 					],
 				],
@@ -839,9 +887,11 @@ class Settings_Page {
 				                     'success'           => \__( 'Connection successful!', 'ai-image-renamer' ),
 				                     'error'             => \__( 'Connection failed:', 'ai-image-renamer' ),
 				                     'error_empty'       => \__( 'API key cannot be empty.', 'ai-image-renamer' ),
-				                     'error_prefix'      => \sprintf( \__( 'Invalid API key format. Groq API keys start with %s',
+				                     /* translators: %s: Groq API key prefix. */
+				                     'error_prefix'      => \sprintf( \__( 'The format of the API key is invalid. Groq API keys start with %s',
 				                                                           'ai-image-renamer' ),
 				                                                      'gsk_' ),
+				                     /* translators: %d: Expected Groq API key length. */
 				                     'error_length'      => \sprintf( \__( 'The API key has an invalid length. It must be exactly %d characters long.',
 				                                                           'ai-image-renamer' ),
 				                                                      56 ),
@@ -905,13 +955,13 @@ class Settings_Page {
 		}
 
 		// No constant defined — use the key from POST data or the saved key.
-		$api_key_raw = isset( $_POST['api_key'] ) ? \wp_unslash( $_POST['api_key'] ) : null;
-		$is_new_key  = ! empty( $_POST['is_new_key'] );
+		$api_key_raw = \filter_input( INPUT_POST, 'api_key', FILTER_UNSAFE_RAW, FILTER_NULL_ON_FAILURE );
+		$is_new_key  = (bool) \filter_input( INPUT_POST, 'is_new_key', FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE );
 
 		$api_key = null;
 
-		if ( null !== $api_key_raw ) {
-			$api_key = \sanitize_text_field( $api_key_raw );
+		if ( is_string( $api_key_raw ) ) {
+			$api_key = \sanitize_text_field( \wp_unslash( $api_key_raw ) );
 
 			// If the key is masked and it's not explicitly marked as a new key, use saved key.
 			if ( API_Key_Validator::is_masked( $api_key ) && ! $is_new_key ) {
@@ -958,6 +1008,12 @@ class Settings_Page {
 			\wp_send_json_error( [ 'message' => \__( 'Permission denied.', 'ai-image-renamer' ) ] );
 		}
 
+		if ( Groq_Service::has_api_key_constant() ) {
+			\wp_send_json_error( [
+				'message' => \__( 'The API key is defined in wp-config.php and cannot be deleted here.', 'ai-image-renamer' ),
+			] );
+		}
+
 		$options            = \get_option( self::OPTION_NAME, $this->get_defaults() );
 		$options['api_key'] = '';
 
@@ -978,7 +1034,7 @@ class Settings_Page {
 			return;
 		}
 
-		if ( 'tools_page_' . self::PAGE_SLUG !== $screen->id && 'options-general' !== $screen->id ) {
+		if ( 'media_page_' . self::PAGE_SLUG !== $screen->id ) {
 			return;
 		}
 

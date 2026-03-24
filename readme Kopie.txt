@@ -7,11 +7,13 @@ Requires PHP: 8.2
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Donate link: https://www.paypal.com/paypalme/thaikolja/10/
+
 Automatically rename newly uploaded images with AI-generated, descriptive filenames and optional alt text.
 
 == Description ==
 
-AI Image Renamer helps you replace filenames like `IMG_1234.jpg` with more descriptive names based on the actual image content.
+AI Image Renamer helps you replace filenames like `IMG_1234.jpg` with cleaner, more descriptive names based on the actual image content.
 
 The plugin integrates with Groq's Vision API during upload and can:
 
@@ -19,7 +21,7 @@ The plugin integrates with Groq's Vision API during upload and can:
 * optionally save cleaned alt text for the uploaded attachment,
 * fall back to the original filename if the AI request fails,
 * let you choose supported file types and the Groq vision model,
-* support API key handling in the settings UI while also allowing a `wp-config.php`-based setup.
+* keep API key handling user-friendly while still supporting a stronger `wp-config.php` setup.
 
 The settings screen is available under **Media → AI Image Renamer**.
 
@@ -33,7 +35,7 @@ The settings screen is available under **Media → AI Image Renamer**.
 * JPEG / JPG
 * PNG
 * WebP
-* BMP
+* AVIF
 * GIF
 
 = Security notes =

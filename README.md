@@ -2,136 +2,131 @@
 
 [![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-0073aa)](https://wordpress.org/) [![PHP](https://img.shields.io/badge/PHP-8.2%2B-777bb4)](https://www.php.net/) [![License: GPL v2+](https://img.shields.io/badge/License-GPLv2%2B-3da639)](https://www.gnu.org/licenses/gpl-2.0.html)
 
-A **WordPress** plugin to automatically rename uploaded images with AI for **SEO-friendly**, descriptive filenames and
-`alt="..."` attributes. Powered by **Groq’s Vision API**.
+`AI Image Renamer` is a WordPress plugin that renames newly uploaded images with AI-generated, descriptive filenames and can optionally store matching alt text.
 
-> [!IMPORTANT]
->
-> This is a **WordPress Plugin**. It requires a WordPress installation to function and cannot be run as a standalone PHP
-> application.
+## What the plugin does
 
-## What it does
+When a supported image is uploaded, the plugin can:
 
-When you upload an image to the WordPress Media Library, the plugin:
+1. send the image to Groq's Vision API,
+2. generate a short descriptive text,
+3. convert that output into a safe filename,
+4. keep the original upload flow intact if the API request fails,
+5. optionally save cleaned alt text for the attachment.
 
-1. Sends the image to Groq’s Vision API.
-2. Gets back a short set of descriptive keywords.
-3. Builds a clean, SEO-friendly filename.
-4. Renames the uploaded file.
-5. Optionally populates the image **alt text**.
+The settings page lives in **Media → AI Image Renamer**.
 
-If the API call fails, the plugin falls back to the original filename, so uploads won’t break.
+## Current feature set
 
-## Example
+- Automatic renaming for new uploads only
+- Optional attachment alt text population
+- Groq API key support via database or `wp-config.php`
+- Encrypted API key storage using `defuse/php-encryption`
+- Configurable file types
+- Configurable keyword limit
+- Model selection for supported Groq vision models
+- Diagnostics and model limit overview in the admin UI
+- WordPress.org-ready production ZIP via `npm run production`
 
-- Before: `IMG_1234.JPEG`
-- After: `golden-retriever-playing-fetch-sunny-park.jpg`
+## Supported image types
 
-## Features
+The plugin can work with these image types:
 
-> [!NOTE]
->
-> The code stored in this repository is only for the free version of **AI Image Renamer**. A pro version of this plugin
-> with dozens of additional features will follow shortly.
-
-- **Native WordPress Integration:** Seamlessly hooks into the media upload process.
-- **AI-Powered:** Uses Groq Vision for accurate image analysis.
-- **Modern Admin UI:** customized settings page with a Quick Start guide and diagnostics.
-- **SEO Optimization:** Generates human-readable, keyword-rich filenames.
-- **Accessibility:** Optional auto-generation of alt text.
-- **Secure:** Encrypted API key storage using `defuse/php-encryption`.
-- **Customizable:** Configure models, prompts, keyword limits, and supported file types.
+- JPEG / JPG
+- PNG
+- WebP
+- AVIF
+- GIF
 
 ## Requirements
 
 - WordPress **6.0+**
 - PHP **8.2+**
-- A Groq API key: https://console.groq.com/keys
+- A Groq API key: <https://console.groq.com/keys>
 
-## Installation
-
-### Option A: Install as a normal WordPress plugin
-
-1. Place this folder at: `wp-content/plugins/ai-image-renamer/`
-2. Ensure Composer dependencies are installed (see below).
-3. Activate the plugin in **WP Admin → Plugins**.
-
-### Option B: Install from Git (recommended for development)
+## Installation for development
 
 ```bash
-cd /path/to/your/wordpress/wp-content/plugins
-
-git clone https://github.com/thaikolja/ai-image-renamer.git
+cd /path/to/wordpress/wp-content/plugins
+git clone https://gitlab.com/thaikolja/wp-ai-image-renamer.git ai-image-renamer
 cd ai-image-renamer
-
-composer install --no-dev --optimize-autoloader
+composer install
+npm install
 ```
 
-> [!CAUTION]
->
-> Without `vendor/` the plugin shows an admin notice (“Composer dependencies not installed…”). That’s expected.
+## Development commands
 
-## Configuration (WP Admin)
+```bash
+composer lint
+composer phpcs
+composer phpstan
+npm run build
+npm run bundle
+```
 
-1. Go to **Settings → AI Image Renamer**.
-2. Paste your Groq API key.
-3. Click **Test Connection**.
-4. Choose model, keyword limit, file types, and (optional) alt-text behavior.
-5. Save.
+## Production build
 
-### Secure Database Bypass (Recommended)
+The production archive is created with:
 
-For maximum control and security, you can define your Groq API key and encryption key directly in your `wp-config.php`.
-Defining `AIR_API_KEY` skips database storage entirely:
+```bash
+npm run production
+```
+
+That process currently:
+
+1. builds frontend assets,
+2. installs Composer dependencies without dev packages,
+3. creates `ai-image-renamer.zip`,
+4. restores development dependencies locally afterwards.
+
+The shipped ZIP includes only runtime-relevant files such as PHP source, assets, views, `readme.txt`, `composer.json`, translations, and runtime Composer dependencies.
+
+## Security notes
+
+### Recommended: store secrets in `wp-config.php`
+
+For the strongest setup, define both constants in `wp-config.php`:
 
 ```php
-define('AIR_API_KEY', 'gsk_your_api_key_here');
-define('AIR_ENCRYPTION_KEY', 'put-a-long-random-secret-here');
+define( 'AIR_API_KEY', 'gsk_your_api_key_here' );
+define( 'AIR_ENCRYPTION_KEY', 'def00000_your_defuse_key_here' );
 ```
 
-You can generate a strong random value locally:
+Notes:
+
+- `AIR_API_KEY` bypasses database storage for the Groq API key.
+- `AIR_ENCRYPTION_KEY` keeps the encryption key out of the database.
+- If `AIR_API_KEY` is present, it takes priority over any saved key in the settings UI.
+
+## Architecture notes
+
+- Main bootstrap: `ai-image-renamer.php`
+- Service container/bootstrap: `includes/Plugin.php`
+- Admin UI: `includes/Admin/Settings_Page.php`
+- Upload hook: `includes/Hooks/Image_Uploader.php`
+- API integration: `includes/Services/Groq_Service.php`
+- Encryption: `includes/Services/Encryption_Service.php`
+- Twig rendering: `includes/Services/Template_Engine.php`
+
+## Release validation performed locally
+
+Before release, validate at least:
 
 ```bash
-php -r "echo bin2hex(random_bytes(32)), PHP_EOL;"
+npm run production
+wp plugin check ai-image-renamer --skip-plugins=secondary-title
+composer lint
 ```
 
-## Security & Privacy
-
-- API keys are encrypted before being stored and cannot be read once added.
-- Images are only transmitted to Groq during upload processing.
-- No image data is stored on external servers by this plugin.
-- No telemetry or "[Phoning home](https://en.wikipedia.org/wiki/Phoning_home)".
-
-## Troubleshooting
-
-### “Composer dependencies not installed.”
-
-Run:
-
-```bash
-composer install --no-dev --optimize-autoloader
-```
-
-inside the plugin directory.
-
-### API test fails
-
-- Double-check the API key at https://console.groq.com/keys
-- Ensure your server can make outbound HTTPS requests.
-- Check WordPress logs (e.g. `wp-content/debug.log`) if enabled.
+For the real shipped contents, check the extracted ZIP instead of the repository folder whenever review tooling would otherwise flag development-only files.
 
 ## Links
 
-* [Official Documentation](https://docs.kolja-nolte.com/ai-image-renamer)
-
-* [Support forum](https://github.com/thaikolja/ai-image-renamer/issues)
-* **AI Image Renamer** [on WordPress.org](https://wordpress.org/plugins/ai-image-renamer)
-* [Reviews](https://wordpress.org/plugins/ai-image-renamer/#reviews)
+- Documentation: <https://docs.kolja-nolte.com/ai-image-renamer>
+- WordPress.org: <https://wordpress.org/plugins/ai-image-renamer>
+- Support forum: <https://wordpress.org/support/plugin/ai-image-renamer/>
+- Source repository: <https://gitlab.com/thaikolja/wp-ai-image-renamer>
 
 ## License
 
-GPL-2.0-or-later. See [`LICENSE`](LICENSE).
-
-## Changelog
-
-See [`CHANGELOG.md`](CHANGELOG.md).
+GPL-2.0-or-later. See `LICENSE`.

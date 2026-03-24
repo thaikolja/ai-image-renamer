@@ -49,20 +49,16 @@ class File_Sanitizer {
 	 * @return string The sanitized filename.
 	 */
 	public static function sanitize( string $filename ): string {
-		// Convert to lowercase.
-		$sanitized = strtolower( $filename );
+		$sanitized = \remove_accents( \wp_strip_all_tags( $filename ) );
+		$sanitized = strtolower( $sanitized );
+		$sanitized = preg_replace( '/[\s_]+/', '-', $sanitized );
+		$sanitized = \sanitize_title( $sanitized );
+		$sanitized = \trim( (string) $sanitized, '-' );
 
-		// Replace spaces and underscores with dashes.
-		$sanitized = str_replace( [ ' ', '_' ], '-', $sanitized );
-
-		// Remove any character that is not alphanumeric or a dash.
-		$sanitized = preg_replace( '/[^a-z0-9\-]/', '', $sanitized );
-
-		// Replace multiple consecutive dashes with a single dash.
-		$sanitized = preg_replace( '/-+/', '-', $sanitized );
-
-		// Trim dashes from the beginning and end.
-		$sanitized = \trim( $sanitized, '-' );
+		if ( strlen( $sanitized ) > 180 ) {
+			$sanitized = substr( $sanitized, 0, 180 );
+			$sanitized = rtrim( $sanitized, '-' );
+		}
 
 		// Ensure the filename is not empty.
 		if ( empty( $sanitized ) ) {

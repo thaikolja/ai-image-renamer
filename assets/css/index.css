@@ -438,8 +438,9 @@
         max-width: 100%;
 
         .deprecation-notice {
-          color:     var(--air-gray-500);
-          font-size: 12px
+          color:       var(--air-gray-600);
+          font-size:   12px;
+          line-height: 1.5
         }
       }
     }
@@ -562,10 +563,6 @@
     width:          100%;
     max-width:      none;
 
-    .deprecation-notice {
-      color: #ff00ff
-    }
-
     .air-model-card {
       flex:          1;
       min-width:     250px;
@@ -586,38 +583,24 @@
 
       &.selected {
         border-color: var(--air-primary);
+        box-shadow:   var(--air-shadow-sm);
         background:   var(--air-primary-light)
       }
 
       &[class*="--deprecated"] {
-        background:     var(--air-gray-100);
         border-color:   var(--air-gray-300);
+        background:     var(--air-gray-50);
         cursor:         not-allowed;
-        opacity:        .7;
         pointer-events: none;
 
         .air-model-content {
-          filter: grayscale(.5);
+          filter: grayscale(.35);
 
           strong,
           p {
             color: var(--air-gray-500)
           }
-
-          .air-model-specs {
-            color: var(--air-gray-500)
-          }
         }
-
-        .air-model-specs {
-          .dashicons {
-            color: var(--air-gray-400)
-          }
-        }
-      }
-
-      input[type=radio] {
-        margin-top: 4px
       }
 
       .air-model-content {
@@ -716,19 +699,19 @@
     top:      120px;
 
     .air-pro-upsell {
-      background:    transparent;
-      border:        2px solid #2f6198;
+      background:    var(--air-white);
+      border:        1px solid var(--air-gray-200);
       border-radius: var(--air-border-radius);
       overflow:      hidden;
-      box-shadow:    0 4px 20px #2f61981a;
+      box-shadow:    var(--air-shadow-sm);
 
       .air-pro-header {
-        background:    linear-gradient(135deg, #2f6198, #1e4166);
+        background:    var(--air-gray-50);
         padding:       16px;
-        border-bottom: none;
+        border-bottom: 1px solid var(--air-gray-200);
 
         .hndle {
-          color:       #ffffff;
+          color:       var(--air-gray-900);
           margin:      0;
           padding:     0;
           font-size:   16px;
@@ -736,23 +719,8 @@
         }
 
         .dashicons {
-          color: gold
+          color: var(--air-primary)
         }
-      }
-
-      .air-pro-badge {
-        display:        inline-flex;
-        align-items:    center;
-        background:     #ffd70033;
-        color:          gold;
-        font-size:      10px;
-        font-weight:    700;
-        padding:        4px 10px;
-        border-radius:  20px;
-        margin-left:    10px;
-        text-transform: uppercase;
-        letter-spacing: .5px;
-        border:         1px solid rgba(255, 215, 0, .3)
       }
 
       .air-pro-tagline {
@@ -781,8 +749,7 @@
           border:               1px solid var(--air-gray-200);
 
           &:hover {
-            background: var(--air-gray-100);
-            transform:  translate(4px)
+            background: var(--air-gray-100)
           }
 
           .dashicons {
@@ -813,242 +780,6 @@
         }
       }
 
-      .air-pro-cta {
-        display:        flex;
-        flex-direction: column;
-        gap:            10px;
-
-        .air-pro-button {
-          display:         flex;
-          align-items:     center;
-          justify-content: center;
-          gap:             8px;
-          width:           100%;
-          padding:         14px;
-          background:      linear-gradient(135deg, #2f6198, #1e4166);
-          color:           #ffffff;
-          border:          none;
-          border-radius:   8px;
-          font-size:       14px;
-          font-weight:     700;
-          cursor:          pointer;
-          transition:      var(--air-transition);
-          text-decoration: none;
-          box-shadow:      0 2px 8px #0000001a;
-
-          &:hover {
-            transform:  translateY(-2px);
-            box-shadow: 0 4px 12px #00000026
-          }
-        }
-
-        .air-pro-price {
-          text-align:  center;
-          font-size:   13px;
-          color:       var(--air-gray-600);
-          font-weight: 500
-        }
-      }
-    }
-
-    .air-donation-box {
-      background:    linear-gradient(135deg, #fff7ed, #ffedd5);
-      border-color:  #f97316;
-      border-radius: var(--air-border-radius);
-      overflow:      hidden;
-      margin-top:    var(--air-gap-lg);
-
-      .air-donation-header {
-        background:    linear-gradient(135deg, #f97316, #ea580c);
-        padding:       var(--air-gap-md);
-        border-bottom: none;
-
-        .hndle {
-          color:   var(--air-white);
-          margin:  0;
-          padding: 0
-        }
-
-        .dashicons {
-          color: #fecaca
-        }
-      }
-
-      .air-donation-tagline {
-        margin:      0 0 var(--air-gap-md) 0;
-        font-size:   14px;
-        color:       var(--air-gray-700);
-        line-height: 1.5
-      }
-
-      .air-donation-cta {
-        display:        flex;
-        flex-direction: column;
-        gap:            8px;
-
-        .air-donation-button {
-          display:         flex;
-          align-items:     center;
-          justify-content: center;
-          gap:             8px;
-          width:           100%;
-          padding:         12px;
-          background:      linear-gradient(135deg, #f97316, #ea580c);
-          color:           var(--air-white);
-          border:          none;
-          border-radius:   var(--air-border-radius);
-          font-size:       14px;
-          font-weight:     500;
-          cursor:          pointer;
-          transition:      var(--air-transition);
-          text-decoration: none;
-
-          &:hover {
-            transform:  translateY(-2px);
-            box-shadow: var(--air-shadow-lg);
-            color:      var(--air-white)
-          }
-
-          .dashicons {
-            font-size: 18px;
-            width:     18px;
-            height:    18px
-          }
-        }
-      }
-    }
-  }
-
-  .air-donation-banner {
-    position:   relative;
-    background: linear-gradient(135deg, #30629a, #1a3a5c);
-    padding:    0;
-    margin:     0;
-    box-shadow: 0 4px 6px -1px #0000001a, 0 2px 4px -1px #0000000f;
-    z-index:    10;
-
-    .air-donation-banner-link {
-      display:         block;
-      text-decoration: none;
-      color:           inherit
-    }
-
-    .air-donation-banner-content {
-      display:         flex;
-      align-items:     center;
-      justify-content: center;
-      gap:             24px;
-      padding:         24px 32px;
-      max-width:       1200px;
-      margin:          0 auto
-    }
-
-    .air-donation-banner-icon {
-      background:              #fff3;
-      width:                   64px;
-      height:                  64px;
-      border-radius:           50%;
-      display:                 flex;
-      align-items:             center;
-      justify-content:         center;
-      flex-shrink:             0;
-      -webkit-backdrop-filter: blur(10px);
-      backdrop-filter:         blur(10px);
-
-      .dashicons {
-        color:     #ffffff;
-        font-size: 32px;
-        width:     32px;
-        height:    32px
-      }
-    }
-
-    .air-donation-banner-text {
-      flex:      1;
-      min-width: 0;
-
-      h3 {
-        margin:      0 0 8px;
-        font-size:   22px;
-        font-weight: 700;
-        color:       #ffffff;
-        line-height: 1.2
-      }
-
-      p {
-        margin:      0;
-        font-size:   14px;
-        color:       #ffffffe6;
-        line-height: 1.5;
-        max-width:   600px
-      }
-    }
-
-    .air-donation-banner-cta {
-      flex-shrink: 0
-    }
-
-    .air-donation-button {
-      display:       inline-flex;
-      align-items:   center;
-      gap:           8px;
-      padding:       12px 24px;
-      background:    #ffffff;
-      color:         #30629a;
-      border:        none;
-      border-radius: 8px;
-      font-size:     15px;
-      font-weight:   600;
-      cursor:        pointer;
-      box-shadow:    0 4px 6px -1px #0000001a;
-      transition:    all .2s ease;
-
-      &:hover {
-        transform:  translateY(-2px);
-        box-shadow: 0 6px 12px -2px #00000026
-      }
-
-      .dashicons {
-        color:     red;
-        font-size: 18px;
-        width:     18px;
-        height:    18px
-      }
-    }
-
-    .air-donation-banner-close {
-      position:                absolute;
-      top:                     12px;
-      right:                   12px;
-      width:                   32px;
-      height:                  32px;
-      background:              #fff3;
-      border:                  none;
-      border-radius:           50%;
-      cursor:                  pointer;
-      display:                 flex;
-      align-items:             center;
-      justify-content:         center;
-      color:                   #ffffff;
-      transition:              all .2s ease;
-      -webkit-backdrop-filter: blur(10px);
-      backdrop-filter:         blur(10px);
-      z-index:                 2;
-
-      &:hover {
-        background: #ffffff4d;
-        transform:  scale(1.1)
-      }
-
-      .dashicons {
-        font-size: 18px;
-        width:     18px;
-        height:    18px
-      }
-    }
-
-    &.hidden {
-      display: none
     }
   }
 }
@@ -1104,34 +835,6 @@
           .air-tab-label {
             display: none
           }
-        }
-      }
-    }
-
-    .air-donation-banner {
-      .air-donation-banner-content {
-        flex-direction: column;
-        text-align:     center;
-        gap:            16px;
-        padding:        20px 24px
-      }
-
-      .air-donation-banner-text {
-        p {
-          max-width: none
-        }
-      }
-
-      .air-donation-banner-close {
-        top:    8px;
-        right:  8px;
-        width:  28px;
-        height: 28px;
-
-        .dashicons {
-          font-size: 16px;
-          width:     16px;
-          height:    16px
         }
       }
     }

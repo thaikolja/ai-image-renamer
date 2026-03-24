@@ -108,11 +108,7 @@ class Groq_Service {
 		// If alt text is enabled, force 10 keywords regardless of max_keywords setting.
 		$max_keywords = $set_alt ? 10 : ( $options['max_keywords'] ?? 5 );
 
-		$prompt = \sprintf( /* translators: %d: Maximum number of keywords */ \_n( 'View this image and describe it in no more than %d keyword into English. Only return the output.',
-		                                                                           'View this image and describe it in no more than %d keywords in English. Only return the output.',
-		                                                                           $max_keywords,
-		                                                                           'ai-image-renamer' ),
-		                                                                      $max_keywords );
+		$prompt = \sprintf( 'View this image and describe it in no more than %d keywords. Only return the output.', $max_keywords );
 
 		/**
 		 * Filter the AI prompt used for image description.
@@ -186,16 +182,15 @@ class Groq_Service {
 		}
 
 		// Make a simple models request to verify the key.
-		$response = \wp_safe_remote_get( 'https://api.groq.com/openai/v1/models',
-		                                 [
-			                                 'timeout' => 15,
-			                                 'headers' => [
-				                                 'Authorization' => 'Bearer ' . $api_key,
-				                                 'Content-Type'  => 'application/json',
-				                                 'Origin'        => \site_url(),
-				                                 'Referer'       => \admin_url(),
-			                                 ],
-		                                 ] );
+		$response = \wp_safe_remote_get( 'https://api.groq.com/openai/v1/models', [
+			'timeout' => 15,
+			'headers' => [
+				'Authorization' => 'Bearer ' . $api_key,
+				'Content-Type'  => 'application/json',
+				'Origin'        => \site_url(),
+				'Referer'       => \admin_url(),
+			],
+		] );
 
 		if ( \is_wp_error( $response ) ) {
 			// Sanitize the error message.
@@ -213,8 +208,7 @@ class Groq_Service {
 				return \esc_html( $decoded['error']['message'] );
 			}
 
-			return \sprintf( /* translators: %d: HTTP status code */ \__( 'API returned HTTP %d', 'ai-image-renamer' ),
-			                                                         $code );
+			return \sprintf( /* translators: %d: HTTP status code */ \__( 'API returned HTTP %d', 'ai-image-renamer' ), $code );
 		}
 
 		return true;
@@ -276,20 +270,10 @@ class Groq_Service {
 		}
 
 		if ( $file_size > $max_file_size ) {
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				\error_log( \sprintf( 'AI Image Renamer: Image file too large (%d bytes). Maximum allowed: %d bytes.',
-				                      $file_size,
-				                      $max_file_size ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			}
-
 			return false;
 		}
 
 		if ( 0 === $file_size ) {
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				\error_log( 'AI Image Renamer: Image file is empty.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			}
-
 			return false;
 		}
 
@@ -298,7 +282,12 @@ class Groq_Service {
 			return false;
 		}
 
-		$mime_type    = \mime_content_type( $image_path );
+		$mime_type = \wp_get_image_mime( $image_path );
+
+		if ( empty( $mime_type ) || ! $this->is_allowed_type( $mime_type ) ) {
+			return false;
+		}
+
 		$base64_image = \base64_encode( $image_data ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 		$data_url     = \sprintf( 'data:%s;base64,%s', $mime_type, $base64_image );
 
@@ -318,9 +307,7 @@ class Groq_Service {
 						],
 						[
 							'type'      => 'image_url',
-							'image_url' => [
-								'url' => $data_url,
-							],
+							'image_url' => [ 'url' => $data_url ],
 						],
 					],
 				],
@@ -338,13 +325,19 @@ class Groq_Service {
 		 */
 		$payload = \apply_filters( 'air_api_payload', $payload, $image_path );
 
+		$encoded_payload = \wp_json_encode( $payload );
+
+		if ( false === $encoded_payload ) {
+			return false;
+		}
+
 		$request_args = [
 			'timeout' => 30,
 			'headers' => [
 				'Authorization' => 'Bearer ' . $api_key,
 				'Content-Type'  => 'application/json',
 			],
-			'body'    => \wp_json_encode( $payload ),
+			'body'    => $encoded_payload,
 		];
 
 		/**
