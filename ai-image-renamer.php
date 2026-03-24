@@ -36,6 +36,12 @@
  * @package AIR
  */
 
+// TODO:
+// - readme.txt / kopie
+// - changelog.md
+// - report.md
+// - docs
+
 declare( strict_types=1 );
 
 // Prevent direct access.
