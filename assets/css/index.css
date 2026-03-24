@@ -386,7 +386,7 @@
       &:last-child {
         display:         flex;
         align-items:     center;
-        justify-content: flex-end;
+        justify-content: space-evenly;
         gap:             8px;
         text-align:      right;
 
@@ -718,7 +718,7 @@
     .air-pro-upsell {
       background:    transparent;
       border:        2px solid #2f6198;
-      border-radius: 12px;
+      border-radius: var(--air-border-radius);
       overflow:      hidden;
       box-shadow:    0 4px 20px #2f61981a;
 
@@ -1009,7 +1009,7 @@
       }
 
       .dashicons {
-        color:     #ffc107;
+        color:     red;
         font-size: 18px;
         width:     18px;
         height:    18px
@@ -1410,7 +1410,7 @@
 
 /* Active: constant IS set — green */
 .air-api-key-notice--active {
-  background:        var(--air-success, #ecfdf5);
+  background:        #ecfdf5;
   border-color:      #a7f3d0;
   border-left-color: var(--air-success);
 }
@@ -1420,17 +1420,10 @@
 }
 
 .air-api-key-notice--active .air-api-key-notice-body strong {
-  color: #065f46;
 }
 
 .air-api-key-notice--active .air-api-key-notice-body p {
-  color:         #047857;
   margin-bottom: 0;
-}
-
-.air-api-key-notice--active .air-api-key-notice-body code {
-  background: #a7f3d0;
-  color:      #065f46;
 }
 
 /* Tip: constant NOT set — blue */
@@ -1558,7 +1551,6 @@
 .air-api-key-input-row--disabled .air-api-key-field {
   background: var(--air-gray-100);
   color:      var(--air-gray-500);
-  font-style: italic;
 }
 
 /* Inline validation error */
@@ -1734,6 +1726,11 @@
   border:     1px solid #fecaca;
   color:      var(--air-error);
   animation:  air-fade-in .3s ease;
+}
+
+.no-ai {
+  font-size: 12px;
+  color:     var(--air-gray-500);
 }
 
 @keyframes air-spin {

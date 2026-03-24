@@ -3,7 +3,7 @@
 /**
  * AI Image Renamer.
  *
- * @description    Uses AI to rename images during upload for SEO-friendly filenames.
+ * @description     Uses AI to rename images during upload for SEO-friendly filenames.
  * @author          Kolja Nolte <kolja.nolte@gmail.com>
  * @copyright       2025-2026 (C) Kolja Nolte
  * @see             https://docs.kolja-nolte.com/wp-ai-image-renamer/
@@ -16,8 +16,8 @@
  * Released under the GNU General Public License v2 or later.
  * See: https://www.gnu.org/licenses/gpl-2.0.html
  *
- * @package AIR
- * @license GPL-2.0-or-later
+ * @package         AIR
+ * @license         GPL-2.0-or-later
  */
 
 /**
@@ -40,6 +40,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 function air_uninstall_cleanup(): void {
 	// Initialize WP_Filesystem.
 	global $wp_filesystem;
+
 	if ( ! function_exists( 'WP_Filesystem' ) ) {
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 	}
@@ -77,7 +78,7 @@ function air_uninstall_cleanup(): void {
 /**
  * Recursively remove a directory and its contents.
  *
- * @param  string $dir  The directory path to remove.
+ * @param string $dir The directory path to remove.
  *
  * @return bool True on success, false on failure.
  */

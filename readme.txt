@@ -47,7 +47,6 @@ Automatically rename uploaded images using AI for SEO-friendly, descriptive file
 * PNG
 * WebP
 * GIF
-* SVG
 
 = Requirements =
 
@@ -159,7 +158,7 @@ Yes! Each site needs its own API key configuration, but you can use the same Gro
 * AI-powered image renaming with Groq Vision API
 * Support for Llama Maverick and Scout models
 * Encrypted API key storage
-* Configurable file types (JPEG, PNG, WebP, GIF, SVG)
+* Configurable file types (JPEG, PNG, WebP, GIF)
 * Custom prompt support
 * Keyword limit configuration (1-10)
 * Optional alt text auto-population

@@ -2,11 +2,13 @@
 
 [![WordPress](https://img.shields.io/badge/WordPress-6.0%2B-0073aa)](https://wordpress.org/) [![PHP](https://img.shields.io/badge/PHP-8.2%2B-777bb4)](https://www.php.net/) [![License: GPL v2+](https://img.shields.io/badge/License-GPLv2%2B-3da639)](https://www.gnu.org/licenses/gpl-2.0.html)
 
-A **WordPress** plugin to automatically rename uploaded images with AI for **SEO-friendly**, descriptive filenames and `alt="..."` attributes. Powered by **Groq’s Vision API**. 
+A **WordPress** plugin to automatically rename uploaded images with AI for **SEO-friendly**, descriptive filenames and
+`alt="..."` attributes. Powered by **Groq’s Vision API**.
 
 > [!IMPORTANT]
 >
-> This is a **WordPress Plugin**. It requires a WordPress installation to function and cannot be run as a standalone PHP application.
+> This is a **WordPress Plugin**. It requires a WordPress installation to function and cannot be run as a standalone PHP
+> application.
 
 ## What it does
 
@@ -29,7 +31,8 @@ If the API call fails, the plugin falls back to the original filename, so upload
 
 > [!NOTE]
 >
-> The code stored in this repository is only for the free version of **AI Image Renamer**. A pro version of this plugin with dozens of additional features will follow shortly. 
+> The code stored in this repository is only for the free version of **AI Image Renamer**. A pro version of this plugin
+> with dozens of additional features will follow shortly.
 
 - **Native WordPress Integration:** Seamlessly hooks into the media upload process.
 - **AI-Powered:** Uses Groq Vision for accurate image analysis.
@@ -78,7 +81,8 @@ composer install --no-dev --optimize-autoloader
 
 ### Secure Database Bypass (Recommended)
 
-For maximum control and security, you can define your Groq API key and encryption key directly in your `wp-config.php`. Defining `AIR_API_KEY` skips database storage entirely:
+For maximum control and security, you can define your Groq API key and encryption key directly in your `wp-config.php`.
+Defining `AIR_API_KEY` skips database storage entirely:
 
 ```php
 define('AIR_API_KEY', 'gsk_your_api_key_here');

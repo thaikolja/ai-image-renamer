@@ -1,95 +1,95 @@
 {# Admin Settings Page Template - Modern Tab Layout #}
 <div
-	class="wrap air-settings-wrap">
-	{# Header #}
-	{% include 'admin/components/header.twig' %}
+        class="wrap air-settings-wrap">
+    {# Header #}
+    {% include 'admin/components/header.twig' %}
 
-	{# Donation Banner #}
-	{% include 'admin/components/donation-banner.twig' %}
+    {# Donation Banner #}
+    {% include 'admin/components/donation-banner.twig' %}
 
-	<div
-		class="air-settings-container">
-		{# Tab Navigation (Sidebar) #}
-		<aside class="air-settings-nav">
-			{% include 'admin/components/tabs.twig' %}
-		</aside>
+    <div
+            class="air-settings-container">
+        {# Tab Navigation (Sidebar) #}
+        <aside class="air-settings-nav">
+            {% include 'admin/components/tabs.twig' %}
+        </aside>
 
-		{# Main Content Area #}
-		<main class="air-settings-content">
-			<!--suppress HtmlUnknownTarget -->
+        {# Main Content Area #}
+        <main class="air-settings-content">
+            <!--suppress HtmlUnknownTarget -->
             <form method="post" action="options.php" id="air-settings-form">
-				{{ settings_fields(option_group)|raw }}
+                {{ settings_fields(option_group)|raw }}
 
-				{# General Settings Panel #}
-				<div id="air-panel-general" class="air-panel active" role="tabpanel" aria-labelledby="air-tab-general">
-					{% include 'admin/fields/general.twig' with {
-						option_name: option_name,
-						enabled: enabled,
-						set_alt_text: set_alt_text
-					} %}
-				</div>
+                {# General Settings Panel #}
+                <div id="air-panel-general" class="air-panel active" role="tabpanel" aria-labelledby="air-tab-general">
+                    {% include 'admin/fields/general.twig' with {
+                        option_name: option_name,
+                        enabled: enabled,
+                        set_alt_text: set_alt_text
+                    } %}
+                </div>
 
-				{# API Configuration Panel #}
-				<div id="air-panel-api" class="air-panel" role="tabpanel" aria-labelledby="air-tab-api" hidden>
-					<div class="air-card">
-						<div class="air-card-header">
-							<h2>
-								<span class="dashicons dashicons-admin-network"></span>
-								{{ __('API Configuration', 'ai-image-renamer') }}
-								<a href="{{ doc_url('usage/settings#api-configuration') }}" target="_blank" class="air-doc-badge">
-									<span class="dashicons dashicons-book"></span>
-									<span>{{ __('Documentation', 'ai-image-renamer') }}</span>
-								</a>
-							</h2>
-							<p class="air-card-description">{{ __('Connect to the Groq Vision API to enable AI-powered image renaming.', 'ai-image-renamer') }}</p>
-						</div>
-						<div class="air-card-body">
-							{% include 'admin/fields/api-key.twig' with {option_name: option_name, display_key: display_key, placeholder: placeholder, saved: saved, using_api_key_constant: using_api_key_constant} %}
-						</div>
-					</div>
-				</div>
+                {# API Configuration Panel #}
+                <div id="air-panel-api" class="air-panel" role="tabpanel" aria-labelledby="air-tab-api" hidden>
+                    <div class="air-card">
+                        <div class="air-card-header">
+                            <h2>
+                                <span class="dashicons dashicons-admin-network"></span>
+                                {{ __('API Configuration', 'ai-image-renamer') }}
+                                <a href="{{ doc_url('usage/settings#api-configuration') }}" target="_blank" class="air-doc-badge">
+                                    <span class="dashicons dashicons-book"></span>
+                                    <span>{{ __('Documentation', 'ai-image-renamer') }}</span> </a>
+                            </h2>
+                            <p class="air-card-description">{{ __('Connect to the Groq Vision API to enable AI-powered image renaming.', 'ai-image-renamer') }}</p>
+                        </div>
+                        <div class="air-card-body">
+                            {% include 'admin/fields/api-key.twig' with {option_name: option_name, display_key: display_key, placeholder: placeholder, saved: saved, using_api_key_constant: using_api_key_constant} %}
+                        </div>
+                    </div>
+                </div>
 
-				{# Models Panel #}
-				<div id="air-panel-models" class="air-panel" role="tabpanel" aria-labelledby="air-tab-models" hidden>
-					{% include 'admin/fields/models.twig' with {
-						models: models,
-						current: current,
-						option_name: option_name,
-						asset_url: asset_url
-					} %}
-				</div>
+                {# Models Panel #}
+                <div id="air-panel-models" class="air-panel" role="tabpanel" aria-labelledby="air-tab-models" hidden>
+                    {% include 'admin/fields/models.twig' with {
+                        models: models,
+                        current: current,
+                        option_name: option_name,
+                        asset_url: asset_url
+                    } %}
+                </div>
 
-				{# File Types Panel #}
-				<div id="air-panel-filetypes" class="air-panel" role="tabpanel" aria-labelledby="air-tab-filetypes" hidden>
-					{% include 'admin/fields/file-types.twig' with {
-						option_name: option_name,
-						file_types: file_types,
-						available_types: available_types
-					} %}
-				</div>
+                {# File Types Panel #}
+                <div id="air-panel-filetypes" class="air-panel" role="tabpanel" aria-labelledby="air-tab-filetypes" hidden>
+                    {% include 'admin/fields/file-types.twig' with {
+                        option_name: option_name,
+                        file_types: file_types,
+                        available_types: available_types
+                    } %}
+                </div>
 
-				{# Advanced Settings Panel #}
-				<div id="air-panel-advanced" class="air-panel" role="tabpanel" aria-labelledby="air-tab-advanced" hidden>
-					{% include 'admin/fields/advanced.twig' with {
-						option_name: option_name,
-						max_keywords: max_keywords,
-						diagnostics: diagnostics
-					} %}
-				</div>
+                {# Advanced Settings Panel #}
+                <div id="air-panel-advanced" class="air-panel" role="tabpanel" aria-labelledby="air-tab-advanced" hidden>
+                    {% include 'admin/fields/advanced.twig' with {
+                        option_name: option_name,
+                        max_keywords: max_keywords,
+                        diagnostics: diagnostics
+                    } %}
+                </div>
 
-				{# Submit Button #}
-				<div class="air-submit-row">
-					<button type="submit" name="submit" id="submit" class="button button-primary air-button-with-icon">
-						<span class="dashicons dashicons-saved"></span>
-						{{ __('Save Settings', 'ai-image-renamer') }}
-					</button>
-				</div>
-			</form>
-		</main>
+                {# Submit Button #}
+                <div class="air-submit-row">
+                    <button type="submit" name="submit" id="submit" class="button button-primary air-button-with-icon">
+                        <span class="dashicons dashicons-saved"></span>
+                        {{ __('Save Settings', 'ai-image-renamer') }}
+                    </button>
+                </div>
+                {% include 'admin/components/footer.twig' %}
+            </form>
+        </main>
 
-		{# Sidebar #}
-		<aside class="air-settings-sidebar">
-			{% include 'admin/sidebar.twig' %}
-		</aside>
-	</div>
+        {# Sidebar #}
+        <aside class="air-settings-sidebar">
+            {% include 'admin/sidebar.twig' %}
+        </aside>
+    </div>
 </div>
