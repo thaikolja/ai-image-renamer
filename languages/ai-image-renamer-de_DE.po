@@ -509,10 +509,6 @@ msgid "Modern format, high quality at small file sizes."
 msgstr "Modernes Format, hohe Qualität bei kleinen Dateigrößen."
 
 #: views/admin/fields/file-types.twig:21
-msgid "Next-gen format, superior compression to WebP."
-msgstr "Next-Gen-Format mit besserer Kompression als WebP."
-
-#: views/admin/fields/file-types.twig:22
 msgid "Static or animated images, limited colors."
 msgstr "Statische oder animierte Bilder mit begrenzter Farbanzahl."
 
@@ -538,7 +534,7 @@ msgstr "Für mehr Sicherheit fügen Sie diese Konstante Ihrer"
 
 #: views/admin/fields/api-key.twig:24
 msgid ". It will automatically override the key entered below."
-msgstr " hinzu. Sie überschreibt automatisch den unten eingegebenen Schlüssel."
+msgstr "hinzu. Sie überschreibt automatisch den unten eingegebenen Schlüssel."
 
 #: views/admin/fields/api-key.twig:26
 msgid "Code block showing how to define API key in wp-config.php"
@@ -751,4 +747,3 @@ msgstr "Geben Sie unten Ihren API-Schlüssel ein und speichern Sie die Einstellu
 #: views/admin/sections/hero.twig:33
 msgid "Toggle \"Enable Auto-Rename\" to start processing new uploads."
 msgstr "Aktivieren Sie \"Automatisches Umbenennen\", um neue Uploads zu verarbeiten."
-

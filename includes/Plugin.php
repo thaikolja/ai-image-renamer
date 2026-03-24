@@ -123,9 +123,7 @@ class Plugin {
 
 		// Initialize admin settings page.
 		if ( \is_admin() ) {
-			$this->settings_page = new Settings_Page( $this->template_engine,
-			                                          $this->encryption_service,
-			                                          $this->groq_service );
+			$this->settings_page = new Settings_Page( $this->template_engine, $this->encryption_service, $this->groq_service );
 			$this->settings_page->init();
 		}
 

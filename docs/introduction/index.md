@@ -37,7 +37,7 @@ When you upload an image, the plugin hooks into WordPress's `wp_handle_upload_pr
 
 ## Supported Formats
 
-The plugin processes **JPEG**, **PNG**, **WebP**, **AVIF**, and **GIF** images. You can enable or disable individual formats in the [settings](/usage/settings).
+The plugin processes **JPEG**, **PNG**, **WebP**, and **GIF** images. You can enable or disable individual formats in the [settings](/usage/settings).
 
 ## Requirements
 

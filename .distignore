@@ -7,7 +7,6 @@ docs/
 package.json
 bun.lock
 composer.json
-composer.lock
 phpcs.xml.dist
 vite.config.mjs
 .gitignore
@@ -18,7 +17,6 @@ vite.config.mjs
 # Exclude all markdown files (WordPress uses readme.txt)
 *.md
 # Exclude AI assistant files
-.claude/
 .clavix/
 .gemini/
 .qwen/

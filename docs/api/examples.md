@@ -25,13 +25,13 @@ add_filter( 'air_sanitized_filename', function( $sanitized_slug, $original_name 
 }, 10, 2 );
 ```
 
-## 3. Disabling WebP & AVIF Support
+## 3. Disabling WebP Support
 
-By default, the plugin processes JPEGs, PNGs, AVIFs, and WebPs. If you only want it to work on standard JPGs:
+By default, the plugin processes JPEGs, PNGs, and WebPs. If you only want it to work on standard JPGs:
 
 ```php
 add_filter( 'air_allowed_file_types', function( $file_types ) {
-    return [ 'image/jpeg', 'image/jpg' ]; // Strip out png/webp/avif
+    return [ 'image/jpeg', 'image/jpg' ]; // Strip out png/webp
 } );
 ```
 

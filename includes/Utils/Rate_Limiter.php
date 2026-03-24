@@ -216,8 +216,7 @@ class Rate_Limiter {
 		$remaining_time = self::get_reset_time( $action );
 
 		\wp_send_json_error( [
-			                     'message'     => \__( 'Rate limit exceeded. Please try again later.',
-			                                           'ai-image-renamer' ),
+			                     'message'     => \__( 'Rate limit exceeded. Please try again later.', 'ai-image-renamer' ),
 			                     'retry_after' => $remaining_time,
 		                     ] );
 	}

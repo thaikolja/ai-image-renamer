@@ -149,7 +149,7 @@ class Groq_Service {
 	 */
 	final public function is_allowed_type( string $mime_type ): bool {
 		$options    = \get_option( 'air_options', [] );
-		$file_types = $options['file_types'] ?? [ 'image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif' ];
+		$file_types = $options['file_types'] ?? [ 'image/jpeg', 'image/png', 'image/webp', 'image/gif' ];
 
 		/**
 		 * Filter the allowed file types.

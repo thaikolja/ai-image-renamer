@@ -3,7 +3,7 @@
  * @wordpress       Uses AI to rename images during upload for SEO-friendly filenames.
  * @author          Kolja Nolte <kolja.nolte@gmail.com>
  * @copyright       2025-2026 (C) Kolja Nolte
- * @see             https://docs.kolja-nolte.com/wp-ai-image-renamer/
+ * @see             https://docs.kolja-nolte.com/ai-image-renamer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -588,10 +588,10 @@
       }
 
       &[class*="--deprecated"] {
-        border-color:   var(--air-gray-300);
-        background:     var(--air-gray-50);
-        cursor:         not-allowed;
-        pointer-events: none;
+        border-color: var(--air-gray-300);
+        background:   var(--air-gray-50);
+        cursor:       not-allowed;
+        opacity:      0.6;
 
         .air-model-content {
           filter: grayscale(.35);
@@ -1073,13 +1073,13 @@
 }
 
 .air-model-limit-meta {
-  display:       flex;
-  align-items:   center;
-  gap:           10px;
-  flex-wrap:     wrap;
-  margin:        0;
-  font-size:     13px;
-  color:         var(--air-gray-700)
+  display:     flex;
+  align-items: center;
+  gap:         10px;
+  flex-wrap:   wrap;
+  margin:      0;
+  font-size:   13px;
+  color:       var(--air-gray-700)
 }
 
 .air-model-limit-meta strong {
@@ -1166,10 +1166,10 @@
 }
 
 .air-model-limit-note .dashicons {
-  font-size:  20px;
-  width:      20px;
-  height:     20px;
-  margin-top: 1px;
+  font-size:   20px;
+  width:       20px;
+  height:      20px;
+  margin-top:  1px;
   flex-shrink: 0
 }
 
@@ -1192,6 +1192,7 @@
 
 .air-model-limit-note--tip {
   background:   var(--air-primary-light);
+  margin-top:   12px;
   border-color: #bfdbfe
 }
 
@@ -1221,7 +1222,7 @@
 @media (max-width: 782px) {
   .air-model-limit-item-header {
     flex-direction: column;
-    align-items:   flex-start
+    align-items:    flex-start
   }
 }
 

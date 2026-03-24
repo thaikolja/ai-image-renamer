@@ -33,7 +33,6 @@ The settings screen is available under **Media → AI Image Renamer**.
 * JPEG / JPG
 * PNG
 * WebP
-* BMP
 * GIF
 
 = Security notes =
@@ -84,7 +83,7 @@ Yes. Define `AIR_ENCRYPTION_KEY` in `wp-config.php`.
 
 = Which file types can be processed? =
 
-JPEG, PNG, WebP, AVIF, and GIF are supported.
+JPEG, PNG, WebP, and GIF are supported.
 
 = Does the plugin create alt text? =
 
@@ -105,7 +104,7 @@ It can save a cleaned version of the generated description as the attachment alt
 * AI-based image renaming for new uploads
 * Optional attachment alt text support
 * Groq API connection test in the admin UI
-* Support for JPEG, PNG, WebP, AVIF, and GIF
+* Support for JPEG, PNG, WebP, and GIF
 * Encrypted API key storage with `wp-config.php` support
 * Diagnostics and model limit information in the settings UI
 

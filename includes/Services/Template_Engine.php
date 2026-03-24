@@ -169,10 +169,9 @@ class Template_Engine {
 			return \esc_attr( $text );
 		} ) );
 
-		$this->twig->addFunction( new TwigFunction( 'wp_nonce_field',
-			function ( string $action, string $name = '_wpnonce', bool $referer = true, bool $echo = false ): string { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.echoFound
-				return \wp_nonce_field( $action, $name, $referer, $echo );
-			} ) );
+		$this->twig->addFunction( new TwigFunction( 'wp_nonce_field', function ( string $action, string $name = '_wpnonce', bool $referer = true, bool $echo = false ): string { // phpcs:ignore Universal.NamingConventions.NoReservedKeywordParameterNames.echoFound
+			return \wp_nonce_field( $action, $name, $referer, $echo );
+		} ) );
 
 		$this->twig->addFunction( new TwigFunction( 'settings_fields', function ( string $option_group ): void {
 			\settings_fields( $option_group );
@@ -182,10 +181,9 @@ class Template_Engine {
 			\do_settings_sections( $page );
 		} ) );
 
-		$this->twig->addFunction( new TwigFunction( 'submit_button',
-			function ( string $text = '', string $type = 'primary', string $name = 'submit', bool $wrap = true, $other_attributes = null ): void {
-				\submit_button( $text, $type, $name, $wrap, $other_attributes );
-			} ) );
+		$this->twig->addFunction( new TwigFunction( 'submit_button', function ( string $text = '', string $type = 'primary', string $name = 'submit', bool $wrap = true, $other_attributes = null ): void {
+			\submit_button( $text, $type, $name, $wrap, $other_attributes );
+		} ) );
 
 		$this->twig->addFunction( new TwigFunction( 'slug', function ( string $text ) {
 			return sanitize_title_with_dashes( $text );
@@ -193,6 +191,7 @@ class Template_Engine {
 
 		$this->twig->addFunction( new TwigFunction( 'doc_url', function ( string $path = '' ): string {
 			$base = (string) \apply_filters( 'air_docs_base_url', 'https://docs.kolja-nolte.com/ai-image-renamer/' );
+
 			return $base . ltrim( $path, '/' );
 		} ) );
 	}
@@ -210,8 +209,7 @@ class Template_Engine {
 			return $this->twig->render( $template, $context );
 		} catch ( LoaderError|RuntimeError|SyntaxError $e ) {
 			if ( WP_DEBUG ) {
-				return '<div class="notice notice-error"><p>' . \esc_html__( 'Template Error:',
-				                                                             'ai-image-renamer' ) . ' ' . \esc_html( $e->getMessage() ) . '</p></div>';
+				return '<div class="notice notice-error"><p>' . \esc_html__( 'Template Error:', 'ai-image-renamer' ) . ' ' . \esc_html( $e->getMessage() ) . '</p></div>';
 			}
 
 			return '';

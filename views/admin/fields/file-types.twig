@@ -15,12 +15,11 @@
 		<div class="air-filetypes-grid" role="group" aria-label="{{ __('Available file formats', 'ai-image-renamer') }}">
 			{% for mime, label in available_types %}
 				{% set type_desc = '' %}
-				{% if mime == 'image/jpeg' %}{% set type_desc = __('Standard image format, best for photographs.', 'ai-image-renamer') %}
-				{% elseif mime == 'image/png' %}{% set type_desc = __('Lossless format, supports transparency.', 'ai-image-renamer') %}
-				{% elseif mime == 'image/webp' %}{% set type_desc = __('Modern format, high quality at small file sizes.', 'ai-image-renamer') %}
-				{% elseif mime == 'image/avif' %}{% set type_desc = __('Next-gen format, superior compression to WebP.', 'ai-image-renamer') %}
-				{% elseif mime == 'image/gif' %}{% set type_desc = __('Static or animated images, limited colors.', 'ai-image-renamer') %}
-				{% endif %}
+			{% if mime == 'image/jpeg' %}{% set type_desc = __('Standard image format, best for photographs.', 'ai-image-renamer') %}
+			{% elseif mime == 'image/png' %}{% set type_desc = __('Lossless format, supports transparency.', 'ai-image-renamer') %}
+			{% elseif mime == 'image/webp' %}{% set type_desc = __('Modern format, high quality at small file sizes.', 'ai-image-renamer') %}
+			{% elseif mime == 'image/gif' %}{% set type_desc = __('Static or animated images, limited colors.', 'ai-image-renamer') %}
+			{% endif %}
 
 				<label class="air-filetype-card {{ mime in file_types ? 'selected' : '' }}">
 					<input type="checkbox" name="{{ option_name }}[file_types][]" value="{{ mime }}" {{ mime in file_types ? 'checked' : '' }} aria-label="{{ label }}{{ type_desc ? ' - ' ~ type_desc : '' }}">

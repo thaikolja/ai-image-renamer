@@ -49,7 +49,7 @@ No. The AI analysis happens only during the upload process and typically takes 1
 
 ## What image formats are supported?
 
-JPEG, PNG, WebP, AVIF, and GIF. You can enable or disable specific formats in the [settings](/usage/settings#file-types).
+JPEG, PNG, WebP, and GIF. You can enable or disable specific formats in the [settings](/usage/settings#file-types).
 
 ## Can I use this plugin on multiple websites?
 

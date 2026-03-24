@@ -131,6 +131,11 @@ try {
         path.join(pluginDir, 'composer.json'),
         `${packageName}/`,
     );
+
+    zip.addLocalFile(
+        path.join(pluginDir, 'composer.lock'),
+        `${packageName}/`,
+    );
   }
 
   // Add views directory

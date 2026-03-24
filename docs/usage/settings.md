@@ -64,7 +64,6 @@ Choose which image formats the plugin should process. Uncheck any formats you'd 
 | JPEG   | ✅ Yes             |
 | PNG    | ✅ Yes             |
 | WebP   | ✅ Yes             |
-| AVIF   | ✅ Yes             |
 | GIF    | ❌ No              |
 
 ## Advanced Settings

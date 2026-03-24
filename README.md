@@ -35,7 +35,6 @@ The plugin can work with these image types:
 - JPEG / JPG
 - PNG
 - WebP
-- AVIF
 - GIF
 
 ## Requirements

@@ -175,12 +175,7 @@ class Image_Uploader {
 		 *
 		 * @since 1.0.0
 		 */
-		$new_filename = \apply_filters( 'air_new_filename',
-		                                $new_filename,
-		                                $sanitized_name,
-		                                $extension,
-		                                $file,
-		                                $description );
+		$new_filename = \apply_filters( 'air_new_filename', $new_filename, $sanitized_name, $extension, $file, $description );
 
 		$new_filename = \sanitize_file_name( (string) $new_filename );
 
@@ -240,10 +235,9 @@ class Image_Uploader {
 			\set_transient( $transient_key, $alt_text, self::TRANSIENT_EXPIRATION );
 
 			// Hook into attachment creation to save this.
-			\add_action( 'add_attachment',
-				function ( $post_id ) use ( $transient_key ) {
-					$this->set_image_alt_text( $post_id, $transient_key );
-				} );
+			\add_action( 'add_attachment', function ( $post_id ) use ( $transient_key ) {
+				$this->set_image_alt_text( $post_id, $transient_key );
+			} );
 		}
 
 		return $file;
@@ -280,7 +274,6 @@ class Image_Uploader {
 			'image/jpeg' => 'jpg',
 			'image/png'  => 'png',
 			'image/webp' => 'webp',
-			'image/avif' => 'avif',
 			'image/gif'  => 'gif',
 		];
 
