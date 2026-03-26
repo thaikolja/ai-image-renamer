@@ -372,18 +372,19 @@ class Settings_Page {
 
 		// Set placeholder based on whether a key is saved.
 		$placeholder            = $saved ? __( 'Enter a new key to replace the saved one…', 'ai-image-renamer' ) : 'gsk_...';
-		$using_api_key_constant = (bool) Groq_Service::has_api_key_constant();
+		$using_api_key_constant = Groq_Service::has_api_key_constant();
 
 		// All values escaped before passing to template.
+		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Twig context contains escaped strings and typed boolean flags only.
 		echo $this->template_engine->render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			'admin/fields/api-key.twig', [
 			'option_name'            => esc_attr( self::OPTION_NAME ),
 			'display_key'            => esc_attr( $display_key ),
 			'placeholder'            => esc_attr( $placeholder ),
-			'saved'                  => (bool) $saved,
+			'saved'                  => $saved,
 			'using_api_key_constant' => $using_api_key_constant,
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Boolean flag for Twig conditional, not direct HTML output.
 		] );
+		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
@@ -666,8 +667,7 @@ class Settings_Page {
 		$max_keywords = $options['max_keywords'] ?? 5;
 
 		// All values escaped before passing to template.
-		echo $this->template_engine->render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			'admin/fields/max-keywords.twig', [
+		echo $this->template_engine->render( 'admin/fields/max-keywords.twig', [
 			'option_name'  => esc_attr( self::OPTION_NAME ),
 			'max_keywords' => absint( $max_keywords ),
 		] );
@@ -685,14 +685,15 @@ class Settings_Page {
 		$prepared_models = $this->prepare_models_for_template( $models );
 
 		// All values escaped before passing to template.
+		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Twig context contains escaped strings and the prepared model array only.
 		echo $this->template_engine->render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			'admin/fields/model.twig', [
 			'option_name' => esc_attr( self::OPTION_NAME ),
 			'current'     => esc_attr( $current ),
 			'models'      => $prepared_models,
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in prepare_models_for_template().
 			'asset_url'   => esc_url( \plugins_url( 'assets', \dirname( __DIR__, 2 ) . '/ai-image-renamer.php' ) ),
 		] );
+		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
@@ -739,6 +740,7 @@ class Settings_Page {
 		\settings_errors( self::OPTION_GROUP );
 
 		// All values escaped before passing to template.
+		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- Twig context contains escaped strings, prepared arrays, and typed boolean flags only.
 		echo $this->template_engine->render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			'admin/settings.twig', [
 			'page_slug'              => esc_attr( self::PAGE_SLUG ),
@@ -748,19 +750,17 @@ class Settings_Page {
 			'page_title'             => esc_html( get_admin_page_title() ),
 			'display_key'            => esc_attr( $display_key ),
 			'placeholder'            => esc_attr( $placeholder ),
-			'saved'                  => (bool) $saved,
+			'saved'                  => $saved,
 			'enabled'                => $this->normalize_checkbox_value( $options['enabled'] ?? $this->get_defaults()['enabled'] ),
 			'set_alt_text'           => $this->normalize_checkbox_value( $options['set_alt_text'] ?? $this->get_defaults()['set_alt_text'] ),
 			'file_types'             => array_map( 'esc_attr', $file_types ),
 			'available_types'        => array_map( 'esc_html', $available_types ),
 			'current'                => esc_attr( $current ),
 			'models'                 => $prepared_models,
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in prepare_models_for_template().
 			'model_limit_info'       => $model_limit_info,
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in prepare_model_limit_info_for_template().
 			'max_keywords'           => absint( $options['max_keywords'] ?? 5 ),
 			'asset_url'              => esc_url( \plugins_url( 'assets', \dirname( __DIR__, 2 ) . '/ai-image-renamer.php' ) ),
-			'using_api_key_constant' => (bool) $using_api_key_constant,
+			'using_api_key_constant' => $using_api_key_constant,
 			'diagnostics'            => [
 				'php'    => [
 					'label' => esc_html__( 'PHP Version', 'ai-image-renamer' ),
@@ -789,11 +789,12 @@ class Settings_Page {
 				'curl'   => [
 					'label' => esc_html__( 'cURL Enabled', 'ai-image-renamer' ),
 					'value' => $curl_enabled ? esc_html__( 'Yes', 'ai-image-renamer' ) : esc_html__( 'No', 'ai-image-renamer' ),
-					'ok'    => (bool) function_exists( 'curl_version' ),
+					'ok'    => function_exists( 'curl_version' ),
 					'desc'  => esc_html__( 'Required for API communication', 'ai-image-renamer' ),
 				],
 			],
 		] );
+		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
@@ -877,7 +878,7 @@ class Settings_Page {
 		// If the API key constant is defined, always use it directly for testing.
 		// This short-circuits all POST data handling regardless of what the JS sends.
 		if ( Groq_Service::has_api_key_constant() ) {
-			$result = $this->groq_service->test_connection( \AIR_API_KEY );
+			$result = $this->groq_service->test_connection( (string) \constant( 'AIR_API_KEY' ) );
 
 			if ( true === $result ) {
 				\wp_send_json_success( [ 'message' => \__( 'Connection successful!', 'ai-image-renamer' ) ] );
