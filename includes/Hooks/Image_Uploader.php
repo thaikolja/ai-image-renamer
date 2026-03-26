@@ -257,6 +257,7 @@ class Image_Uploader {
 		if ( ! empty( $alt_text ) ) {
 			\update_post_meta( $post_id, '_wp_attachment_image_alt', $alt_text );
 			\update_post_meta( $post_id, '_ai_image_renamer_alt_set', 'true' );
+
 			// Delete the transient after use to prevent memory leaks.
 			\delete_transient( $transient_key );
 		}

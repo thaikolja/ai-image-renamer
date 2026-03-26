@@ -32,15 +32,10 @@
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       ai-image-renamer
  * Domain Path:       /languages
+ * Donate Link:       https://www.paypal.com/paypalme/thaikolja/10/
  *
  * @package AIR
  */
-
-// TODO:
-// - readme.txt / kopie
-// - changelog.md
-// - report.md
-// - docs
 
 declare( strict_types=1 );
 
@@ -51,14 +46,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use AIR\Plugin;
 
-// Define plugin constants.
 const AIR_VERSION = '1.0.0';
 
 define( 'AIR_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AIR_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'AIR_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
-// Load Composer autoloader.
 if ( file_exists( AIR_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
 	require_once AIR_PLUGIN_DIR . 'vendor/autoload.php';
 } else {
@@ -71,13 +64,28 @@ if ( file_exists( AIR_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
 	return;
 }
 
-add_action( 'init', function () {
+/**
+ * Loads the plugin's text domain for translation.
+ *
+ * This method makes the plugin's translation files available
+ * for internationalization and localization, enabling text strings
+ * within the plugin to be displayed in different languages.
+ *
+ * @return void
+ */
+add_action( 'init', function (): void {
 	load_plugin_textdomain( 'ai-image-renamer', false, dirname( AIR_PLUGIN_BASENAME ) . '/languages' );
 } );
 
-// Bootstrap the plugin.
+/**
+ * Initializes and executes the Plugin object.
+ *
+ * This function creates a new instance of the Plugin class,
+ * and subsequently calls its init() method to initialize it.
+ *
+ * @return void
+ */
 add_action( 'plugins_loaded', function () {
-
 	$plugin = new Plugin();
 	$plugin->init();
 } );

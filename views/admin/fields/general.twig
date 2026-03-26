@@ -19,6 +19,7 @@
             </div>
             <div class="air-setting-control">
                 <label class="air-toggle">
+                    <input type="hidden" name="{{ option_name }}[enabled]" value="0">
                     <input type="checkbox" id="air_enabled" name="{{ option_name }}[enabled]" value="1" {{ enabled ? 'checked' : '' }}>
                     <span class="air-toggle-slider"></span>
                 </label>
@@ -31,6 +32,7 @@
             </div>
             <div class="air-setting-control">
                 <label class="air-toggle">
+                    <input type="hidden" name="{{ option_name }}[set_alt_text]" value="0">
                     <input type="checkbox" id="air_set_alt_text" name="{{ option_name }}[set_alt_text]" value="1" {{ set_alt_text ? 'checked' : '' }}>
                     <span class="air-toggle-slider"></span>
                 </label>

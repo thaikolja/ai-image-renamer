@@ -79,6 +79,7 @@ class Template_Engine {
 		// Create cache directory if it doesn't exist and caching is enabled.
 		if ( $cache_path && ! \is_dir( $cache_path ) ) {
 			$created = \wp_mkdir_p( $cache_path );
+
 			if ( ! $created ) {
 				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 					\error_log( 'AI Image Renamer: Failed to create Twig cache directory.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
@@ -112,6 +113,7 @@ class Template_Engine {
 
 		// Validate and filter paths - only include existing directories.
 		$valid_paths = [];
+
 		foreach ( $template_paths as $path ) {
 			if ( \is_string( $path ) && \is_dir( $path ) ) {
 				$valid_paths[] = $path;
@@ -173,16 +175,25 @@ class Template_Engine {
 			return \wp_nonce_field( $action, $name, $referer, $echo );
 		} ) );
 
-		$this->twig->addFunction( new TwigFunction( 'settings_fields', function ( string $option_group ): void {
+		$this->twig->addFunction( new TwigFunction( 'settings_fields', function ( string $option_group ): string {
+			\ob_start();
 			\settings_fields( $option_group );
+
+			return (string) \ob_get_clean();
 		} ) );
 
-		$this->twig->addFunction( new TwigFunction( 'do_settings_sections', function ( string $page ): void {
+		$this->twig->addFunction( new TwigFunction( 'do_settings_sections', function ( string $page ): string {
+			\ob_start();
 			\do_settings_sections( $page );
+
+			return (string) \ob_get_clean();
 		} ) );
 
-		$this->twig->addFunction( new TwigFunction( 'submit_button', function ( string $text = '', string $type = 'primary', string $name = 'submit', bool $wrap = true, $other_attributes = null ): void {
+		$this->twig->addFunction( new TwigFunction( 'submit_button', function ( string $text = '', string $type = 'primary', string $name = 'submit', bool $wrap = true, $other_attributes = null ): string {
+			\ob_start();
 			\submit_button( $text, $type, $name, $wrap, $other_attributes );
+
+			return (string) \ob_get_clean();
 		} ) );
 
 		$this->twig->addFunction( new TwigFunction( 'slug', function ( string $text ) {

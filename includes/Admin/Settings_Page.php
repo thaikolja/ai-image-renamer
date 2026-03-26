@@ -229,6 +229,17 @@ class Settings_Page {
 	}
 
 	/**
+	 * Normalize checkbox-like settings values to a boolean.
+	 *
+	 * @param mixed $value Raw submitted or stored value.
+	 *
+	 * @return bool
+	 */
+	private function normalize_checkbox_value( mixed $value ): bool {
+		return true === $value || 1 === $value || '1' === (string) $value;
+	}
+
+	/**
 	 * Sanitize settings before saving.
 	 *
 	 * @param array $input The input settings.
@@ -269,7 +280,7 @@ class Settings_Page {
 		}
 
 		// Enabled toggle.
-		$sanitized['enabled'] = isset( $input['enabled'] ) && '1' === $input['enabled'];
+		$sanitized['enabled'] = $this->normalize_checkbox_value( $input['enabled'] ?? false );
 
 		// File types.
 		if ( isset( $input['file_types'] ) && is_array( $input['file_types'] ) ) {
@@ -296,7 +307,7 @@ class Settings_Page {
 
 		// Alt text toggle.
 		// Note: The UI says "Add to alt Attribute", key is set_alt_text.
-		$sanitized['set_alt_text'] = isset( $input['set_alt_text'] ) && '1' === $input['set_alt_text'];
+		$sanitized['set_alt_text'] = $this->normalize_checkbox_value( $input['set_alt_text'] ?? false );
 
 		// Model selection.
 		if ( isset( $input['model'] ) ) {
@@ -598,7 +609,7 @@ class Settings_Page {
 	 */
 	final public function render_enabled_field(): void {
 		$options = \get_option( self::OPTION_NAME, $this->get_defaults() );
-		$enabled = $options['enabled'] ?? true;
+		$enabled = $this->normalize_checkbox_value( $options['enabled'] ?? $this->get_defaults()['enabled'] );
 
 		// All values escaped before passing to template.
 		echo $this->template_engine->render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -615,7 +626,7 @@ class Settings_Page {
 	 */
 	final public function render_alt_text_field(): void {
 		$options = \get_option( self::OPTION_NAME, $this->get_defaults() );
-		$set_alt = $options['set_alt_text'] ?? false;
+		$set_alt = $this->normalize_checkbox_value( $options['set_alt_text'] ?? $this->get_defaults()['set_alt_text'] );
 
 		// All values escaped before passing to template.
 		echo $this->template_engine->render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -738,8 +749,8 @@ class Settings_Page {
 			'display_key'            => esc_attr( $display_key ),
 			'placeholder'            => esc_attr( $placeholder ),
 			'saved'                  => (bool) $saved,
-			'enabled'                => (bool) ( $options['enabled'] ?? true ),
-			'set_alt_text'           => (bool) ( $options['set_alt_text'] ?? false ),
+			'enabled'                => $this->normalize_checkbox_value( $options['enabled'] ?? $this->get_defaults()['enabled'] ),
+			'set_alt_text'           => $this->normalize_checkbox_value( $options['set_alt_text'] ?? $this->get_defaults()['set_alt_text'] ),
 			'file_types'             => array_map( 'esc_attr', $file_types ),
 			'available_types'        => array_map( 'esc_html', $available_types ),
 			'current'                => esc_attr( $current ),

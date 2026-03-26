@@ -1,12 +1,14 @@
 === AI Image Renamer ===
-Contributors: thaikolja
-Tags: images, media, seo, accessibility, ai
-Requires at least: 6.0
-Tested up to: 6.9
-Requires PHP: 8.2
-Stable tag: 1.0.0
-License: GPLv2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Contributors:         thaikolja
+Tags:                 images, media, seo, accessibility, ai
+Requires at least:    6.0
+Tested up to:         6.9
+Requires PHP:         8.2
+Stable tag:           1.0.0
+License:              GPLv2 or later
+License URI:          https://www.gnu.org/licenses/gpl-2.0.html
+Donate link:          https://www.paypal.com/paypalme/thaikolja/10/
+
 Automatically rename newly uploaded images with AI-generated, descriptive filenames and optional alt text.
 
 == Description ==
@@ -142,6 +144,6 @@ AI Image Renamer uses the Groq API to analyze uploaded images and generate descr
 
 == Support ==
 
-* Documentation: https://docs.kolja-nolte.com/ai-image-renamer
-* Support forum: https://wordpress.org/support/plugin/ai-image-renamer/
-* Source repository: https://gitlab.com/thaikolja/wp-ai-image-renamer
+* Documentation:      https://docs.kolja-nolte.com/ai-image-renamer
+* Support forum:      https://wordpress.org/support/plugin/ai-image-renamer/
+* Source repository:  https://gitlab.com/thaikolja/ai-image-renamer
