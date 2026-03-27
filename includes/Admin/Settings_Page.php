@@ -667,10 +667,10 @@ class Settings_Page {
 		$max_keywords = $options['max_keywords'] ?? 5;
 
 		// All values escaped before passing to template.
-		echo $this->template_engine->render( 'admin/fields/max-keywords.twig', [
+		echo esc_attr( $this->template_engine->render( 'admin/fields/max-keywords.twig', [
 			'option_name'  => esc_attr( self::OPTION_NAME ),
 			'max_keywords' => absint( $max_keywords ),
-		] );
+		] ) );
 	}
 
 	/**

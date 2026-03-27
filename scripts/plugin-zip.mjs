@@ -171,6 +171,7 @@ try {
         entry.entryName.match(/\/vendor\/.*\/(docs|dist|tests|other)(\/|$)/i) ||
         entry.entryName.match(/\/vendor\/(dealerdirect|kint-php|phpcsstandards|phpstan|squizlabs)(\/|$)/i) ||
         //entry.entryName.match(/\/vendor\/.*\/(psalm\.xml|splitsh\.json|build-phar\.sh)$/i) ||
+        entry.entryName.match(/build-phar\.sh$/i) ||
         entry.entryName.match(/\/vendor\/.*\/CHANGELOG$/i) ||
         entry.entryName.match(/\/vendor\/.*\/README\.(md|rst|txt)$/i)
     ) {
