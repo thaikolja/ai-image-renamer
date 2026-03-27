@@ -3,7 +3,7 @@
         'name' => 'thaikolja/ai-image-renamer',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '2df780d0bfa1974ca035ae1e16a63e61f953369d',
+        'reference' => 'b09fc2442487dfcc9584fd8ea7c2f4c2fd5296e9',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -112,7 +112,7 @@
         'thaikolja/ai-image-renamer' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '2df780d0bfa1974ca035ae1e16a63e61f953369d',
+            'reference' => 'b09fc2442487dfcc9584fd8ea7c2f4c2fd5296e9',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
