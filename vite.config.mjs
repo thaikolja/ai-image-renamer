@@ -17,9 +17,9 @@
  * @license GPL-2.0-or-later
  */
 
-import {defineConfig}  from 'vite';
-import path            from 'path';
-import {fileURLToPath} from 'url';
+import { defineConfig } from 'vite';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,11 +27,11 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 export default defineConfig({
   plugins: [],
-  build:   {
-    outDir:        'assets',
-    emptyOutDir:   false,
+  build: {
+    outDir: 'assets',
+    emptyOutDir: false,
     rollupOptions: {
-      input:  {
+      input: {
         main: path.resolve(__dirname, 'assets/js/main.js'),
       },
       output: {
@@ -50,15 +50,15 @@ export default defineConfig({
         },
       },
     },
-    sourcemap:     true,
-    minify:        isProduction,
-    cssMinify:     isProduction,
-    jsSourceMap:   true,
-    cssCodeSplit:  true,
+    sourcemap: false,
+    minify: isProduction,
+    cssMinify: isProduction,
+    jsSourceMap: true,
+    cssCodeSplit: true,
   },
-  server:  {
-    port:  3000,
-    host:  true,
+  server: {
+    port: 3000,
+    host: true,
     watch: {
       ignored: ['**/vendor/**', '**/node_modules/**'],
     },
