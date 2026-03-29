@@ -18,11 +18,11 @@
     "vision-api",
     "image-renaming"
   ],
-  "homepage":    "https://gitlab.com/thaikolja/wp-ai-image-renamer",
+  "homepage":    "https://gitlab.com/thaikolja/ai-image-renamer",
   "support":     {
     "docs":   "https://docs.kolja-nolte.com/ai-image-renamer",
     "forum":  "https://wordpress.org/support/plugin/ai-image-renamer/",
-    "source": "https://gitlab.com/thaikolja/wp-ai-image-renamer"
+    "source": "https://gitlab.com/thaikolja/ai-image-renamer"
   },
   "require":     {
     "php":                   ">=8.2",

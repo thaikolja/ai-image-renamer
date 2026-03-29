@@ -1,5 +1,4 @@
 <?php
-
 /*
  * @name:           AI Image Renamer
  * @wordpress       Uses AI to rename images during upload for SEO-friendly filenames.

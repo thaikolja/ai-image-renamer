@@ -9,3 +9,4 @@ cache/
 !CODE_OF_CONDUCT.md
 *.zip
 node_modules
+conversation-*.txt
