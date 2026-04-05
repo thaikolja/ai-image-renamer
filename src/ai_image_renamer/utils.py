@@ -47,6 +47,9 @@ import re
 # Used for: converting image bytes to base64 for API transmission
 import base64
 
+# json: Used to build the multimodal request payload without nested literal noise
+import json
+
 # ==============================================================================
 # Third-Party Library Imports
 # ==============================================================================
@@ -248,6 +251,16 @@ def sanitize_image_path(image_path: str, image_content: str) -> str:
     return os.path.join(dir_path, f"{slug}{extension}")
 
 
+def _guess_image_mime_type(image_path: str) -> str:
+    """Return the detected image MIME type, falling back to JPEG."""
+
+    kind = filetype.guess(image_path)
+    if kind and kind.mime.startswith('image/'):
+        return kind.mime
+
+    return 'image/jpeg'
+
+
 # ==============================================================================
 # AI Content Generation Functions
 # ==============================================================================
@@ -256,7 +269,7 @@ def get_words(image_path: str, words: int = 6) -> str:
     """
     Generate a concise, SEO-friendly description for an image using AI.
 
-    This function sends an image to Groq's multimodal API (Llama 4 Scout model)
+    This function sends an image to Groq's multimodal API (Llama 4 Maverick model)
 
     and receives a short text description of the image contents. The description
     is suitable for use as a filename.
@@ -303,9 +316,9 @@ def get_words(image_path: str, words: int = 6) -> str:
         'sunny beach with palm trees'
 
     Technical Details:
-        - Model: meta-llama/llama-4-scout-17b-16e-instruct
+        - Model: meta-llama/llama-4-maverick-17b-128e-instruct
         - Temperature: 2.0 (high creativity, varied outputs)
-        - Image encoding: Base64 JPEG data URL
+        - Image encoding: Base64 data URL using the detected MIME type
         - Request type: Chat completion with multimodal content
 
     Note:
@@ -333,55 +346,52 @@ def get_words(image_path: str, words: int = 6) -> str:
     # Step 4: Encode the image to base64 for API transmission
     # This converts binary image data to a string format suitable for JSON
     encoded_image = encode_image(image_path)
+    image_mime_type = _guess_image_mime_type(image_path)
 
     # Step 5: Construct the multimodal chat completion request
     # The message contains both text instructions and the image data
-    completion = client.chat.completions.create(
+    request_messages = json.loads(
+        f'''
+        [
+            {{
+                "role": "user",
+                "content": [
+                    {{
+                        "type": "text",
+                        "text": "What's in this image? Describe the content of this image with no more than {words} words in an SEO-friendly way"
+                    }},
+                    {{
+                        "type": "image_url",
+                        "image_url": {{
+                            "url": "data:{image_mime_type};base64,{encoded_image}"
+                        }}
+                    }}
+                ]
+            }}
+        ]
+        '''
+    )
+
+    request_payload = {
         # Use Llama 4 Maverick: fast, multimodal, good for descriptive tasks
-        model="meta-llama/llama-4-scout-17b-16e-instruct",
+        "model": "meta-llama/llama-4-maverick-17b-128e-instruct",
 
         # Temperature controls randomness:
         # 0.0 = deterministic, 1.0 = balanced, 2.0 = very creative
         # Higher temperature produces more varied, creative descriptions
-        temperature=2,
+        "temperature": 2.0,
 
         # Disable streaming - we want the complete response at once
-        stream=False,
+        "stream": False,
 
         # No custom stop sequences - let the model complete naturally
-        stop=None,
+        "stop": None,
 
         # Messages array: conversation history for the model
-        messages=[
-            {
-                # Role: "user" indicates this is user input
-                "role": "user",
+        "messages": request_messages,
+    }
 
-                # Content array: allows mixing text and images
-                "content": [
-                    {
-                        # First element: text instruction/prompt
-                        "type": "text",
-                        # Prompt asks for SEO-friendly, word-limited description
-                        "text": (
-                            f"What's in this image? "
-                            f"Describe the content of this image with no more than {words} words "
-                            f"in an SEO-friendly way"
-                        )
-                    },
-                    {
-                        # Second element: image data as URL
-                        "type": "image_url",
-                        "image_url": {
-                            # Data URL format: data:[MIME-type];base64,[data]
-                            # We assume JPEG; most images work with this
-                            "url": f"data:image/jpeg;base64,{encoded_image}",
-                        }
-                    }
-                ]
-            }
-        ],
-    )
+    completion = client.chat.completions.create(**request_payload)
 
     # Step 6: Extract the response content with defensive null checks
     # The API response structure: completion.choices[0].message.content
@@ -400,3 +410,7 @@ def get_words(image_path: str, words: int = 6) -> str:
 
     # All checks passed - return the generated description
     return completion.choices[0].message.content
+
+
+
+

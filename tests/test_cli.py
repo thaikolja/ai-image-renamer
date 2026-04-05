@@ -15,9 +15,9 @@ Tests cover:
 # ==============================================================================
 # Standard Library Imports
 # ==============================================================================
+import io
 import unittest
-from unittest.mock import patch, MagicMock
-import argparse
+from unittest.mock import patch
 import os
 import sys
 
@@ -139,13 +139,41 @@ class TestCLI(unittest.TestCase):
         """
         Test that invalid word count raises SystemExit.
 
-        Words must be in range 1-49.
+        Words must be in range 1-50.
         """
         # Arrange: Set up command line with invalid word count
-        with patch('sys.argv', ['rename-images', '-w', '100', 'image.jpg']):
+        with patch('sys.argv', ['rename-images', '-w', '51', 'image.jpg']):
             # Act & Assert: Should raise SystemExit due to choices validation
             with self.assertRaises(SystemExit):
                 cli.main()
+
+    @patch('ai_image_renamer.cli.renamer.ImageRenamer')
+    @patch('ai_image_renamer.cli.load_dotenv')
+    def test_main_allows_max_words_value(self, mock_load_dotenv, mock_renamer):
+        """
+        Test that the maximum supported word count of 50 is accepted.
+        """
+        with patch('sys.argv', ['rename-images', '-w', '50', 'image.jpg']):
+            cli.main()
+
+        call_args = mock_renamer.call_args[0][0]
+        self.assertEqual(call_args.words, 50)
+
+    @patch('ai_image_renamer.cli.load_dotenv')
+    def test_version_uses_source_fallback(self, mock_load_dotenv):
+        """
+        Test that --version works even when package metadata is unavailable.
+        """
+        stdout = io.StringIO()
+
+        with patch('sys.stdout', stdout):
+            with patch('sys.argv', ['rename-images', '--version']):
+                with patch('ai_image_renamer.cli._get_version', return_value='1.1.0'):
+                    with self.assertRaises(SystemExit) as exc:
+                        cli.main()
+
+        self.assertEqual(exc.exception.code, 0)
+        self.assertEqual(stdout.getvalue().strip(), 'rename-images 1.1.0')
 
     def test_main_zero_words_raises_error(self):
         """

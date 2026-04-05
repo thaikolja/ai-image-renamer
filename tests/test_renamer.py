@@ -176,14 +176,51 @@ class TestRenamer(unittest.TestCase):
         # Arrange: Configure mock utils for valid but very short result
         mock_utils.verify_image_file.return_value = True
         mock_utils.get_words.return_value = "ab"  # Very short content
-        mock_utils.sanitize_image_path.return_value = "ab.jpg"  # Length is 6, but let's test the logic
+        mock_utils.sanitize_image_path.return_value = "ab.jpg"
 
         # Act: Create ImageRenamer instance
         renamer.ImageRenamer(args)
 
-        # Assert: With content "ab", sanitize should produce something like "ab.jpg" which is > 3 chars
-        # The test verifies the logic exists; actual skip happens for paths <= 3 chars total
-        # This is a boundary condition test
+        # Assert: Very short stems should be skipped before renaming
+        mock_os_rename.assert_not_called()
+
+    @patch('ai_image_renamer.renamer.utils')
+    @patch('os.rename')
+    def test_rename_skips_when_target_matches_source(self, mock_os_rename, mock_utils):
+        """
+        Test that the renamer skips a file when the sanitized path matches the source.
+        """
+        args = MagicMock()
+        args.image_paths = ["/tmp/same-name.jpg"]
+        args.words = 8
+
+        mock_utils.verify_image_file.return_value = True
+        mock_utils.get_words.return_value = "same name"
+        mock_utils.sanitize_image_path.return_value = "/tmp/same-name.jpg"
+
+        renamer.ImageRenamer(args)
+
+        mock_os_rename.assert_not_called()
+
+    @patch('ai_image_renamer.renamer.utils')
+    @patch('ai_image_renamer.renamer.os.path.exists')
+    @patch('os.rename')
+    def test_rename_adds_suffix_when_target_exists(self, mock_os_rename, mock_exists, mock_utils):
+        """
+        Test that an existing destination gets a numeric suffix instead of being overwritten.
+        """
+        args = MagicMock()
+        args.image_paths = ["/tmp/source.jpg"]
+        args.words = 8
+
+        mock_utils.verify_image_file.return_value = True
+        mock_utils.get_words.return_value = "target name"
+        mock_utils.sanitize_image_path.return_value = "/tmp/target-name.jpg"
+        mock_exists.side_effect = [True, False]
+
+        renamer.ImageRenamer(args)
+
+        mock_os_rename.assert_called_once_with("/tmp/source.jpg", "/tmp/target-name-1.jpg")
 
     # ==========================================================================
     # Tests for Argument Handling

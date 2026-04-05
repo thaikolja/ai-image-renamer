@@ -9,14 +9,15 @@ where = ["src"]
 name = "ai-image-renamer"
 version = "1.1.0"
 description = "Rename images based on AI-generated descriptions."
-readme = "README.md"
+readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.8"
 authors = [
     { name = "Kolja Nolte", email = "kolja.nolte@gmail.com" }
 ]
 license = "MIT"
+keywords = ["ai", "image", "renamer", "cli", "groq", "llama", "photos"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
@@ -35,7 +36,10 @@ dependencies = [
 
 [project.urls]
 "Homepage" = "https://docs.kolja-nolte.com/ai-image-renamer-cli"
+"Documentation" = "https://docs.kolja-nolte.com/ai-image-renamer-cli"
 "Repository" = "https://gitlab.com/thaikolja/ai-image-renamer.git"
+"Changelog" = "https://gitlab.com/thaikolja/ai-image-renamer/-/blob/main/CHANGELOG.md"
+"Issues" = "https://gitlab.com/thaikolja/ai-image-renamer/-/issues"
 
 [project.scripts]
 rename-images = "ai_image_renamer.cli:main"

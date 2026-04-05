@@ -227,10 +227,23 @@ class ImageRenamer:
             # This generates an SEO-friendly filename like "sunset-beach.jpg"
             new_path = utils.sanitize_image_path(path, content)
 
-            # Skip if the resulting name is implausibly short
-            # Length ≤3 means sanitization stripped most content (e.g., "a.jpg")
-            # This prevents creating meaningless filenames
-            if len(new_path) <= 3:
+            # Skip if sanitization produced the same path as the source.
+            if os.path.abspath(path) == os.path.abspath(new_path):
+                print(f"File already has target name, skipping: {path}")
+                continue
+
+            # Avoid overwriting an existing file by generating a unique suffix.
+            base_path, extension = os.path.splitext(new_path)
+            candidate_path = new_path
+            suffix = 1
+            while os.path.exists(candidate_path):
+                candidate_path = f"{base_path}-{suffix}{extension}"
+                suffix += 1
+
+            # Skip if the resulting filename stem is implausibly short.
+            # Length ≤3 means sanitization stripped most content (e.g., "a.jpg").
+            stem = os.path.splitext(os.path.basename(candidate_path))[0]
+            if len(stem) <= 3:
                 print(f"Generated filename too short, skipping: {path}")
                 continue
 
@@ -240,7 +253,8 @@ class ImageRenamer:
             # Perform the actual file system rename operation
             # os.rename() is atomic on most filesystems
             # Note: This will fail if destination file already exists
-            os.rename(path, new_path)
+            os.rename(path, candidate_path)
 
             # Report success to the user
-            print(f"Renamed {path} to {new_path}")
+            print(f"Renamed {path} to {candidate_path}")
+

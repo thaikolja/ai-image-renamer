@@ -112,8 +112,9 @@ class TestUtils(unittest.TestCase):
     # ==========================================================================
 
     @patch('ai_image_renamer.utils.encode_image')
+    @patch('ai_image_renamer.utils.filetype.guess')
     @patch('ai_image_renamer.utils.Groq')
-    def test_get_words_success(self, mock_groq, mock_encode_image):
+    def test_get_words_success(self, mock_groq, mock_guess, mock_encode_image):
         """
         Test get_words function with a successful API call.
 
@@ -122,6 +123,9 @@ class TestUtils(unittest.TestCase):
         """
         # Arrange: Mock the encode_image function
         mock_encode_image.return_value = "encoded_image_string"
+
+        # Arrange: Mock MIME detection for a PNG image
+        mock_guess.return_value = MagicMock(mime='image/png')
 
         # Arrange: Mock the Groq client and response
         mock_completion = MagicMock()
@@ -134,9 +138,18 @@ class TestUtils(unittest.TestCase):
         # Assert: Should return the mocked description
         self.assertEqual(result, "A test description")
 
+        # Assert: The vision payload should use the detected MIME type
+        create_kwargs = mock_groq.return_value.chat.completions.create.call_args.kwargs
+        self.assertEqual(create_kwargs["model"], "meta-llama/llama-4-maverick-17b-128e-instruct")
+        self.assertEqual(
+            create_kwargs["messages"][0]["content"][1]["image_url"]["url"],
+            "data:image/png;base64,encoded_image_string",
+        )
+
     @patch('ai_image_renamer.utils.encode_image')
+    @patch('ai_image_renamer.utils.filetype.guess')
     @patch('ai_image_renamer.utils.Groq')
-    def test_get_words_failure(self, mock_groq, mock_encode_image):
+    def test_get_words_failure(self, mock_groq, mock_guess, mock_encode_image):
         """
         Test get_words function with a failed API call.
 
@@ -144,6 +157,9 @@ class TestUtils(unittest.TestCase):
         """
         # Arrange: Mock the encode_image function
         mock_encode_image.return_value = "encoded_image_string"
+
+        # Arrange: Mock MIME detection for the input image
+        mock_guess.return_value = MagicMock(mime='image/jpeg')
 
         # Arrange: Mock failed API response (None)
         mock_groq.return_value.chat.completions.create.return_value = None

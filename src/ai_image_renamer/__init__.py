@@ -60,14 +60,17 @@ For full documentation, visit: https://docs.kolja-nolte.com/ai-image-renamer-cli
 # ==============================================================================
 # Version Information
 # ==============================================================================
-# Import version from metadata for consistent versioning across the package
-# This reads from pyproject.toml's [project.version]
+# Import version from installed package metadata when available. During local
+# development or direct source execution, fall back to the project version.
+from importlib.metadata import PackageNotFoundError, version
+
+_PACKAGE_NAME = 'ai-image-renamer'
+_FALLBACK_VERSION = '1.1.0'
+
 try:
-    from importlib import metadata
-    __version__ = metadata.version('ai-image-renamer')
-except Exception:
-    # Fallback version if metadata is not available (e.g., during development)
-    __version__ = '1.0.0'
+    __version__ = version(_PACKAGE_NAME)
+except PackageNotFoundError:
+    __version__ = _FALLBACK_VERSION
 
 # ==============================================================================
 # Public API Exports
