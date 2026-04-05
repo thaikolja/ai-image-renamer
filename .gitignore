@@ -3,6 +3,10 @@
 .LSOverride
 .idea
 Icon
+*.md
+!README.md
+!CHANGELOG.md
+!CONTRIBUTING.md
 ._*
 .DocumentRevisions-V100
 .fseventsd

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #
 #  AI Image Renamer
 #
@@ -13,70 +12,276 @@
 #  @email       kolja.nolte@gmail.com
 #  @license     MIT
 #  @date        2025
-#  @website     https://docs.kolja-nolte.com/ai-image-renamer
+#  @website     https://docs.kolja-nolte.com/ai-image-renamer-cli
 #  @repository  https://gitlab.com/thaikolja/ai-image-renamer
 
+"""
+Command-Line Interface module for AI Image Renamer.
 
-# Standard library import: argparse provides facilities for parsing CLI arguments.
+This module provides the entry point for the `rename-images` CLI command.
+It handles:
+
+- Argument parsing and validation
+- Environment variable loading from .env files
+- Version information display
+- Delegation to the ImageRenamer class for processing
+
+The CLI is configured via pyproject.toml's [project.scripts] section:
+
+    [project.scripts]
+    rename-images = "ai_image_renamer.cli:main"
+
+Usage Examples:
+    # Rename a single image
+    $ rename-images photo.jpg
+
+    # Rename multiple images
+    $ rename-images photo1.jpg photo2.png photo3.webp
+
+    # Specify word count for filenames
+    $ rename-images -w 3 vacation.jpg
+
+    # Show version
+    $ rename-images -v
+
+Environment Variables:
+    GROQ_API_KEY (str, required): API key for Groq services
+        - Get free key at: https://console.groq.com/keys
+        - Set in .bashrc/.zshrc: export GROQ_API_KEY="gsk_..."
+        - Or create .env file in working directory
+"""
+
+# ==============================================================================
+# Standard Library Imports
+# ==============================================================================
+
+# argparse: Command-line argument parsing library
+# Provides a declarative way to define CLI arguments with automatic help generation
 import argparse
-# Internal package import: renamer module (aliased) containing ImageRenamer logic.
-import ai_image_renamer.renamer as renamer
-# Standard library import: metadata retrieves the installed package version (PEP 566).
+
+# importlib.metadata: Access installed package metadata (PEP 566)
+# Used to retrieve the version string from pyproject.toml
 from importlib import metadata
-# Third-party import: load_dotenv loads environment variables from a .env file.
+
+# ==============================================================================
+# Third-Party Library Imports
+# ==============================================================================
+
+# python-dotenv: Load environment variables from .env file
+# Allows users to store GROQ_API_KEY in a .env file instead of shell config
 from dotenv import load_dotenv
 
+# ==============================================================================
+# Package Imports
+# ==============================================================================
+
+# Import the renamer module (aliased for clarity)
+# Contains the ImageRenamer class that performs the actual renaming
+from . import renamer
+
+
+# ==============================================================================
+# Main Entry Point Function
+# ==============================================================================
 
 def main():
-	"""
-	Entry point for the AI Image Renamer CLI.
+    """
+    Main entry point for the AI Image Renamer CLI application.
 
-	Parses command line arguments and instantiates renamer.ImageRenamer
-	with the resulting namespace.
+    This function orchestrates the CLI workflow:
+    1. Load environment variables from .env file (if present)
+    2. Create and configure the argument parser
+    3. Parse command-line arguments
+    4. Instantiate ImageRenamer to process the images
 
-	Supported arguments:
-	- -v / --version: Displays the package version and exits.
-	- image_paths: One or more paths to image files that should be renamed.
+    The function is designed to be called as the script entry point,
+    configured in pyproject.toml under [project.scripts].
 
-	Returns:
-		None
-	"""
-	load_dotenv()
+    Command-Line Arguments:
+        Positional Arguments:
+            image_paths: One or more paths to image files to rename
+                        Accepts: .jpg, .jpeg, .png, .webp, .gif, etc.
+                        At least one path is required (nargs='+')
 
-	# Create an ArgumentParser configured with a short description and an epilog
-	# pointing users to the project documentation for extended usage details.
-	parser = argparse.ArgumentParser(
-		description="AI Image Renamer CLI",
-		epilog="For more information, visit https://docs.kolja-nolte.com/ai-image-renamer"
-	)
-	# Add an optional flag (--version / -v) that prints the package version and exits.
-	# The 'version' action handles displaying the string and terminating the program.
-	parser.add_argument(
-		'--version', '-v',
-		action="version",
-		version=f"%(prog)s {metadata.version('ai-image-renamer')}",
-		help="Show the version of the ai_image_renamer package",
-	)
-	parser.add_argument(
-		'--words', '-w',
-		default=6,
-		help="Number of words used to rename the image file (default: 6)",
-		type=int,
-		metavar='N',
-		choices=range(1, 50),
-	)
-	# Add a positional argument accepting one or more image file paths.
-	# nargs='+' enforces at least one path; each is collected as a string.
-	parser.add_argument(
-		'image_paths',
-		help="Path(s) to the image file(s) to be renamed",
-		action="store",
-		type=str,
-		nargs='+'
-	)
+        Optional Arguments:
+            --words, -w N: Number of words in the generated filename
+                          Range: 1-50 (validated by argparse choices)
+                          Default: 6
+                          Example: -w 3 produces shorter filenames
 
-	# Parse all command-line arguments into a Namespace object.
-	args = parser.parse_args()
+            --version, -v: Display the package version and exit
+                          Example: rename-images -v
+                          Output: rename-images 1.0.0
 
-	# Instantiate the ImageRenamer with the parsed arguments to perform renaming logic.
-	renamer.ImageRenamer(args)
+            --help, -h: Show usage information and exit
+                        Automatically generated by argparse
+
+    Returns:
+        None: This function performs side effects (file renames) but
+              returns nothing. Exit codes:
+              - 0: Success (implicit)
+              - Non-zero: Exception occurred (propagates)
+
+    Raises:
+        RuntimeError: If GROQ_API_KEY is not set (from utils.get_words)
+        FileNotFoundError: If specified image file does not exist
+        Exception: Any underlying exception propagates to CLI
+
+    Environment Variables:
+        GROQ_API_KEY: Required for AI image analysis
+                     Must be set before calling this function
+                     Can be in .env file, .bashrc, .zshrc, or exported
+
+    Example Usage:
+        Command line:
+
+        $ rename-images vacation.jpg family.png
+        Processing vacation.jpg...
+        Renamed vacation.jpg to /photos/sunny-beach-palm-trees.jpg
+        Processing family.png...
+        Renamed family.png to /photos/happy-family-portrait.png
+
+        $ rename-images -w 3 cat.jpg
+        Processing cat.jpg...
+        Renamed cat.jpg to /photos/orange-cat-sleeping.jpg
+
+        $ rename-images -v
+        rename-images 1.0.0
+
+    Note:
+        The function uses argparse's built-in error handling:
+        - Invalid arguments show help and exit with error code
+        - --version and --help exit early without processing
+        - No explicit return code; exceptions propagate naturally
+    """
+    # ==========================================================================
+    # STEP 1: Load Environment Variables
+    # ==========================================================================
+    # Load variables from .env file if it exists in the current directory
+    # This is optional - environment variables can also be set via shell
+    # load_dotenv() does NOT override existing environment variables
+    load_dotenv()
+
+    # ==========================================================================
+    # STEP 2: Create Argument Parser
+    # ==========================================================================
+    # Create the parser with a description shown in --help output
+    # The epilog appears after the argument list in help text
+    parser = argparse.ArgumentParser(
+        # Short description shown at the top of --help
+        description="AI Image Renamer CLI - Rename images using AI-generated descriptions",
+
+        # Text shown at the bottom of --help, pointing to documentation
+        epilog=(
+            "For more information, visit:\n"
+            "  Documentation: https://docs.kolja-nolte.com/ai-image-renamer-cli\n"
+            "\n"
+            "Get your free API key at: https://console.groq.com/keys"
+        ),
+
+        # Use custom formatter for better help text formatting
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+
+    # ==========================================================================
+    # STEP 3: Define Arguments
+    # ==========================================================================
+
+    # -------------------------------------------------------------------------
+    # Argument: --version / -v
+    # -------------------------------------------------------------------------
+    # Displays the package version and exits immediately
+    # Uses argparse's built-in 'version' action for automatic handling
+    parser.add_argument(
+        '--version', '-v',
+
+        # 'version' action automatically prints and exits
+        action="version",
+
+        # Version string format: "program_name version_number"
+        # metadata.version() reads from pyproject.toml's [project.version]
+        version=f"%(prog)s {metadata.version('ai-image-renamer')}",
+
+        # Help text shown in --help output
+        help="Show the version of ai-image-renamer and exit"
+    )
+
+    # -------------------------------------------------------------------------
+    # Argument: --words / -w
+    # -------------------------------------------------------------------------
+    # Controls the length of AI-generated filenames
+    parser.add_argument(
+        '--words', '-w',
+
+        # Default value if argument not provided
+        default=6,
+
+        # Help text with default value shown
+        help=(
+            "Number of words to use in the generated filename. "
+            "Shorter filenames are more concise; longer are more descriptive. "
+            "(default: %(default)s)"
+        ),
+
+        # Enforce integer type (rejects strings like "five")
+        type=int,
+
+        # Placeholder shown in usage message: --words N
+        metavar='N',
+
+        # Restrict to valid range using choices
+        # range(1, 50) allows values 1-49 inclusive
+        choices=range(1, 50),
+    )
+
+    # -------------------------------------------------------------------------
+    # Argument: image_paths (positional)
+    # -------------------------------------------------------------------------
+    # One or more paths to image files to rename
+    parser.add_argument(
+        'image_paths',  # Argument name (used in args.image_paths)
+
+        # Help text for positional argument
+        help=(
+            "Path(s) to the image file(s) to be renamed. "
+            "Accepts multiple files. "
+            "Supported formats: JPEG, PNG, WebP, GIF, and others detected by content."
+        ),
+
+        # 'store' is the default action - save the value
+        action="store",
+
+        # Enforce string type (paths are always strings)
+        type=str,
+
+        # '+' means: one or more arguments required
+        # '* would mean zero or more'
+        # Results in a list even for single file
+        nargs='+'
+    )
+
+    # ==========================================================================
+    # STEP 4: Parse Arguments
+    # ==========================================================================
+    # Parse sys.argv and return a Namespace object
+    # This will exit with error message if arguments are invalid
+    # Namespace attributes match the argument names (args.image_paths, etc.)
+    args = parser.parse_args()
+
+    # ==========================================================================
+    # STEP 5: Process Images
+    # ==========================================================================
+    # Instantiate ImageRenamer with parsed arguments
+    # The constructor automatically processes all images (calls self.rename())
+    # Progress and results are printed to stdout by ImageRenamer
+    renamer.ImageRenamer(args)
+
+
+# ==============================================================================
+# Script Entry Point
+# ==============================================================================
+# This allows the module to be run directly for testing:
+#     python -m ai_image_renamer.cli image.jpg
+# Though the primary entry point is via pyproject.toml's script definition
+if __name__ == '__main__':
+    main()
